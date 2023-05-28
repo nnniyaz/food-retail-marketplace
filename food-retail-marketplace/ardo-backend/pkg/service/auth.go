@@ -2,9 +2,10 @@ package service
 
 import (
 	"context"
-	"errors"
 	"github.com/gofrs/uuid"
 	"github/nnniyaz/ardo/domain"
+	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/pkg/env"
 	"github/nnniyaz/ardo/pkg/repository"
 	"golang.org/x/crypto/bcrypt"
 	"time"
@@ -18,13 +19,13 @@ func NewAuthService(repo *repository.Repository) *Auth {
 	return &Auth{repo: repo}
 }
 
-func (a *Auth) Login(ctx context.Context, login domain.Login) (uuid.UUID, error) {
-	if login.Email == "" {
-		return uuid.Nil, errors.New("email is empty")
-	}
+const defaultUserType = base.UserTypeClient
 
-	if login.Password == "" {
-		return uuid.Nil, errors.New("password is empty")
+func (a *Auth) Login(ctx context.Context, login domain.Login) (uuid.UUID, error) {
+	err := login.Validate()
+
+	if err != nil {
+		return uuid.Nil, err
 	}
 
 	user, err := a.repo.RepoUser.GetUser(ctx, login.Email)
@@ -79,34 +80,87 @@ func (a *Auth) Logout(ctx context.Context, token uuid.UUID) error {
 	return a.repo.RepoSession.DeleteSessionByToken(ctx, token)
 }
 
-func (a *Auth) Register(ctx context.Context, register domain.Register) (uuid.UUID, error) {
-	if register.Email == "" {
-		return uuid.Nil, errors.New("email is empty")
+func (a *Auth) Register(ctx context.Context, register domain.Register) error {
+	apiUri := env.MustGetEnv("API_URI")
+
+	err := register.Validate()
+
+	if err != nil {
+		return err
 	}
 
-	if register.Password == "" {
-		return uuid.Nil, errors.New("password is empty")
+	user, err := a.repo.RepoUser.GetUser(ctx, register.Email)
+
+	if err != nil {
+		return err
+	}
+
+	if user != (domain.User{}) {
+		return base.ErrorEmailAlreadyExists
 	}
 
 	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(register.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return uuid.Nil, err
+		return err
 	}
 
 	id, err := uuid.NewV4()
 
 	if err != nil {
-		return uuid.Nil, err
+		return err
 	}
 
-	err = a.repo.RepoUser.CreateUser(ctx, domain.User{
+	userType, err := base.NewUserType(defaultUserType)
+
+	if err != nil {
+		return err
+	}
+
+	newUser := domain.User{
 		Id:        id,
 		Email:     register.Email,
 		Password:  string(hashedPassword),
 		FirstName: register.FirstName,
 		LastName:  register.LastName,
+		UserType:  userType,
+		IsDeleted: false,
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	if user == (domain.User{}) {
+		err = a.repo.RepoUser.CreateUser(ctx, newUser)
+	}
+
+	if err != nil {
+		return err
+	}
+
+	newActivationLink, err := uuid.NewV4()
+
+	if err != nil {
+		return err
+	}
+
+	err = a.repo.RepoLink.CreateActivationLink(ctx, domain.ActivationLink{
+		UserId:      newUser.Id,
+		Link:        newActivationLink,
+		IsActivated: false,
 	})
 
-	return id, err
+	if err != nil {
+		return err
+	}
+
+	link := apiUri + "/auth/confirm/" + newActivationLink.String()
+
+	err = SendEmail(string(register.Email), link)
+
+	return err
+}
+
+func (a *Auth) Confirm(ctx context.Context, link uuid.UUID) error {
+	err := a.repo.RepoLink.UpdateActivationLink(ctx, link)
+	return err
 }

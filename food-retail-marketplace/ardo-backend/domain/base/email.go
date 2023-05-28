@@ -6,9 +6,9 @@ import (
 )
 
 var (
-	ErrorEmailIsEmpty     = errors.New("email is empty")
-	ErrorEmailIsInvalid   = errors.New("email is invalid")
-	ErrorEmailIsNotUnique = errors.New("email is not unique")
+	ErrorEmailIsEmpty       = errors.New("email is empty")
+	ErrorEmailIsInvalid     = errors.New("email is invalid")
+	ErrorEmailAlreadyExists = errors.New("user with this email already exists")
 )
 
 type Email string

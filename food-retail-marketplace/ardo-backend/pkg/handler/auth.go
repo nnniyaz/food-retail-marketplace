@@ -3,9 +3,9 @@ package handler
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/gofrs/uuid"
-	"github.com/pkg/errors"
 	"github/nnniyaz/ardo/domain"
 	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/pkg/env"
 	"github/nnniyaz/ardo/pkg/utils"
 	"net/http"
 )
@@ -15,6 +15,8 @@ const (
 	internalStatusError    = "internal status error"
 	authorizedSuccessfully = "authorized successfully"
 	loggedOutSuccessfully  = "logged out successfully"
+	wrongUUIDFormat        = "wrong uuid format"
+	confirmEmailSent       = "confirmation was sent to email"
 )
 
 type LoginIn struct {
@@ -40,11 +42,7 @@ func (h *Handler) login(c *gin.Context) {
 	token, err := h.services.Authorization.Login(c, domain.Login{Email: email, Password: login.Password})
 
 	if err != nil {
-		if errors.Is(err, domain.ErrorUserNotFound) {
-			c.AbortWithStatusJSON(http.StatusNotFound, utils.ErrorResponse(err.Error()))
-			return
-		}
-		c.AbortWithStatusJSON(http.StatusInternalServerError, utils.ErrorResponse(internalStatusError))
+		c.AbortWithStatusJSON(http.StatusInternalServerError, utils.ErrorResponse(err.Error()))
 		return
 	}
 
@@ -104,7 +102,7 @@ func (h *Handler) register(c *gin.Context) {
 		return
 	}
 
-	user, err := h.services.Authorization.Register(c, domain.Register{
+	err = h.services.Authorization.Register(c, domain.Register{
 		Email:     email,
 		Password:  register.Password,
 		FirstName: register.FirstName,
@@ -112,9 +110,62 @@ func (h *Handler) register(c *gin.Context) {
 	})
 
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, utils.ErrorResponse(internalStatusError))
+		switch err {
+		case base.ErrorEmailIsEmpty:
+			fallthrough
+		case domain.ErrorUserNotFound:
+			fallthrough
+		case domain.ErrorFirstNameIsEmpty:
+			fallthrough
+		case domain.ErrorFirstNameLessThan3:
+			fallthrough
+		case domain.ErrorFirstNameMoreThan50:
+			fallthrough
+		case domain.ErrorLastNameIsEmpty:
+			fallthrough
+		case domain.ErrorLastNameLessThan3:
+			fallthrough
+		case domain.ErrorLastNameMoreThan50:
+			fallthrough
+		case domain.ErrorPasswordIsEmpty:
+			fallthrough
+		case domain.ErrorPasswordLessThan3:
+			fallthrough
+		case domain.ErrorPasswordMoreThan32:
+			fallthrough
+		case base.ErrorEmailAlreadyExists:
+			fallthrough
+		case base.ErrorInvalidUserType:
+			c.AbortWithStatusJSON(http.StatusBadRequest, utils.ErrorResponse(err.Error()))
+		default:
+			c.AbortWithStatusJSON(http.StatusInternalServerError, utils.ErrorResponse(err.Error()))
+		}
 		return
 	}
 
-	c.JSON(http.StatusOK, utils.SuccessResponse(authorizedSuccessfully, user))
+	c.JSON(http.StatusOK, utils.SuccessResponse(confirmEmailSent, nil))
+}
+
+func (h *Handler) confirm(c *gin.Context) {
+	link := c.Param("link")
+
+	if link == "" {
+		c.AbortWithStatusJSON(http.StatusBadRequest, utils.ErrorResponse(wrongDataFormat))
+		return
+	}
+
+	parsedLink, err := uuid.FromString(link)
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, utils.ErrorResponse(wrongUUIDFormat))
+	}
+
+	err = h.services.Authorization.Confirm(c, parsedLink)
+
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, utils.ErrorResponse(err.Error()))
+		return
+	}
+
+	c.Redirect(http.StatusPermanentRedirect, env.MustGetEnv("CLIENT_URI"))
 }

@@ -20,14 +20,25 @@ type IRepoSession interface {
 	DeleteSessionByToken(ctx context.Context, token uuid.UUID) error
 }
 
+type IRepoLink interface {
+	CreateActivationLink(ctx context.Context, activationLink domain.ActivationLink) error
+	UpdateActivationLink(ctx context.Context, link uuid.UUID) error
+	GetActivationLink(ctx context.Context, link uuid.UUID) (activationLink domain.ActivationLink, err error)
+	GetAllActivationLinks(ctx context.Context, user uuid.UUID) ([]domain.ActivationLink, error)
+	DeleteActivationLink(ctx context.Context, user uuid.UUID, link uuid.UUID) error
+	DeleteAllActivationLinks(ctx context.Context, user uuid.UUID) error
+}
+
 type Repository struct {
 	RepoUser    IRepoUser
 	RepoSession IRepoSession
+	RepoLink    IRepoLink
 }
 
 func NewRepository(client mongo.Client) *Repository {
 	return &Repository{
 		RepoUser:    NewRepoUser(client),
 		RepoSession: NewRepoSession(client),
+		RepoLink:    NewRepoLink(client),
 	}
 }

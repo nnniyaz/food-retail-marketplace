@@ -26,7 +26,7 @@ func (r *RepoUser) GetUser(ctx context.Context, email base.Email) (domain.User, 
 	err := r.Coll().FindOne(ctx, bson.D{{"email", email}}).Decode(&user)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.User{}, domain.ErrorUserNotFound
+			return domain.User{}, nil
 		}
 		return domain.User{}, err
 	}
