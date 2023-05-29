@@ -30,42 +30,32 @@ func (r *Register) Validate() error {
 	if r.Email == "" {
 		return base.ErrorEmailIsEmpty
 	}
-
 	if r.Password == "" {
 		return ErrorPasswordIsEmpty
 	}
-
 	if len(r.Password) < 3 {
 		return ErrorPasswordLessThan3
 	}
-
 	if len(r.Password) > 32 {
 		return ErrorPasswordMoreThan32
 	}
-
 	if r.FirstName == "" {
 		return ErrorFirstNameIsEmpty
 	}
-
 	if len(r.FirstName) < 3 {
 		return ErrorFirstNameLessThan3
 	}
-
 	if len(r.FirstName) > 50 {
 		return ErrorFirstNameMoreThan50
 	}
-
 	if r.LastName == "" {
 		return ErrorLastNameIsEmpty
 	}
-
 	if len(r.LastName) < 3 {
 		return ErrorLastNameLessThan3
 	}
-
 	if len(r.LastName) > 50 {
 		return ErrorLastNameMoreThan50
 	}
-
 	return nil
 }

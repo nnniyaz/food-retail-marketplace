@@ -3,10 +3,11 @@ package main
 import (
 	"context"
 	"github/nnniyaz/ardo"
+	"github/nnniyaz/ardo/handler/http"
 	"github/nnniyaz/ardo/pkg/env"
-	"github/nnniyaz/ardo/pkg/handler"
-	"github/nnniyaz/ardo/pkg/repository"
-	"github/nnniyaz/ardo/pkg/service"
+	"github/nnniyaz/ardo/pkg/uuid"
+	mongo2 "github/nnniyaz/ardo/repo"
+	"github/nnniyaz/ardo/service"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -20,9 +21,9 @@ func main() {
 
 	mongoClient := initDbConnection(mongoUri)
 
-	repos := repository.NewRepository(mongoClient)
-	services := service.NewService(repos)
-	handlers := handler.NewHandler(services)
+	repos := mongo2.NewRepository(mongoClient)
+	services := service.NewService(*repos)
+	handlers := http.NewHandler(services)
 
 	srv := new(ardo.Server)
 	if err := srv.Run(port, handlers.InitRoutes()); err != nil {
@@ -34,7 +35,8 @@ func initDbConnection(mongoUri string) mongo.Client {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 
-	client, err := mongo.Connect(ctx, options.Client().ApplyURI(mongoUri))
+	mongoOptions := options.Client().ApplyURI(mongoUri).SetRegistry(uuid.MongoRegistry)
+	client, err := mongo.Connect(ctx, mongoOptions)
 	if err != nil {
 		log.Fatal(err)
 	}

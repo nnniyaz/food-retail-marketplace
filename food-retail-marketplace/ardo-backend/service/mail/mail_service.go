@@ -1,4 +1,4 @@
-package service
+package mail
 
 import (
 	"github/nnniyaz/ardo/pkg/env"

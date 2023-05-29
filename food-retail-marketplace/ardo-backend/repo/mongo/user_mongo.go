@@ -1,4 +1,4 @@
-package repository
+package mongo
 
 import (
 	"context"
@@ -21,16 +21,16 @@ func (r *RepoUser) Coll() *mongo.Collection {
 	return r.client.Database("main").Collection("users")
 }
 
-func (r *RepoUser) GetUser(ctx context.Context, email base.Email) (domain.User, error) {
+func (r *RepoUser) GetUser(ctx context.Context, email base.Email) (*domain.User, error) {
 	var user domain.User
 	err := r.Coll().FindOne(ctx, bson.D{{"email", email}}).Decode(&user)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return domain.User{}, nil
+			return nil, nil
 		}
-		return domain.User{}, err
+		return nil, err
 	}
-	return user, nil
+	return &user, nil
 }
 
 func (r *RepoUser) CreateUser(ctx context.Context, user domain.User) error {

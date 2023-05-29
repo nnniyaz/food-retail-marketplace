@@ -8,21 +8,18 @@ import (
 var (
 	ErrorEmailIsEmpty       = errors.New("email is empty")
 	ErrorEmailIsInvalid     = errors.New("email is invalid")
-	ErrorEmailAlreadyExists = errors.New("user with this email already exists")
+	ErrorEmailAlreadyExists = errors.New("email already exists")
 )
 
 type Email string
 
 func NewEmail(email string) (Email, error) {
-	if email == "" {
-		return "", ErrorEmailIsEmpty
-	}
-
-	_, err := mail.ParseAddress(email)
-
-	if err != nil {
+	if _, err := mail.ParseAddress(email); err != nil {
 		return "", ErrorEmailIsInvalid
 	}
-
 	return Email(email), nil
+}
+
+func (e Email) String() string {
+	return string(e)
 }

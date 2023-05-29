@@ -4,9 +4,7 @@ import "errors"
 
 type UserType string
 
-var (
-	ErrorInvalidUserType = errors.New("invalid user type")
-)
+var ErrorInvalidUserType = errors.New("invalid user type")
 
 const (
 	UserTypeClient   UserType = "client"
@@ -14,15 +12,19 @@ const (
 	UserTypeStaff    UserType = "staff"
 )
 
-func (u UserType) String() string {
-	return string(u)
-}
-
-func NewUserType(userType UserType) (UserType, error) {
+func NewUserType(userType string) (UserType, error) {
 	switch userType {
-	case UserTypeClient, UserTypeMerchant, UserTypeStaff:
-		return userType, nil
+	case "client":
+		return UserTypeClient, nil
+	case "merchant":
+		return UserTypeMerchant, nil
+	case "staff":
+		return UserTypeStaff, nil
 	default:
 		return "", ErrorInvalidUserType
 	}
+}
+
+func (u UserType) String() string {
+	return string(u)
 }

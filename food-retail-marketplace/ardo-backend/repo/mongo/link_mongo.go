@@ -1,10 +1,11 @@
-package repository
+package mongo
 
 import (
 	"context"
 	"errors"
 	"github.com/gofrs/uuid"
 	"github/nnniyaz/ardo/domain"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -28,8 +29,10 @@ func (r *RepoLink) CreateActivationLink(ctx context.Context, activationLink doma
 	return nil
 }
 
-func (r *RepoLink) UpdateActivationLink(ctx context.Context, link uuid.UUID) error {
-	_, err := r.Coll().ReplaceOne(ctx, domain.ActivationLink{Link: link}, domain.ActivationLink{IsActivated: true})
+func (r *RepoLink) UpdateActivationLinkIsActivated(ctx context.Context, link uuid.UUID) error {
+	filter := bson.D{{"link", link}}
+	update := bson.D{{"$set", bson.D{{"isActivated", true}}}}
+	_, err := r.Coll().UpdateOne(ctx, filter, update)
 	return err
 }
 
