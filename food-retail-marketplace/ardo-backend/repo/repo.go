@@ -2,44 +2,53 @@ package repo
 
 import (
 	"context"
-	"github.com/gofrs/uuid"
-	"github/nnniyaz/ardo/domain"
+	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base"
-	mongo2 "github/nnniyaz/ardo/repo/mongo"
+	"github/nnniyaz/ardo/domain/session"
+	"github/nnniyaz/ardo/domain/user"
+	"github/nnniyaz/ardo/domain/user/valueobject"
+	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
+	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
+	userMongo "github/nnniyaz/ardo/repo/mongo/user"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
-type IRepoUser interface {
-	GetUser(ctx context.Context, email base.Email) (*domain.User, error)
-	CreateUser(ctx context.Context, user domain.User) error
+type User interface {
+	Find(ctx context.Context) ([]*user.User, error)
+	FindOneById(ctx context.Context, id base.UUID) (*user.User, error)
+	FindOneByEmail(ctx context.Context, email valueobject.Email) (*user.User, error)
+	Create(ctx context.Context, user *user.User) error
+	Update(ctx context.Context, user *user.User) error
+	Delete(ctx context.Context, id base.UUID) error
 }
 
-type IRepoSession interface {
-	CreateSession(ctx context.Context, session domain.Session) error
-	GetSessionsByUserId(ctx context.Context, userId uuid.UUID) ([]domain.Session, error)
-	DeleteSessionById(ctx context.Context, id uuid.UUID) error
-	DeleteSessionByToken(ctx context.Context, token uuid.UUID) error
+type Session interface {
+	CreateSession(ctx context.Context, session *session.Session) error
+	GetSessionsByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error)
+	DeleteSessionById(ctx context.Context, id base.UUID) error
+	DeleteSessionByToken(ctx context.Context, token base.UUID) error
 }
 
-type IRepoLink interface {
-	CreateActivationLink(ctx context.Context, activationLink domain.ActivationLink) error
-	UpdateActivationLinkIsActivated(ctx context.Context, link uuid.UUID) error
-	GetActivationLink(ctx context.Context, link uuid.UUID) (activationLink domain.ActivationLink, err error)
-	GetAllActivationLinks(ctx context.Context, user uuid.UUID) ([]domain.ActivationLink, error)
-	DeleteActivationLink(ctx context.Context, user uuid.UUID, link uuid.UUID) error
-	DeleteAllActivationLinks(ctx context.Context, user uuid.UUID) error
+type ActivationLink interface {
+	Find(ctx context.Context, user base.UUID) ([]*activationLink.ActivationLink, error)
+	FindOneByUserId(ctx context.Context, userId base.UUID) (activationLink *activationLink.ActivationLink, err error)
+	FindOneByLink(ctx context.Context, link base.UUID) (activationLink *activationLink.ActivationLink, err error)
+	Create(ctx context.Context, activationLink *activationLink.ActivationLink) error
+	Update(ctx context.Context, activationLink *activationLink.ActivationLink) error
+	DeleteAll(ctx context.Context, user base.UUID) error
+	DeleteOne(ctx context.Context, user base.UUID) error
 }
 
 type Repository struct {
-	RepoUser    IRepoUser
-	RepoSession IRepoSession
-	RepoLink    IRepoLink
+	RepoUser           User
+	RepoSession        Session
+	RepoActivationLink ActivationLink
 }
 
 func NewRepository(client mongo.Client) *Repository {
 	return &Repository{
-		RepoUser:    mongo2.NewRepoUser(client),
-		RepoSession: mongo2.NewRepoSession(client),
-		RepoLink:    mongo2.NewRepoLink(client),
+		RepoUser:           userMongo.NewRepoUser(client),
+		RepoSession:        sessionMongo.NewRepoSession(client),
+		RepoActivationLink: activationLinkMongo.NewRepoActivationLink(client),
 	}
 }

@@ -6,7 +6,7 @@ import (
 	"github/nnniyaz/ardo/handler/http"
 	"github/nnniyaz/ardo/pkg/env"
 	"github/nnniyaz/ardo/pkg/uuid"
-	mongo2 "github/nnniyaz/ardo/repo"
+	"github/nnniyaz/ardo/repo"
 	"github/nnniyaz/ardo/service"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -15,14 +15,15 @@ import (
 	"time"
 )
 
+const port = 8080
+
 func main() {
-	var port = env.MustGetEnv("PORT")
 	var mongoUri = env.MustGetEnv("MONGO_URI")
 
 	mongoClient := initDbConnection(mongoUri)
 
-	repos := mongo2.NewRepository(mongoClient)
-	services := service.NewService(*repos)
+	repos := repo.NewRepository(mongoClient)
+	services := service.NewService(repos)
 	handlers := http.NewHandler(services)
 
 	srv := new(ardo.Server)

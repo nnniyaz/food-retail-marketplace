@@ -1,10 +1,12 @@
-package base
+package valueobject
 
-import "errors"
+import (
+	"github/nnniyaz/ardo/pkg/core"
+)
 
 type UserType string
 
-var ErrorInvalidUserType = errors.New("invalid user type")
+var ErrInvalidUserType = core.NewI18NError(core.EINVALID, core.TXT_INVALID_USER_TYPE)
 
 const (
 	UserTypeClient   UserType = "client"
@@ -14,14 +16,10 @@ const (
 
 func NewUserType(userType string) (UserType, error) {
 	switch userType {
-	case "client":
-		return UserTypeClient, nil
-	case "merchant":
-		return UserTypeMerchant, nil
-	case "staff":
-		return UserTypeStaff, nil
+	case "client", "merchant", "staff":
+		return UserType(userType), nil
 	default:
-		return "", ErrorInvalidUserType
+		return "", ErrInvalidUserType
 	}
 }
 

@@ -1,0 +1,26 @@
+key,RU,EN
+unknown_error,Неизвестная ошибка,Unknown error
+
+empty_firstname,Имя не может быть пустым,First name can not be empty
+firstname_too_short,Имя должно быть не менее 6 символов,First name must be at least 6 characters
+firstname_too_long,Имя должно быть не более 50 символов,First name must be no more than 50 characters
+empty_lastname,Фамилия не может быть пустой,Last name can not be empty
+lastname_too_short,Фамилия должна быть не менее 6 символов,Last name must be at least 6 characters
+lastname_too_long,Фамилия должна быть не более 50 символов,Last name must be no more than 50 characters
+
+empty_password,Пароль не может быть пустым,Password can not be empty
+password_too_short,Пароль должен быть не менее 6 символов,Password must be at least 6 characters
+password_too_long,Пароль должен быть не более 32 символов,Password must be no more than 32 characters
+invalid_password,Неверный пароль,Invalid password
+same_password,Новый пароль не может совпадать со старым,New password can not be the same as the old one
+
+empty_email,Email не может быть пустым,Email can not be empty
+invalid_email,Неверный формат email,Invalid email
+email_doesnt_exist,Пользователь с таким email не существует,User with this email does not exist
+email_already_exists,Пользователь с таким email уже существует,User with this email already exists
+
+invalid_user_type,Неверный тип пользователя,Invalid user type
+
+user_not_found,Пользователь не найден,User not found
+
+account_not_active,Аккаунт не активирован,Account not activated

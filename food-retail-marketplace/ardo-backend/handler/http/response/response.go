@@ -13,10 +13,9 @@ func ErrorResponse(msg string) ResponseType {
 	}
 }
 
-func SuccessResponse(msg string, data interface{}) ResponseType {
+func SuccessResponse(data interface{}) ResponseType {
 	return ResponseType{
 		Success: true,
-		Message: msg,
 		Data:    data,
 	}
 }

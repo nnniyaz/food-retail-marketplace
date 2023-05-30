@@ -2,155 +2,134 @@ package auth
 
 import (
 	"context"
-	"github.com/gofrs/uuid"
-	"github/nnniyaz/ardo/domain"
 	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/env"
-	"github/nnniyaz/ardo/repo"
-	"github/nnniyaz/ardo/service/mail"
-	"golang.org/x/crypto/bcrypt"
+	linkService "github/nnniyaz/ardo/service/link"
+	mailService "github/nnniyaz/ardo/service/mail"
+	sessionService "github/nnniyaz/ardo/service/session"
+	userService "github/nnniyaz/ardo/service/user"
 	"sort"
-	"time"
 )
 
 const maxSessionsCount = 5
-const defaultUserType = base.UserTypeClient
+const defaultUserType = "client"
+
+var (
+	ErrEmailNotFound      = core.NewI18NError(core.EINVALID, core.TXT_EMAIL_DOESNT_EXIST)
+	ErrInvalidPassword    = core.NewI18NError(core.EINVALID, core.TXT_INVALID_PASSWORD)
+	ErrEmailAlreadyExists = core.NewI18NError(core.EINVALID, core.TXT_EMAIL_ALREADY_EXISTS)
+	ErrAccountNotActive   = core.NewI18NError(core.EINVALID, core.TXT_ACCOUNT_NOT_ACTIVE)
+)
 
 type AuthService interface {
-	Login(ctx context.Context, auth domain.Login) (uuid.UUID, error)
-	Register(ctx context.Context, user domain.Register) error
-	Logout(ctx context.Context, token uuid.UUID) error
-	Confirm(ctx context.Context, link uuid.UUID) error
+	Login(ctx context.Context, email, password string) (base.UUID, error)
+	Register(ctx context.Context, firstName, lastName, email, password string) error
+	Logout(ctx context.Context, token string) error
+	Confirm(ctx context.Context, link string) error
 }
 
 type authService struct {
-	repo *repo.Repository
+	userService    userService.UserService
+	linkService    linkService.ActivationLinkService
+	sessionService sessionService.SessionService
 }
 
-func NewAuthService(repo *repo.Repository) AuthService {
-	return &authService{repo: repo}
+func NewAuthService(userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService) AuthService {
+	return &authService{linkService: linkService, userService: userService, sessionService: sessionService}
 }
 
-func (a *authService) Login(ctx context.Context, login domain.Login) (uuid.UUID, error) {
-	err := login.Validate()
-
+func (a *authService) Login(ctx context.Context, email, password string) (base.UUID, error) {
+	user, err := a.userService.GetByEmail(ctx, email)
 	if err != nil {
-		return uuid.Nil, err
+		return base.Nil, ErrEmailNotFound
 	}
 
-	user, err := a.repo.RepoUser.GetUser(ctx, login.Email)
-
-	if err != nil {
-		return uuid.Nil, err
+	ok := user.ComparePassword(password)
+	if !ok {
+		return base.Nil, ErrInvalidPassword
 	}
 
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(login.Password))
-
+	foundActivationLink, err := a.linkService.GetByUserId(ctx, user.GetId().String())
 	if err != nil {
-		return uuid.Nil, err
+		return base.Nil, err
+	}
+	if foundActivationLink.GetIsActivated() {
+		return base.Nil, ErrAccountNotActive
 	}
 
-	sessions, err := a.repo.RepoSession.GetSessionsByUserId(ctx, user.Id)
-
+	sessions, err := a.sessionService.GetAllByUserId(ctx, user.GetId().String())
 	if err != nil {
-		return uuid.Nil, err
+		return base.Nil, err
 	}
 
 	if len(sessions) >= maxSessionsCount {
 		sort.Slice(sessions, func(i, j int) bool {
-			return sessions[i].CreatedAt.Before(sessions[j].CreatedAt)
+			return sessions[i].GetCreatedAt().Before(sessions[j].GetCreatedAt())
 		})
 
 		for i := 0; i < len(sessions)-maxSessionsCount+1; i++ {
-			if err = a.repo.RepoSession.DeleteSessionById(ctx, sessions[i].Id); err != nil {
-				return uuid.Nil, err
+			if err = a.sessionService.DeleteOneBySessionId(ctx, sessions[i].GetId().String()); err != nil {
+				return base.Nil, err
 			}
 		}
 	}
 
-	token, err := uuid.NewV4()
-
+	newSession, err := a.sessionService.Create(ctx, user.GetId().String())
 	if err != nil {
-		return uuid.Nil, err
+		return base.Nil, err
 	}
-
-	err = a.repo.RepoSession.CreateSession(ctx, domain.Session{
-		UserID:    user.Id,
-		Session:   token,
-		CreatedAt: time.Now(),
-	})
-
-	return token, err
+	return newSession.GetSession(), nil
 }
 
-func (a *authService) Logout(ctx context.Context, token uuid.UUID) error {
-	return a.repo.RepoSession.DeleteSessionByToken(ctx, token)
+func (a *authService) Logout(ctx context.Context, token string) error {
+	return a.sessionService.DeleteOneByToken(ctx, token)
 }
 
-func (a *authService) Register(ctx context.Context, register domain.Register) error {
+func (a *authService) Register(ctx context.Context, firstName, lastName, email, password string) error {
 	apiUri := env.MustGetEnv("API_URI")
 
-	if err := register.Validate(); err != nil {
-		return err
+	if user, err := a.userService.GetByEmail(ctx, email); err != nil || user != nil {
+		if err != nil {
+			return err
+		}
+		if !user.GetIsDeleted() {
+			return ErrEmailAlreadyExists
+		}
+
+		foundActivationLink, err := a.linkService.GetByUserId(ctx, user.GetId().String())
+		if err != nil {
+			return err
+		}
+		if foundActivationLink != nil {
+			if foundActivationLink.GetIsActivated() {
+				return ErrEmailAlreadyExists
+			}
+
+			err = a.userService.UpdatePassword(ctx, user.GetId().String(), password)
+			if err != nil {
+				return err
+			}
+			foundActivationLink.UpdateLink()
+			link := apiUri + "/api/auth/confirm/" + foundActivationLink.GetLink().String()
+			return mailService.SendEmail(email, link)
+		}
 	}
 
-	user, err := a.repo.RepoUser.GetUser(ctx, register.Email)
-	if err != nil {
-		return err
-	}
-	if user != nil {
-		return base.ErrorEmailAlreadyExists
-	}
-
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(register.Password), bcrypt.DefaultCost)
-	if err != nil {
-		return err
-	}
-
-	id, err := uuid.NewV4()
-	if err != nil {
-		return err
-	}
-
-	userType, err := base.NewUserType(defaultUserType)
-	if err != nil {
-		return err
-	}
-
-	newUser := domain.User{
-		Id:        id,
-		Email:     register.Email,
-		Password:  string(hashedPassword),
-		FirstName: register.FirstName,
-		LastName:  register.LastName,
-		UserType:  userType,
-		IsDeleted: false,
-		CreatedAt: time.Now(),
-		UpdatedAt: time.Now(),
-	}
-
-	if err = a.repo.RepoUser.CreateUser(ctx, newUser); err != nil {
-		return err
-	}
-
-	newActivationLink, err := uuid.NewV4()
+	newUser, err := a.userService.Create(ctx, firstName, lastName, email, password, defaultUserType)
 	if err != nil {
 		return err
 	}
 
-	err = a.repo.RepoLink.CreateActivationLink(ctx, domain.ActivationLink{
-		UserId:      newUser.Id,
-		Link:        newActivationLink,
-		IsActivated: false,
-	})
+	newActivationLink, err := a.linkService.Create(ctx, newUser.GetId().String())
 	if err != nil {
 		return err
 	}
 
-	link := apiUri + "/authService/confirm/" + newActivationLink.String()
-	return mail.SendEmail(string(register.Email), link)
+	link := apiUri + "/api/auth/confirm/" + newActivationLink.GetLink().String()
+	return mailService.SendEmail(newUser.GetEmail().String(), link)
 }
 
-func (a *authService) Confirm(ctx context.Context, link uuid.UUID) error {
-	return a.repo.RepoLink.UpdateActivationLinkIsActivated(ctx, link)
+func (a *authService) Confirm(ctx context.Context, link string) error {
+	return a.linkService.UpdateIsActivated(ctx, link, true)
 }

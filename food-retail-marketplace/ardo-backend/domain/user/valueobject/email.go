@@ -1,14 +1,13 @@
-package base
+package valueobject
 
 import (
-	"errors"
+	"github/nnniyaz/ardo/pkg/core"
 	"net/mail"
 )
 
 var (
-	ErrorEmailIsEmpty       = errors.New("email is empty")
-	ErrorEmailIsInvalid     = errors.New("email is invalid")
-	ErrorEmailAlreadyExists = errors.New("email already exists")
+	ErrorEmailIsEmpty   = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_EMAIL)
+	ErrorEmailIsInvalid = core.NewI18NError(core.EINVALID, core.TXT_INVALID_EMAIL)
 )
 
 type Email string
