@@ -25,76 +25,87 @@ func (r *RepoUser) Coll() *mongo.Collection {
 	return r.client.Database("main").Collection("users")
 }
 
+type mongoPassword struct {
+	Hash string `bson:"hash"`
+	Salt string `bson:"salt"`
+}
+
+func newFromPassword(p valueobject.Password) mongoPassword {
+	return mongoPassword{
+		Hash: p.GetHash(),
+		Salt: p.GetSalt(),
+	}
+}
+
+func (m *mongoPassword) ToAggregate() valueobject.Password {
+	return valueobject.UnmarshalPasswordFromDatabase(m.Hash, m.Salt)
+}
+
+type mongoUser struct {
+	Id        base.UUID     `bson:"_id"`
+	FirstName string        `bson:"first_name"`
+	LastName  string        `bson:"last_name"`
+	Email     string        `bson:"email"`
+	Password  mongoPassword `bson:"password"`
+	UserType  string        `bson:"user_type"`
+	IsDeleted bool          `bson:"is_deleted"`
+	CreatedAt time.Time     `bson:"created_at"`
+	UpdatedAt time.Time     `bson:"updated_at"`
+}
+
+func newFromUser(u *user.User) *mongoUser {
+	return &mongoUser{
+		Id:        u.GetId(),
+		FirstName: u.GetFirstName().String(),
+		LastName:  u.GetLastName().String(),
+		Email:     u.GetEmail().String(),
+		Password:  newFromPassword(u.GetPassword()),
+		UserType:  u.GetUserType().String(),
+		IsDeleted: u.GetIsDeleted(),
+		CreatedAt: u.GetCreatedAt(),
+		UpdatedAt: u.GetUpdatedAt(),
+	}
+}
+
+func (m *mongoUser) ToAggregate() *user.User {
+	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt)
+}
+
 func (r *RepoUser) Find(ctx context.Context) ([]*user.User, error) {
-	var users []*user.User
 	cur, err := r.Coll().Find(ctx, bson.D{})
 	if err != nil {
 		return nil, err
 	}
-	err = cur.All(ctx, &users)
-	if err != nil {
-		return nil, err
+	var result []*user.User
+	for cur.Next(ctx) {
+		var internal mongoUser
+		if err = cur.Decode(&internal); err != nil {
+			return nil, err
+		}
+		result = append(result, internal.ToAggregate())
 	}
-	return users, nil
+	return result, nil
 }
 
 func (r *RepoUser) FindOneById(ctx context.Context, id base.UUID) (*user.User, error) {
-	var user user.User
-	err := r.Coll().FindOne(ctx, bson.D{{"_id", id}}).Decode(&user)
+	var foundUser mongoUser
+	err := r.Coll().FindOne(ctx, bson.D{{"_id", id}}).Decode(&foundUser)
 	if err != nil {
 		return nil, err
 	}
-	return &user, nil
+	return foundUser.ToAggregate(), nil
 }
 
-func (r *RepoUser) FindOneByEmail(ctx context.Context, email valueobject.Email) (*user.User, error) {
-	var user user.User
-	err := r.Coll().FindOne(ctx, bson.D{{"email", email}}).Decode(&user)
+func (r *RepoUser) FindOneByEmail(ctx context.Context, email string) (*user.User, error) {
+	var foundUser mongoUser
+	err := r.Coll().FindOne(ctx, bson.D{{"email", email}}).Decode(&foundUser)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
 	}
-	return &user, nil
-}
-
-type mongoPassword struct {
-	hash string `bson:"hash"`
-	salt string `bson:"salt"`
-}
-
-func newFromPassword(p valueobject.Password) mongoPassword {
-	return mongoPassword{
-		hash: p.GetHash(),
-		salt: p.GetSalt(),
-	}
-}
-
-type mongoUser struct {
-	id        base.UUID     `bson:"_id"`
-	firstName string        `bson:"first_name"`
-	lastName  string        `bson:"last_name"`
-	email     string        `bson:"email"`
-	password  mongoPassword `bson:"password"`
-	userType  string        `bson:"user_type"`
-	isDeleted bool          `bson:"is_deleted"`
-	createdAt time.Time     `bson:"created_at"`
-	updatedAt time.Time     `bson:"updated_at"`
-}
-
-func newFromUser(u *user.User) *mongoUser {
-	return &mongoUser{
-		id:        u.GetId(),
-		firstName: u.GetFirstName().String(),
-		lastName:  u.GetLastName().String(),
-		email:     u.GetEmail().String(),
-		password:  newFromPassword(u.GetPassword()),
-		userType:  u.GetUserType().String(),
-		isDeleted: u.GetIsDeleted(),
-		createdAt: u.GetCreatedAt(),
-		updatedAt: u.GetUpdatedAt(),
-	}
+	return foundUser.ToAggregate(), nil
 }
 
 func (r *RepoUser) Create(ctx context.Context, user *user.User) error {

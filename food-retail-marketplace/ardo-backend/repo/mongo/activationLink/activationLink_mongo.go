@@ -2,7 +2,6 @@ package activationLink
 
 import (
 	"context"
-	"errors"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base"
 	"go.mongodb.org/mongo-driver/bson"
@@ -21,56 +20,55 @@ func (r *RepoActivationLink) Coll() *mongo.Collection {
 	return r.client.Database("main").Collection("activationLinks")
 }
 
+type mongoActivationLink struct {
+	Link        base.UUID `bson:"link"`
+	UserId      base.UUID `bson:"userID"`
+	IsActivated bool      `bson:"isActivated"`
+}
+
+func newFromActivationLink(a *activationLink.ActivationLink) *mongoActivationLink {
+	return &mongoActivationLink{
+		Link:        a.GetLink(),
+		UserId:      a.GetUserId(),
+		IsActivated: a.GetIsActivated(),
+	}
+}
+
+func (m *mongoActivationLink) ToAggregate() *activationLink.ActivationLink {
+	return activationLink.UnmarshalActivationLinkFromDatabase(m.Link, m.UserId, m.IsActivated)
+}
+
 func (r *RepoActivationLink) Find(ctx context.Context, userId base.UUID) ([]*activationLink.ActivationLink, error) {
 	cur, err := r.Coll().Find(ctx, bson.D{{"userID", userId}})
 	if err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, nil
-		}
 		return nil, err
 	}
 
 	var activationLinks []*activationLink.ActivationLink
-	if err = cur.All(ctx, &activationLinks); err != nil {
-		return nil, err
+	for cur.Next(ctx) {
+		var internal mongoActivationLink
+		if err = cur.Decode(&internal); err != nil {
+			return nil, err
+		}
+		activationLinks = append(activationLinks, internal.ToAggregate())
 	}
 	return activationLinks, nil
 }
 
 func (r *RepoActivationLink) FindOneByUserId(ctx context.Context, userId base.UUID) (*activationLink.ActivationLink, error) {
-	var foundActivationLink *activationLink.ActivationLink
+	var foundActivationLink mongoActivationLink
 	if err := r.Coll().FindOne(ctx, bson.D{{"userID", userId}}).Decode(&foundActivationLink); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, nil
-		}
 		return nil, err
 	}
-	return foundActivationLink, nil
+	return foundActivationLink.ToAggregate(), nil
 }
 
 func (r *RepoActivationLink) FindOneByLink(ctx context.Context, link base.UUID) (*activationLink.ActivationLink, error) {
-	var foundActivationLink *activationLink.ActivationLink
+	var foundActivationLink mongoActivationLink
 	if err := r.Coll().FindOne(ctx, bson.D{{"link", link}}).Decode(&foundActivationLink); err != nil {
-		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, nil
-		}
 		return nil, err
 	}
-	return foundActivationLink, nil
-}
-
-type mongoActivationLink struct {
-	link        base.UUID `bson:"link"`
-	userId      base.UUID `bson:"userID"`
-	isActivated bool      `bson:"isActivated"`
-}
-
-func newFromActivationLink(a *activationLink.ActivationLink) *mongoActivationLink {
-	return &mongoActivationLink{
-		link:        a.GetLink(),
-		userId:      a.GetUserId(),
-		isActivated: a.GetIsActivated(),
-	}
+	return foundActivationLink.ToAggregate(), nil
 }
 
 func (r *RepoActivationLink) Create(ctx context.Context, activationLink *activationLink.ActivationLink) error {

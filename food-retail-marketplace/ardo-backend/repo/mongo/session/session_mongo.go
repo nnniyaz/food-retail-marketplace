@@ -22,19 +22,23 @@ func (r *RepoSession) Coll() *mongo.Collection {
 }
 
 type mongoSession struct {
-	id        base.UUID `bson:"_id"`
-	userID    base.UUID `bson:"userID"`
-	session   base.UUID `bson:"session"`
-	createdAt time.Time `bson:"createdAt"`
+	Id        base.UUID `json:"id" bson:"_id"`
+	UserID    base.UUID `bson:"userID"`
+	Session   base.UUID `bson:"session"`
+	CreatedAt time.Time `bson:"createdAt"`
 }
 
 func newFromSession(s *session.Session) *mongoSession {
 	return &mongoSession{
-		id:        s.GetId(),
-		userID:    s.GetUserId(),
-		session:   s.GetSession(),
-		createdAt: s.GetCreatedAt(),
+		Id:        s.GetId(),
+		UserID:    s.GetUserId(),
+		Session:   s.GetSession(),
+		CreatedAt: s.GetCreatedAt(),
 	}
+}
+
+func (m *mongoSession) ToAggregate() *session.Session {
+	return session.UnmarshalSessionFromDatabase(m.Id, m.UserID, m.Session, m.CreatedAt)
 }
 
 func (r *RepoSession) CreateSession(ctx context.Context, session *session.Session) error {
@@ -50,11 +54,11 @@ func (r *RepoSession) GetSessionsByUserId(ctx context.Context, userId base.UUID)
 
 	var sessions []*session.Session
 	for cur.Next(ctx) {
-		var s session.Session
+		var s mongoSession
 		if err = cur.Decode(&s); err != nil {
 			return nil, err
 		}
-		sessions = append(sessions, &s)
+		sessions = append(sessions, s.ToAggregate())
 	}
 	return sessions, nil
 }

@@ -36,3 +36,12 @@ func (s *Session) GetSession() base.UUID {
 func (s *Session) GetCreatedAt() time.Time {
 	return s.createdAt
 }
+
+func UnmarshalSessionFromDatabase(id base.UUID, userID base.UUID, session base.UUID, createdAt time.Time) *Session {
+	return &Session{
+		id:        id,
+		userID:    userID,
+		session:   session,
+		createdAt: createdAt,
+	}
+}

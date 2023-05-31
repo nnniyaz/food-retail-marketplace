@@ -15,9 +15,17 @@ func (id UUID) String() string {
 }
 
 func UUIDFromString(id string) (UUID, error) {
-	uuid, err := uuid.Parse(id)
+	parsedUUID, err := uuid.Parse(id)
 	if err != nil {
 		return Nil, err
 	}
-	return UUID(uuid), nil
+	return UUID(parsedUUID), nil
+}
+
+func UUIDFromBytes(id []byte) (UUID, error) {
+	parsedUUID, err := uuid.FromBytes(id)
+	if err != nil {
+		return Nil, err
+	}
+	return UUID(parsedUUID), nil
 }

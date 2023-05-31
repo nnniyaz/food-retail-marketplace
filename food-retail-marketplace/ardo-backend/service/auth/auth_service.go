@@ -93,15 +93,12 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 		if err != nil {
 			return err
 		}
-		if !user.GetIsDeleted() {
-			return ErrEmailAlreadyExists
-		}
 
 		foundActivationLink, err := a.linkService.GetByUserId(ctx, user.GetId().String())
 		if err != nil {
 			return err
 		}
-		if foundActivationLink != nil {
+		if foundActivationLink != nil && !user.GetIsDeleted() {
 			if foundActivationLink.GetIsActivated() {
 				return ErrEmailAlreadyExists
 			}

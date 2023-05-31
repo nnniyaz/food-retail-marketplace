@@ -115,3 +115,17 @@ func (u *User) ChangePassword(password string) error {
 	u.password = newPassword
 	return nil
 }
+
+func UnmarshalUserFromDatabase(id base.UUID, firstName, lastName, email, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
+	return &User{
+		id:        id,
+		firstName: valueobject.FirstName(firstName),
+		lastName:  valueobject.LastName(lastName),
+		email:     valueobject.Email(email),
+		password:  password,
+		userType:  valueobject.UserType(userType),
+		isDeleted: isDeleted,
+		createdAt: createdAt,
+		updatedAt: updatedAt,
+	}
+}

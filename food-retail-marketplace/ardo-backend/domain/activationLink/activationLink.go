@@ -41,3 +41,11 @@ func (a *ActivationLink) Deactivate() {
 func (a *ActivationLink) UpdateLink() {
 	a.link = base.NewUUID()
 }
+
+func UnmarshalActivationLinkFromDatabase(link base.UUID, userId base.UUID, isActivated bool) *ActivationLink {
+	return &ActivationLink{
+		link:        link,
+		userId:      userId,
+		isActivated: isActivated,
+	}
+}

@@ -4,7 +4,6 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user"
-	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/repo"
 )
@@ -43,11 +42,11 @@ func (u *userService) GetById(ctx context.Context, id string) (*user.User, error
 }
 
 func (u *userService) GetByEmail(ctx context.Context, email string) (*user.User, error) {
-	convertedEmail, err := valueobject.NewEmail(email)
-	if err != nil {
-		return nil, err
-	}
-	return u.userRepo.FindOneByEmail(ctx, convertedEmail)
+	//convertedEmail, err := valueobject.NewEmail(email)
+	//if err != nil {
+	//	return nil, err
+	//}
+	return u.userRepo.FindOneByEmail(ctx, email)
 }
 
 func (u *userService) Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error) {

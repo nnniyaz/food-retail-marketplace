@@ -6,7 +6,6 @@ import (
 	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
-	"github/nnniyaz/ardo/domain/user/valueobject"
 	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
@@ -16,7 +15,7 @@ import (
 type User interface {
 	Find(ctx context.Context) ([]*user.User, error)
 	FindOneById(ctx context.Context, id base.UUID) (*user.User, error)
-	FindOneByEmail(ctx context.Context, email valueobject.Email) (*user.User, error)
+	FindOneByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, user *user.User) error
 	Update(ctx context.Context, user *user.User) error
 	Delete(ctx context.Context, id base.UUID) error
