@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"time"
@@ -12,7 +12,7 @@ var (
 )
 
 type User struct {
-	id        base.UUID
+	id        uuid.UUID
 	firstName valueobject.FirstName
 	lastName  valueobject.LastName
 	email     valueobject.Email
@@ -24,7 +24,7 @@ type User struct {
 }
 
 func NewUser(firstName, lastName, email, password, userType string) (*User, error) {
-	userId := base.NewUUID()
+	userId := uuid.NewUUID()
 
 	userFirstName, err := valueobject.NewFirstName(firstName)
 	if err != nil {
@@ -64,7 +64,7 @@ func NewUser(firstName, lastName, email, password, userType string) (*User, erro
 	}, nil
 }
 
-func (u *User) GetId() base.UUID {
+func (u *User) GetId() uuid.UUID {
 	return u.id
 }
 
@@ -116,7 +116,26 @@ func (u *User) ChangePassword(password string) error {
 	return nil
 }
 
-func UnmarshalUserFromDatabase(id base.UUID, firstName, lastName, email, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
+func (u *User) UpdateCredentials(firstName, lastName, email string) error {
+	userFirstName, err := valueobject.NewFirstName(firstName)
+	if err != nil {
+		return err
+	}
+	userLastName, err := valueobject.NewLastName(lastName)
+	if err != nil {
+		return err
+	}
+	userEmail, err := valueobject.NewEmail(email)
+	if err != nil {
+		return err
+	}
+	u.firstName = userFirstName
+	u.lastName = userLastName
+	u.email = userEmail
+	return nil
+}
+
+func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, email, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
 	return &User{
 		id:        id,
 		firstName: valueobject.FirstName(firstName),

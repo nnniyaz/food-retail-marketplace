@@ -3,11 +3,12 @@ package user
 import (
 	"context"
 	"errors"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
@@ -42,7 +43,7 @@ func (m *mongoPassword) ToAggregate() valueobject.Password {
 }
 
 type mongoUser struct {
-	Id        base.UUID     `bson:"_id"`
+	Id        uuid.UUID     `bson:"_id"`
 	FirstName string        `bson:"first_name"`
 	LastName  string        `bson:"last_name"`
 	Email     string        `bson:"email"`
@@ -76,6 +77,8 @@ func (r *RepoUser) Find(ctx context.Context) ([]*user.User, error) {
 	if err != nil {
 		return nil, err
 	}
+	defer cur.Close(ctx)
+
 	var result []*user.User
 	for cur.Next(ctx) {
 		var internal mongoUser
@@ -87,7 +90,27 @@ func (r *RepoUser) Find(ctx context.Context) ([]*user.User, error) {
 	return result, nil
 }
 
-func (r *RepoUser) FindOneById(ctx context.Context, id base.UUID) (*user.User, error) {
+func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
+	filter := bson.D{{"is_deleted", isDeleted}}
+
+	cur, err := r.Coll().Find(ctx, filter, options.Find().SetSkip(offset).SetLimit(limit))
+	if err != nil {
+		return nil, err
+	}
+	defer cur.Close(ctx)
+
+	var result []*user.User
+	for cur.Next(ctx) {
+		var internal mongoUser
+		if err = cur.Decode(&internal); err != nil {
+			return nil, err
+		}
+		result = append(result, internal.ToAggregate())
+	}
+	return result, nil
+}
+
+func (r *RepoUser) FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error) {
 	var foundUser mongoUser
 	err := r.Coll().FindOne(ctx, bson.D{{"_id", id}}).Decode(&foundUser)
 	if err != nil {
@@ -118,7 +141,7 @@ func (r *RepoUser) Update(ctx context.Context, user *user.User) error {
 	return err
 }
 
-func (r *RepoUser) Delete(ctx context.Context, id base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", id}}, bson.D{{"$set", bson.D{{"is_deleted", true}}}})
+func (r *RepoUser) Delete(ctx context.Context, id uuid.UUID) error {
+	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", id}}, bson.D{{"$set", bson.D{{"is_deleted", true}, {"updated_at", time.Now()}}}})
 	return err
 }

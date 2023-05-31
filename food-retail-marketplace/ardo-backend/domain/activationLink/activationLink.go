@@ -1,28 +1,28 @@
 package activationLink
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 )
 
 type ActivationLink struct {
-	link        base.UUID
-	userId      base.UUID
+	link        uuid.UUID
+	userId      uuid.UUID
 	isActivated bool
 }
 
-func NewActivationLink(userId base.UUID) *ActivationLink {
+func NewActivationLink(userId uuid.UUID) *ActivationLink {
 	return &ActivationLink{
-		link:        base.NewUUID(),
+		link:        uuid.NewUUID(),
 		userId:      userId,
 		isActivated: false,
 	}
 }
 
-func (a *ActivationLink) GetLink() base.UUID {
+func (a *ActivationLink) GetLink() uuid.UUID {
 	return a.link
 }
 
-func (a *ActivationLink) GetUserId() base.UUID {
+func (a *ActivationLink) GetUserId() uuid.UUID {
 	return a.userId
 }
 
@@ -39,10 +39,10 @@ func (a *ActivationLink) Deactivate() {
 }
 
 func (a *ActivationLink) UpdateLink() {
-	a.link = base.NewUUID()
+	a.link = uuid.NewUUID()
 }
 
-func UnmarshalActivationLinkFromDatabase(link base.UUID, userId base.UUID, isActivated bool) *ActivationLink {
+func UnmarshalActivationLinkFromDatabase(link uuid.UUID, userId uuid.UUID, isActivated bool) *ActivationLink {
 	return &ActivationLink{
 		link:        link,
 		userId:      userId,

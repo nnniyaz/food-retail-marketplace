@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/env"
 	linkService "github/nnniyaz/ardo/service/link"
@@ -23,7 +23,7 @@ var (
 )
 
 type AuthService interface {
-	Login(ctx context.Context, email, password string) (base.UUID, error)
+	Login(ctx context.Context, email, password string) (uuid.UUID, error)
 	Register(ctx context.Context, firstName, lastName, email, password string) error
 	Logout(ctx context.Context, token string) error
 	Confirm(ctx context.Context, link string) error
@@ -39,28 +39,28 @@ func NewAuthService(userService userService.UserService, sessionService sessionS
 	return &authService{linkService: linkService, userService: userService, sessionService: sessionService}
 }
 
-func (a *authService) Login(ctx context.Context, email, password string) (base.UUID, error) {
+func (a *authService) Login(ctx context.Context, email, password string) (uuid.UUID, error) {
 	user, err := a.userService.GetByEmail(ctx, email)
 	if err != nil {
-		return base.Nil, ErrEmailNotFound
+		return uuid.Nil, ErrEmailNotFound
 	}
 
 	ok := user.ComparePassword(password)
 	if !ok {
-		return base.Nil, ErrInvalidPassword
+		return uuid.Nil, ErrInvalidPassword
 	}
 
 	foundActivationLink, err := a.linkService.GetByUserId(ctx, user.GetId().String())
 	if err != nil {
-		return base.Nil, err
+		return uuid.Nil, err
 	}
-	if foundActivationLink.GetIsActivated() {
-		return base.Nil, ErrAccountNotActive
+	if !foundActivationLink.GetIsActivated() {
+		return uuid.Nil, ErrAccountNotActive
 	}
 
 	sessions, err := a.sessionService.GetAllByUserId(ctx, user.GetId().String())
 	if err != nil {
-		return base.Nil, err
+		return uuid.Nil, err
 	}
 
 	if len(sessions) >= maxSessionsCount {
@@ -70,14 +70,14 @@ func (a *authService) Login(ctx context.Context, email, password string) (base.U
 
 		for i := 0; i < len(sessions)-maxSessionsCount+1; i++ {
 			if err = a.sessionService.DeleteOneBySessionId(ctx, sessions[i].GetId().String()); err != nil {
-				return base.Nil, err
+				return uuid.Nil, err
 			}
 		}
 	}
 
 	newSession, err := a.sessionService.Create(ctx, user.GetId().String())
 	if err != nil {
-		return base.Nil, err
+		return uuid.Nil, err
 	}
 	return newSession.GetSession(), nil
 }
@@ -103,9 +103,11 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 				return ErrEmailAlreadyExists
 			}
 
-			err = a.userService.UpdatePassword(ctx, user.GetId().String(), password)
-			if err != nil {
-				return err
+			if !user.ComparePassword(password) {
+				err = a.userService.UpdatePassword(ctx, user.GetId().String(), password)
+				if err != nil {
+					return err
+				}
 			}
 			foundActivationLink.UpdateLink()
 			link := apiUri + "/api/auth/confirm/" + foundActivationLink.GetLink().String()

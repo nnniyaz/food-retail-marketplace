@@ -24,3 +24,6 @@ invalid_user_type,Неверный тип пользователя,Invalid user 
 user_not_found,Пользователь не найден,User not found
 
 account_not_active,Аккаунт не активирован,Account not activated
+
+empty_merchant_role,Роль не может быть пустой,Role can not be empty
+invalid_merchant_role,Неверная роль,Invalid role
