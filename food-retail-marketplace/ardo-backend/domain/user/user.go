@@ -1,7 +1,7 @@
 package user
 
 import (
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"time"
@@ -12,10 +12,10 @@ var (
 )
 
 type User struct {
-	id        uuid.UUID
+	id        base.UUID
 	firstName valueobject.FirstName
 	lastName  valueobject.LastName
-	email     valueobject.Email
+	email     base.Email
 	password  valueobject.Password
 	userType  valueobject.UserType
 	isDeleted bool
@@ -24,7 +24,7 @@ type User struct {
 }
 
 func NewUser(firstName, lastName, email, password, userType string) (*User, error) {
-	userId := uuid.NewUUID()
+	userId := base.NewUUID()
 
 	userFirstName, err := valueobject.NewFirstName(firstName)
 	if err != nil {
@@ -36,7 +36,7 @@ func NewUser(firstName, lastName, email, password, userType string) (*User, erro
 		return nil, err
 	}
 
-	userEmail, err := valueobject.NewEmail(email)
+	userEmail, err := base.NewEmail(email)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +64,7 @@ func NewUser(firstName, lastName, email, password, userType string) (*User, erro
 	}, nil
 }
 
-func (u *User) GetId() uuid.UUID {
+func (u *User) GetId() base.UUID {
 	return u.id
 }
 
@@ -76,7 +76,7 @@ func (u *User) GetLastName() valueobject.LastName {
 	return u.lastName
 }
 
-func (u *User) GetEmail() valueobject.Email {
+func (u *User) GetEmail() base.Email {
 	return u.email
 }
 
@@ -125,7 +125,7 @@ func (u *User) UpdateCredentials(firstName, lastName, email string) error {
 	if err != nil {
 		return err
 	}
-	userEmail, err := valueobject.NewEmail(email)
+	userEmail, err := base.NewEmail(email)
 	if err != nil {
 		return err
 	}
@@ -135,12 +135,12 @@ func (u *User) UpdateCredentials(firstName, lastName, email string) error {
 	return nil
 }
 
-func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, email, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
+func UnmarshalUserFromDatabase(id base.UUID, firstName, lastName, email, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
 	return &User{
 		id:        id,
 		firstName: valueobject.FirstName(firstName),
 		lastName:  valueobject.LastName(lastName),
-		email:     valueobject.Email(email),
+		email:     base.Email(email),
 		password:  password,
 		userType:  valueobject.UserType(userType),
 		isDeleted: isDeleted,

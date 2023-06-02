@@ -1,4 +1,4 @@
-package valueobject
+package base
 
 import (
 	"github/nnniyaz/ardo/pkg/core"

@@ -2,7 +2,7 @@ package user_organization
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user_organization"
 	"github/nnniyaz/ardo/domain/user_organization/valueobject"
 	"github/nnniyaz/ardo/repo"
@@ -33,7 +33,7 @@ func (s *userOrgService) GetAll(ctx context.Context) ([]*user_organization.UserO
 }
 
 func (s *userOrgService) GetByOrgId(ctx context.Context, orgId string) (*user_organization.UserOrganization, error) {
-	convertedOrgId, err := uuid.UUIDFromString(orgId)
+	convertedOrgId, err := base.UUIDFromString(orgId)
 	if err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (s *userOrgService) GetByOrgId(ctx context.Context, orgId string) (*user_or
 }
 
 func (s *userOrgService) Create(ctx context.Context, userId, role string) error {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return err
 	}
@@ -57,7 +57,7 @@ func (s *userOrgService) Create(ctx context.Context, userId, role string) error 
 }
 
 func (s *userOrgService) UpdateMerchantRole(ctx context.Context, userId, role string) error {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func (s *userOrgService) UpdateMerchantRole(ctx context.Context, userId, role st
 }
 
 func (s *userOrgService) Delete(ctx context.Context, userId string) error {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return err
 	}

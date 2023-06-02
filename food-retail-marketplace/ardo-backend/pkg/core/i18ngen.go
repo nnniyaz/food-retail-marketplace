@@ -3,27 +3,37 @@
 package core
 
 const (
-	TXT_UNKNOWN_ERROR         TxtKey = 1
-	TXT_EMPTY_FIRSTNAME       TxtKey = 2
-	TXT_FIRSTNAME_TOO_SHORT   TxtKey = 3
-	TXT_FIRSTNAME_TOO_LONG    TxtKey = 4
-	TXT_EMPTY_LASTNAME        TxtKey = 5
-	TXT_LASTNAME_TOO_SHORT    TxtKey = 6
-	TXT_LASTNAME_TOO_LONG     TxtKey = 7
-	TXT_EMPTY_PASSWORD        TxtKey = 8
-	TXT_PASSWORD_TOO_SHORT    TxtKey = 9
-	TXT_PASSWORD_TOO_LONG     TxtKey = 10
-	TXT_INVALID_PASSWORD      TxtKey = 11
-	TXT_SAME_PASSWORD         TxtKey = 12
-	TXT_EMPTY_EMAIL           TxtKey = 13
-	TXT_INVALID_EMAIL         TxtKey = 14
-	TXT_EMAIL_DOESNT_EXIST    TxtKey = 15
-	TXT_EMAIL_ALREADY_EXISTS  TxtKey = 16
-	TXT_INVALID_USER_TYPE     TxtKey = 17
-	TXT_USER_NOT_FOUND        TxtKey = 18
-	TXT_ACCOUNT_NOT_ACTIVE    TxtKey = 19
-	TXT_EMPTY_MERCHANT_ROLE   TxtKey = 20
-	TXT_INVALID_MERCHANT_ROLE TxtKey = 21
+	TXT_UNKNOWN_ERROR            TxtKey = 1
+	TXT_EMPTY_FIRSTNAME          TxtKey = 2
+	TXT_FIRSTNAME_TOO_SHORT      TxtKey = 3
+	TXT_FIRSTNAME_TOO_LONG       TxtKey = 4
+	TXT_EMPTY_LASTNAME           TxtKey = 5
+	TXT_LASTNAME_TOO_SHORT       TxtKey = 6
+	TXT_LASTNAME_TOO_LONG        TxtKey = 7
+	TXT_EMPTY_PASSWORD           TxtKey = 8
+	TXT_PASSWORD_TOO_SHORT       TxtKey = 9
+	TXT_PASSWORD_TOO_LONG        TxtKey = 10
+	TXT_INVALID_PASSWORD         TxtKey = 11
+	TXT_SAME_PASSWORD            TxtKey = 12
+	TXT_EMPTY_EMAIL              TxtKey = 13
+	TXT_INVALID_EMAIL            TxtKey = 14
+	TXT_EMAIL_DOESNT_EXIST       TxtKey = 15
+	TXT_EMAIL_ALREADY_EXISTS     TxtKey = 16
+	TXT_INVALID_USER_TYPE        TxtKey = 17
+	TXT_USER_NOT_FOUND           TxtKey = 18
+	TXT_ACCOUNT_NOT_ACTIVE       TxtKey = 19
+	TXT_EMPTY_MERCHANT_ROLE      TxtKey = 20
+	TXT_INVALID_MERCHANT_ROLE    TxtKey = 21
+	TXT_INVALID_CURRENCY         TxtKey = 22
+	TXT_EMPTY_PHONE_NUMBER       TxtKey = 23
+	TXT_EMPTY_ADDRESS            TxtKey = 24
+	TXT_INVALID_PRODUCT_STATUS   TxtKey = 25
+	TXT_INVALID_PRODUCT_PRICE    TxtKey = 26
+	TXT_INVALID_PRODUCT_QUANTITY TxtKey = 27
+	TXT_INVALID_PRODUCT_IMG_URL  TxtKey = 28
+	TXT_INVALID_REVIEW_RATING    TxtKey = 29
+	TXT_INVALID_REVIEW_COMMENT   TxtKey = 30
+	TXT_WRONG_MLSTRING_FORMAT    TxtKey = 31
 )
 
 var Txts = TxtResource{
@@ -111,6 +121,46 @@ var Txts = TxtResource{
 		RU: `Неверная роль`,
 		EN: `Invalid role`,
 	},
+	TXT_INVALID_CURRENCY: MlString{
+		RU: `Неверная валюта`,
+		EN: `Invalid currency`,
+	},
+	TXT_EMPTY_PHONE_NUMBER: MlString{
+		RU: `Номер телефона не может быть пустым`,
+		EN: `Phone number can not be empty`,
+	},
+	TXT_EMPTY_ADDRESS: MlString{
+		RU: `Адрес не может быть пустым`,
+		EN: `Address can not be empty`,
+	},
+	TXT_INVALID_PRODUCT_STATUS: MlString{
+		RU: `Неверный статус продукта`,
+		EN: `Invalid product status`,
+	},
+	TXT_INVALID_PRODUCT_PRICE: MlString{
+		RU: `Неверная цена продукта`,
+		EN: `Invalid product price`,
+	},
+	TXT_INVALID_PRODUCT_QUANTITY: MlString{
+		RU: `Неверное количество продукта`,
+		EN: `Invalid product quantity`,
+	},
+	TXT_INVALID_PRODUCT_IMG_URL: MlString{
+		RU: `Неверный URL изображения продукта`,
+		EN: `Invalid product image URL`,
+	},
+	TXT_INVALID_REVIEW_RATING: MlString{
+		RU: `Рейтинг отзыва должен быть от 1 до 5`,
+		EN: `Review rating must be from 1 to 5`,
+	},
+	TXT_INVALID_REVIEW_COMMENT: MlString{
+		RU: `Комментарий отзыва должен быть не более 250 символов`,
+		EN: `Review comment must be no more than 250 characters`,
+	},
+	TXT_WRONG_MLSTRING_FORMAT: MlString{
+		RU: `Неверный формат mlstring`,
+		EN: `Wrong mlstring format`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -157,6 +207,26 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "empty_merchant_role"
 	case TXT_INVALID_MERCHANT_ROLE:
 		return "invalid_merchant_role"
+	case TXT_INVALID_CURRENCY:
+		return "invalid_currency"
+	case TXT_EMPTY_PHONE_NUMBER:
+		return "empty_phone_number"
+	case TXT_EMPTY_ADDRESS:
+		return "empty_address"
+	case TXT_INVALID_PRODUCT_STATUS:
+		return "invalid_product_status"
+	case TXT_INVALID_PRODUCT_PRICE:
+		return "invalid_product_price"
+	case TXT_INVALID_PRODUCT_QUANTITY:
+		return "invalid_product_quantity"
+	case TXT_INVALID_PRODUCT_IMG_URL:
+		return "invalid_product_img_url"
+	case TXT_INVALID_REVIEW_RATING:
+		return "invalid_review_rating"
+	case TXT_INVALID_REVIEW_COMMENT:
+		return "invalid_review_comment"
+	case TXT_WRONG_MLSTRING_FORMAT:
+		return "wrong_mlstring_format"
 
 	default:
 		return ""

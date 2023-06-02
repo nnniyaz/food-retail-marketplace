@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/repo"
 )
@@ -23,7 +23,7 @@ func NewSessionService(repo repo.Session) SessionService {
 }
 
 func (s *sessionService) Create(ctx context.Context, userId string) (*session.Session, error) {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -36,7 +36,7 @@ func (s *sessionService) Create(ctx context.Context, userId string) (*session.Se
 }
 
 func (s *sessionService) GetAllByUserId(ctx context.Context, userId string) ([]*session.Session, error) {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (s *sessionService) GetAllByUserId(ctx context.Context, userId string) ([]*
 }
 
 func (s *sessionService) DeleteOneBySessionId(ctx context.Context, sessionId string) error {
-	convertedSessionId, err := uuid.UUIDFromString(sessionId)
+	convertedSessionId, err := base.UUIDFromString(sessionId)
 	if err != nil {
 		return err
 	}
@@ -56,7 +56,7 @@ func (s *sessionService) DeleteOneBySessionId(ctx context.Context, sessionId str
 }
 
 func (s *sessionService) DeleteOneByToken(ctx context.Context, token string) error {
-	convertedToken, err := uuid.UUIDFromString(token)
+	convertedToken, err := base.UUIDFromString(token)
 	if err != nil {
 		return err
 	}

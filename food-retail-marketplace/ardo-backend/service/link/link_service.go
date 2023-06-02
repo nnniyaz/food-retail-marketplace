@@ -3,7 +3,7 @@ package link
 import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/repo"
 )
 
@@ -23,7 +23,7 @@ func NewActivationLinkService(repo repo.ActivationLink) ActivationLinkService {
 }
 
 func (a *activationLinkService) GetByUserId(ctx context.Context, userId string) (*activationLink.ActivationLink, error) {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -35,7 +35,7 @@ func (a *activationLinkService) GetByUserId(ctx context.Context, userId string) 
 }
 
 func (a *activationLinkService) Create(ctx context.Context, userId string) (*activationLink.ActivationLink, error) {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -48,7 +48,7 @@ func (a *activationLinkService) Create(ctx context.Context, userId string) (*act
 }
 
 func (a *activationLinkService) UpdateIsActivated(ctx context.Context, link string, isActivated bool) error {
-	convertedLink, err := uuid.UUIDFromString(link)
+	convertedLink, err := base.UUIDFromString(link)
 	if err != nil {
 		return err
 	}
@@ -65,7 +65,7 @@ func (a *activationLinkService) UpdateIsActivated(ctx context.Context, link stri
 }
 
 func (a *activationLinkService) UpdateLink(ctx context.Context, userId string) error {
-	convertedUserId, err := uuid.UUIDFromString(userId)
+	convertedUserId, err := base.UUIDFromString(userId)
 	if err != nil {
 		return err
 	}

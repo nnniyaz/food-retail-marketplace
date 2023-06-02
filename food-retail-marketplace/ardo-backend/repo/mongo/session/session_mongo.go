@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/session"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,9 +22,9 @@ func (r *RepoSession) Coll() *mongo.Collection {
 }
 
 type mongoSession struct {
-	Id        uuid.UUID `bson:"_id"`
-	UserID    uuid.UUID `bson:"userID"`
-	Session   uuid.UUID `bson:"session"`
+	Id        base.UUID `bson:"_id"`
+	UserID    base.UUID `bson:"userID"`
+	Session   base.UUID `bson:"session"`
 	CreatedAt time.Time `bson:"createdAt"`
 }
 
@@ -46,7 +46,7 @@ func (r *RepoSession) CreateSession(ctx context.Context, session *session.Sessio
 	return err
 }
 
-func (r *RepoSession) GetSessionsByUserId(ctx context.Context, userId uuid.UUID) ([]*session.Session, error) {
+func (r *RepoSession) GetSessionsByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error) {
 	cur, err := r.Coll().Find(ctx, bson.D{{"userID", userId}})
 	if err != nil {
 		return nil, err
@@ -64,12 +64,12 @@ func (r *RepoSession) GetSessionsByUserId(ctx context.Context, userId uuid.UUID)
 	return sessions, nil
 }
 
-func (r *RepoSession) DeleteSessionById(ctx context.Context, id uuid.UUID) error {
+func (r *RepoSession) DeleteSessionById(ctx context.Context, id base.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.D{{"_id", id}})
 	return err
 }
 
-func (r *RepoSession) DeleteSessionByToken(ctx context.Context, token uuid.UUID) error {
+func (r *RepoSession) DeleteSessionByToken(ctx context.Context, token base.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.D{{"session", token}})
 	return err
 }

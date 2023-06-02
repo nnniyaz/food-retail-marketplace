@@ -1,35 +1,35 @@
 package session
 
 import (
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"time"
 )
 
 type Session struct {
-	id        uuid.UUID
-	userID    uuid.UUID
-	session   uuid.UUID
+	id        base.UUID
+	userID    base.UUID
+	session   base.UUID
 	createdAt time.Time
 }
 
-func NewSession(userID uuid.UUID) *Session {
+func NewSession(userID base.UUID) *Session {
 	return &Session{
-		id:        uuid.NewUUID(),
+		id:        base.NewUUID(),
 		userID:    userID,
-		session:   uuid.NewUUID(),
+		session:   base.NewUUID(),
 		createdAt: time.Now(),
 	}
 }
 
-func (s *Session) GetId() uuid.UUID {
+func (s *Session) GetId() base.UUID {
 	return s.userID
 }
 
-func (s *Session) GetUserId() uuid.UUID {
+func (s *Session) GetUserId() base.UUID {
 	return s.userID
 }
 
-func (s *Session) GetSession() uuid.UUID {
+func (s *Session) GetSession() base.UUID {
 	return s.session
 }
 
@@ -37,7 +37,7 @@ func (s *Session) GetCreatedAt() time.Time {
 	return s.createdAt
 }
 
-func UnmarshalSessionFromDatabase(id uuid.UUID, userID uuid.UUID, session uuid.UUID, createdAt time.Time) *Session {
+func UnmarshalSessionFromDatabase(id base.UUID, userID base.UUID, session base.UUID, createdAt time.Time) *Session {
 	return &Session{
 		id:        id,
 		userID:    userID,

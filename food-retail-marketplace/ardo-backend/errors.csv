@@ -27,3 +27,17 @@ account_not_active,Аккаунт не активирован,Account not activa
 
 empty_merchant_role,Роль не может быть пустой,Role can not be empty
 invalid_merchant_role,Неверная роль,Invalid role
+
+invalid_currency,Неверная валюта,Invalid currency
+empty_phone_number,Номер телефона не может быть пустым,Phone number can not be empty
+empty_address,Адрес не может быть пустым,Address can not be empty
+
+invalid_product_status,Неверный статус продукта,Invalid product status
+invalid_product_price,Неверная цена продукта,Invalid product price
+invalid_product_quantity,Неверное количество продукта,Invalid product quantity
+invalid_product_img_url,Неверный URL изображения продукта,Invalid product image URL
+
+invalid_review_rating,Рейтинг отзыва должен быть от 1 до 5,Review rating must be from 1 to 5
+invalid_review_comment,Комментарий отзыва должен быть не более 250 символов,Review comment must be no more than 250 characters
+
+wrong_mlstring_format,Неверный формат mlstring,Wrong mlstring format

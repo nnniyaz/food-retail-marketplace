@@ -3,7 +3,7 @@ package user
 import (
 	"context"
 	"errors"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"go.mongodb.org/mongo-driver/bson"
@@ -43,7 +43,7 @@ func (m *mongoPassword) ToAggregate() valueobject.Password {
 }
 
 type mongoUser struct {
-	Id        uuid.UUID     `bson:"_id"`
+	Id        base.UUID     `bson:"_id"`
 	FirstName string        `bson:"first_name"`
 	LastName  string        `bson:"last_name"`
 	Email     string        `bson:"email"`
@@ -110,7 +110,7 @@ func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDel
 	return result, nil
 }
 
-func (r *RepoUser) FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error) {
+func (r *RepoUser) FindOneById(ctx context.Context, id base.UUID) (*user.User, error) {
 	var foundUser mongoUser
 	err := r.Coll().FindOne(ctx, bson.D{{"_id", id}}).Decode(&foundUser)
 	if err != nil {
@@ -141,7 +141,7 @@ func (r *RepoUser) Update(ctx context.Context, user *user.User) error {
 	return err
 }
 
-func (r *RepoUser) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *RepoUser) Delete(ctx context.Context, id base.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", id}}, bson.D{{"$set", bson.D{{"is_deleted", true}, {"updated_at", time.Now()}}}})
 	return err
 }

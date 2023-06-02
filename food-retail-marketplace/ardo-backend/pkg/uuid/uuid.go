@@ -2,7 +2,7 @@ package uuid
 
 import (
 	"fmt"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/bsoncodec"
 	"go.mongodb.org/mongo-driver/bson/bsonrw"
@@ -19,7 +19,7 @@ import (
 // Use as you please
 
 var (
-	tUUID       = reflect.TypeOf(uuid.UUID{})
+	tUUID       = reflect.TypeOf(base.UUID{})
 	uuidSubtype = byte(0x04)
 
 	MongoRegistry = bson.NewRegistryBuilder().
@@ -32,7 +32,7 @@ func uuidEncodeValue(ec bsoncodec.EncodeContext, vw bsonrw.ValueWriter, val refl
 	if !val.IsValid() || val.Type() != tUUID {
 		return bsoncodec.ValueEncoderError{Name: "uuidEncodeValue", Types: []reflect.Type{tUUID}, Received: val}
 	}
-	b := val.Interface().(uuid.UUID)
+	b := val.Interface().(base.UUID)
 	return vw.WriteBinaryWithSubtype(b[:], uuidSubtype)
 }
 
@@ -61,7 +61,7 @@ func uuidDecodeValue(dc bsoncodec.DecodeContext, vr bsonrw.ValueReader, val refl
 	if err != nil {
 		return err
 	}
-	uuid2, err := uuid.UUIDFromBytes(data)
+	uuid2, err := base.UUIDFromBytes(data)
 	if err != nil {
 		return err
 	}

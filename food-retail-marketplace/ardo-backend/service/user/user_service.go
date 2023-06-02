@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/repo"
@@ -53,7 +53,7 @@ func (u *userService) GetByFilters(ctx context.Context, offset, limit, isDeleted
 }
 
 func (u *userService) GetById(ctx context.Context, id string) (*user.User, error) {
-	convertedId, err := uuid.UUIDFromString(id)
+	convertedId, err := base.UUIDFromString(id)
 	if err != nil {
 		return nil, err
 	}

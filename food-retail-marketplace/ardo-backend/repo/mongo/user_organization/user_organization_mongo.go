@@ -2,7 +2,7 @@ package user_organization
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user_organization"
 	"github/nnniyaz/ardo/domain/user_organization/valueobject"
 	"go.mongodb.org/mongo-driver/bson"
@@ -23,10 +23,9 @@ func (r *RepoOrganization) Coll() *mongo.Collection {
 }
 
 type mongoOrganization struct {
-	Id        uuid.UUID `bson:"_id"`
-	UserID    uuid.UUID `bson:"userID"`
+	Id        base.UUID `bson:"_id"`
+	UserID    base.UUID `bson:"userID"`
 	Role      string    `bson:"role"`
-	IsDeleted bool      `bson:"isDeleted"`
 	CreatedAt time.Time `bson:"createdAt"`
 	UpdatedAt time.Time `bson:"updatedAt"`
 }
@@ -36,14 +35,13 @@ func newFromOrganization(o *user_organization.UserOrganization) *mongoOrganizati
 		Id:        o.GetId(),
 		UserID:    o.GetUserId(),
 		Role:      o.GetRole().String(),
-		IsDeleted: o.GetIsDeleted(),
 		CreatedAt: o.GetCreatedAt(),
 		UpdatedAt: o.GetUpdatedAt(),
 	}
 }
 
 func (m *mongoOrganization) ToAggregate() *user_organization.UserOrganization {
-	return user_organization.UnmarshalUserOrganizationFromDatabase(m.Id, m.UserID, m.Role, m.IsDeleted, m.CreatedAt, m.UpdatedAt)
+	return user_organization.UnmarshalUserOrganizationFromDatabase(m.Id, m.UserID, m.Role, m.CreatedAt, m.UpdatedAt)
 }
 
 func (r *RepoOrganization) Find(ctx context.Context) ([]*user_organization.UserOrganization, error) {
@@ -67,7 +65,7 @@ func (r *RepoOrganization) Find(ctx context.Context) ([]*user_organization.UserO
 	return result, nil
 }
 
-func (r *RepoOrganization) FindOneByOrgId(ctx context.Context, orgId uuid.UUID) (*user_organization.UserOrganization, error) {
+func (r *RepoOrganization) FindOneByOrgId(ctx context.Context, orgId base.UUID) (*user_organization.UserOrganization, error) {
 	var org mongoOrganization
 	err := r.Coll().FindOne(ctx, bson.D{{"_id", orgId}}).Decode(&org)
 	if err != nil {
@@ -84,7 +82,7 @@ func (r *RepoOrganization) Create(ctx context.Context, organization *user_organi
 	return err
 }
 
-func (r *RepoOrganization) UpdateMerchantRole(ctx context.Context, orgId uuid.UUID, role valueobject.MerchantRole) error {
+func (r *RepoOrganization) UpdateMerchantRole(ctx context.Context, orgId base.UUID, role valueobject.MerchantRole) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.D{
 		{"_id", orgId},
 	}, bson.D{{"$set", bson.D{
@@ -93,7 +91,7 @@ func (r *RepoOrganization) UpdateMerchantRole(ctx context.Context, orgId uuid.UU
 	return err
 }
 
-func (r *RepoOrganization) Delete(ctx context.Context, orgId uuid.UUID) error {
+func (r *RepoOrganization) Delete(ctx context.Context, orgId base.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.D{
 		{"_id", orgId},
 	}, bson.D{{"$set", bson.D{

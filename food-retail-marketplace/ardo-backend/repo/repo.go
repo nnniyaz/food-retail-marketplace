@@ -3,7 +3,7 @@ package repo
 import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user_organization"
@@ -18,41 +18,41 @@ import (
 type User interface {
 	Find(ctx context.Context) ([]*user.User, error)
 	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error)
-	FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error)
+	FindOneById(ctx context.Context, id base.UUID) (*user.User, error)
 	FindOneByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, user *user.User) error
 	Update(ctx context.Context, user *user.User) error
-	Delete(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id base.UUID) error
 }
 
 type Session interface {
 	CreateSession(ctx context.Context, session *session.Session) error
-	GetSessionsByUserId(ctx context.Context, userId uuid.UUID) ([]*session.Session, error)
-	DeleteSessionById(ctx context.Context, id uuid.UUID) error
-	DeleteSessionByToken(ctx context.Context, token uuid.UUID) error
+	GetSessionsByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error)
+	DeleteSessionById(ctx context.Context, id base.UUID) error
+	DeleteSessionByToken(ctx context.Context, token base.UUID) error
 }
 
 type ActivationLink interface {
-	Find(ctx context.Context, user uuid.UUID) ([]*activationLink.ActivationLink, error)
-	FindOneByUserId(ctx context.Context, userId uuid.UUID) (activationLink *activationLink.ActivationLink, err error)
-	FindOneByLink(ctx context.Context, link uuid.UUID) (activationLink *activationLink.ActivationLink, err error)
+	Find(ctx context.Context, user base.UUID) ([]*activationLink.ActivationLink, error)
+	FindOneByUserId(ctx context.Context, userId base.UUID) (activationLink *activationLink.ActivationLink, err error)
+	FindOneByLink(ctx context.Context, link base.UUID) (activationLink *activationLink.ActivationLink, err error)
 	Create(ctx context.Context, activationLink *activationLink.ActivationLink) error
 	Update(ctx context.Context, activationLink *activationLink.ActivationLink) error
-	DeleteAll(ctx context.Context, user uuid.UUID) error
-	DeleteOne(ctx context.Context, user uuid.UUID) error
+	DeleteAll(ctx context.Context, user base.UUID) error
+	DeleteOne(ctx context.Context, user base.UUID) error
 }
 
 type UserOrganization interface {
 	Find(ctx context.Context) ([]*user_organization.UserOrganization, error)
-	FindOneByOrgId(ctx context.Context, orgId uuid.UUID) (*user_organization.UserOrganization, error)
+	FindOneByOrgId(ctx context.Context, orgId base.UUID) (*user_organization.UserOrganization, error)
 	Create(ctx context.Context, organization *user_organization.UserOrganization) error
-	UpdateMerchantRole(ctx context.Context, orgId uuid.UUID, role valueobject.MerchantRole) error
-	Delete(ctx context.Context, orgId uuid.UUID) error
+	UpdateMerchantRole(ctx context.Context, orgId base.UUID, role valueobject.MerchantRole) error
+	Delete(ctx context.Context, orgId base.UUID) error
 }
 
 type Repository struct {
-	RepoUser           User
-	RepoSession        Session
+	RepoUser             User
+	RepoSession          Session
 	RepoActivationLink   ActivationLink
 	RepoUserOrganization UserOrganization
 }

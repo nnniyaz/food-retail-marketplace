@@ -2,7 +2,7 @@ package auth
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/env"
 	linkService "github/nnniyaz/ardo/service/link"
@@ -23,7 +23,7 @@ var (
 )
 
 type AuthService interface {
-	Login(ctx context.Context, email, password string) (uuid.UUID, error)
+	Login(ctx context.Context, email, password string) (base.UUID, error)
 	Register(ctx context.Context, firstName, lastName, email, password string) error
 	Logout(ctx context.Context, token string) error
 	Confirm(ctx context.Context, link string) error
@@ -39,28 +39,28 @@ func NewAuthService(userService userService.UserService, sessionService sessionS
 	return &authService{linkService: linkService, userService: userService, sessionService: sessionService}
 }
 
-func (a *authService) Login(ctx context.Context, email, password string) (uuid.UUID, error) {
+func (a *authService) Login(ctx context.Context, email, password string) (base.UUID, error) {
 	user, err := a.userService.GetByEmail(ctx, email)
 	if err != nil {
-		return uuid.Nil, ErrEmailNotFound
+		return base.Nil, ErrEmailNotFound
 	}
 
 	ok := user.ComparePassword(password)
 	if !ok {
-		return uuid.Nil, ErrInvalidPassword
+		return base.Nil, ErrInvalidPassword
 	}
 
 	foundActivationLink, err := a.linkService.GetByUserId(ctx, user.GetId().String())
 	if err != nil {
-		return uuid.Nil, err
+		return base.Nil, err
 	}
 	if !foundActivationLink.GetIsActivated() {
-		return uuid.Nil, ErrAccountNotActive
+		return base.Nil, ErrAccountNotActive
 	}
 
 	sessions, err := a.sessionService.GetAllByUserId(ctx, user.GetId().String())
 	if err != nil {
-		return uuid.Nil, err
+		return base.Nil, err
 	}
 
 	if len(sessions) >= maxSessionsCount {
@@ -70,14 +70,14 @@ func (a *authService) Login(ctx context.Context, email, password string) (uuid.U
 
 		for i := 0; i < len(sessions)-maxSessionsCount+1; i++ {
 			if err = a.sessionService.DeleteOneBySessionId(ctx, sessions[i].GetId().String()); err != nil {
-				return uuid.Nil, err
+				return base.Nil, err
 			}
 		}
 	}
 
 	newSession, err := a.sessionService.Create(ctx, user.GetId().String())
 	if err != nil {
-		return uuid.Nil, err
+		return base.Nil, err
 	}
 	return newSession.GetSession(), nil
 }
