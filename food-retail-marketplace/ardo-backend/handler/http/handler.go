@@ -25,6 +25,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 	api := r.Group("/api")
 	{
 		authentication := api.Group("/auth")
+		authentication.Use()
 		{
 			authentication.POST("/login", h.Auth.Login)
 			authentication.POST("/logout", h.Auth.Logout)
@@ -41,7 +42,6 @@ func (h *Handler) InitRoutes() *gin.Engine {
 			users.PUT("/:id", h.Management.UpdateUserPassword)
 			users.DELETE("/:id", h.Management.DeleteUser)
 		}
-
 	}
 
 	return r

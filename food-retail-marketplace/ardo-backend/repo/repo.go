@@ -4,14 +4,14 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base/uuid"
-	"github/nnniyaz/ardo/domain/organization"
-	"github/nnniyaz/ardo/domain/organization/valueobject"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
+	"github/nnniyaz/ardo/domain/user_organization"
+	"github/nnniyaz/ardo/domain/user_organization/valueobject"
 	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
-	organizationMongo "github/nnniyaz/ardo/repo/mongo/organization"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
+	userOrganizationMongo "github/nnniyaz/ardo/repo/mongo/user_organization"
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
@@ -42,10 +42,10 @@ type ActivationLink interface {
 	DeleteOne(ctx context.Context, user uuid.UUID) error
 }
 
-type Organization interface {
-	Find(ctx context.Context) ([]*organization.Organization, error)
-	FindOneByOrgId(ctx context.Context, orgId uuid.UUID) (*organization.Organization, error)
-	Create(ctx context.Context, organization *organization.Organization) error
+type UserOrganization interface {
+	Find(ctx context.Context) ([]*user_organization.UserOrganization, error)
+	FindOneByOrgId(ctx context.Context, orgId uuid.UUID) (*user_organization.UserOrganization, error)
+	Create(ctx context.Context, organization *user_organization.UserOrganization) error
 	UpdateMerchantRole(ctx context.Context, orgId uuid.UUID, role valueobject.MerchantRole) error
 	Delete(ctx context.Context, orgId uuid.UUID) error
 }
@@ -53,15 +53,15 @@ type Organization interface {
 type Repository struct {
 	RepoUser           User
 	RepoSession        Session
-	RepoActivationLink ActivationLink
-	RepoOrganization   Organization
+	RepoActivationLink   ActivationLink
+	RepoUserOrganization UserOrganization
 }
 
 func NewRepository(client mongo.Client) *Repository {
 	return &Repository{
-		RepoUser:           userMongo.NewRepoUser(client),
-		RepoSession:        sessionMongo.NewRepoSession(client),
-		RepoActivationLink: activationLinkMongo.NewRepoActivationLink(client),
-		RepoOrganization:   organizationMongo.NewRepoOrganization(client),
+		RepoUser:             userMongo.NewRepoUser(client),
+		RepoSession:          sessionMongo.NewRepoSession(client),
+		RepoActivationLink:   activationLinkMongo.NewRepoActivationLink(client),
+		RepoUserOrganization: userOrganizationMongo.NewRepoOrganization(client),
 	}
 }
