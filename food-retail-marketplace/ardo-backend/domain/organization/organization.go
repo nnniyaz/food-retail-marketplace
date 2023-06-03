@@ -63,7 +63,7 @@ func (o *Organization) GetUpdatedAt() time.Time {
 	return o.updatedAt
 }
 
-func (o *Organization) UnmarshalOrganizationFromDatabase(orgId base.UUID, logo, currency string, isDisabled, isDeleted bool, createdAt, updatedAt time.Time) (*Organization, error) {
+func UnmarshalOrganizationFromDatabase(orgId base.UUID, logo, currency string, isDisabled, isDeleted bool, createdAt, updatedAt time.Time) (*Organization, error) {
 	orgCurrency, err := valueobject.NewCurrency(currency)
 	if err != nil {
 		return nil, err

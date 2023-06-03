@@ -41,12 +41,12 @@ func (m *mongoSession) ToAggregate() *session.Session {
 	return session.UnmarshalSessionFromDatabase(m.Id, m.UserID, m.Session, m.CreatedAt)
 }
 
-func (r *RepoSession) CreateSession(ctx context.Context, session *session.Session) error {
+func (r *RepoSession) Create(ctx context.Context, session *session.Session) error {
 	_, err := r.Coll().InsertOne(ctx, newFromSession(session))
 	return err
 }
 
-func (r *RepoSession) GetSessionsByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error) {
+func (r *RepoSession) FindManyByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error) {
 	cur, err := r.Coll().Find(ctx, bson.D{{"userID", userId}})
 	if err != nil {
 		return nil, err
@@ -64,12 +64,12 @@ func (r *RepoSession) GetSessionsByUserId(ctx context.Context, userId base.UUID)
 	return sessions, nil
 }
 
-func (r *RepoSession) DeleteSessionById(ctx context.Context, id base.UUID) error {
+func (r *RepoSession) DeleteById(ctx context.Context, id base.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.D{{"_id", id}})
 	return err
 }
 
-func (r *RepoSession) DeleteSessionByToken(ctx context.Context, token base.UUID) error {
+func (r *RepoSession) DeleteByToken(ctx context.Context, token base.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.D{{"session", token}})
 	return err
 }

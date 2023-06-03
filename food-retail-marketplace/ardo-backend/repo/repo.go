@@ -4,11 +4,19 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/organization"
+	"github/nnniyaz/ardo/domain/organization/org_contact"
+	"github/nnniyaz/ardo/domain/organization/org_desc"
+	"github/nnniyaz/ardo/domain/organization/org_name"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user_organization"
 	"github/nnniyaz/ardo/domain/user_organization/valueobject"
 	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
+	organizationMongo "github/nnniyaz/ardo/repo/mongo/organization"
+	organizationContactMongo "github/nnniyaz/ardo/repo/mongo/organization/org_contact"
+	organizationDescMongo "github/nnniyaz/ardo/repo/mongo/organization/org_desc"
+	organizationNameMongo "github/nnniyaz/ardo/repo/mongo/organization/org_name"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
 	userOrganizationMongo "github/nnniyaz/ardo/repo/mongo/user_organization"
@@ -26,10 +34,10 @@ type User interface {
 }
 
 type Session interface {
-	CreateSession(ctx context.Context, session *session.Session) error
-	GetSessionsByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error)
-	DeleteSessionById(ctx context.Context, id base.UUID) error
-	DeleteSessionByToken(ctx context.Context, token base.UUID) error
+	Create(ctx context.Context, session *session.Session) error
+	FindManyByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error)
+	DeleteById(ctx context.Context, id base.UUID) error
+	DeleteByToken(ctx context.Context, token base.UUID) error
 }
 
 type ActivationLink interface {
@@ -42,6 +50,37 @@ type ActivationLink interface {
 	DeleteOne(ctx context.Context, user base.UUID) error
 }
 
+type Organization interface {
+	Find(ctx context.Context) ([]*organization.Organization, error)
+	FindById(ctx context.Context, id base.UUID) (*organization.Organization, error)
+	Create(ctx context.Context, o *organization.Organization) error
+	UpdateOrganization(ctx context.Context, o *organization.Organization) error
+	DeleteOrganization(ctx context.Context, id base.UUID) error
+	DisableOrganization(ctx context.Context, id base.UUID) error
+	EnableOrganization(ctx context.Context, id base.UUID) error
+}
+
+type OrganizationName interface {
+	FindOne(ctx context.Context, orgId base.UUID) (*org_name.OrgName, error)
+	Create(ctx context.Context, o *org_name.OrgName) error
+	Update(ctx context.Context, o *org_name.OrgName) error
+	Delete(ctx context.Context, o *org_name.OrgName) error
+}
+
+type OrganizationDesc interface {
+	FindOne(ctx context.Context, orgId base.UUID) (*org_desc.OrgDesc, error)
+	Create(ctx context.Context, o *org_desc.OrgDesc) error
+	Update(ctx context.Context, o *org_desc.OrgDesc) error
+	Delete(ctx context.Context, o *org_desc.OrgDesc) error
+}
+
+type OrganizationContacts interface {
+	FindOne(ctx context.Context, orgId base.UUID) (*org_contact.OrgContact, error)
+	Create(ctx context.Context, o *org_contact.OrgContact) error
+	Update(ctx context.Context, o *org_contact.OrgContact) error
+	Delete(ctx context.Context, o *org_contact.OrgContact) error
+}
+
 type UserOrganization interface {
 	Find(ctx context.Context) ([]*user_organization.UserOrganization, error)
 	FindOneByOrgId(ctx context.Context, orgId base.UUID) (*user_organization.UserOrganization, error)
@@ -51,17 +90,25 @@ type UserOrganization interface {
 }
 
 type Repository struct {
-	RepoUser             User
-	RepoSession          Session
-	RepoActivationLink   ActivationLink
-	RepoUserOrganization UserOrganization
+	RepoUser                 User
+	RepoSession              Session
+	RepoActivationLink       ActivationLink
+	RepoOrganization         Organization
+	RepoOrganizationName     OrganizationName
+	RepoOrganizationDesc     OrganizationDesc
+	RepoOrganizationContacts OrganizationContacts
+	RepoUserOrganization     UserOrganization
 }
 
 func NewRepository(client mongo.Client) *Repository {
 	return &Repository{
-		RepoUser:             userMongo.NewRepoUser(client),
-		RepoSession:          sessionMongo.NewRepoSession(client),
-		RepoActivationLink:   activationLinkMongo.NewRepoActivationLink(client),
-		RepoUserOrganization: userOrganizationMongo.NewRepoOrganization(client),
+		RepoUser:                 userMongo.NewRepoUser(client),
+		RepoSession:              sessionMongo.NewRepoSession(client),
+		RepoActivationLink:       activationLinkMongo.NewRepoActivationLink(client),
+		RepoOrganization:         organizationMongo.NewRepoOrganization(client),
+		RepoOrganizationName:     organizationNameMongo.NewRepoOrgName(client),
+		RepoOrganizationDesc:     organizationDescMongo.NewRepoOrgDesc(client),
+		RepoOrganizationContacts: organizationContactMongo.NewRepoOrgContact(client),
+		RepoUserOrganization:     userOrganizationMongo.NewRepoOrganization(client),
 	}
 }

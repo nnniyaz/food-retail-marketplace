@@ -10,19 +10,19 @@ import (
 	"time"
 )
 
-type RepoOrganization struct {
+type RepoUserOrganization struct {
 	client mongo.Client
 }
 
-func NewRepoOrganization(client mongo.Client) *RepoOrganization {
-	return &RepoOrganization{client: client}
+func NewRepoOrganization(client mongo.Client) *RepoUserOrganization {
+	return &RepoUserOrganization{client: client}
 }
 
-func (r *RepoOrganization) Coll() *mongo.Collection {
-	return r.client.Database("main").Collection("organizations")
+func (r *RepoUserOrganization) Coll() *mongo.Collection {
+	return r.client.Database("main").Collection("user_organizations")
 }
 
-type mongoOrganization struct {
+type mongoUserOrganization struct {
 	Id        base.UUID `bson:"_id"`
 	UserID    base.UUID `bson:"userID"`
 	Role      string    `bson:"role"`
@@ -30,8 +30,8 @@ type mongoOrganization struct {
 	UpdatedAt time.Time `bson:"updatedAt"`
 }
 
-func newFromOrganization(o *user_organization.UserOrganization) *mongoOrganization {
-	return &mongoOrganization{
+func newFromUserOrganization(o *user_organization.UserOrganization) *mongoUserOrganization {
+	return &mongoUserOrganization{
 		Id:        o.GetId(),
 		UserID:    o.GetUserId(),
 		Role:      o.GetRole().String(),
@@ -40,11 +40,11 @@ func newFromOrganization(o *user_organization.UserOrganization) *mongoOrganizati
 	}
 }
 
-func (m *mongoOrganization) ToAggregate() *user_organization.UserOrganization {
+func (m *mongoUserOrganization) ToAggregate() *user_organization.UserOrganization {
 	return user_organization.UnmarshalUserOrganizationFromDatabase(m.Id, m.UserID, m.Role, m.CreatedAt, m.UpdatedAt)
 }
 
-func (r *RepoOrganization) Find(ctx context.Context) ([]*user_organization.UserOrganization, error) {
+func (r *RepoUserOrganization) Find(ctx context.Context) ([]*user_organization.UserOrganization, error) {
 	cur, err := r.Coll().Find(ctx, bson.D{})
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -56,7 +56,7 @@ func (r *RepoOrganization) Find(ctx context.Context) ([]*user_organization.UserO
 
 	var result []*user_organization.UserOrganization
 	for cur.Next(ctx) {
-		var internal mongoOrganization
+		var internal mongoUserOrganization
 		if err = cur.Decode(&internal); err != nil {
 			return nil, err
 		}
@@ -65,8 +65,8 @@ func (r *RepoOrganization) Find(ctx context.Context) ([]*user_organization.UserO
 	return result, nil
 }
 
-func (r *RepoOrganization) FindOneByOrgId(ctx context.Context, orgId base.UUID) (*user_organization.UserOrganization, error) {
-	var org mongoOrganization
+func (r *RepoUserOrganization) FindOneByOrgId(ctx context.Context, orgId base.UUID) (*user_organization.UserOrganization, error) {
+	var org mongoUserOrganization
 	err := r.Coll().FindOne(ctx, bson.D{{"_id", orgId}}).Decode(&org)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -77,12 +77,12 @@ func (r *RepoOrganization) FindOneByOrgId(ctx context.Context, orgId base.UUID) 
 	return org.ToAggregate(), nil
 }
 
-func (r *RepoOrganization) Create(ctx context.Context, organization *user_organization.UserOrganization) error {
-	_, err := r.Coll().InsertOne(ctx, newFromOrganization(organization))
+func (r *RepoUserOrganization) Create(ctx context.Context, organization *user_organization.UserOrganization) error {
+	_, err := r.Coll().InsertOne(ctx, newFromUserOrganization(organization))
 	return err
 }
 
-func (r *RepoOrganization) UpdateMerchantRole(ctx context.Context, orgId base.UUID, role valueobject.MerchantRole) error {
+func (r *RepoUserOrganization) UpdateMerchantRole(ctx context.Context, orgId base.UUID, role valueobject.MerchantRole) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.D{
 		{"_id", orgId},
 	}, bson.D{{"$set", bson.D{
@@ -91,7 +91,7 @@ func (r *RepoOrganization) UpdateMerchantRole(ctx context.Context, orgId base.UU
 	return err
 }
 
-func (r *RepoOrganization) Delete(ctx context.Context, orgId base.UUID) error {
+func (r *RepoUserOrganization) Delete(ctx context.Context, orgId base.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.D{
 		{"_id", orgId},
 	}, bson.D{{"$set", bson.D{
