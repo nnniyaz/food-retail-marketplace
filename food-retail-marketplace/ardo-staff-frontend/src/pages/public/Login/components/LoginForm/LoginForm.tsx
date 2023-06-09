@@ -3,16 +3,23 @@ import {Button, Form} from "antd";
 import {txt} from "shared/core/i18ngen";
 import {rules} from "shared/lib/form-rules/rules";
 import {FormInput} from "shared/ui/FormInput/FormInput";
+import {useActions} from "shared/lib/hooks/useActions";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import classes from "./LoginForm.module.scss";
 
 export const LoginForm: FC = () => {
     const {currentLang} = useTypedSelector(state => state.lang);
+    const {isLoadingAuth} = useTypedSelector(state => state.auth);
+    const {login} = useActions();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
 
+    const handleLogin = () => {
+        login({email, password});
+    }
+
     return (
-        <Form className={classes.form} layout={"vertical"}>
+        <Form className={classes.form} layout={"vertical"} onFinish={handleLogin} name={"form"}>
             <FormInput
                 id={"email"}
                 label={txt.email[currentLang]}
@@ -29,7 +36,13 @@ export const LoginForm: FC = () => {
                 setValue={setPassword}
                 placeholder={txt.enter_password[currentLang]}
             />
-            <Button className={classes.form__btn} size={"large"}>
+            <Button
+                loading={isLoadingAuth}
+                className={classes.form__btn}
+                type={"primary"}
+                size={"large"}
+                htmlType={"submit"}
+            >
                 <span className={classes.form__btn__text}>
                     {txt.login[currentLang]}
                 </span>
