@@ -8,6 +8,14 @@
   background-color: inherit;
 }
 
+.text__small {
+  font-size: $global-font-size-regular-small;
+  line-height: $global-line-height-regular-small;
+  font-weight: $global-font-weight-regular;
+  color: $global-font-color-light-black;
+  background-color: inherit;
+}
+
 .text__medium {
   font-size: $global-font-size-regular-medium;
   line-height: $global-line-height-regular-medium;

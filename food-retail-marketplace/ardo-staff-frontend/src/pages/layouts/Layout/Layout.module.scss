@@ -1,23 +1,6 @@
-@import "app/styles/vars";
-
 .layout {
   min-height: 100vh;
   width: 100%;
   display: flex;
   flex-direction: column;
-  background-color: $global-color-light-bg-secondary-white;
-}
-
-/* Light mode */
-@media (prefers-color-scheme: light) {
-  * {
-    background-color: $global-color-light-bg-secondary-white;
-  }
-}
-
-/* Dark mode */
-@media (prefers-color-scheme: dark) {
-  * {
-    background-color: $global-color-light-bg-secondary-black;
-  }
 }

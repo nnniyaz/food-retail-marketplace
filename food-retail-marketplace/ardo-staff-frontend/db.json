@@ -1,0 +1,20 @@
+{
+  "login": {
+    "email": "",
+    "password": ""
+  },
+  "me": {
+    "success": true,
+    "message": "User data",
+    "data": {
+      "id": "c34d5b61-437c-4f37-83f2-e6a69a22c765",
+      "firstName": "Niyaz",
+      "lastName": "Nassyrov",
+      "email": "nassyrovich@gmail.com",
+      "userType": "STAFF",
+      "isDeleted": false,
+      "createdAt": "2023-06-10T17:04:04.647Z",
+      "updatedAt": "2023-06-10T17:04:04.647Z"
+    }
+  }
+}

@@ -6,7 +6,6 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: $global-color-light-bg-secondary-white;
 
   .container {
     width: 400px;
@@ -17,6 +16,7 @@
     padding: 20px;
     border-radius: 15px;
     background-color: $global-color-light-bg-white;
+    box-shadow: 0 4px 16px 0 rgba(36,36,36,.051);
 
     .container__header {
       width: 100%;
@@ -24,13 +24,6 @@
       justify-content: space-between;
       align-items: center;
       background-color: inherit;
-
-      .logo {
-        font-size: 35px;
-        font-weight: 700;
-        color: $global-font-color-light-black;
-        background-color: inherit;
-      }
     }
   }
 }

@@ -1,0 +1,54 @@
+@import "app/styles/vars.scss";
+
+.header {
+  width: 100%;
+  height: 60px;
+  background-color: $global-color-light-bg-white;
+  border-radius: 20px;
+  padding: 0 20px;
+  box-shadow: 0 4px 16px 0 rgba(36, 36, 36, .051);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .header__item {
+    width: fit-content;
+    height: 50px;
+    display: flex;
+    align-items: center;
+
+    .account__block {
+      display: flex;
+      align-items: center;
+      padding: 5px;
+      background-color: $global-color-light-bg-secondary-white;
+      gap: 10px;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: .1s linear;
+
+      &:hover {
+        opacity: .8;
+      }
+
+      .account__avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background-color: #ff6e30;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        color: $global-font-color-light-white;
+      }
+
+      .account__info {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: space-between;
+      }
+    }
+  }
+}

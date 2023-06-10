@@ -8,7 +8,7 @@ export enum LangActionEnum {
     SET_LANG = 'SET_LANG',
 }
 
-export interface SetLangAction {
+export type SetLangAction = {
     type: LangActionEnum.SET_LANG;
     payload: LangsList;
 }

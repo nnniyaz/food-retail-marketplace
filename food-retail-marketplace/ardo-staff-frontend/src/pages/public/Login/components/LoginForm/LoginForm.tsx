@@ -1,5 +1,7 @@
 import {FC, useState} from "react";
 import {Button, Form} from "antd";
+import {useNavigate} from "react-router-dom";
+import {RouteNames} from "pages/index";
 import {txt} from "shared/core/i18ngen";
 import {rules} from "shared/lib/form-rules/rules";
 import {FormInput} from "shared/ui/FormInput/FormInput";
@@ -8,16 +10,15 @@ import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import classes from "./LoginForm.module.scss";
 
 export const LoginForm: FC = () => {
+    const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
     const {isLoadingAuth} = useTypedSelector(state => state.auth);
     const {login} = useActions();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
-
     const handleLogin = () => {
-        login({email, password});
+        login({email, password}, {navigate: navigate, to: RouteNames.LOGIN});
     }
-
     return (
         <Form className={classes.form} layout={"vertical"} onFinish={handleLogin} name={"form"}>
             <FormInput

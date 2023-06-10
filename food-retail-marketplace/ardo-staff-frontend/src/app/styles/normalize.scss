@@ -6,3 +6,17 @@
   box-sizing: border-box;
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 }
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+  * {
+    background-color: $global-color-light-bg-secondary-white;
+  }
+}
+
+/* Dark mode */
+@media (prefers-color-scheme: dark) {
+  * {
+    background-color: $global-color-light-bg-secondary-black;
+  }
+}
