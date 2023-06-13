@@ -1,13 +1,21 @@
 import React, {useState} from "react";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import {MlString} from "entities/base/MlString";
-import {BookOutlined, DashboardOutlined, SettingOutlined, ShopOutlined, UserOutlined} from "@ant-design/icons";
+import {
+    BookOutlined,
+    DashboardOutlined,
+    SettingOutlined,
+    ShopOutlined,
+    UnorderedListOutlined,
+    UserOutlined
+} from "@ant-design/icons";
 import {txt} from "shared/core/i18ngen";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import {Layout} from "./layouts/Layout";
 import {StaffLayout} from "./layouts/StaffLayout";
 import {Login} from "./public/Login";
 import {Dashboard} from "./staff/Dashboard";
+import {Catalog} from "./staff/Catalog";
 import {Users} from "./staff/Users";
 import {Organizations} from "./staff/Organizations";
 import {Applications} from "./staff/Applications";
@@ -26,6 +34,7 @@ export enum RouteNames {
 
     // STAFF
     DASHBOARD = "/",
+    CATALOG = "/catalog",
     USERS = "/users",
     ORGANIZATIONS = "/organizations",
     APPLICATIONS = "/applications",
@@ -41,6 +50,7 @@ export const publicRoutes: IRoute[] = [
 
 export const staffRoutes: IRoute[] = [
     {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>},
+    {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <UnorderedListOutlined />},
     {path: RouteNames.USERS, element: Users, name: txt.users, icon: <UserOutlined/>},
     {path: RouteNames.ORGANIZATIONS, element: Organizations, name: txt.organizations, icon: <ShopOutlined/>},
     {path: RouteNames.APPLICATIONS, element: Applications, name: txt.applications, icon: <BookOutlined/>},
@@ -87,4 +97,3 @@ const AppRouter = () => {
 };
 
 export default AppRouter;
-

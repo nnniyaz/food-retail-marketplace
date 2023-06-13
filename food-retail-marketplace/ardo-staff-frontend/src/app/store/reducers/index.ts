@@ -6,5 +6,5 @@ import user from "./user";
 export default {
     lang,
     auth,
-    user
+    user,
 }

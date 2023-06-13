@@ -1,0 +1,59 @@
+{
+  "success": true,
+  "message": "users fetched successfully",
+  "data": {
+    "users": [
+      {
+        "id": "4d4520a6-1333-4d4d-8354-f173aaf512a2",
+        "firstName": "Niyaz",
+        "lastName": "Nassyrov",
+        "email": "nassyrovich@gmail.com",
+        "userType": "STAFF",
+        "isDeleted": false,
+        "createdAt": "2023-06-10T19:21:35.360Z",
+        "updatedAt": "2023-06-10T19:21:35.360Z"
+      },
+      {
+        "id": "4d4520a6-1333-4d4d-8354-f173aaf512a5",
+        "firstName": "Niyaz",
+        "lastName": "Nassyrov",
+        "email": "nassyrovich@gmail.com",
+        "userType": "STAFF",
+        "isDeleted": false,
+        "createdAt": "2023-06-10T19:21:35.360Z",
+        "updatedAt": "2023-06-10T19:21:35.360Z"
+      },
+      {
+        "id": "4d4520a6-1333-4d4d-8354-f173aaf512a4",
+        "firstName": "Niyaz",
+        "lastName": "Nassyrov",
+        "email": "nassyrovich@gmail.com",
+        "userType": "STAFF",
+        "isDeleted": false,
+        "createdAt": "2023-06-10T19:21:35.360Z",
+        "updatedAt": "2023-06-10T19:21:35.360Z"
+      },
+      {
+        "id": "4d4520a6-1333-4d4d-8354-f173aaf512a3",
+        "firstName": "Niyaz",
+        "lastName": "Nassyrov",
+        "email": "nassyrovich@gmail.com",
+        "userType": "STAFF",
+        "isDeleted": false,
+        "createdAt": "2023-06-10T19:21:35.360Z",
+        "updatedAt": "2023-06-10T19:21:35.360Z"
+      },
+      {
+        "id": "4d4520a6-1333-4d4d-8354-f173aaf512a1",
+        "firstName": "Niyaz",
+        "lastName": "Nassyrov",
+        "email": "nassyrovich@gmail.com",
+        "userType": "STAFF",
+        "isDeleted": false,
+        "createdAt": "2023-06-10T19:21:35.360Z",
+        "updatedAt": "2023-06-10T19:21:35.360Z"
+      }
+    ],
+    "usersCount": 5
+  }
+}

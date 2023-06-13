@@ -15,3 +15,15 @@ export type User = {
     createdAt: Timestamp;
     updatedAt: Timestamp;
 }
+
+export type UsersData = {
+    users: User[];
+    usersCount: number;
+}
+
+export type UsersGetRequest = {
+    limit: number;
+    offset: number;
+    search: string;
+    isDeleted: boolean;
+}

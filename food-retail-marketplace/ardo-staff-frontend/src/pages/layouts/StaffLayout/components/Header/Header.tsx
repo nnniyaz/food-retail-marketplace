@@ -1,33 +1,54 @@
 import React, {FC} from "react";
+import {MenuUnfoldOutlined} from "@ant-design/icons";
+import {Transition, TransitionStatus} from "react-transition-group";
 import {Logo} from "shared/ui/Logo";
 import {Text} from "shared/ui/Text";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
-import classes from "./Header.module.scss"
+import classes from "./Header.module.scss";
 
-export const Header: FC = () => {
+interface HeaderProps {
+    isShown: boolean;
+    setIsShown: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const Header: FC<HeaderProps> = ({isShown, setIsShown}) => {
     const {user} = useTypedSelector(state => state.user);
     const data = {
         firstName: user.firstName || "",
         lastName: user.lastName || "",
         role: user.userType || "",
     }
+    const transitionClasses: Record<TransitionStatus, string> = {
+        entering: classes.header__enter__active,
+        entered: classes.header__enter__done,
+        exiting: classes.header__exit__active,
+        exited: classes.header__exit__done,
+        unmounted: classes.header__exit__done,
+    }
 
     return (
-        <div className={classes.header}>
-            <div className={classes.header__item}>
-                <Logo/>
-            </div>
-            <div className={classes.header__item}>
-                <div className={classes.account__block}>
-                    <div className={classes.account__avatar}>
-                        {`${data.firstName[0]}${data.lastName[0]}`}
+        <Transition in={!isShown} timeout={200} mountOnEnter unmountOnExit>
+            {state => (
+                <div className={`${classes.header} ${transitionClasses[state]}`} style={{opacity: isShown ? .5 : 1}}>
+                    <div className={classes.header__item}>
+                        <Logo/>
                     </div>
-                    <div className={classes.account__info}>
-                        <Text text={`${data.firstName} ${data.lastName}`} type={"text-small"}/>
-                        <Text text={data.role} type={"text-small"}/>
+                    <div className={classes.header__item}>
+                        <MenuUnfoldOutlined className={classes.burger} onClick={() => setIsShown(true)}/>
+                    </div>
+                    <div className={classes.header__item}>
+                        <div className={classes.account__block}>
+                            <div className={classes.account__avatar}>
+                                {`${data.firstName[0]}${data.lastName[0]}`}
+                            </div>
+                            <div className={classes.account__info}>
+                                <Text text={`${data.firstName} ${data.lastName}`} type={"text-small"}/>
+                                <Text text={data.role} type={"text-small"}/>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            )}
+        </Transition>
     )
 }

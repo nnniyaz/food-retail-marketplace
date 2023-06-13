@@ -1,3 +1,5 @@
+@import "app/styles/vars.scss";
+
 .layout {
   width: 100%;
   min-height: 100vh;
@@ -11,9 +13,41 @@
     padding: 20px 0;
     display: flex;
     align-items: flex-start;
+    gap: 20px;
 
     .content {
-      padding-left: 20px;
+      width: calc(100% - 300px);
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      .content__title {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+
+        .content__title__icon {
+          path {
+            fill: $global-font-color-light-black;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1340px) {
+  .layout {
+    padding: 10px;
+
+    .body {
+      min-height: calc(100vh - 80px);
+      padding: 80px 0 20px 0;
+
+      .content {
+        width: 100%;
+      }
     }
   }
 }

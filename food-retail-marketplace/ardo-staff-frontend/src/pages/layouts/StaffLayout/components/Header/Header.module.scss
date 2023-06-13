@@ -10,12 +10,17 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  transition: .1s linear;
 
   .header__item {
     width: fit-content;
     height: 50px;
     display: flex;
     align-items: center;
+
+    &:nth-child(2) {
+      display: none;
+    }
 
     .account__block {
       display: flex;
@@ -35,7 +40,7 @@
         width: 40px;
         height: 40px;
         border-radius: 50%;
-        background-color: #ff6e30;
+        background-color: $global-font-color-light-blue;
         display: flex;
         justify-content: center;
         align-items: center;
@@ -50,5 +55,60 @@
         justify-content: space-between;
       }
     }
+  }
+}
+
+@media (max-width: 1340px) {
+  .header {
+    position: fixed;
+    top: 10px;
+    width: calc(100% - 20px);
+    padding: 0 5px;
+    border-radius: 15px;
+    z-index: 2;
+
+    .header__item {
+      &:nth-child(1) {
+        display: none;
+      }
+
+      &:nth-child(2) {
+        width: 50px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        .burger {
+          font-size: 30px;
+          opacity: .5;
+        }
+      }
+    }
+  }
+
+  .header__enter__active {
+    animation: SlideDown .2s forwards;
+  }
+
+  .header__enter__done {
+    opacity: 1;
+  }
+
+  .header__exit__active {
+    animation: SlideDown .2s reverse;
+  }
+
+  .header__exit__done {
+    opacity: 0;
+  }
+}
+
+@keyframes SlideDown {
+  0% {
+    transform: translateY(-100%);
+  }
+
+  100% {
+    transform: translateY(0);
   }
 }

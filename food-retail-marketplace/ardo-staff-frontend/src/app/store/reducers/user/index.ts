@@ -1,4 +1,4 @@
-import {User, UserType} from "entities/user/user";
+import {User} from "entities/user/user";
 import {UserAction, UserActionEnum, UserState} from "./types";
 
 const initialState: UserState = {
@@ -12,15 +12,24 @@ const initialState: UserState = {
         createdAt: "2023-06-10T19:21:35.360Z",
         updatedAt: "2023-06-10T19:21:35.360Z",
     } as User,
+    users: [],
+    usersCount: 0,
     isLoadingGetUser: false,
+    isLoadingGetUsers: false,
 }
 
 export default function userReducer(state = initialState, action: UserAction): UserState {
     switch (action.type) {
         case UserActionEnum.SET_USER:
             return {...state, user: action.payload}
+        case UserActionEnum.SET_USERS:
+            return {...state, users: action.payload}
+        case UserActionEnum.SET_USERS_COUNT:
+            return {...state, usersCount: action.payload}
         case UserActionEnum.SET_IS_LOADING_GET_USER:
             return {...state, isLoadingGetUser: action.payload}
+        case UserActionEnum.SET_IS_LOADING_GET_USERS:
+            return {...state, isLoadingGetUsers: action.payload}
         default:
             return state;
     }

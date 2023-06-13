@@ -9,7 +9,7 @@ export interface LoginRequest {
 }
 
 export default class AuthService {
-    static login (request: LoginRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+    static async login (request: LoginRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
         return $api.post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.LOGIN, request)
     }
 }
