@@ -6,7 +6,6 @@ import (
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/repo"
-	"strconv"
 )
 
 var (
@@ -15,7 +14,7 @@ var (
 
 type UserService interface {
 	GetAll(ctx context.Context) ([]*user.User, error)
-	GetByFilters(ctx context.Context, offset, limit, isDeleted string) ([]*user.User, error)
+	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error)
 	GetById(ctx context.Context, id string) (*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error)
@@ -36,20 +35,8 @@ func (u *userService) GetAll(ctx context.Context) ([]*user.User, error) {
 	return u.userRepo.Find(ctx)
 }
 
-func (u *userService) GetByFilters(ctx context.Context, offset, limit, isDeleted string) ([]*user.User, error) {
-	convertedOffset, err := strconv.Atoi(offset)
-	if err != nil {
-		return nil, err
-	}
-	convertedLimit, err := strconv.Atoi(limit)
-	if err != nil {
-		return nil, err
-	}
-	convertedIsDeleted, err := strconv.ParseBool(isDeleted)
-	if err != nil {
-		return nil, err
-	}
-	return u.userRepo.FindByFilters(ctx, int64(convertedOffset), int64(convertedLimit), convertedIsDeleted)
+func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
+	return u.userRepo.FindByFilters(ctx, offset, limit, isDeleted)
 }
 
 func (u *userService) GetById(ctx context.Context, id string) (*user.User, error) {

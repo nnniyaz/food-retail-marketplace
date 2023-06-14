@@ -3,37 +3,42 @@
 package core
 
 const (
-	TXT_UNKNOWN_ERROR            TxtKey = 1
-	TXT_EMPTY_FIRSTNAME          TxtKey = 2
-	TXT_FIRSTNAME_TOO_SHORT      TxtKey = 3
-	TXT_FIRSTNAME_TOO_LONG       TxtKey = 4
-	TXT_EMPTY_LASTNAME           TxtKey = 5
-	TXT_LASTNAME_TOO_SHORT       TxtKey = 6
-	TXT_LASTNAME_TOO_LONG        TxtKey = 7
-	TXT_EMPTY_PASSWORD           TxtKey = 8
-	TXT_PASSWORD_TOO_SHORT       TxtKey = 9
-	TXT_PASSWORD_TOO_LONG        TxtKey = 10
-	TXT_INVALID_PASSWORD         TxtKey = 11
-	TXT_SAME_PASSWORD            TxtKey = 12
-	TXT_EMPTY_EMAIL              TxtKey = 13
-	TXT_INVALID_EMAIL            TxtKey = 14
-	TXT_EMAIL_DOESNT_EXIST       TxtKey = 15
-	TXT_EMAIL_ALREADY_EXISTS     TxtKey = 16
-	TXT_INVALID_USER_TYPE        TxtKey = 17
-	TXT_USER_NOT_FOUND           TxtKey = 18
-	TXT_ACCOUNT_NOT_ACTIVE       TxtKey = 19
-	TXT_EMPTY_MERCHANT_ROLE      TxtKey = 20
-	TXT_INVALID_MERCHANT_ROLE    TxtKey = 21
-	TXT_INVALID_CURRENCY         TxtKey = 22
-	TXT_EMPTY_PHONE_NUMBER       TxtKey = 23
-	TXT_EMPTY_ADDRESS            TxtKey = 24
-	TXT_INVALID_PRODUCT_STATUS   TxtKey = 25
-	TXT_INVALID_PRODUCT_PRICE    TxtKey = 26
-	TXT_INVALID_PRODUCT_QUANTITY TxtKey = 27
-	TXT_INVALID_PRODUCT_IMG_URL  TxtKey = 28
-	TXT_INVALID_REVIEW_RATING    TxtKey = 29
-	TXT_INVALID_REVIEW_COMMENT   TxtKey = 30
-	TXT_WRONG_MLSTRING_FORMAT    TxtKey = 31
+	TXT_UNKNOWN_ERROR               TxtKey = 1
+	TXT_EMPTY_FIRSTNAME             TxtKey = 2
+	TXT_FIRSTNAME_TOO_SHORT         TxtKey = 3
+	TXT_FIRSTNAME_TOO_LONG          TxtKey = 4
+	TXT_EMPTY_LASTNAME              TxtKey = 5
+	TXT_LASTNAME_TOO_SHORT          TxtKey = 6
+	TXT_LASTNAME_TOO_LONG           TxtKey = 7
+	TXT_EMPTY_PASSWORD              TxtKey = 8
+	TXT_PASSWORD_TOO_SHORT          TxtKey = 9
+	TXT_PASSWORD_TOO_LONG           TxtKey = 10
+	TXT_INVALID_PASSWORD            TxtKey = 11
+	TXT_SAME_PASSWORD               TxtKey = 12
+	TXT_EMPTY_EMAIL                 TxtKey = 13
+	TXT_INVALID_EMAIL               TxtKey = 14
+	TXT_EMAIL_DOESNT_EXIST          TxtKey = 15
+	TXT_EMAIL_ALREADY_EXISTS        TxtKey = 16
+	TXT_INVALID_USER_TYPE           TxtKey = 17
+	TXT_USER_NOT_FOUND              TxtKey = 18
+	TXT_ACCOUNT_NOT_ACTIVE          TxtKey = 19
+	TXT_EMPTY_MERCHANT_ROLE         TxtKey = 20
+	TXT_INVALID_MERCHANT_ROLE       TxtKey = 21
+	TXT_INVALID_CURRENCY            TxtKey = 22
+	TXT_EMPTY_PHONE_NUMBER          TxtKey = 23
+	TXT_EMPTY_ADDRESS               TxtKey = 24
+	TXT_INVALID_PRODUCT_STATUS      TxtKey = 25
+	TXT_INVALID_PRODUCT_PRICE       TxtKey = 26
+	TXT_INVALID_PRODUCT_QUANTITY    TxtKey = 27
+	TXT_INVALID_PRODUCT_IMG_URL     TxtKey = 28
+	TXT_INVALID_REVIEW_RATING       TxtKey = 29
+	TXT_INVALID_REVIEW_COMMENT      TxtKey = 30
+	TXT_WRONG_MLSTRING_FORMAT       TxtKey = 31
+	TXT_USER_AGENT_EMPTY            TxtKey = 32
+	TXT_USER_SESSION_ALREADY_EXISTS TxtKey = 33
+	TXT_USER_SESSION_NOT_FOUND      TxtKey = 34
+	TXT_USER_ALREADY_EXISTS         TxtKey = 35
+	TXT_UNAUTHORIZED                TxtKey = 36
 )
 
 var Txts = TxtResource{
@@ -161,6 +166,26 @@ var Txts = TxtResource{
 		RU: `Неверный формат mlstring`,
 		EN: `Wrong mlstring format`,
 	},
+	TXT_USER_AGENT_EMPTY: MlString{
+		RU: `User agent не может быть пустым`,
+		EN: `User agent can not be empty`,
+	},
+	TXT_USER_SESSION_ALREADY_EXISTS: MlString{
+		RU: `Сессия уже существует`,
+		EN: `Session already exists`,
+	},
+	TXT_USER_SESSION_NOT_FOUND: MlString{
+		RU: `Сессия не найдена`,
+		EN: `Session not found`,
+	},
+	TXT_USER_ALREADY_EXISTS: MlString{
+		RU: `Пользователь уже существует`,
+		EN: `User already exists`,
+	},
+	TXT_UNAUTHORIZED: MlString{
+		RU: `Неавторизованный запрос`,
+		EN: `Unauthorized request`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -227,6 +252,16 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "invalid_review_comment"
 	case TXT_WRONG_MLSTRING_FORMAT:
 		return "wrong_mlstring_format"
+	case TXT_USER_AGENT_EMPTY:
+		return "user_agent_empty"
+	case TXT_USER_SESSION_ALREADY_EXISTS:
+		return "user_session_already_exists"
+	case TXT_USER_SESSION_NOT_FOUND:
+		return "user_session_not_found"
+	case TXT_USER_ALREADY_EXISTS:
+		return "user_already_exists"
+	case TXT_UNAUTHORIZED:
+		return "unauthorized"
 
 	default:
 		return ""

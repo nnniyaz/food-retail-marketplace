@@ -1,46 +1,48 @@
 package management
 
 import (
-	"github.com/gin-gonic/gin"
+	"encoding/json"
 	"github/nnniyaz/ardo/handler/http/response"
+	"github/nnniyaz/ardo/pkg/logger"
 	service "github/nnniyaz/ardo/service/management"
 	"net/http"
 )
 
 type HttpDelivery struct {
 	service service.ManagementService
+	logger  logger.Logger
 }
 
-func NewHttpDelivery(s service.ManagementService) *HttpDelivery {
-	return &HttpDelivery{service: s}
+func NewHttpDelivery(s service.ManagementService, l logger.Logger) *HttpDelivery {
+	return &HttpDelivery{service: s, logger: l}
 }
 
 // -----------------------------------------------------------------------------
 // Queries
 // -----------------------------------------------------------------------------
 
-func (hd *HttpDelivery) GetAllUsers(c *gin.Context) {
-	offset := c.Query("offset")
-	limit := c.Query("limit")
-	isDeleted := c.Query("is_deleted")
-	users, err := hd.service.GetUsersByFilters(c, offset, limit, isDeleted)
+func (hd *HttpDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+	offset := r.Context().Value("offset").(int64)
+	limit := r.Context().Value("limit").(int64)
+	isDeleted := r.Context().Value("is_deleted").(bool)
+	users, err := hd.service.GetUsersByFilters(r.Context(), offset, limit, isDeleted)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(users))
+	response.NewSuccess(hd.logger, w, r, users)
 }
 
-func (hd *HttpDelivery) GetById(c *gin.Context) {
-	userId := c.Query("user_id")
-	user, err := hd.service.GetUserById(c, userId)
+func (hd *HttpDelivery) GetById(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value("user_id").(string)
+	user, err := hd.service.GetUserById(r.Context(), userId)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(user))
+	response.NewSuccess(hd.logger, w, r, user)
 }
 
 // -----------------------------------------------------------------------------
@@ -48,80 +50,76 @@ func (hd *HttpDelivery) GetById(c *gin.Context) {
 // -----------------------------------------------------------------------------
 
 type AddUserRequest struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
-	UserType  string `json:"user_type"`
+	UserType  string `json:"userType"`
 }
 
-func (hd *HttpDelivery) AddUser(c *gin.Context) {
-	r := AddUserRequest{}
-	if err := c.BindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(err.Error()))
+func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
+	in := AddUserRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	err := hd.service.AddUser(c, r.FirstName, r.LastName, r.Email, r.Password, r.UserType)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Password, in.UserType); err != nil {
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(nil))
+	response.NewSuccess(hd.logger, w, r, nil)
 }
 
 type UpdateUserCredentialsRequest struct {
-	FirstName string `json:"first_name"`
-	LastName  string `json:"last_name"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 }
 
-func (hd *HttpDelivery) UpdateUserCredentials(c *gin.Context) {
-	userId := c.Query("user_id")
-	r := UpdateUserCredentialsRequest{}
-	if err := c.BindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(err.Error()))
+func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value("user_id").(string)
+	in := UpdateUserCredentialsRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
 		return
 	}
 
-	err := hd.service.UpdateUserCredentials(c, userId, r.FirstName, r.LastName, r.Email)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+	if err := hd.service.UpdateUserCredentials(r.Context(), userId, in.FirstName, in.LastName, in.Email); err != nil {
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(nil))
+	response.NewSuccess(hd.logger, w, r, nil)
 }
 
 type UpdateUserPasswordRequest struct {
 	Password string `json:"password"`
 }
 
-func (hd *HttpDelivery) UpdateUserPassword(c *gin.Context) {
-	userId := c.Query("user_id")
-	r := UpdateUserPasswordRequest{}
-	if err := c.BindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(err.Error()))
+func (hd *HttpDelivery) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value("user_id").(string)
+	in := UpdateUserPasswordRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
 		return
 	}
 
-	err := hd.service.UpdateUserPassword(c, userId, r.Password)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+	if err := hd.service.UpdateUserPassword(r.Context(), userId, in.Password); err != nil {
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(nil))
+	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-func (hd *HttpDelivery) DeleteUser(c *gin.Context) {
-	userId := c.Query("user_id")
-	err := hd.service.DeleteUser(c, userId)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+func (hd *HttpDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
+	userId := r.Context().Value("user_id").(string)
+	if err := hd.service.DeleteUser(r.Context(), userId); err != nil {
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	c.JSON(http.StatusOK, response.SuccessResponse(nil))
+	response.NewSuccess(hd.logger, w, r, nil)
 }

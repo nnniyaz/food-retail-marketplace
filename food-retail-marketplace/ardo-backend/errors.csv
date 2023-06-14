@@ -1,43 +1,37 @@
 key,RU,EN
 unknown_error,Неизвестная ошибка,Unknown error
-
 empty_firstname,Имя не может быть пустым,First name can not be empty
 firstname_too_short,Имя должно быть не менее 6 символов,First name must be at least 6 characters
 firstname_too_long,Имя должно быть не более 50 символов,First name must be no more than 50 characters
 empty_lastname,Фамилия не может быть пустой,Last name can not be empty
 lastname_too_short,Фамилия должна быть не менее 6 символов,Last name must be at least 6 characters
 lastname_too_long,Фамилия должна быть не более 50 символов,Last name must be no more than 50 characters
-
 empty_password,Пароль не может быть пустым,Password can not be empty
 password_too_short,Пароль должен быть не менее 6 символов,Password must be at least 6 characters
 password_too_long,Пароль должен быть не более 32 символов,Password must be no more than 32 characters
 invalid_password,Неверный пароль,Invalid password
 same_password,Новый пароль не может совпадать со старым,New password can not be the same as the old one
-
 empty_email,Email не может быть пустым,Email can not be empty
 invalid_email,Неверный формат email,Invalid email
 email_doesnt_exist,Пользователь с таким email не существует,User with this email does not exist
 email_already_exists,Пользователь с таким email уже существует,User with this email already exists
-
 invalid_user_type,Неверный тип пользователя,Invalid user type
-
 user_not_found,Пользователь не найден,User not found
-
 account_not_active,Аккаунт не активирован,Account not activated
-
 empty_merchant_role,Роль не может быть пустой,Role can not be empty
 invalid_merchant_role,Неверная роль,Invalid role
-
 invalid_currency,Неверная валюта,Invalid currency
 empty_phone_number,Номер телефона не может быть пустым,Phone number can not be empty
 empty_address,Адрес не может быть пустым,Address can not be empty
-
 invalid_product_status,Неверный статус продукта,Invalid product status
 invalid_product_price,Неверная цена продукта,Invalid product price
 invalid_product_quantity,Неверное количество продукта,Invalid product quantity
 invalid_product_img_url,Неверный URL изображения продукта,Invalid product image URL
-
 invalid_review_rating,Рейтинг отзыва должен быть от 1 до 5,Review rating must be from 1 to 5
 invalid_review_comment,Комментарий отзыва должен быть не более 250 символов,Review comment must be no more than 250 characters
-
 wrong_mlstring_format,Неверный формат mlstring,Wrong mlstring format
+user_agent_empty,User agent не может быть пустым,User agent can not be empty
+user_session_already_exists,Сессия уже существует,Session already exists
+user_session_not_found,Сессия не найдена,Session not found
+user_already_exists,Пользователь уже существует,User already exists
+unauthorized,Неавторизованный запрос,Unauthorized request

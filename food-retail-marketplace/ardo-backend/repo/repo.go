@@ -8,6 +8,7 @@ import (
 	"github/nnniyaz/ardo/domain/organization/org_contact"
 	"github/nnniyaz/ardo/domain/organization/org_desc"
 	"github/nnniyaz/ardo/domain/organization/org_name"
+	"github/nnniyaz/ardo/domain/product"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user_organization"
@@ -17,6 +18,7 @@ import (
 	organizationContactMongo "github/nnniyaz/ardo/repo/mongo/organization/org_contact"
 	organizationDescMongo "github/nnniyaz/ardo/repo/mongo/organization/org_desc"
 	organizationNameMongo "github/nnniyaz/ardo/repo/mongo/organization/org_name"
+	productMongo "github/nnniyaz/ardo/repo/mongo/product"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
 	userOrganizationMongo "github/nnniyaz/ardo/repo/mongo/user_organization"
@@ -36,8 +38,10 @@ type User interface {
 type Session interface {
 	Create(ctx context.Context, session *session.Session) error
 	FindManyByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error)
+	FindOneBySession(ctx context.Context, session base.UUID) (*session.Session, error)
 	DeleteById(ctx context.Context, id base.UUID) error
 	DeleteByToken(ctx context.Context, token base.UUID) error
+	UpdateLastActionAt(ctx context.Context, sessionId base.UUID) error
 }
 
 type ActivationLink interface {
@@ -64,21 +68,21 @@ type OrganizationName interface {
 	FindOne(ctx context.Context, orgId base.UUID) (*org_name.OrgName, error)
 	Create(ctx context.Context, o *org_name.OrgName) error
 	Update(ctx context.Context, o *org_name.OrgName) error
-	Delete(ctx context.Context, o *org_name.OrgName) error
+	Delete(ctx context.Context, orgId base.UUID) error
 }
 
 type OrganizationDesc interface {
 	FindOne(ctx context.Context, orgId base.UUID) (*org_desc.OrgDesc, error)
 	Create(ctx context.Context, o *org_desc.OrgDesc) error
 	Update(ctx context.Context, o *org_desc.OrgDesc) error
-	Delete(ctx context.Context, o *org_desc.OrgDesc) error
+	Delete(ctx context.Context, orgId *org_desc.OrgDesc) error
 }
 
 type OrganizationContacts interface {
 	FindOne(ctx context.Context, orgId base.UUID) (*org_contact.OrgContact, error)
 	Create(ctx context.Context, o *org_contact.OrgContact) error
 	Update(ctx context.Context, o *org_contact.OrgContact) error
-	Delete(ctx context.Context, o *org_contact.OrgContact) error
+	Delete(ctx context.Context, orgId *base.UUID) error
 }
 
 type UserOrganization interface {
@@ -87,6 +91,17 @@ type UserOrganization interface {
 	Create(ctx context.Context, organization *user_organization.UserOrganization) error
 	UpdateMerchantRole(ctx context.Context, orgId base.UUID, role valueobject.MerchantRole) error
 	Delete(ctx context.Context, orgId base.UUID) error
+}
+
+type Product interface {
+	Find(ctx context.Context) ([]*product.Product, error)
+	FindById(ctx context.Context, id base.UUID) (*product.Product, error)
+	FindByOrgId(ctx context.Context, orgId base.UUID) ([]*product.Product, error)
+	FindBySectionId(ctx context.Context, sectionId base.UUID) ([]*product.Product, error)
+	FindByCategoryId(ctx context.Context, categoryId base.UUID) ([]*product.Product, error)
+	Create(ctx context.Context, p *product.Product) error
+	Update(ctx context.Context, p *product.Product) error
+	Delete(ctx context.Context, id base.UUID) error
 }
 
 type Repository struct {
@@ -98,9 +113,10 @@ type Repository struct {
 	RepoOrganizationDesc     OrganizationDesc
 	RepoOrganizationContacts OrganizationContacts
 	RepoUserOrganization     UserOrganization
+	RepoProduct              Product
 }
 
-func NewRepository(client mongo.Client) *Repository {
+func NewRepository(client *mongo.Client) *Repository {
 	return &Repository{
 		RepoUser:                 userMongo.NewRepoUser(client),
 		RepoSession:              sessionMongo.NewRepoSession(client),
@@ -110,5 +126,6 @@ func NewRepository(client mongo.Client) *Repository {
 		RepoOrganizationDesc:     organizationDescMongo.NewRepoOrgDesc(client),
 		RepoOrganizationContacts: organizationContactMongo.NewRepoOrgContact(client),
 		RepoUserOrganization:     userOrganizationMongo.NewRepoOrganization(client),
+		RepoProduct:              productMongo.NewRepoProduct(client),
 	}
 }

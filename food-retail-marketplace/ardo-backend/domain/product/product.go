@@ -93,7 +93,7 @@ func (p *Product) GetUpdatedAt() time.Time {
 	return p.updatedAt
 }
 
-func (p *Product) UnmarshalProductFromDatabase(id, orgId, sectionId, categoryId base.UUID, price float64, quantity int, status string, isDeleted bool, createdAt, updatedAt time.Time) (*Product, error) {
+func UnmarshalProductFromDatabase(id, orgId, sectionId, categoryId base.UUID, price float64, quantity int, status string, isDeleted bool, createdAt, updatedAt time.Time) (*Product, error) {
 	productStatus, err := valueobject.NewProductStatus(status)
 	if err != nil {
 		return nil, err

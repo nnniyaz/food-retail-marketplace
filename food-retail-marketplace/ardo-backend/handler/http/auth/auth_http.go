@@ -1,19 +1,23 @@
 package auth
 
 import (
-	"github.com/gin-gonic/gin"
+	"encoding/json"
+	"github.com/go-chi/chi/v5"
 	"github/nnniyaz/ardo/handler/http/response"
-	"github/nnniyaz/ardo/pkg/env"
+	"github/nnniyaz/ardo/pkg/logger"
+	"github/nnniyaz/ardo/pkg/web"
 	service "github/nnniyaz/ardo/service/auth"
 	"net/http"
 )
 
 type HttpDelivery struct {
-	service service.AuthService
+	service   service.AuthService
+	logger    logger.Logger
+	clientUri string
 }
 
-func NewHttpDelivery(s service.AuthService) *HttpDelivery {
-	return &HttpDelivery{service: s}
+func NewHttpDelivery(s service.AuthService, l logger.Logger, clientUri string) *HttpDelivery {
+	return &HttpDelivery{service: s, logger: l, clientUri: clientUri}
 }
 
 // -----------------------------------------------------------------------------
@@ -25,40 +29,46 @@ type LoginRequest struct {
 	Password string `json:"password"`
 }
 
-func (hd *HttpDelivery) Login(c *gin.Context) {
-	r := LoginRequest{}
-	if err := c.BindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(err.Error()))
+func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
+	requestInfo := r.Context().Value("requestInfo").(web.RequestInfo)
+
+	var in LoginRequest
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
 		return
 	}
 
-	token, err := hd.service.Login(c, r.Email, r.Password)
+	token, err := hd.service.Login(r.Context(), in.Email, in.Password, requestInfo.UserAgent.String)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	http.SetCookie(c.Writer, &http.Cookie{
+	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    token.String(),
+		Path:     "/",
+		Secure:   true,
 		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
 	})
-	c.JSON(http.StatusOK, response.SuccessResponse(nil))
+
+	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-func (hd *HttpDelivery) Logout(c *gin.Context) {
-	cookie, err := c.Cookie("session")
+func (hd *HttpDelivery) Logout(w http.ResponseWriter, r *http.Request) {
+	cookie, err := r.Cookie("session")
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, response.ErrorResponse(err.Error()))
+		response.NewBad(hd.logger, w, r, err)
 		return
 	}
 
-	err = hd.service.Logout(c, cookie)
-	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+	if err = hd.service.Logout(r.Context(), cookie.Value); err != nil {
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessResponse(nil))
+
+	response.NewSuccess(hd.logger, w, r, nil)
 }
 
 type RegisterIn struct {
@@ -68,27 +78,28 @@ type RegisterIn struct {
 	Password  string `json:"password"`
 }
 
-func (hd *HttpDelivery) Register(c *gin.Context) {
-	r := RegisterIn{}
-	if err := c.BindJSON(&r); err != nil {
-		c.AbortWithStatusJSON(http.StatusBadRequest, response.ErrorResponse(err.Error()))
+func (hd *HttpDelivery) Register(w http.ResponseWriter, r *http.Request) {
+	in := RegisterIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
 		return
 	}
 
-	err := hd.service.Register(c, r.FirstName, r.LastName, r.Email, r.Password)
+	err := hd.service.Register(r.Context(), in.FirstName, in.LastName, in.Email, in.Password)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	c.JSON(http.StatusOK, response.SuccessResponse(nil))
+
+	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-func (hd *HttpDelivery) Confirm(c *gin.Context) {
-	link := c.Param("link")
-	err := hd.service.Confirm(c, link)
+func (hd *HttpDelivery) Confirm(w http.ResponseWriter, r *http.Request) {
+	link := chi.URLParam(r, "link")
+	err := hd.service.Confirm(r.Context(), link)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusInternalServerError, response.ErrorResponse(err.Error()))
+		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	c.Redirect(http.StatusTemporaryRedirect, env.MustGetEnv("CLIENT_URI"))
+	http.Redirect(w, r, hd.clientUri, http.StatusTemporaryRedirect)
 }

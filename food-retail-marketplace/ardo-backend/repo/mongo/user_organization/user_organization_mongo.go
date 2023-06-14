@@ -11,10 +11,10 @@ import (
 )
 
 type RepoUserOrganization struct {
-	client mongo.Client
+	client *mongo.Client
 }
 
-func NewRepoOrganization(client mongo.Client) *RepoUserOrganization {
+func NewRepoOrganization(client *mongo.Client) *RepoUserOrganization {
 	return &RepoUserOrganization{client: client}
 }
 
@@ -45,7 +45,7 @@ func (m *mongoUserOrganization) ToAggregate() *user_organization.UserOrganizatio
 }
 
 func (r *RepoUserOrganization) Find(ctx context.Context) ([]*user_organization.UserOrganization, error) {
-	cur, err := r.Coll().Find(ctx, bson.D{})
+	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": false})
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
@@ -67,7 +67,7 @@ func (r *RepoUserOrganization) Find(ctx context.Context) ([]*user_organization.U
 
 func (r *RepoUserOrganization) FindOneByOrgId(ctx context.Context, orgId base.UUID) (*user_organization.UserOrganization, error) {
 	var org mongoUserOrganization
-	err := r.Coll().FindOne(ctx, bson.D{{"_id", orgId}}).Decode(&org)
+	err := r.Coll().FindOne(ctx, bson.M{"_id": orgId}).Decode(&org)
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
@@ -83,19 +83,23 @@ func (r *RepoUserOrganization) Create(ctx context.Context, organization *user_or
 }
 
 func (r *RepoUserOrganization) UpdateMerchantRole(ctx context.Context, orgId base.UUID, role valueobject.MerchantRole) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{
-		{"_id", orgId},
-	}, bson.D{{"$set", bson.D{
-		{"role", role.String()},
-	}}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": orgId,
+	}, bson.M{
+		"$set": bson.M{
+			"role": role.String(),
+		},
+	})
 	return err
 }
 
 func (r *RepoUserOrganization) Delete(ctx context.Context, orgId base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{
-		{"_id", orgId},
-	}, bson.D{{"$set", bson.D{
-		{"isDeleted", true},
-	}}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": orgId,
+	}, bson.M{
+		"$set": bson.M{
+			"isDeleted": true,
+		},
+	})
 	return err
 }

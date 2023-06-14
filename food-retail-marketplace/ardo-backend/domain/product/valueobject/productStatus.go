@@ -21,3 +21,7 @@ func NewProductStatus(status string) (ProductStatus, error) {
 	}
 	return "", ErrInvalidProductStatus
 }
+
+func (p ProductStatus) String() string {
+	return string(p)
+}

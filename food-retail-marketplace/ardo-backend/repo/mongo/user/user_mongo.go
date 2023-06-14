@@ -13,12 +13,12 @@ import (
 )
 
 type RepoUser struct {
-	client    mongo.Client
+	client    *mongo.Client
 	col       *mongo.Collection
 	accessCol *mongo.Collection
 }
 
-func NewRepoUser(client mongo.Client) *RepoUser {
+func NewRepoUser(client *mongo.Client) *RepoUser {
 	return &RepoUser{client: client}
 }
 
@@ -44,14 +44,14 @@ func (m *mongoPassword) ToAggregate() valueobject.Password {
 
 type mongoUser struct {
 	Id        base.UUID     `bson:"_id"`
-	FirstName string        `bson:"first_name"`
-	LastName  string        `bson:"last_name"`
+	FirstName string        `bson:"firstName"`
+	LastName  string        `bson:"lastName"`
 	Email     string        `bson:"email"`
 	Password  mongoPassword `bson:"password"`
-	UserType  string        `bson:"user_type"`
-	IsDeleted bool          `bson:"is_deleted"`
-	CreatedAt time.Time     `bson:"created_at"`
-	UpdatedAt time.Time     `bson:"updated_at"`
+	UserType  string        `bson:"userType"`
+	IsDeleted bool          `bson:"isDeleted"`
+	CreatedAt time.Time     `bson:"createdAt"`
+	UpdatedAt time.Time     `bson:"updatedAt"`
 }
 
 func newFromUser(u *user.User) *mongoUser {
@@ -73,7 +73,9 @@ func (m *mongoUser) ToAggregate() *user.User {
 }
 
 func (r *RepoUser) Find(ctx context.Context) ([]*user.User, error) {
-	cur, err := r.Coll().Find(ctx, bson.D{})
+	cur, err := r.Coll().Find(ctx, bson.M{
+		"isDeleted": false,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -91,7 +93,7 @@ func (r *RepoUser) Find(ctx context.Context) ([]*user.User, error) {
 }
 
 func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
-	filter := bson.D{{"is_deleted", isDeleted}}
+	filter := bson.M{"isDeleted": isDeleted}
 
 	cur, err := r.Coll().Find(ctx, filter, options.Find().SetSkip(offset).SetLimit(limit))
 	if err != nil {
@@ -112,7 +114,7 @@ func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDel
 
 func (r *RepoUser) FindOneById(ctx context.Context, id base.UUID) (*user.User, error) {
 	var foundUser mongoUser
-	err := r.Coll().FindOne(ctx, bson.D{{"_id", id}}).Decode(&foundUser)
+	err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundUser)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +123,7 @@ func (r *RepoUser) FindOneById(ctx context.Context, id base.UUID) (*user.User, e
 
 func (r *RepoUser) FindOneByEmail(ctx context.Context, email string) (*user.User, error) {
 	var foundUser mongoUser
-	err := r.Coll().FindOne(ctx, bson.D{{"email", email}}).Decode(&foundUser)
+	err := r.Coll().FindOne(ctx, bson.M{"email": email}).Decode(&foundUser)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
@@ -137,11 +139,22 @@ func (r *RepoUser) Create(ctx context.Context, user *user.User) error {
 }
 
 func (r *RepoUser) Update(ctx context.Context, user *user.User) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", user.GetId()}}, bson.D{{"$set", newFromUser(user)}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": user.GetId(),
+	}, bson.M{
+		"$set": newFromUser(user),
+	})
 	return err
 }
 
 func (r *RepoUser) Delete(ctx context.Context, id base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", id}}, bson.D{{"$set", bson.D{{"is_deleted", true}, {"updated_at", time.Now()}}}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"$set": bson.M{
+			"isDeleted": true,
+			"updatedAt": time.Now(),
+		},
+	})
 	return err
 }

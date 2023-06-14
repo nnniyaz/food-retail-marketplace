@@ -10,10 +10,10 @@ import (
 )
 
 type RepoOrganization struct {
-	client mongo.Client
+	client *mongo.Client
 }
 
-func NewRepoOrganization(client mongo.Client) *RepoOrganization {
+func NewRepoOrganization(client *mongo.Client) *RepoOrganization {
 	return &RepoOrganization{client: client}
 }
 
@@ -48,7 +48,7 @@ func (m *mongoOrganization) ToAggregate() (*organization.Organization, error) {
 }
 
 func (r *RepoOrganization) Find(ctx context.Context) ([]*organization.Organization, error) {
-	cur, err := r.Coll().Find(ctx, bson.D{{}})
+	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": false})
 	if err != nil {
 		return nil, err
 	}
@@ -71,7 +71,7 @@ func (r *RepoOrganization) Find(ctx context.Context) ([]*organization.Organizati
 
 func (r *RepoOrganization) FindById(ctx context.Context, id base.UUID) (*organization.Organization, error) {
 	var o mongoOrganization
-	if err := r.Coll().FindOne(ctx, bson.D{{"_id", id}}).Decode(&o); err != nil {
+	if err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&o); err != nil {
 		return nil, err
 	}
 	return o.ToAggregate()
@@ -83,21 +83,39 @@ func (r *RepoOrganization) Create(ctx context.Context, o *organization.Organizat
 }
 
 func (r *RepoOrganization) UpdateOrganization(ctx context.Context, o *organization.Organization) error {
-	_, err := r.Coll().UpdateOne(ctx, o.GetId(), newFromOrganization(o))
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": o.GetId(),
+	}, bson.M{
+		"$set": newFromOrganization(o),
+	})
 	return err
 }
 
 func (r *RepoOrganization) DeleteOrganization(ctx context.Context, id base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", id}}, bson.M{"isDeleted": true})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"$set": bson.M{
+			"isDeleted": true,
+		},
+	})
 	return err
 }
 
 func (r *RepoOrganization) DisableOrganization(ctx context.Context, id base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", id}}, bson.M{"isDisabled": true})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"isDisabled": true,
+	})
 	return err
 }
 
 func (r *RepoOrganization) EnableOrganization(ctx context.Context, id base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{{"_id", id}}, bson.M{"isDisabled": false})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"isDisabled": false,
+	})
 	return err
 }

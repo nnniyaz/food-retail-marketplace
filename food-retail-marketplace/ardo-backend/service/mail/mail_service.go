@@ -1,15 +1,15 @@
 package mail
 
 import (
-	"github/nnniyaz/ardo/pkg/env"
+	"github/nnniyaz/ardo/config"
 	"net/smtp"
 )
 
-func SendEmail(sendTo string, link string) error {
-	SmtpUser := env.MustGetEnv("SMTP_USER")
-	SmtpPass := env.MustGetEnv("SMTP_PASS")
-	SmtpHost := env.MustGetEnv("SMTP_HOST")
-	SmtpPort := env.MustGetEnv("SMTP_PORT")
+func SendEmail(sendTo string, link string, config *config.ServiceConfig) error {
+	SmtpUser := config.GetSmtpUser()
+	SmtpPass := config.GetSmtpPass()
+	SmtpHost := config.GetSmtpHost()
+	SmtpPort := config.GetSmtpPort()
 
 	// Sender data.
 	from := SmtpUser

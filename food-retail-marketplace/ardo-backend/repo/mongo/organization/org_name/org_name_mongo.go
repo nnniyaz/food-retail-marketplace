@@ -10,10 +10,10 @@ import (
 )
 
 type RepoOrgName struct {
-	client mongo.Client
+	client *mongo.Client
 }
 
-func NewRepoOrgName(client mongo.Client) *RepoOrgName {
+func NewRepoOrgName(client *mongo.Client) *RepoOrgName {
 	return &RepoOrgName{client: client}
 }
 
@@ -39,7 +39,9 @@ func (m *mongoOrgName) ToAggregate() (*org_name.OrgName, error) {
 
 func (r *RepoOrgName) FindOne(ctx context.Context, orgId base.UUID) (*org_name.OrgName, error) {
 	var o mongoOrgName
-	if err := r.Coll().FindOne(ctx, bson.D{{"orgId", orgId}}).Decode(&o); err != nil {
+	if err := r.Coll().FindOne(ctx, bson.M{
+		"orgId": orgId,
+	}).Decode(&o); err != nil {
 		return nil, err
 	}
 	return o.ToAggregate()
@@ -51,11 +53,15 @@ func (r *RepoOrgName) Create(ctx context.Context, o *org_name.OrgName) error {
 }
 
 func (r *RepoOrgName) Update(ctx context.Context, o *org_name.OrgName) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{{"orgId", o.GetOrgId()}}, bson.D{{"$set", newFromOrgName(o)}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"orgId": o.GetOrgId(),
+	}, bson.M{
+		"$set": newFromOrgName(o),
+	})
 	return err
 }
 
-func (r *RepoOrgName) Delete(ctx context.Context, o *org_name.OrgName) error {
-	_, err := r.Coll().DeleteOne(ctx, newFromOrgName(o))
+func (r *RepoOrgName) Delete(ctx context.Context, orgId base.UUID) error {
+	_, err := r.Coll().DeleteOne(ctx, bson.M{"orgId": orgId})
 	return err
 }

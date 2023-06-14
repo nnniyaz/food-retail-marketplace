@@ -8,7 +8,7 @@ import (
 
 type ManagementService interface {
 	GetAllUsers(ctx context.Context) ([]*user.User, error)
-	GetUsersByFilters(ctx context.Context, offset, limit, isDeleted string) ([]*user.User, error)
+	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error)
 	GetUserById(ctx context.Context, userId string) (*user.User, error)
 	AddUser(ctx context.Context, firstName, lastName, email, password, userType string) error
 	DeleteUser(ctx context.Context, userId string) error
@@ -32,7 +32,7 @@ func (m *managementService) GetAllUsers(ctx context.Context) ([]*user.User, erro
 	return users, nil
 }
 
-func (m *managementService) GetUsersByFilters(ctx context.Context, offset, limit, isDeleted string) ([]*user.User, error) {
+func (m *managementService) GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
 	users, err := m.userService.GetByFilters(ctx, offset, limit, isDeleted)
 	if err != nil {
 		return nil, err

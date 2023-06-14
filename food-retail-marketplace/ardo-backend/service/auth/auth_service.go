@@ -2,13 +2,17 @@ package auth
 
 import (
 	"context"
+	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/user"
+	"github/nnniyaz/ardo/domain/user/exception"
 	"github/nnniyaz/ardo/pkg/core"
-	"github/nnniyaz/ardo/pkg/env"
+	"github/nnniyaz/ardo/pkg/logger"
 	linkService "github/nnniyaz/ardo/service/link"
 	mailService "github/nnniyaz/ardo/service/mail"
 	sessionService "github/nnniyaz/ardo/service/session"
 	userService "github/nnniyaz/ardo/service/user"
+	"go.uber.org/zap"
 	"sort"
 )
 
@@ -20,37 +24,41 @@ var (
 	ErrInvalidPassword    = core.NewI18NError(core.EINVALID, core.TXT_INVALID_PASSWORD)
 	ErrEmailAlreadyExists = core.NewI18NError(core.EINVALID, core.TXT_EMAIL_ALREADY_EXISTS)
 	ErrAccountNotActive   = core.NewI18NError(core.EINVALID, core.TXT_ACCOUNT_NOT_ACTIVE)
+	ErrUnauthorized       = core.NewI18NError(core.EUNAUTHORIZED, core.TXT_UNAUTHORIZED)
 )
 
 type AuthService interface {
-	Login(ctx context.Context, email, password string) (base.UUID, error)
+	Login(ctx context.Context, email, password, userAgent string) (base.UUID, error)
 	Register(ctx context.Context, firstName, lastName, email, password string) error
-	Logout(ctx context.Context, token string) error
+	Logout(ctx context.Context, session string) error
 	Confirm(ctx context.Context, link string) error
+	UserCheck(ctx context.Context, session string, userAgent string) (*user.User, error)
 }
 
 type authService struct {
 	userService    userService.UserService
 	linkService    linkService.ActivationLinkService
 	sessionService sessionService.SessionService
+	logger         logger.Logger
+	config         *config.ServiceConfig
 }
 
-func NewAuthService(userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService) AuthService {
-	return &authService{linkService: linkService, userService: userService, sessionService: sessionService}
+func NewAuthService(userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService, l logger.Logger, config *config.ServiceConfig) AuthService {
+	return &authService{linkService: linkService, userService: userService, sessionService: sessionService, logger: l, config: config}
 }
 
-func (a *authService) Login(ctx context.Context, email, password string) (base.UUID, error) {
-	user, err := a.userService.GetByEmail(ctx, email)
+func (a *authService) Login(ctx context.Context, email, password, userAgent string) (base.UUID, error) {
+	u, err := a.userService.GetByEmail(ctx, email)
 	if err != nil {
 		return base.Nil, ErrEmailNotFound
 	}
 
-	ok := user.ComparePassword(password)
+	ok := u.ComparePassword(password)
 	if !ok {
 		return base.Nil, ErrInvalidPassword
 	}
 
-	foundActivationLink, err := a.linkService.GetByUserId(ctx, user.GetId().String())
+	foundActivationLink, err := a.linkService.GetByUserId(ctx, u.GetId().String())
 	if err != nil {
 		return base.Nil, err
 	}
@@ -58,7 +66,7 @@ func (a *authService) Login(ctx context.Context, email, password string) (base.U
 		return base.Nil, ErrAccountNotActive
 	}
 
-	sessions, err := a.sessionService.GetAllByUserId(ctx, user.GetId().String())
+	sessions, err := a.sessionService.GetAllByUserId(ctx, u.GetId().String())
 	if err != nil {
 		return base.Nil, err
 	}
@@ -75,7 +83,7 @@ func (a *authService) Login(ctx context.Context, email, password string) (base.U
 		}
 	}
 
-	newSession, err := a.sessionService.Create(ctx, user.GetId().String())
+	newSession, err := a.sessionService.Create(ctx, u.GetId().String(), userAgent)
 	if err != nil {
 		return base.Nil, err
 	}
@@ -87,31 +95,29 @@ func (a *authService) Logout(ctx context.Context, token string) error {
 }
 
 func (a *authService) Register(ctx context.Context, firstName, lastName, email, password string) error {
-	apiUri := env.MustGetEnv("API_URI")
-
-	if user, err := a.userService.GetByEmail(ctx, email); err != nil || user != nil {
+	if u, err := a.userService.GetByEmail(ctx, email); err != nil || u != nil {
 		if err != nil {
 			return err
 		}
 
-		foundActivationLink, err := a.linkService.GetByUserId(ctx, user.GetId().String())
+		foundActivationLink, err := a.linkService.GetByUserId(ctx, u.GetId().String())
 		if err != nil {
 			return err
 		}
-		if foundActivationLink != nil && !user.GetIsDeleted() {
+		if foundActivationLink != nil && !u.GetIsDeleted() {
 			if foundActivationLink.GetIsActivated() {
 				return ErrEmailAlreadyExists
 			}
 
-			if !user.ComparePassword(password) {
-				err = a.userService.UpdatePassword(ctx, user.GetId().String(), password)
+			if !u.ComparePassword(password) {
+				err = a.userService.UpdatePassword(ctx, u.GetId().String(), password)
 				if err != nil {
 					return err
 				}
 			}
 			foundActivationLink.UpdateLink()
-			link := apiUri + "/api/auth/confirm/" + foundActivationLink.GetLink().String()
-			return mailService.SendEmail(email, link)
+			link := a.config.GetApiUri() + "/api/auth/confirm/" + foundActivationLink.GetLink().String()
+			return mailService.SendEmail(email, link, a.config)
 		}
 	}
 
@@ -125,10 +131,33 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 		return err
 	}
 
-	link := apiUri + "/api/auth/confirm/" + newActivationLink.GetLink().String()
-	return mailService.SendEmail(newUser.GetEmail().String(), link)
+	link := a.config.GetApiUri() + "/api/auth/confirm/" + newActivationLink.GetLink().String()
+	return mailService.SendEmail(newUser.GetEmail().String(), link, a.config)
 }
 
 func (a *authService) Confirm(ctx context.Context, link string) error {
 	return a.linkService.UpdateIsActivated(ctx, link, true)
+}
+
+func (a *authService) UserCheck(ctx context.Context, key string, userAgent string) (*user.User, error) {
+	userSession, err := a.sessionService.GetOneBySession(ctx, key)
+	if err != nil {
+		if err != exception.ErrUserSessionNotFound {
+			return nil, err
+		}
+		return nil, ErrUnauthorized
+	}
+
+	if userSession.GetUserAgent().String() != userAgent {
+		if err = a.sessionService.DeleteOneByToken(ctx, key); err != nil {
+			a.logger.Error("failed to delete user session", zap.Error(err))
+		}
+		return nil, ErrUnauthorized
+	}
+
+	if err = a.sessionService.UpdateLastActionAt(ctx, userSession.GetId().String()); err != nil {
+		return nil, err
+	}
+
+	return a.userService.GetById(ctx, userSession.GetUserId().String())
 }

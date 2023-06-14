@@ -9,10 +9,10 @@ import (
 )
 
 type RepoActivationLink struct {
-	client mongo.Client
+	client *mongo.Client
 }
 
-func NewRepoActivationLink(client mongo.Client) *RepoActivationLink {
+func NewRepoActivationLink(client *mongo.Client) *RepoActivationLink {
 	return &RepoActivationLink{client: client}
 }
 
@@ -39,7 +39,7 @@ func (m *mongoActivationLink) ToAggregate() *activationLink.ActivationLink {
 }
 
 func (r *RepoActivationLink) Find(ctx context.Context, userId base.UUID) ([]*activationLink.ActivationLink, error) {
-	cur, err := r.Coll().Find(ctx, bson.D{{"userID", userId}})
+	cur, err := r.Coll().Find(ctx, bson.M{"userID": userId})
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +58,7 @@ func (r *RepoActivationLink) Find(ctx context.Context, userId base.UUID) ([]*act
 
 func (r *RepoActivationLink) FindOneByUserId(ctx context.Context, userId base.UUID) (*activationLink.ActivationLink, error) {
 	var foundActivationLink mongoActivationLink
-	if err := r.Coll().FindOne(ctx, bson.D{{"userID", userId}}).Decode(&foundActivationLink); err != nil {
+	if err := r.Coll().FindOne(ctx, bson.M{"userID": userId}).Decode(&foundActivationLink); err != nil {
 		return nil, err
 	}
 	return foundActivationLink.ToAggregate(), nil
@@ -66,7 +66,7 @@ func (r *RepoActivationLink) FindOneByUserId(ctx context.Context, userId base.UU
 
 func (r *RepoActivationLink) FindOneByLink(ctx context.Context, link base.UUID) (*activationLink.ActivationLink, error) {
 	var foundActivationLink mongoActivationLink
-	if err := r.Coll().FindOne(ctx, bson.D{{"link", link}}).Decode(&foundActivationLink); err != nil {
+	if err := r.Coll().FindOne(ctx, bson.M{"link": link}).Decode(&foundActivationLink); err != nil {
 		return nil, err
 	}
 	return foundActivationLink.ToAggregate(), nil
@@ -81,18 +81,24 @@ func (r *RepoActivationLink) Create(ctx context.Context, activationLink *activat
 }
 
 func (r *RepoActivationLink) Update(ctx context.Context, activationLink *activationLink.ActivationLink) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.D{
-		{"link", activationLink.GetUserId()},
-	}, bson.D{{"$set", newFromActivationLink(activationLink)}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"link": activationLink.GetLink(),
+	}, bson.M{
+		"$set": newFromActivationLink(activationLink),
+	})
 	return err
 }
 
 func (r *RepoActivationLink) DeleteAll(ctx context.Context, user base.UUID) error {
-	_, err := r.Coll().DeleteOne(ctx, bson.D{{"userID", user}})
+	_, err := r.Coll().DeleteOne(ctx, bson.M{
+		"userID": user,
+	})
 	return err
 }
 
 func (r *RepoActivationLink) DeleteOne(ctx context.Context, user base.UUID) error {
-	_, err := r.Coll().DeleteMany(ctx, bson.D{{"userID", user}})
+	_, err := r.Coll().DeleteMany(ctx, bson.M{
+		"userID": user,
+	})
 	return err
 }
