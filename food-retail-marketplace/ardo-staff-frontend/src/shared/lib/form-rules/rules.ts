@@ -11,10 +11,10 @@ export const rules: IRules = {
     email: (message: string) => ({type: 'email', message: message}),
     minmaxLen: (message: string, min: number, max: number) => ({
         validator(_: any, value: string) {
-            if (value === undefined || value === null) {
+            if (!value) {
                 return Promise.resolve();
             }
-            if (value.length < min || value.length > max) {
+            else if (value.length < min || value.length > max) {
                 return Promise.reject(message);
             }
             return Promise.resolve();

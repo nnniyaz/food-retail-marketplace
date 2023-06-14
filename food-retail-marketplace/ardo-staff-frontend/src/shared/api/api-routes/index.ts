@@ -1,5 +1,5 @@
 export enum ApiRoutes {
-    LOGIN = "/login",
+    LOGIN = "/auth/login",
 
     ME = "/me",
 

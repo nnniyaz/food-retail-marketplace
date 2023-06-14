@@ -1,0 +1,40 @@
+@import "app/styles/vars.scss";
+
+.credits {
+  position: absolute;
+  bottom: 20px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 5px;
+  gap: 10px;
+  border-radius: 7px;
+  background-color: $global-color-light-bg-white;
+
+  .credits__text {
+    font-size: $global-font-size-regular-small;
+    color: $global-font-color-light-black;
+    opacity: .5;
+  }
+
+  .credits__tag {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 7px;
+    padding: 5px 7px;
+    letter-spacing: 1px;
+    background-color: $global-font-color-light-blue;
+
+    .credits__tag__logo {
+      font-size: $global-font-size-regular-small;
+      color: $global-font-color-light-white;
+    }
+  }
+}
+
+@media (max-width: 1340px) {
+  .credits {
+    bottom: 10px;
+  }
+}

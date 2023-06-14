@@ -29,7 +29,7 @@ export const Header: FC<HeaderProps> = ({isShown, setIsShown}) => {
     return (
         <Transition in={!isShown} timeout={200} mountOnEnter unmountOnExit>
             {state => (
-                <div className={`${classes.header} ${transitionClasses[state]}`} style={{opacity: isShown ? .5 : 1}}>
+                <div className={`${classes.header} ${transitionClasses[state]}`}>
                     <div className={classes.header__item}>
                         <Logo/>
                     </div>

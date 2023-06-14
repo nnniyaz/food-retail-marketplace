@@ -66,6 +66,7 @@
     padding: 0 5px;
     border-radius: 15px;
     z-index: 2;
+    opacity: 0;
 
     .header__item {
       &:nth-child(1) {
@@ -105,10 +106,14 @@
 
 @keyframes SlideDown {
   0% {
+    opacity: 1;
     transform: translateY(-100%);
   }
-
+  50% {
+    opacity: 1;
+  }
   100% {
+    opacity: 1;
     transform: translateY(0);
   }
 }

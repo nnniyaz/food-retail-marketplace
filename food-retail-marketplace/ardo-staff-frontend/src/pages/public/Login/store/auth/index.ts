@@ -1,7 +1,7 @@
 import {AuthAction, AuthActionEnum, AuthState} from "./types";
 
 const initialState: AuthState = {
-    isAuth: true,
+    isAuth: false,
     isLoadingAuth: false,
 }
 
