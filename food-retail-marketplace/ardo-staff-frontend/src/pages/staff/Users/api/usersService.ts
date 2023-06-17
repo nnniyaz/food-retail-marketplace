@@ -4,7 +4,7 @@ import {ApiRoutes} from "shared/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "shared/api/response/response";
 
 export default class UsersService {
-    static async getUsers(request: UsersGetRequest): Promise<AxiosResponse<SuccessResponse<UsersData> | ErrorResponse>> {
-        return axios.get<SuccessResponse<UsersData> | ErrorResponse>(ApiRoutes.USERS, {params: {...request}});
+    static async getUsers(request: UsersGetRequest, controller: AbortController): Promise<AxiosResponse<SuccessResponse<UsersData> | ErrorResponse>> {
+        return axios.get<SuccessResponse<UsersData> | ErrorResponse>(ApiRoutes.GET_ALL_USERS, {params: {...request}, signal: controller.signal});
     }
 }

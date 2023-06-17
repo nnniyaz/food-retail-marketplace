@@ -1,0 +1,33 @@
+import {Organization} from "entities/organization/organization";
+
+export type OrganizationsState = {
+    organizations: Organization[];
+    organizationsCount: number;
+    isLoadingGetOrganizations: boolean;
+}
+
+export enum OrganizationsActionEnum {
+    SET_ORGANIZATIONS = "SET_ORGANIZATIONS",
+    SET_ORGANIZATIONS_COUNT = "SET_ORGANIZATIONS_COUNT",
+    SET_IS_LOADING_GET_ORGANIZATIONS = "SET_IS_LOADING_GET_ORGANIZATIONS",
+}
+
+export type SetOrganizationsAction = {
+    type: OrganizationsActionEnum.SET_ORGANIZATIONS;
+    payload: Organization[];
+}
+
+export type SetOrganizationsCountAction = {
+    type: OrganizationsActionEnum.SET_ORGANIZATIONS_COUNT;
+    payload: number;
+}
+
+export type SetIsLoadingGetOrganizationsAction = {
+    type: OrganizationsActionEnum.SET_IS_LOADING_GET_ORGANIZATIONS;
+    payload: boolean;
+}
+
+export type OrganizationsAction =
+    SetOrganizationsAction |
+    SetOrganizationsCountAction |
+    SetIsLoadingGetOrganizationsAction;

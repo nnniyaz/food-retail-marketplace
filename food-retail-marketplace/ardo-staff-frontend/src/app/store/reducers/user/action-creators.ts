@@ -1,4 +1,4 @@
-import {User, UsersGetRequest} from "entities/user/user";
+import {User} from "entities/user/user";
 import {NavigateCallback} from "entities/base/navigateCallback";
 import {txt} from "shared/core/i18ngen";
 import {Notify} from "shared/lib/notification/notification";
@@ -6,26 +6,12 @@ import {FailedResponseHandler, httpHandler} from "shared/lib/http-handler/httpHa
 import UserService from "pages/public/Login/api/userService";
 import {AuthActionCreators} from "pages/public/Login/store/auth/action-creators";
 import {AppDispatch, RootState} from "../../index";
-import {
-    SetUserAction,
-    SetUsersAction,
-    SetUsersCountAction,
-    SetIsLoadingGetUserAction,
-    SetIsLoadingGetUsersAction,
-    UserActionEnum
-} from "./types";
-import UsersService from "pages/staff/Users/api/usersService";
+import {SetUserAction, SetIsLoadingGetUserAction, UserActionEnum} from "./types";
 
 export const UserActionCreators = {
     setUser: (payload: User): SetUserAction => ({type: UserActionEnum.SET_USER, payload}),
-    setUsers: (payload: User[]): SetUsersAction => ({type: UserActionEnum.SET_USERS, payload}),
-    setUsersCount: (payload: number): SetUsersCountAction => ({type: UserActionEnum.SET_USERS_COUNT, payload}),
     setIsLoadingGetUser: (payload: boolean): SetIsLoadingGetUserAction => ({
         type: UserActionEnum.SET_IS_LOADING_GET_USER,
-        payload
-    }),
-    setIsLoadingGetUsers: (payload: boolean): SetIsLoadingGetUsersAction => ({
-        type: UserActionEnum.SET_IS_LOADING_GET_USERS,
         payload
     }),
     getCurrentUser: (navigateCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
@@ -36,7 +22,6 @@ export const UserActionCreators = {
             if (res.data.success) {
                 if (res.data.data.userType !== "STAFF") {
                     const mainClientUri = process.env.REACT_APP_MAIN_CLIENT_URI;
-                    console.log(mainClientUri)
                     if (mainClientUri) {
                         window.location.href = mainClientUri;
                     }
@@ -71,30 +56,4 @@ export const UserActionCreators = {
             dispatch(UserActionCreators.setIsLoadingGetUser(false));
         }
     },
-    getUsers: (request: UsersGetRequest, controller: AbortController) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().lang;
-        try {
-            dispatch(UserActionCreators.setIsLoadingGetUsers(true));
-            const res = await UsersService.getUsers(request);
-            if (res.data.success) {
-                dispatch(UserActionCreators.setUsers(res.data.data.users));
-                dispatch(UserActionCreators.setUsersCount(res.data.data.usersCount));
-            } else {
-                FailedResponseHandler({
-                    message: res.data?.message,
-                    httpStatus: res.status,
-                    currentLang: currentLang,
-                });
-            }
-        } catch (e: any) {
-            httpHandler({
-                error: e,
-                httpStatus: e?.response?.status,
-                dispatch: dispatch,
-                currentLang: currentLang,
-            });
-        } finally {
-            dispatch(UserActionCreators.setIsLoadingGetUsers(false));
-        }
-    }
 }

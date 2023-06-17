@@ -1,10 +1,10 @@
 import React, {FC, useEffect} from "react";
 import {txt} from "shared/core/i18ngen";
 import {Table} from "shared/ui/Table";
+import {useActions} from "shared/lib/hooks/useActions";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import {Block} from "./components/Block";
 import classes from "./Dashboard.module.scss";
-import {useActions} from "../../../shared/lib/hooks/useActions";
 
 const requestOptions = {
     offset: 0,
@@ -15,32 +15,38 @@ const requestOptions = {
 
 export const Dashboard: FC = () => {
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {isLoadingGetUsers, users, usersCount} = useTypedSelector(state => state.user);
-    const {getUsers} = useActions();
+    const {isLoadingGetUsers, users} = useTypedSelector(state => state.users);
+    const {isLoadingGetOrganizations, organizations} = useTypedSelector(state => state.organizations);
+    const {fetchUsers, fetchOrganizations} = useActions();
 
     const usersColumns = [
-        {
-            title: txt.fullName[currentLang],
-            dataIndex: "fullName",
-        },
-        {
-            title: txt.email[currentLang],
-            dataIndex: "email",
-        },
-        {
-            title: txt.type[currentLang],
-            dataIndex: "userType",
-        }
+        {title: txt.fullName[currentLang], dataIndex: "fullName"},
+        {title: txt.type[currentLang], dataIndex: "userType"}
     ];
-    const usersData = users.map(user => ({
+    const usersData = users.slice(0, 5).map(user => ({
         fullName: `${user.firstName} ${user.lastName}`,
-        email: user.email,
         userType: user.userType,
     }));
 
+    const organizationsColumns = [
+        {title: txt.org_name[currentLang], dataIndex: "orgName"},
+    ];
+    const organizationsData = organizations.slice(0, 5).map(org => ({
+        orgName: org.orgName[currentLang],
+    }));
+
+    const applicationsColumns = [];
+    const applicationsData = [];
+
     useEffect(() => {
         const controller = new AbortController();
-        getUsers(requestOptions, controller);
+        fetchUsers(requestOptions, controller);
+        return () => controller.abort();
+    }, [])
+
+    useEffect(() => {
+        const controller = new AbortController();
+        fetchOrganizations(requestOptions, controller);
         return () => controller.abort();
     }, [])
 
@@ -49,7 +55,9 @@ export const Dashboard: FC = () => {
             <Block label={txt.users[currentLang]}>
                 <Table data={usersData} columns={usersColumns} loading={isLoadingGetUsers}/>
             </Block>
-            <Block label={txt.organizations[currentLang]}>Organizations</Block>
+            <Block label={txt.organizations[currentLang]}>
+                <Table data={organizationsData} columns={organizationsColumns} loading={isLoadingGetOrganizations}/>
+            </Block>
             <Block label={txt.applications[currentLang]}>Applications</Block>
         </div>
     )

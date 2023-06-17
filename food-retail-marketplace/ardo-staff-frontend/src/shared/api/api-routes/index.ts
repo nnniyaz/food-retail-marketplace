@@ -3,5 +3,7 @@ export enum ApiRoutes {
 
     ME = "/me",
 
-    USERS = "/users.json",
+    GET_ALL_USERS = "/users.json",
+
+    GET_ALL_ORGANIZATIONS = "/organizations.json",
 }

@@ -29,16 +29,8 @@ export const Table: FC<TableProps> = ({data, columns, loading}) => {
         </tr>
     ));
 
-    const loader = (
-        <tr className={classes.table__row__loading}>
-            <td className={classes.table__data__cell__loading}>
-                <Loader/>
-            </td>
-        </tr>
-    )
-
     return (
-        <React.Fragment>
+        <div className={classes.table__container}>
             <table className={classes.table}>
                 <thead className={classes.table__head}>
                 <tr className={classes.table__row}>
@@ -48,10 +40,10 @@ export const Table: FC<TableProps> = ({data, columns, loading}) => {
                 </tr>
                 </thead>
                 <tbody className={classes.table__body}>
-                {loading ? loader : rows}
+                {rows}
                 </tbody>
             </table>
-            <div></div>
-        </React.Fragment>
+            {loading && <div className={classes.table__loader}><Loader/></div>}
+        </div>
     )
 }

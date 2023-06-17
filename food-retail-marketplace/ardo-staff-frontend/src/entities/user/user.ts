@@ -1,3 +1,5 @@
+import {Paginate} from "../base/paginate";
+
 type UserFirstName = string;
 type UserLastName = string;
 
@@ -11,7 +13,6 @@ export type User = {
     lastName: UserLastName;
     email: Email;
     userType: UserType;
-    isDeleted: boolean;
     createdAt: Timestamp;
     updatedAt: Timestamp;
 }
@@ -21,9 +22,4 @@ export type UsersData = {
     usersCount: number;
 }
 
-export type UsersGetRequest = {
-    limit: number;
-    offset: number;
-    search: string;
-    isDeleted: boolean;
-}
+export type UsersGetRequest = Paginate;
