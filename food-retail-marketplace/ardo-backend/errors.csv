@@ -35,3 +35,6 @@ user_session_already_exists,Сессия уже существует,Session alr
 user_session_not_found,Сессия не найдена,Session not found
 user_already_exists,Пользователь уже существует,User already exists
 unauthorized,Неавторизованный запрос,Unauthorized request
+empty_org_name,Название организации не может быть пустым,Organization name can not be empty
+org_name_too_short,Название организации должно быть не менее 3 символов,Organization name must be at least 6 characters
+org_name_too_long,Название организации должно быть не более 50 символов,Organization name must be no more than 50 characters

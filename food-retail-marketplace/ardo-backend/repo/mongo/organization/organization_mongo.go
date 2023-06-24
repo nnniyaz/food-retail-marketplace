@@ -24,6 +24,7 @@ func (r *RepoOrganization) Coll() *mongo.Collection {
 type mongoOrganization struct {
 	id         base.UUID `bson:"_id"`
 	logo       string    `bson:"logo"`
+	name       string    `bson:"name"`
 	currency   string    `bson:"currency"`
 	isDisabled bool      `bson:"isDisabled"`
 	isDeleted  bool      `bson:"isDeleted"`
@@ -35,6 +36,7 @@ func newFromOrganization(o *organization.Organization) *mongoOrganization {
 	return &mongoOrganization{
 		id:         o.GetId(),
 		logo:       o.GetLogo(),
+		name:       o.GetName().String(),
 		currency:   o.GetCurrency().String(),
 		isDisabled: o.IsDisabled(),
 		isDeleted:  o.IsDeleted(),
@@ -44,7 +46,7 @@ func newFromOrganization(o *organization.Organization) *mongoOrganization {
 }
 
 func (m *mongoOrganization) ToAggregate() (*organization.Organization, error) {
-	return organization.UnmarshalOrganizationFromDatabase(m.id, m.logo, m.currency, m.isDisabled, m.isDeleted, m.createdAt, m.updatedAt)
+	return organization.UnmarshalOrganizationFromDatabase(m.id, m.logo, m.name, m.currency, m.isDisabled, m.isDeleted, m.createdAt, m.updatedAt)
 }
 
 func (r *RepoOrganization) Find(ctx context.Context) ([]*organization.Organization, error) {

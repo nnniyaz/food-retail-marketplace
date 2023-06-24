@@ -8,6 +8,10 @@ import (
 	"net/http"
 )
 
+var (
+	ErrUnauthorized = core.NewI18NError(core.EUNAUTHORIZED, core.TXT_UNAUTHORIZED)
+)
+
 type Error struct {
 	TraceId  string   `json:"traceId" example:"1234567890"`
 	Success  bool     `json:"success" example:"false"`
@@ -15,12 +19,14 @@ type Error struct {
 }
 
 func NewUnauthorized(l logger.Logger, w http.ResponseWriter, r *http.Request) {
+	errMsg := core.NewI18NError(core.EUNAUTHORIZED, core.TXT_UNAUTHORIZED).ErrMsg()
+
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusUnauthorized)
 	writeErr := writeJSON(w, Error{
 		TraceId:  r.Context().Value("traceId").(string),
 		Success:  false,
-		Messages: nil,
+		Messages: []string{errMsg},
 	})
 	if writeErr != nil {
 		l.Error("failed to write json", zap.Error(writeErr))

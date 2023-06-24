@@ -5,14 +5,12 @@ import (
 	"github/nnniyaz/ardo"
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/handler/http"
+	"github/nnniyaz/ardo/pkg/email"
 	"github/nnniyaz/ardo/pkg/env"
 	"github/nnniyaz/ardo/pkg/logger"
-	"github/nnniyaz/ardo/pkg/uuid"
+	"github/nnniyaz/ardo/pkg/mongo"
 	"github/nnniyaz/ardo/repo"
 	"github/nnniyaz/ardo/service"
-	"go.mongodb.org/mongo-driver/mongo"
-	"go.mongodb.org/mongo-driver/mongo/options"
-	"go.mongodb.org/mongo-driver/mongo/readpref"
 	"go.uber.org/zap"
 	"os/signal"
 	"syscall"
@@ -29,12 +27,7 @@ func main() {
 
 	// --- init settings
 	cf := config.New(
-		env.MustGetEnv("MONGO_URI"),
 		env.MustGetEnvAsBool("IS_DEV_MODE"),
-		env.MustGetEnv("SMTP_USER"),
-		env.MustGetEnv("SMTP_PASS"),
-		env.MustGetEnv("SMTP_HOST"),
-		env.MustGetEnv("SMTP_PORT"),
 		env.MustGetEnv("API_URI"),
 		env.MustGetEnv("CLIENT_URI"),
 	)
@@ -48,31 +41,32 @@ func main() {
 
 	lg.Info("starting", zap.Time("start", start))
 
-	mongoClient, err := initDbConnection(ctx, cf.GetMongoUri())
+	// --- init mongodb db
+	db, err := mongo.New(ctx, env.MustGetEnv("MONGO_URI"))
 	if err != nil {
 		lg.Fatal("failed to init mongodb", zap.Error(err))
 		return
 	}
+	defer db.Disconnect(ctx)
 
-	repos := repo.NewRepository(mongoClient)
-	services := service.NewService(repos, cf.GetServiceConfig(), lg)
+	// --- init email service
+	emailService, err := email.New(email.Config{
+		Host:     env.MustGetEnv("SMTP_HOST"),
+		Port:     env.MustGetEnvAsInt("SMTP_PORT"),
+		Username: env.MustGetEnv("SMTP_USER"),
+		Password: env.MustGetEnv("SMTP_PASS"),
+	})
+	if err != nil {
+		lg.Fatal("failed to init email service", zap.Error(err))
+		return
+	}
+
+	repos := repo.NewRepository(db)
+	services := service.NewService(repos, cf, lg, emailService)
 	handlers := http.NewHandler(services, lg, cf.GetClientUri())
 
 	srv := new(ardo.Server)
 	if err := srv.Run(port, handlers.InitRoutes(cf.GetIsDevMode())); err != nil {
 		lg.Fatal("error occurred while running http server: ", zap.Error(err))
 	}
-}
-
-func initDbConnection(ctx context.Context, mongoUri string) (*mongo.Client, error) {
-	mongoOptions := options.Client().ApplyURI(mongoUri).SetRegistry(uuid.MongoRegistry)
-	client, err := mongo.Connect(ctx, mongoOptions)
-	if err != nil {
-		return client, err
-	}
-
-	if err = client.Ping(ctx, readpref.Primary()); err != nil {
-		return client, err
-	}
-	return client, nil
 }

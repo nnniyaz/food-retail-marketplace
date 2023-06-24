@@ -39,6 +39,9 @@ const (
 	TXT_USER_SESSION_NOT_FOUND      TxtKey = 34
 	TXT_USER_ALREADY_EXISTS         TxtKey = 35
 	TXT_UNAUTHORIZED                TxtKey = 36
+	TXT_EMPTY_ORG_NAME              TxtKey = 37
+	TXT_ORG_NAME_TOO_SHORT          TxtKey = 38
+	TXT_ORG_NAME_TOO_LONG           TxtKey = 39
 )
 
 var Txts = TxtResource{
@@ -186,6 +189,18 @@ var Txts = TxtResource{
 		RU: `Неавторизованный запрос`,
 		EN: `Unauthorized request`,
 	},
+	TXT_EMPTY_ORG_NAME: MlString{
+		RU: `Название организации не может быть пустым`,
+		EN: `Organization name can not be empty`,
+	},
+	TXT_ORG_NAME_TOO_SHORT: MlString{
+		RU: `Название организации должно быть не менее 3 символов`,
+		EN: `Organization name must be at least 6 characters`,
+	},
+	TXT_ORG_NAME_TOO_LONG: MlString{
+		RU: `Название организации должно быть не более 50 символов`,
+		EN: `Organization name must be no more than 50 characters`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -262,6 +277,12 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "user_already_exists"
 	case TXT_UNAUTHORIZED:
 		return "unauthorized"
+	case TXT_EMPTY_ORG_NAME:
+		return "empty_org_name"
+	case TXT_ORG_NAME_TOO_SHORT:
+		return "org_name_too_short"
+	case TXT_ORG_NAME_TOO_LONG:
+		return "org_name_too_long"
 
 	default:
 		return ""

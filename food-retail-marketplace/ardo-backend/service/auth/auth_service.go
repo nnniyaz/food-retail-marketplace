@@ -2,14 +2,16 @@ package auth
 
 import (
 	"context"
+	"fmt"
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/exception"
+	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
+	"github/nnniyaz/ardo/pkg/email"
 	"github/nnniyaz/ardo/pkg/logger"
 	linkService "github/nnniyaz/ardo/service/link"
-	mailService "github/nnniyaz/ardo/service/mail"
 	sessionService "github/nnniyaz/ardo/service/session"
 	userService "github/nnniyaz/ardo/service/user"
 	"go.uber.org/zap"
@@ -17,7 +19,7 @@ import (
 )
 
 const maxSessionsCount = 5
-const defaultUserType = "client"
+const defaultUserType = valueobject.UserTypeClient
 
 var (
 	ErrEmailNotFound      = core.NewI18NError(core.EINVALID, core.TXT_EMAIL_DOESNT_EXIST)
@@ -40,11 +42,12 @@ type authService struct {
 	linkService    linkService.ActivationLinkService
 	sessionService sessionService.SessionService
 	logger         logger.Logger
-	config         *config.ServiceConfig
+	config         *config.Config
+	emailService   email.Email
 }
 
-func NewAuthService(userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService, l logger.Logger, config *config.ServiceConfig) AuthService {
-	return &authService{linkService: linkService, userService: userService, sessionService: sessionService, logger: l, config: config}
+func NewAuthService(userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService, l logger.Logger, config *config.Config, emailService email.Email) AuthService {
+	return &authService{linkService: linkService, userService: userService, sessionService: sessionService, logger: l, config: config, emailService: emailService}
 }
 
 func (a *authService) Login(ctx context.Context, email, password, userAgent string) (base.UUID, error) {
@@ -117,11 +120,14 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 			}
 			foundActivationLink.UpdateLink()
 			link := a.config.GetApiUri() + "/api/auth/confirm/" + foundActivationLink.GetLink().String()
-			return mailService.SendEmail(email, link, a.config)
+
+			subject := "Confirm your email"
+			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">%s</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link, link)
+			return a.emailService.SendMail([]string{email}, subject, htmlBody)
 		}
 	}
 
-	newUser, err := a.userService.Create(ctx, firstName, lastName, email, password, defaultUserType)
+	newUser, err := a.userService.Create(ctx, firstName, lastName, email, password, defaultUserType.String())
 	if err != nil {
 		return err
 	}
@@ -132,7 +138,9 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 	}
 
 	link := a.config.GetApiUri() + "/api/auth/confirm/" + newActivationLink.GetLink().String()
-	return mailService.SendEmail(newUser.GetEmail().String(), link, a.config)
+	subject := "Confirm your email"
+	htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">%s</a></p><p>Thanks,<br/>The Ardo Team</p>", newUser.GetFirstName(), link, link)
+	return a.emailService.SendMail([]string{newUser.GetEmail().String()}, subject, htmlBody)
 }
 
 func (a *authService) Confirm(ctx context.Context, link string) error {
@@ -158,6 +166,5 @@ func (a *authService) UserCheck(ctx context.Context, key string, userAgent strin
 	if err = a.sessionService.UpdateLastActionAt(ctx, userSession.GetId().String()); err != nil {
 		return nil, err
 	}
-
 	return a.userService.GetById(ctx, userSession.GetUserId().String())
 }

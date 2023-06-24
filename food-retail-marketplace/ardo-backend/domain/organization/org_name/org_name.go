@@ -1,40 +1,36 @@
 package org_name
 
 import (
-	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/pkg/core"
+	"unicode/utf8"
+)
+
+const (
+	minOrgNameLength = 3
+	maxOrgNameLength = 50
 )
 
 var (
-	ErrEmptyMlString = core.NewI18NError(core.EINVALID, core.TXT_WRONG_MLSTRING_FORMAT)
+	ErrEmptyOrgName    = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_ORG_NAME)
+	ErrOrgNameTooShort = core.NewI18NError(core.EINVALID, core.TXT_ORG_NAME_TOO_SHORT)
+	ErrOrgNameTooLong  = core.NewI18NError(core.EINVALID, core.TXT_ORG_NAME_TOO_LONG)
 )
 
-type OrgName struct {
-	orgId base.UUID
-	name  core.MlString
-}
+type OrgName string
 
-func New(orgId base.UUID, name core.MlString) (*OrgName, error) {
-	if name.IsEmpty() {
-		return nil, ErrEmptyMlString
+func New(name string) (OrgName, error) {
+	if name == "" {
+		return "", ErrEmptyOrgName
 	}
-	return &OrgName{
-		orgId: orgId,
-		name:  name,
-	}, nil
+	if utf8.RuneCountInString(name) < minOrgNameLength {
+		return "", ErrOrgNameTooShort
+	}
+	if utf8.RuneCountInString(name) > maxOrgNameLength {
+		return "", ErrOrgNameTooLong
+	}
+	return OrgName(name), nil
 }
 
-func (o *OrgName) GetOrgId() base.UUID {
-	return o.orgId
-}
-
-func (o *OrgName) GetName() core.MlString {
-	return o.name
-}
-
-func UnmarshalOrgNameFromDatabase(orgId base.UUID, name core.MlString) (*OrgName, error) {
-	return &OrgName{
-		orgId: orgId,
-		name:  name,
-	}, nil
+func (o OrgName) String() string {
+	return string(o)
 }

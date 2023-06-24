@@ -7,6 +7,7 @@ import (
 	"github/nnniyaz/ardo/handler/http/auth"
 	"github/nnniyaz/ardo/handler/http/management"
 	middleware2 "github/nnniyaz/ardo/handler/http/middleware"
+	"github/nnniyaz/ardo/handler/http/user"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service"
 	"net/http"
@@ -16,12 +17,15 @@ type Handler struct {
 	Auth       *auth.HttpDelivery
 	Management *management.HttpDelivery
 	Middleware *middleware2.Middleware
+	User       *user.HttpDelivery
 }
 
 func NewHandler(s *service.Services, l logger.Logger, clientUri string) *Handler {
 	return &Handler{
 		Auth:       auth.NewHttpDelivery(s.Auth, l, clientUri),
 		Management: management.NewHttpDelivery(s.Management, l),
+		Middleware: middleware2.New(s.Auth, l),
+		User:       user.NewHttpDelivery(s.User, l),
 	}
 }
 
@@ -48,9 +52,8 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 
 	r.Use(h.Middleware.Trace)
 	r.Use(h.Middleware.RequestInfo)
-	r.Use(middleware.RequestID)
-	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
+	r.Use(middleware.RealIP)
 	r.Use(middleware.Recoverer)
 
 	r.Route("/api", func(r chi.Router) {
@@ -66,14 +69,23 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			})
 		})
 
-		r.Route("/users", func(r chi.Router) {
+		r.Route("/me", func(r chi.Router) {
 			r.Use(h.Middleware.UserAuth)
-			r.Get("/", h.Management.GetAllUsers)
-			r.Get("/{id}", h.Management.GetById)
-			r.Post("/", h.Management.AddUser)
-			r.Put("/{id}", h.Management.UpdateUserCredentials)
-			r.Put("/password/{id}", h.Management.UpdateUserPassword)
-			r.Delete("/{id}", h.Management.DeleteUser)
+			r.Get("/", h.User.GetCurrentUser)
+			r.Put("/", h.User.UpdateCurrentUserCredentials)
+			r.Put("/password", h.User.UpdateCurrentUserPassword)
+		})
+
+		r.Route("/management", func(r chi.Router) {
+			r.Use(h.Middleware.UserAuth)
+			r.Route("/users", func(r chi.Router) {
+				r.Get("/", h.Management.GetAllUsers)
+				r.Get("/{id}", h.Management.GetById)
+				r.Post("/", h.Management.AddUser)
+				r.Put("/{id}", h.Management.UpdateUserCredentials)
+				r.Put("/{id}/password", h.Management.UpdateUserPassword)
+				r.Delete("/{id}", h.Management.DeleteUser)
+			})
 		})
 	})
 	return r

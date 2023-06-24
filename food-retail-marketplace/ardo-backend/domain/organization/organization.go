@@ -2,6 +2,7 @@ package organization
 
 import (
 	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/organization/org_name"
 	"github/nnniyaz/ardo/domain/organization/valueobject"
 	"time"
 )
@@ -9,6 +10,7 @@ import (
 type Organization struct {
 	id         base.UUID
 	logo       string
+	name       org_name.OrgName
 	currency   valueobject.Currency
 	isDisabled bool
 	isDeleted  bool
@@ -43,6 +45,10 @@ func (o *Organization) GetLogo() string {
 	return o.logo
 }
 
+func (o *Organization) GetName() org_name.OrgName {
+	return o.name
+}
+
 func (o *Organization) GetCurrency() valueobject.Currency {
 	return o.currency
 }
@@ -63,15 +69,20 @@ func (o *Organization) GetUpdatedAt() time.Time {
 	return o.updatedAt
 }
 
-func UnmarshalOrganizationFromDatabase(orgId base.UUID, logo, currency string, isDisabled, isDeleted bool, createdAt, updatedAt time.Time) (*Organization, error) {
+func UnmarshalOrganizationFromDatabase(orgId base.UUID, logo, name string, currency string, isDisabled, isDeleted bool, createdAt, updatedAt time.Time) (*Organization, error) {
 	orgCurrency, err := valueobject.NewCurrency(currency)
 	if err != nil {
 		return nil, err
 	}
 
+	orgName, err := org_name.New(name)
+	if err != nil {
+		return nil, err
+	}
 	return &Organization{
 		id:         orgId,
 		logo:       logo,
+		name:       orgName,
 		currency:   orgCurrency,
 		isDisabled: isDisabled,
 		isDeleted:  isDeleted,

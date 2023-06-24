@@ -32,7 +32,7 @@ func NewSession(userID base.UUID, userAgent string) (*Session, error) {
 }
 
 func (s *Session) GetId() base.UUID {
-	return s.userID
+	return s.id
 }
 
 func (s *Session) GetUserId() base.UUID {

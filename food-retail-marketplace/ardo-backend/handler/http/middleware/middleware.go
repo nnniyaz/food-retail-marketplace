@@ -6,19 +6,17 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/pkg/web"
 	"github/nnniyaz/ardo/service/auth"
-	"go.mongodb.org/mongo-driver/mongo"
 	"net/http"
 	"strconv"
 )
 
 type Middleware struct {
-	client  mongo.Client
 	service auth.AuthService
 	logger  logger.Logger
 }
 
-func New(c mongo.Client, s auth.AuthService, l logger.Logger) *Middleware {
-	return &Middleware{client: c, service: s, logger: l}
+func New(s auth.AuthService, l logger.Logger) *Middleware {
+	return &Middleware{service: s, logger: l}
 }
 
 func (m *Middleware) RequestInfo(next http.Handler) http.Handler {

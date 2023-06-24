@@ -48,6 +48,9 @@ func (m *mongoSession) ToAggregate() (*session.Session, error) {
 func (r *RepoSession) FindManyByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error) {
 	cur, err := r.Coll().Find(ctx, bson.M{"userID": userId})
 	if err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, err
 	}
 	defer cur.Close(ctx)

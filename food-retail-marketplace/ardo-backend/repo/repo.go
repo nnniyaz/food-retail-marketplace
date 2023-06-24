@@ -7,7 +7,6 @@ import (
 	"github/nnniyaz/ardo/domain/organization"
 	"github/nnniyaz/ardo/domain/organization/org_contact"
 	"github/nnniyaz/ardo/domain/organization/org_desc"
-	"github/nnniyaz/ardo/domain/organization/org_name"
 	"github/nnniyaz/ardo/domain/product"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
@@ -17,7 +16,6 @@ import (
 	organizationMongo "github/nnniyaz/ardo/repo/mongo/organization"
 	organizationContactMongo "github/nnniyaz/ardo/repo/mongo/organization/org_contact"
 	organizationDescMongo "github/nnniyaz/ardo/repo/mongo/organization/org_desc"
-	organizationNameMongo "github/nnniyaz/ardo/repo/mongo/organization/org_name"
 	productMongo "github/nnniyaz/ardo/repo/mongo/product"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
@@ -64,13 +62,6 @@ type Organization interface {
 	EnableOrganization(ctx context.Context, id base.UUID) error
 }
 
-type OrganizationName interface {
-	FindOne(ctx context.Context, orgId base.UUID) (*org_name.OrgName, error)
-	Create(ctx context.Context, o *org_name.OrgName) error
-	Update(ctx context.Context, o *org_name.OrgName) error
-	Delete(ctx context.Context, orgId base.UUID) error
-}
-
 type OrganizationDesc interface {
 	FindOne(ctx context.Context, orgId base.UUID) (*org_desc.OrgDesc, error)
 	Create(ctx context.Context, o *org_desc.OrgDesc) error
@@ -109,7 +100,6 @@ type Repository struct {
 	RepoSession              Session
 	RepoActivationLink       ActivationLink
 	RepoOrganization         Organization
-	RepoOrganizationName     OrganizationName
 	RepoOrganizationDesc     OrganizationDesc
 	RepoOrganizationContacts OrganizationContacts
 	RepoUserOrganization     UserOrganization
@@ -122,7 +112,6 @@ func NewRepository(client *mongo.Client) *Repository {
 		RepoSession:              sessionMongo.NewRepoSession(client),
 		RepoActivationLink:       activationLinkMongo.NewRepoActivationLink(client),
 		RepoOrganization:         organizationMongo.NewRepoOrganization(client),
-		RepoOrganizationName:     organizationNameMongo.NewRepoOrgName(client),
 		RepoOrganizationDesc:     organizationDescMongo.NewRepoOrgDesc(client),
 		RepoOrganizationContacts: organizationContactMongo.NewRepoOrgContact(client),
 		RepoUserOrganization:     userOrganizationMongo.NewRepoOrganization(client),
