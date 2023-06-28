@@ -5,6 +5,7 @@ import (
 	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/pkg/core"
+	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
 )
 
@@ -25,10 +26,11 @@ type UserService interface {
 
 type userService struct {
 	userRepo repo.User
+	logger   logger.Logger
 }
 
-func NewUserService(repo repo.User) UserService {
-	return &userService{userRepo: repo}
+func NewUserService(repo repo.User, l logger.Logger) UserService {
+	return &userService{userRepo: repo, logger: l}
 }
 
 func (u *userService) GetAll(ctx context.Context) ([]*user.User, error) {
@@ -36,6 +38,12 @@ func (u *userService) GetAll(ctx context.Context) ([]*user.User, error) {
 }
 
 func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
+	if offset < 0 {
+		offset = 0
+	}
+	if limit < 0 {
+		limit = 0
+	}
 	return u.userRepo.FindByFilters(ctx, offset, limit, isDeleted)
 }
 
@@ -72,7 +80,7 @@ func (u *userService) UpdateCredentials(ctx context.Context, userId, firstName, 
 	if err != nil {
 		return err
 	}
-	return u.userRepo.Update(ctx, foundUser)
+	return u.userRepo.UpdateUserCredentials(ctx, foundUser.GetId(), foundUser.GetFirstName(), foundUser.GetLastName(), foundUser.GetEmail())
 }
 
 func (u *userService) UpdatePassword(ctx context.Context, id, password string) error {
@@ -84,7 +92,7 @@ func (u *userService) UpdatePassword(ctx context.Context, id, password string) e
 	if err != nil {
 		return err
 	}
-	return u.userRepo.Update(ctx, foundUser)
+	return u.userRepo.UpdateUserPassword(ctx, foundUser.GetId(), foundUser.GetPassword())
 }
 
 func (u *userService) Delete(ctx context.Context, id string) error {

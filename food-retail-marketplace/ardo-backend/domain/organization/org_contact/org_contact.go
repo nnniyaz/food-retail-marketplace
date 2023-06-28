@@ -10,13 +10,12 @@ var (
 )
 
 type OrgContact struct {
-	orgId   base.UUID
 	phone   base.Phone
 	email   base.Email
 	address string
 }
 
-func New(orgId base.UUID, phone, email, address string) (*OrgContact, error) {
+func New(phone, email, address string) (*OrgContact, error) {
 	orgEmail, err := base.NewEmail(email)
 	if err != nil {
 		return nil, err
@@ -31,15 +30,10 @@ func New(orgId base.UUID, phone, email, address string) (*OrgContact, error) {
 		return nil, ErrEmptyAddress
 	}
 	return &OrgContact{
-		orgId:   orgId,
 		phone:   orgPhone,
 		email:   orgEmail,
 		address: address,
 	}, nil
-}
-
-func (o *OrgContact) GetOrgId() base.UUID {
-	return o.orgId
 }
 
 func (o *OrgContact) GetPhone() base.Phone {
@@ -54,7 +48,7 @@ func (o *OrgContact) GetAddress() string {
 	return o.address
 }
 
-func UnmarshalOrgContactFromDatabase(orgId base.UUID, phone, email, address string) (*OrgContact, error) {
+func UnmarshalOrgContactFromDatabase(phone, email, address string) (*OrgContact, error) {
 	orgEmail, err := base.NewEmail(email)
 	if err != nil {
 		return nil, err
@@ -69,7 +63,6 @@ func UnmarshalOrgContactFromDatabase(orgId base.UUID, phone, email, address stri
 		return nil, ErrEmptyAddress
 	}
 	return &OrgContact{
-		orgId:   orgId,
 		phone:   orgPhone,
 		email:   orgEmail,
 		address: address,

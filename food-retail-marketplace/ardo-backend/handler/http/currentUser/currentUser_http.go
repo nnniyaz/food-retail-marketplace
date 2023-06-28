@@ -1,11 +1,12 @@
-package user
+package currentUser
 
 import (
+	"encoding/json"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/handler/http/response"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
-	service "github/nnniyaz/ardo/service/user"
+	currentUserService "github/nnniyaz/ardo/service/currentUser"
 	"net/http"
 	"time"
 )
@@ -15,11 +16,11 @@ var (
 )
 
 type HttpDelivery struct {
-	service service.UserService
+	service currentUserService.CurrentUserService
 	logger  logger.Logger
 }
 
-func NewHttpDelivery(s service.UserService, l logger.Logger) *HttpDelivery {
+func NewHttpDelivery(s currentUserService.CurrentUserService, l logger.Logger) *HttpDelivery {
 	return &HttpDelivery{service: s, logger: l}
 }
 
@@ -27,12 +28,45 @@ func NewHttpDelivery(s service.UserService, l logger.Logger) *HttpDelivery {
 // Commands
 // -----------------------------------------------------------------------------
 
-func (hd *HttpDelivery) UpdateCurrentUserCredentials(w http.ResponseWriter, r *http.Request) {
+type UpdateCurrentUserCredentialsIn struct {
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+}
 
+func (hd *HttpDelivery) UpdateCurrentUserCredentials(w http.ResponseWriter, r *http.Request) {
+	var in UpdateCurrentUserCredentialsIn
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	u := r.Context().Value("user").(user.User)
+	err := hd.service.UpdateCredentials(r.Context(), u.GetId().String(), in.FirstName, in.LastName, in.Email)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateCurrentUserPasswordIn struct {
+	OldPassword string `json:"oldPassword"`
+	NewPassword string `json:"newPassword"`
 }
 
 func (hd *HttpDelivery) UpdateCurrentUserPassword(w http.ResponseWriter, r *http.Request) {
-
+	var in UpdateCurrentUserPasswordIn
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	u := r.Context().Value("user").(user.User)
+	err := hd.service.ChangePassword(r.Context(), u.GetId().String(), in.OldPassword, in.NewPassword)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
 }
 
 // -----------------------------------------------------------------------------

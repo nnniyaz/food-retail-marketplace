@@ -6,7 +6,6 @@ import (
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/user"
-	"github/nnniyaz/ardo/domain/user/exception"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/email"
@@ -53,6 +52,10 @@ func NewAuthService(userService userService.UserService, sessionService sessionS
 func (a *authService) Login(ctx context.Context, email, password, userAgent string) (base.UUID, error) {
 	u, err := a.userService.GetByEmail(ctx, email)
 	if err != nil {
+		return base.Nil, ErrEmailNotFound
+	}
+
+	if u == nil || u.GetIsDeleted() {
 		return base.Nil, ErrEmailNotFound
 	}
 
@@ -149,11 +152,11 @@ func (a *authService) Confirm(ctx context.Context, link string) error {
 
 func (a *authService) UserCheck(ctx context.Context, key string, userAgent string) (*user.User, error) {
 	userSession, err := a.sessionService.GetOneBySession(ctx, key)
-	if err != nil {
-		if err != exception.ErrUserSessionNotFound {
-			return nil, err
-		}
+	if userSession == nil {
 		return nil, ErrUnauthorized
+	}
+	if err != nil {
+		return nil, err
 	}
 
 	if userSession.GetUserAgent().String() != userAgent {
@@ -162,7 +165,6 @@ func (a *authService) UserCheck(ctx context.Context, key string, userAgent strin
 		}
 		return nil, ErrUnauthorized
 	}
-
 	if err = a.sessionService.UpdateLastActionAt(ctx, userSession.GetId().String()); err != nil {
 		return nil, err
 	}

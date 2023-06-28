@@ -24,7 +24,7 @@ func NewHttpDelivery(s service.AuthService, l logger.Logger, clientUri string) *
 // Commands
 // -----------------------------------------------------------------------------
 
-type LoginRequest struct {
+type LoginIn struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
 }
@@ -32,7 +32,7 @@ type LoginRequest struct {
 func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	requestInfo := r.Context().Value("requestInfo").(web.RequestInfo)
 
-	var in LoginRequest
+	var in LoginIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewBad(hd.logger, w, r, err)
 		return

@@ -2,12 +2,18 @@ package middleware
 
 import (
 	"context"
+	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/handler/http/response"
+	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/pkg/web"
 	"github/nnniyaz/ardo/service/auth"
 	"net/http"
 	"strconv"
+)
+
+var (
+	ErrDoNotHaveAnAccess = core.NewI18NError(core.EFORBIDDEN, core.TXT_DO_NOT_HAVE_AN_ACCESS)
 )
 
 type Middleware struct {
@@ -53,7 +59,7 @@ func (m *Middleware) PaginationParams(next http.Handler) http.Handler {
 			offset = 0
 		}
 
-		isDeleted, err := getParamBool(r, "isDeleted")
+		isDeleted, err := getParamBool(r, "is_deleted")
 		if err != nil {
 			isDeleted = false
 		}
@@ -62,7 +68,7 @@ func (m *Middleware) PaginationParams(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), "limit", limit)
 		ctx = context.WithValue(ctx, "offset", offset)
-		ctx = context.WithValue(ctx, "isDeleted", isDeleted)
+		ctx = context.WithValue(ctx, "is_deleted", isDeleted)
 		ctx = context.WithValue(ctx, "search", search)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
@@ -71,7 +77,7 @@ func (m *Middleware) PaginationParams(next http.Handler) http.Handler {
 func (m *Middleware) UserIdParam(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		id := getParam(r, "user_id")
-		ctx := context.WithValue(r.Context(), "userId", id)
+		ctx := context.WithValue(r.Context(), "user_id", id)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -93,6 +99,33 @@ func (m *Middleware) UserAuth(next http.Handler) http.Handler {
 		u, err := m.service.UserCheck(r.Context(), session.Value, requestInfo.UserAgent.String)
 		if err != nil {
 			response.NewError(m.logger, w, r, err)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), "sessionKey", session.Value)
+		ctx = context.WithValue(ctx, "user", *u)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := r.Cookie("session")
+		if err != nil {
+			response.NewUnauthorized(m.logger, w, r)
+			return
+		}
+
+		requestInfo := r.Context().Value("requestInfo").(web.RequestInfo)
+
+		u, err := m.service.UserCheck(r.Context(), session.Value, requestInfo.UserAgent.String)
+		if err != nil {
+			response.NewError(m.logger, w, r, err)
+			return
+		}
+
+		if u.GetUserType() != valueobject.UserTypeStaff {
+			response.NewError(m.logger, w, r, ErrDoNotHaveAnAccess)
 			return
 		}
 

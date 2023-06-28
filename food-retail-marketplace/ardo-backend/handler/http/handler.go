@@ -5,9 +5,9 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github/nnniyaz/ardo/handler/http/auth"
+	"github/nnniyaz/ardo/handler/http/currentUser"
 	"github/nnniyaz/ardo/handler/http/management"
 	middleware2 "github/nnniyaz/ardo/handler/http/middleware"
-	"github/nnniyaz/ardo/handler/http/user"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service"
 	"net/http"
@@ -17,7 +17,7 @@ type Handler struct {
 	Auth       *auth.HttpDelivery
 	Management *management.HttpDelivery
 	Middleware *middleware2.Middleware
-	User       *user.HttpDelivery
+	User       *currentUser.HttpDelivery
 }
 
 func NewHandler(s *service.Services, l logger.Logger, clientUri string) *Handler {
@@ -25,7 +25,7 @@ func NewHandler(s *service.Services, l logger.Logger, clientUri string) *Handler
 		Auth:       auth.NewHttpDelivery(s.Auth, l, clientUri),
 		Management: management.NewHttpDelivery(s.Management, l),
 		Middleware: middleware2.New(s.Auth, l),
-		User:       user.NewHttpDelivery(s.User, l),
+		User:       currentUser.NewHttpDelivery(s.CurrentUser, l),
 	}
 }
 
@@ -77,14 +77,14 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 		})
 
 		r.Route("/management", func(r chi.Router) {
-			r.Use(h.Middleware.UserAuth)
+			r.Use(h.Middleware.StaffAuth)
 			r.Route("/users", func(r chi.Router) {
-				r.Get("/", h.Management.GetAllUsers)
-				r.Get("/{id}", h.Management.GetById)
+				r.With(h.Middleware.PaginationParams).Get("/", h.Management.GetAllUsers)
+				r.Get("/{user_id}", h.Management.GetById)
 				r.Post("/", h.Management.AddUser)
-				r.Put("/{id}", h.Management.UpdateUserCredentials)
-				r.Put("/{id}/password", h.Management.UpdateUserPassword)
-				r.Delete("/{id}", h.Management.DeleteUser)
+				r.Put("/{user_id}", h.Management.UpdateUserCredentials)
+				r.Put("/{user_id}/password", h.Management.UpdateUserPassword)
+				r.Delete("/{user_id}", h.Management.DeleteUser)
 			})
 		})
 	})

@@ -3,6 +3,7 @@ package management
 import (
 	"context"
 	"github/nnniyaz/ardo/domain/user"
+	"github/nnniyaz/ardo/pkg/logger"
 	userService "github/nnniyaz/ardo/service/user"
 )
 
@@ -18,10 +19,11 @@ type ManagementService interface {
 
 type managementService struct {
 	userService userService.UserService
+	logger      logger.Logger
 }
 
-func NewManagementService(userService userService.UserService) ManagementService {
-	return &managementService{userService: userService}
+func NewManagementService(userService userService.UserService, l logger.Logger) ManagementService {
+	return &managementService{userService: userService, logger: l}
 }
 
 func (m *managementService) GetAllUsers(ctx context.Context) ([]*user.User, error) {

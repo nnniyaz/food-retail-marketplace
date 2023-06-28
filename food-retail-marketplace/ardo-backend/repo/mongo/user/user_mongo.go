@@ -93,9 +93,7 @@ func (r *RepoUser) Find(ctx context.Context) ([]*user.User, error) {
 }
 
 func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
-	filter := bson.M{"isDeleted": isDeleted}
-
-	cur, err := r.Coll().Find(ctx, filter, options.Find().SetSkip(offset).SetLimit(limit))
+	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
 	if err != nil {
 		return nil, err
 	}
@@ -141,11 +139,28 @@ func (r *RepoUser) Create(ctx context.Context, user *user.User) error {
 	return err
 }
 
-func (r *RepoUser) Update(ctx context.Context, user *user.User) error {
+func (r *RepoUser) UpdateUserCredentials(ctx context.Context, userId base.UUID, firstName valueobject.FirstName, lastName valueobject.LastName, email base.Email) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
-		"_id": user.GetId(),
+		"_id": userId,
 	}, bson.M{
-		"$set": newFromUser(user),
+		"$set": bson.M{
+			"firstName": firstName.String(),
+			"lastName":  lastName.String(),
+			"email":     email.String(),
+			"updatedAt": time.Now(),
+		},
+	})
+	return err
+}
+
+func (r *RepoUser) UpdateUserPassword(ctx context.Context, userId base.UUID, password valueobject.Password) error {
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": userId,
+	}, bson.M{
+		"$set": bson.M{
+			"password":  newFromPassword(password),
+			"updatedAt": time.Now(),
+		},
 	})
 	return err
 }

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/base"
 	"github/nnniyaz/ardo/domain/session"
+	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
 )
 
@@ -11,6 +12,7 @@ type SessionService interface {
 	Create(ctx context.Context, userId, userAgent string) (*session.Session, error)
 	GetAllByUserId(ctx context.Context, userId string) ([]*session.Session, error)
 	GetOneBySession(ctx context.Context, session string) (*session.Session, error)
+	DeleteAllSessionsByUserId(ctx context.Context, userId string) error
 	DeleteOneBySessionId(ctx context.Context, id string) error
 	DeleteOneByToken(ctx context.Context, token string) error
 	UpdateLastActionAt(ctx context.Context, session string) error
@@ -18,10 +20,11 @@ type SessionService interface {
 
 type sessionService struct {
 	sessionRepo repo.Session
+	logger      logger.Logger
 }
 
-func NewSessionService(repo repo.Session) SessionService {
-	return &sessionService{sessionRepo: repo}
+func NewSessionService(repo repo.Session, l logger.Logger) SessionService {
+	return &sessionService{sessionRepo: repo, logger: l}
 }
 
 func (s *sessionService) Create(ctx context.Context, userId, userAgent string) (*session.Session, error) {
@@ -57,6 +60,14 @@ func (s *sessionService) GetOneBySession(ctx context.Context, session string) (*
 		return nil, err
 	}
 	return s.sessionRepo.FindOneBySession(ctx, convertedToken)
+}
+
+func (s *sessionService) DeleteAllSessionsByUserId(ctx context.Context, userId string) error {
+	convertedUserId, err := base.UUIDFromString(userId)
+	if err != nil {
+		return err
+	}
+	return s.sessionRepo.DeleteAllByUserId(ctx, convertedUserId)
 }
 
 func (s *sessionService) DeleteOneBySessionId(ctx context.Context, sessionId string) error {

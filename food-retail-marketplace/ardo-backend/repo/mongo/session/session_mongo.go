@@ -73,6 +73,9 @@ func (r *RepoSession) FindManyByUserId(ctx context.Context, userId base.UUID) ([
 func (r *RepoSession) FindOneBySession(ctx context.Context, session base.UUID) (*session.Session, error) {
 	var s mongoSession
 	if err := r.Coll().FindOne(ctx, bson.M{"session": session}).Decode(&s); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, nil
+		}
 		return nil, err
 	}
 	ag, err := s.ToAggregate()
@@ -95,6 +98,11 @@ func (r *RepoSession) UpdateLastActionAt(ctx context.Context, sessionId base.UUI
 			"lastActionAt": time.Now(),
 		},
 	})
+	return err
+}
+
+func (r *RepoSession) DeleteAllByUserId(ctx context.Context, userId base.UUID) error {
+	_, err := r.Coll().DeleteMany(ctx, bson.M{"userID": userId})
 	return err
 }
 

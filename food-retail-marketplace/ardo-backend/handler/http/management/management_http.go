@@ -2,10 +2,13 @@ package management
 
 import (
 	"encoding/json"
+	"github.com/go-chi/chi/v5"
+	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/handler/http/response"
 	"github/nnniyaz/ardo/pkg/logger"
 	service "github/nnniyaz/ardo/service/management"
 	"net/http"
+	"time"
 )
 
 type HttpDelivery struct {
@@ -21,6 +24,36 @@ func NewHttpDelivery(s service.ManagementService, l logger.Logger) *HttpDelivery
 // Queries
 // -----------------------------------------------------------------------------
 
+type User struct {
+	Id        string    `json:"id"`
+	Email     string    `json:"email"`
+	FirstName string    `json:"firstName"`
+	LastName  string    `json:"lastName"`
+	UserType  string    `json:"userType"`
+	CreatedAt time.Time `json:"createdAt"`
+	UpdatedAt time.Time `json:"updatedAt"`
+}
+
+func NewUser(u *user.User) User {
+	return User{
+		Id:        u.GetId().String(),
+		Email:     u.GetEmail().String(),
+		FirstName: u.GetFirstName().String(),
+		LastName:  u.GetLastName().String(),
+		UserType:  u.GetUserType().String(),
+		CreatedAt: u.GetCreatedAt(),
+		UpdatedAt: u.GetUpdatedAt(),
+	}
+}
+
+func NewUsers(users []*user.User) []User {
+	var us []User
+	for _, u := range users {
+		us = append(us, NewUser(u))
+	}
+	return us
+}
+
 func (hd *HttpDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -31,25 +64,25 @@ func (hd *HttpDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	response.NewSuccess(hd.logger, w, r, users)
+	response.NewSuccess(hd.logger, w, r, NewUsers(users))
 }
 
 func (hd *HttpDelivery) GetById(w http.ResponseWriter, r *http.Request) {
-	userId := r.Context().Value("user_id").(string)
-	user, err := hd.service.GetUserById(r.Context(), userId)
+	userId := chi.URLParam(r, "user_id")
+	u, err := hd.service.GetUserById(r.Context(), userId)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
 
-	response.NewSuccess(hd.logger, w, r, user)
+	response.NewSuccess(hd.logger, w, r, NewUser(u))
 }
 
 // -----------------------------------------------------------------------------
 // Commands
 // -----------------------------------------------------------------------------
 
-type AddUserRequest struct {
+type AddUserIn struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
@@ -58,7 +91,7 @@ type AddUserRequest struct {
 }
 
 func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
-	in := AddUserRequest{}
+	in := AddUserIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
@@ -72,15 +105,15 @@ func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-type UpdateUserCredentialsRequest struct {
+type UpdateUserCredentialsIn struct {
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
 }
 
 func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Request) {
-	userId := r.Context().Value("user_id").(string)
-	in := UpdateUserCredentialsRequest{}
+	userId := chi.URLParam(r, "user_id")
+	in := UpdateUserCredentialsIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewBad(hd.logger, w, r, err)
 		return
@@ -94,13 +127,13 @@ func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Req
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-type UpdateUserPasswordRequest struct {
+type UpdateUserPasswordIn struct {
 	Password string `json:"password"`
 }
 
 func (hd *HttpDelivery) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
-	userId := r.Context().Value("user_id").(string)
-	in := UpdateUserPasswordRequest{}
+	userId := chi.URLParam(r, "user_id")
+	in := UpdateUserPasswordIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewBad(hd.logger, w, r, err)
 		return
@@ -115,7 +148,7 @@ func (hd *HttpDelivery) UpdateUserPassword(w http.ResponseWriter, r *http.Reques
 }
 
 func (hd *HttpDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
-	userId := r.Context().Value("user_id").(string)
+	userId := chi.URLParam(r, "user_id")
 	if err := hd.service.DeleteUser(r.Context(), userId); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

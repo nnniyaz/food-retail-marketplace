@@ -4,6 +4,7 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
 )
 
@@ -16,10 +17,11 @@ type ActivationLinkService interface {
 
 type activationLinkService struct {
 	linkRepo repo.ActivationLink
+	logger   logger.Logger
 }
 
-func NewActivationLinkService(repo repo.ActivationLink) ActivationLinkService {
-	return &activationLinkService{linkRepo: repo}
+func NewActivationLinkService(repo repo.ActivationLink, l logger.Logger) ActivationLinkService {
+	return &activationLinkService{linkRepo: repo, logger: l}
 }
 
 func (a *activationLinkService) GetByUserId(ctx context.Context, userId string) (*activationLink.ActivationLink, error) {
