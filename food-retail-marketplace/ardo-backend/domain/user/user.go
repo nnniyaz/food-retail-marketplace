@@ -1,7 +1,8 @@
 package user
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/email"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"time"
@@ -12,10 +13,10 @@ var (
 )
 
 type User struct {
-	id        base.UUID
+	id        uuid.UUID
 	firstName valueobject.FirstName
 	lastName  valueobject.LastName
-	email     base.Email
+	email     email.Email
 	password  valueobject.Password
 	userType  valueobject.UserType
 	isDeleted bool
@@ -23,8 +24,8 @@ type User struct {
 	updatedAt time.Time
 }
 
-func NewUser(firstName, lastName, email, password, userType string) (*User, error) {
-	userId := base.NewUUID()
+func NewUser(firstName, lastName, mail, password, userType string) (*User, error) {
+	userId := uuid.NewUUID()
 
 	userFirstName, err := valueobject.NewFirstName(firstName)
 	if err != nil {
@@ -36,7 +37,7 @@ func NewUser(firstName, lastName, email, password, userType string) (*User, erro
 		return nil, err
 	}
 
-	userEmail, err := base.NewEmail(email)
+	userEmail, err := email.NewEmail(mail)
 	if err != nil {
 		return nil, err
 	}
@@ -64,7 +65,7 @@ func NewUser(firstName, lastName, email, password, userType string) (*User, erro
 	}, nil
 }
 
-func (u *User) GetId() base.UUID {
+func (u *User) GetId() uuid.UUID {
 	return u.id
 }
 
@@ -76,7 +77,7 @@ func (u *User) GetLastName() valueobject.LastName {
 	return u.lastName
 }
 
-func (u *User) GetEmail() base.Email {
+func (u *User) GetEmail() email.Email {
 	return u.email
 }
 
@@ -116,7 +117,7 @@ func (u *User) ChangePassword(password string) error {
 	return nil
 }
 
-func (u *User) UpdateCredentials(firstName, lastName, email string) error {
+func (u *User) UpdateCredentials(firstName, lastName, mail string) error {
 	userFirstName, err := valueobject.NewFirstName(firstName)
 	if err != nil {
 		return err
@@ -125,7 +126,7 @@ func (u *User) UpdateCredentials(firstName, lastName, email string) error {
 	if err != nil {
 		return err
 	}
-	userEmail, err := base.NewEmail(email)
+	userEmail, err := email.NewEmail(mail)
 	if err != nil {
 		return err
 	}
@@ -135,12 +136,12 @@ func (u *User) UpdateCredentials(firstName, lastName, email string) error {
 	return nil
 }
 
-func UnmarshalUserFromDatabase(id base.UUID, firstName, lastName, email, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
+func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
 	return &User{
 		id:        id,
 		firstName: valueobject.FirstName(firstName),
 		lastName:  valueobject.LastName(lastName),
-		email:     base.Email(email),
+		email:     email.Email(mail),
 		password:  password,
 		userType:  valueobject.UserType(userType),
 		isDeleted: isDeleted,

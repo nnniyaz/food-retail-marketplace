@@ -1,7 +1,7 @@
 package product_name
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/pkg/core"
 )
 
@@ -10,18 +10,18 @@ var (
 )
 
 type ProductName struct {
-	productId base.UUID
+	productId uuid.UUID
 	name      core.MlString
 }
 
-func NewProductName(productId base.UUID, name core.MlString) (*ProductName, error) {
+func NewProductName(productId uuid.UUID, name core.MlString) (*ProductName, error) {
 	if name.IsEmpty() {
 		return nil, ErrEmptyMlString
 	}
 	return &ProductName{productId: productId, name: name}, nil
 }
 
-func (p *ProductName) GetProductId() base.UUID {
+func (p *ProductName) GetProductId() uuid.UUID {
 	return p.productId
 }
 
@@ -29,7 +29,7 @@ func (p *ProductName) GetName() core.MlString {
 	return p.name
 }
 
-func UnmarshalProductNameFromDatabase(productId base.UUID, name core.MlString) (*ProductName, error) {
+func UnmarshalProductNameFromDatabase(productId uuid.UUID, name core.MlString) (*ProductName, error) {
 	if name.IsEmpty() {
 		return nil, ErrEmptyMlString
 	}

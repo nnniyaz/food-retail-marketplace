@@ -1,7 +1,7 @@
 package category_name
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/pkg/core"
 )
 
@@ -10,11 +10,11 @@ var (
 )
 
 type CategoryName struct {
-	categoryId base.UUID
+	categoryId uuid.UUID
 	name       core.MlString
 }
 
-func NewCategoryName(categoryId base.UUID, name core.MlString) (*CategoryName, error) {
+func NewCategoryName(categoryId uuid.UUID, name core.MlString) (*CategoryName, error) {
 	if name.IsEmpty() {
 		return nil, ErrEmptyMlString
 	}
@@ -24,7 +24,7 @@ func NewCategoryName(categoryId base.UUID, name core.MlString) (*CategoryName, e
 	}, nil
 }
 
-func (c *CategoryName) GetCategoryId() base.UUID {
+func (c *CategoryName) GetCategoryId() uuid.UUID {
 	return c.categoryId
 }
 
@@ -32,7 +32,7 @@ func (c *CategoryName) GetName() core.MlString {
 	return c.name
 }
 
-func UnmarshalCategoryNameFromDatabase(categoryId base.UUID, name core.MlString) (*CategoryName, error) {
+func UnmarshalCategoryNameFromDatabase(categoryId uuid.UUID, name core.MlString) (*CategoryName, error) {
 	if name.IsEmpty() {
 		return nil, ErrEmptyMlString
 	}

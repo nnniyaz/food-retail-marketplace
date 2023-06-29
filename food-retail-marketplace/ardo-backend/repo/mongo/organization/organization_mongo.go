@@ -2,15 +2,18 @@ package organization
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/organization"
-	"github/nnniyaz/ardo/domain/organization/org_contact"
-	"github/nnniyaz/ardo/domain/organization/org_desc"
-	"github/nnniyaz/ardo/domain/organization/org_name"
 	"github/nnniyaz/ardo/domain/organization/valueobject"
+	"github/nnniyaz/ardo/pkg/core"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
+)
+
+var (
+	ErrOrganizationNotFound = core.NewI18NError(core.EINVALID, core.TXT_ORG_NOT_FOUND)
 )
 
 type RepoOrganization struct {
@@ -25,40 +28,64 @@ func (r *RepoOrganization) Coll() *mongo.Collection {
 	return r.client.Database("main").Collection("organizations")
 }
 
+type mongoContacts struct {
+	Phone   string `bson:"phone"`
+	Email   string `bson:"email"`
+	Address string `bson:"address"`
+}
+
+func newFromContacts(c valueobject.OrgContact) mongoContacts {
+	return mongoContacts{
+		Phone:   c.GetPhone().String(),
+		Email:   c.GetEmail().String(),
+		Address: c.GetAddress(),
+	}
+}
+
+func (m *mongoContacts) ToAggregate() (valueobject.OrgContact, error) {
+	contact, err := valueobject.UnmarshalOrgContactFromDatabase(m.Phone, m.Email, m.Address)
+	if err != nil {
+		return valueobject.OrgContact{}, err
+	}
+	return contact, nil
+}
+
 type mongoOrganization struct {
-	id         base.UUID              `bson:"_id"`
-	logo       string                 `bson:"logo"`
-	name       string                 `bson:"name"`
-	desc       org_desc.OrgDesc       `bson:"desc"`
-	contacts   org_contact.OrgContact `bson:"contacts"`
-	currency   string                 `bson:"currency"`
-	isDisabled bool                   `bson:"isDisabled"`
-	isDeleted  bool                   `bson:"isDeleted"`
-	createdAt  time.Time              `bson:"createdAt"`
-	updatedAt  time.Time              `bson:"updatedAt"`
+	Id        uuid.UUID           `bson:"_id"`
+	Logo      string              `bson:"logo"`
+	Name      string              `bson:"name"`
+	Desc      valueobject.OrgDesc `bson:"desc"`
+	Contacts  mongoContacts       `bson:"contacts"`
+	Currency  string              `bson:"currency"`
+	IsDeleted bool                `bson:"isDeleted"`
+	CreatedAt time.Time           `bson:"createdAt"`
+	UpdatedAt time.Time           `bson:"updatedAt"`
 }
 
 func newFromOrganization(o *organization.Organization) *mongoOrganization {
 	return &mongoOrganization{
-		id:         o.GetId(),
-		logo:       o.GetLogo(),
-		name:       o.GetName().String(),
-		desc:       o.GetDesc(),
-		contacts:   o.GetContacts(),
-		currency:   o.GetCurrency().String(),
-		isDisabled: o.IsDisabled(),
-		isDeleted:  o.IsDeleted(),
-		createdAt:  o.GetCreatedAt(),
-		updatedAt:  o.GetUpdatedAt(),
+		Id:        o.GetId(),
+		Logo:      o.GetLogo(),
+		Name:      o.GetName().String(),
+		Desc:      o.GetDesc(),
+		Contacts:  newFromContacts(o.GetContacts()),
+		Currency:  o.GetCurrency().String(),
+		IsDeleted: o.IsDeleted(),
+		CreatedAt: o.GetCreatedAt(),
+		UpdatedAt: o.GetUpdatedAt(),
 	}
 }
 
 func (m *mongoOrganization) ToAggregate() (*organization.Organization, error) {
-	return organization.UnmarshalOrganizationFromDatabase(m.id, m.logo, m.name, m.currency, m.desc, m.contacts, m.isDisabled, m.isDeleted, m.createdAt, m.updatedAt)
+	contacts, err := valueobject.NewOrgContact(m.Contacts.Phone, m.Contacts.Email, m.Contacts.Address)
+	if err != nil {
+		return nil, err
+	}
+	return organization.UnmarshalOrganizationFromDatabase(m.Id, m.Logo, m.Name, m.Currency, m.Desc, contacts, m.IsDeleted, m.CreatedAt, m.UpdatedAt)
 }
 
-func (r *RepoOrganization) Find(ctx context.Context) ([]*organization.Organization, error) {
-	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": false})
+func (r *RepoOrganization) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*organization.Organization, error) {
+	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
 	if err != nil {
 		return nil, err
 	}
@@ -79,9 +106,12 @@ func (r *RepoOrganization) Find(ctx context.Context) ([]*organization.Organizati
 	return organizations, nil
 }
 
-func (r *RepoOrganization) FindById(ctx context.Context, id base.UUID) (*organization.Organization, error) {
+func (r *RepoOrganization) FindOneById(ctx context.Context, id uuid.UUID) (*organization.Organization, error) {
 	var o mongoOrganization
 	if err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&o); err != nil {
+		if err == mongo.ErrNoDocuments {
+			return nil, ErrOrganizationNotFound
+		}
 		return nil, err
 	}
 	return o.ToAggregate()
@@ -92,16 +122,7 @@ func (r *RepoOrganization) Create(ctx context.Context, o *organization.Organizat
 	return err
 }
 
-func (r *RepoOrganization) UpdateOrganization(ctx context.Context, o *organization.Organization) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.M{
-		"_id": o.GetId(),
-	}, bson.M{
-		"$set": newFromOrganization(o),
-	})
-	return err
-}
-
-func (r *RepoOrganization) UpdateOrganizationInfo(ctx context.Context, id base.UUID, name org_name.OrgName, logo string, desc org_desc.OrgDesc, contacts org_contact.OrgContact, currency valueobject.Currency) error {
+func (r *RepoOrganization) UpdateOrgInfo(ctx context.Context, id uuid.UUID, name valueobject.OrgName, logo string, desc valueobject.OrgDesc, contacts valueobject.OrgContact, currency valueobject.Currency) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": id,
 	}, bson.M{
@@ -109,7 +130,7 @@ func (r *RepoOrganization) UpdateOrganizationInfo(ctx context.Context, id base.U
 			"name":      name.String(),
 			"logo":      logo,
 			"desc":      desc,
-			"contacts":  contacts,
+			"contacts":  newFromContacts(contacts),
 			"currency":  currency.String(),
 			"updatedAt": time.Now(),
 		},
@@ -117,31 +138,24 @@ func (r *RepoOrganization) UpdateOrganizationInfo(ctx context.Context, id base.U
 	return err
 }
 
-func (r *RepoOrganization) DeleteOrganization(ctx context.Context, id base.UUID) error {
+func (r *RepoOrganization) UpdateOrgLogo(ctx context.Context, id uuid.UUID, logo string) error {
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"$set": bson.M{
+			"logo": logo,
+		},
+	})
+	return err
+}
+
+func (r *RepoOrganization) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": id,
 	}, bson.M{
 		"$set": bson.M{
 			"isDeleted": true,
 		},
-	})
-	return err
-}
-
-func (r *RepoOrganization) DisableOrganization(ctx context.Context, id base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.M{
-		"_id": id,
-	}, bson.M{
-		"isDisabled": true,
-	})
-	return err
-}
-
-func (r *RepoOrganization) EnableOrganization(ctx context.Context, id base.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.M{
-		"_id": id,
-	}, bson.M{
-		"isDisabled": false,
 	})
 	return err
 }

@@ -52,7 +52,6 @@ func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
 		HttpOnly: true,
 		SameSite: http.SameSiteNoneMode,
 	})
-
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
@@ -67,7 +66,6 @@ func (hd *HttpDelivery) Logout(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
@@ -90,7 +88,6 @@ func (hd *HttpDelivery) Register(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 

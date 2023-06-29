@@ -1,7 +1,7 @@
 package product_desc
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/pkg/core"
 )
 
@@ -10,11 +10,11 @@ var (
 )
 
 type ProductDesc struct {
-	productId base.UUID
+	productId uuid.UUID
 	desc      core.MlString
 }
 
-func NewProductDesc(productId base.UUID, desc core.MlString) (*ProductDesc, error) {
+func NewProductDesc(productId uuid.UUID, desc core.MlString) (*ProductDesc, error) {
 	if desc.IsEmpty() {
 		return nil, ErrEmptyMlString
 	}
@@ -25,7 +25,7 @@ func NewProductDesc(productId base.UUID, desc core.MlString) (*ProductDesc, erro
 	}, nil
 }
 
-func (p *ProductDesc) GetProductId() base.UUID {
+func (p *ProductDesc) GetProductId() uuid.UUID {
 	return p.productId
 }
 
@@ -33,7 +33,7 @@ func (p *ProductDesc) GetDesc() core.MlString {
 	return p.desc
 }
 
-func UnmarshalProductDescFromDatabase(productId base.UUID, desc core.MlString) (*ProductDesc, error) {
+func UnmarshalProductDescFromDatabase(productId uuid.UUID, desc core.MlString) (*ProductDesc, error) {
 	return &ProductDesc{
 		productId: productId,
 		desc:      desc,

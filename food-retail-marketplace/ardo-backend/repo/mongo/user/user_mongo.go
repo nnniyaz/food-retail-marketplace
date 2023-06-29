@@ -3,7 +3,8 @@ package user
 import (
 	"context"
 	"errors"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/email"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"go.mongodb.org/mongo-driver/bson"
@@ -43,7 +44,7 @@ func (m *mongoPassword) ToAggregate() valueobject.Password {
 }
 
 type mongoUser struct {
-	Id        base.UUID     `bson:"_id"`
+	Id        uuid.UUID     `bson:"_id"`
 	FirstName string        `bson:"firstName"`
 	LastName  string        `bson:"lastName"`
 	Email     string        `bson:"email"`
@@ -72,26 +73,6 @@ func (m *mongoUser) ToAggregate() *user.User {
 	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt)
 }
 
-func (r *RepoUser) Find(ctx context.Context) ([]*user.User, error) {
-	cur, err := r.Coll().Find(ctx, bson.M{
-		"isDeleted": false,
-	})
-	if err != nil {
-		return nil, err
-	}
-	defer cur.Close(ctx)
-
-	var result []*user.User
-	for cur.Next(ctx) {
-		var internal mongoUser
-		if err = cur.Decode(&internal); err != nil {
-			return nil, err
-		}
-		result = append(result, internal.ToAggregate())
-	}
-	return result, nil
-}
-
 func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
 	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
 	if err != nil {
@@ -110,7 +91,7 @@ func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDel
 	return result, nil
 }
 
-func (r *RepoUser) FindOneById(ctx context.Context, id base.UUID) (*user.User, error) {
+func (r *RepoUser) FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error) {
 	var foundUser mongoUser
 	err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundUser)
 	if err != nil {
@@ -139,7 +120,7 @@ func (r *RepoUser) Create(ctx context.Context, user *user.User) error {
 	return err
 }
 
-func (r *RepoUser) UpdateUserCredentials(ctx context.Context, userId base.UUID, firstName valueobject.FirstName, lastName valueobject.LastName, email base.Email) error {
+func (r *RepoUser) UpdateUserCredentials(ctx context.Context, userId uuid.UUID, firstName valueobject.FirstName, lastName valueobject.LastName, email email.Email) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": userId,
 	}, bson.M{
@@ -153,7 +134,7 @@ func (r *RepoUser) UpdateUserCredentials(ctx context.Context, userId base.UUID, 
 	return err
 }
 
-func (r *RepoUser) UpdateUserPassword(ctx context.Context, userId base.UUID, password valueobject.Password) error {
+func (r *RepoUser) UpdateUserPassword(ctx context.Context, userId uuid.UUID, password valueobject.Password) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": userId,
 	}, bson.M{
@@ -165,7 +146,7 @@ func (r *RepoUser) UpdateUserPassword(ctx context.Context, userId base.UUID, pas
 	return err
 }
 
-func (r *RepoUser) Delete(ctx context.Context, id base.UUID) error {
+func (r *RepoUser) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": id,
 	}, bson.M{

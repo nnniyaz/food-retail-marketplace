@@ -1,7 +1,7 @@
 package product_review
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/pkg/core"
 	"time"
 	"unicode/utf8"
@@ -13,16 +13,16 @@ var (
 )
 
 type ProductReview struct {
-	id         base.UUID
-	productId  base.UUID
-	customerId base.UUID
+	id         uuid.UUID
+	productId  uuid.UUID
+	customerId uuid.UUID
 	rating     int
 	comment    string
 	createdAt  time.Time
 	updatedAt  time.Time
 }
 
-func NewProductReview(productId, customerId base.UUID, rating int, comment string) (*ProductReview, error) {
+func NewProductReview(productId, customerId uuid.UUID, rating int, comment string) (*ProductReview, error) {
 	if rating < 1 || rating > 5 {
 		return nil, ErrInvalidRating
 	}
@@ -32,7 +32,7 @@ func NewProductReview(productId, customerId base.UUID, rating int, comment strin
 	}
 
 	return &ProductReview{
-		id:         base.NewUUID(),
+		id:         uuid.NewUUID(),
 		productId:  productId,
 		customerId: customerId,
 		rating:     rating,
@@ -42,15 +42,15 @@ func NewProductReview(productId, customerId base.UUID, rating int, comment strin
 	}, nil
 }
 
-func (p *ProductReview) GetId() base.UUID {
+func (p *ProductReview) GetId() uuid.UUID {
 	return p.id
 }
 
-func (p *ProductReview) GetProductId() base.UUID {
+func (p *ProductReview) GetProductId() uuid.UUID {
 	return p.productId
 }
 
-func (p *ProductReview) GetCustomerId() base.UUID {
+func (p *ProductReview) GetCustomerId() uuid.UUID {
 	return p.customerId
 }
 
@@ -70,7 +70,7 @@ func (p *ProductReview) GetUpdatedAt() time.Time {
 	return p.updatedAt
 }
 
-func UnmarshalProductReviewFromDatabase(id, productId, customerId base.UUID, rating int, comment string, createdAt, updatedAt time.Time) (*ProductReview, error) {
+func UnmarshalProductReviewFromDatabase(id, productId, customerId uuid.UUID, rating int, comment string, createdAt, updatedAt time.Time) (*ProductReview, error) {
 	if rating < 1 || rating > 5 {
 		return nil, ErrInvalidRating
 	}

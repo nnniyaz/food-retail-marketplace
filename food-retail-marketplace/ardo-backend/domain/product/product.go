@@ -1,7 +1,7 @@
 package product
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/product/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"time"
@@ -13,10 +13,10 @@ var (
 )
 
 type Product struct {
-	id         base.UUID
-	orgId      base.UUID
-	sectionId  base.UUID
-	categoryId base.UUID
+	id         uuid.UUID
+	orgId      uuid.UUID
+	sectionId  uuid.UUID
+	categoryId uuid.UUID
 	price      float64
 	quantity   int
 	status     valueobject.ProductStatus
@@ -25,7 +25,7 @@ type Product struct {
 	updatedAt  time.Time
 }
 
-func NewProduct(orgId base.UUID, sectionId base.UUID, categoryId base.UUID, price float64, quantity int, status string) (*Product, error) {
+func NewProduct(orgId uuid.UUID, sectionId uuid.UUID, categoryId uuid.UUID, price float64, quantity int, status string) (*Product, error) {
 	if price < 0 {
 		return nil, ErrInvalidPrice
 	}
@@ -40,7 +40,7 @@ func NewProduct(orgId base.UUID, sectionId base.UUID, categoryId base.UUID, pric
 	}
 
 	return &Product{
-		id:         base.NewUUID(),
+		id:         uuid.NewUUID(),
 		orgId:      orgId,
 		sectionId:  sectionId,
 		categoryId: categoryId,
@@ -53,19 +53,19 @@ func NewProduct(orgId base.UUID, sectionId base.UUID, categoryId base.UUID, pric
 	}, nil
 }
 
-func (p *Product) GetId() base.UUID {
+func (p *Product) GetId() uuid.UUID {
 	return p.id
 }
 
-func (p *Product) GetOrgId() base.UUID {
+func (p *Product) GetOrgId() uuid.UUID {
 	return p.orgId
 }
 
-func (p *Product) GetSectionId() base.UUID {
+func (p *Product) GetSectionId() uuid.UUID {
 	return p.sectionId
 }
 
-func (p *Product) GetCategoryId() base.UUID {
+func (p *Product) GetCategoryId() uuid.UUID {
 	return p.categoryId
 }
 
@@ -93,7 +93,7 @@ func (p *Product) GetUpdatedAt() time.Time {
 	return p.updatedAt
 }
 
-func UnmarshalProductFromDatabase(id, orgId, sectionId, categoryId base.UUID, price float64, quantity int, status string, isDeleted bool, createdAt, updatedAt time.Time) (*Product, error) {
+func UnmarshalProductFromDatabase(id, orgId, sectionId, categoryId uuid.UUID, price float64, quantity int, status string, isDeleted bool, createdAt, updatedAt time.Time) (*Product, error) {
 	productStatus, err := valueobject.NewProductStatus(status)
 	if err != nil {
 		return nil, err

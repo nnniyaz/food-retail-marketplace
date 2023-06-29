@@ -1,7 +1,7 @@
 package product_characteristic
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/pkg/core"
 )
 
@@ -10,12 +10,12 @@ var (
 )
 
 type ProductCharacteristic struct {
-	productId base.UUID
+	productId uuid.UUID
 	label     core.MlString
 	value     core.MlString
 }
 
-func NewProductCharacteristic(productId base.UUID, label, value core.MlString) (*ProductCharacteristic, error) {
+func NewProductCharacteristic(productId uuid.UUID, label, value core.MlString) (*ProductCharacteristic, error) {
 	if label.IsEmpty() {
 		return nil, ErrEmptyMlString
 	}
@@ -30,7 +30,7 @@ func NewProductCharacteristic(productId base.UUID, label, value core.MlString) (
 	}, nil
 }
 
-func (p *ProductCharacteristic) GetProductId() base.UUID {
+func (p *ProductCharacteristic) GetProductId() uuid.UUID {
 	return p.productId
 }
 
@@ -42,7 +42,7 @@ func (p *ProductCharacteristic) GetValue() core.MlString {
 	return p.value
 }
 
-func UnmarshalProductCharacteristicFromDatabase(productId base.UUID, label, value core.MlString) (*ProductCharacteristic, error) {
+func UnmarshalProductCharacteristicFromDatabase(productId uuid.UUID, label, value core.MlString) (*ProductCharacteristic, error) {
 	return &ProductCharacteristic{
 		productId: productId,
 		label:     label,

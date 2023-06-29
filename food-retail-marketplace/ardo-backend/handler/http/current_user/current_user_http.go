@@ -1,18 +1,13 @@
-package currentUser
+package current_user
 
 import (
 	"encoding/json"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/handler/http/response"
-	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
-	currentUserService "github/nnniyaz/ardo/service/currentUser"
+	currentUserService "github/nnniyaz/ardo/service/current_user"
 	"net/http"
 	"time"
-)
-
-var (
-	ErrUserDoesNotExist = core.NewI18NError(core.EINVALID, http.StatusNotFound)
 )
 
 type HttpDelivery struct {

@@ -1,4 +1,4 @@
-package base
+package email
 
 import (
 	"github/nnniyaz/ardo/pkg/core"

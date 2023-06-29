@@ -2,7 +2,7 @@ package product
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/product"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,10 +22,10 @@ func (r *RepoProduct) Coll() *mongo.Collection {
 }
 
 type mongoProduct struct {
-	Id         base.UUID `bson:"_id"`
-	OrgId      base.UUID `bson:"orgId"`
-	SectionId  base.UUID `bson:"sectionId"`
-	CategoryId base.UUID `bson:"categoryId"`
+	Id         uuid.UUID `bson:"_id"`
+	OrgId      uuid.UUID `bson:"orgId"`
+	SectionId  uuid.UUID `bson:"sectionId"`
+	CategoryId uuid.UUID `bson:"categoryId"`
 	Price      float64   `bson:"price"`
 	Quantity   int       `bson:"quantity"`
 	Status     string    `bson:"status"`
@@ -78,7 +78,7 @@ func (r *RepoProduct) Find(ctx context.Context) ([]*product.Product, error) {
 	return products, nil
 }
 
-func (r *RepoProduct) FindById(ctx context.Context, id base.UUID) (*product.Product, error) {
+func (r *RepoProduct) FindById(ctx context.Context, id uuid.UUID) (*product.Product, error) {
 	var mp mongoProduct
 	if err := r.Coll().FindOne(ctx, bson.M{
 		"_id": id,
@@ -88,7 +88,7 @@ func (r *RepoProduct) FindById(ctx context.Context, id base.UUID) (*product.Prod
 	return mp.ToAggregate()
 }
 
-func (r *RepoProduct) FindByOrgId(ctx context.Context, orgId base.UUID) ([]*product.Product, error) {
+func (r *RepoProduct) FindByOrgId(ctx context.Context, orgId uuid.UUID) ([]*product.Product, error) {
 	cursor, err := r.Coll().Find(ctx, bson.M{
 		"orgId":     orgId,
 		"isDeleted": false,
@@ -114,7 +114,7 @@ func (r *RepoProduct) FindByOrgId(ctx context.Context, orgId base.UUID) ([]*prod
 	return products, nil
 }
 
-func (r *RepoProduct) FindBySectionId(ctx context.Context, sectionId base.UUID) ([]*product.Product, error) {
+func (r *RepoProduct) FindBySectionId(ctx context.Context, sectionId uuid.UUID) ([]*product.Product, error) {
 	cursor, err := r.Coll().Find(ctx, bson.M{
 		"sectionId": sectionId,
 		"isDeleted": false,
@@ -140,7 +140,7 @@ func (r *RepoProduct) FindBySectionId(ctx context.Context, sectionId base.UUID) 
 	return products, nil
 }
 
-func (r *RepoProduct) FindByCategoryId(ctx context.Context, categoryId base.UUID) ([]*product.Product, error) {
+func (r *RepoProduct) FindByCategoryId(ctx context.Context, categoryId uuid.UUID) ([]*product.Product, error) {
 	cursor, err := r.Coll().Find(ctx, bson.M{
 		"categoryId": categoryId,
 		"isDeleted":  false,
@@ -180,7 +180,7 @@ func (r *RepoProduct) Update(ctx context.Context, p *product.Product) error {
 	return err
 }
 
-func (r *RepoProduct) Delete(ctx context.Context, id base.UUID) error {
+func (r *RepoProduct) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.M{"_id": id})
 	return err
 }

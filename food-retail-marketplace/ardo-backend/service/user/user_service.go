@@ -2,7 +2,7 @@ package user
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
@@ -14,7 +14,6 @@ var (
 )
 
 type UserService interface {
-	GetAll(ctx context.Context) ([]*user.User, error)
 	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error)
 	GetById(ctx context.Context, id string) (*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
@@ -33,10 +32,6 @@ func NewUserService(repo repo.User, l logger.Logger) UserService {
 	return &userService{userRepo: repo, logger: l}
 }
 
-func (u *userService) GetAll(ctx context.Context) ([]*user.User, error) {
-	return u.userRepo.Find(ctx)
-}
-
 func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
 	if offset < 0 {
 		offset = 0
@@ -48,7 +43,7 @@ func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isD
 }
 
 func (u *userService) GetById(ctx context.Context, id string) (*user.User, error) {
-	convertedId, err := base.UUIDFromString(id)
+	convertedId, err := uuid.UUIDFromString(id)
 	if err != nil {
 		return nil, err
 	}

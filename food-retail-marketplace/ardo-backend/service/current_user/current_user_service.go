@@ -1,4 +1,4 @@
-package currentUser
+package current_user
 
 import (
 	"context"

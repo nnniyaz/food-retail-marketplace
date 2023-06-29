@@ -1,4 +1,4 @@
-package org_name
+package valueobject
 
 import (
 	"github/nnniyaz/ardo/pkg/core"
@@ -18,7 +18,7 @@ var (
 
 type OrgName string
 
-func New(name string) (OrgName, error) {
+func NewOrgName(name string) (OrgName, error) {
 	if name == "" {
 		return "", ErrEmptyOrgName
 	}

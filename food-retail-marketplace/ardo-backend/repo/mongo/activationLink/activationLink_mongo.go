@@ -3,7 +3,7 @@ package activationLink
 import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -21,8 +21,8 @@ func (r *RepoActivationLink) Coll() *mongo.Collection {
 }
 
 type mongoActivationLink struct {
-	Link        base.UUID `bson:"link"`
-	UserId      base.UUID `bson:"userID"`
+	Link        uuid.UUID `bson:"link"`
+	UserId      uuid.UUID `bson:"userId"`
 	IsActivated bool      `bson:"isActivated"`
 }
 
@@ -38,8 +38,8 @@ func (m *mongoActivationLink) ToAggregate() *activationLink.ActivationLink {
 	return activationLink.UnmarshalActivationLinkFromDatabase(m.Link, m.UserId, m.IsActivated)
 }
 
-func (r *RepoActivationLink) Find(ctx context.Context, userId base.UUID) ([]*activationLink.ActivationLink, error) {
-	cur, err := r.Coll().Find(ctx, bson.M{"userID": userId})
+func (r *RepoActivationLink) Find(ctx context.Context, userId uuid.UUID) ([]*activationLink.ActivationLink, error) {
+	cur, err := r.Coll().Find(ctx, bson.M{"userId": userId})
 	if err != nil {
 		return nil, err
 	}
@@ -56,15 +56,15 @@ func (r *RepoActivationLink) Find(ctx context.Context, userId base.UUID) ([]*act
 	return activationLinks, nil
 }
 
-func (r *RepoActivationLink) FindOneByUserId(ctx context.Context, userId base.UUID) (*activationLink.ActivationLink, error) {
+func (r *RepoActivationLink) FindOneByUserId(ctx context.Context, userId uuid.UUID) (*activationLink.ActivationLink, error) {
 	var foundActivationLink mongoActivationLink
-	if err := r.Coll().FindOne(ctx, bson.M{"userID": userId}).Decode(&foundActivationLink); err != nil {
+	if err := r.Coll().FindOne(ctx, bson.M{"userId": userId}).Decode(&foundActivationLink); err != nil {
 		return nil, err
 	}
 	return foundActivationLink.ToAggregate(), nil
 }
 
-func (r *RepoActivationLink) FindOneByLink(ctx context.Context, link base.UUID) (*activationLink.ActivationLink, error) {
+func (r *RepoActivationLink) FindOneByLink(ctx context.Context, link uuid.UUID) (*activationLink.ActivationLink, error) {
 	var foundActivationLink mongoActivationLink
 	if err := r.Coll().FindOne(ctx, bson.M{"link": link}).Decode(&foundActivationLink); err != nil {
 		return nil, err
@@ -89,16 +89,16 @@ func (r *RepoActivationLink) Update(ctx context.Context, activationLink *activat
 	return err
 }
 
-func (r *RepoActivationLink) DeleteAll(ctx context.Context, user base.UUID) error {
+func (r *RepoActivationLink) DeleteAll(ctx context.Context, user uuid.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.M{
-		"userID": user,
+		"userId": user,
 	})
 	return err
 }
 
-func (r *RepoActivationLink) DeleteOne(ctx context.Context, user base.UUID) error {
+func (r *RepoActivationLink) DeleteOne(ctx context.Context, user uuid.UUID) error {
 	_, err := r.Coll().DeleteMany(ctx, bson.M{
-		"userID": user,
+		"userId": user,
 	})
 	return err
 }

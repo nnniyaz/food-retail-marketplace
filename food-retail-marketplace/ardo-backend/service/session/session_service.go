@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
@@ -28,7 +28,7 @@ func NewSessionService(repo repo.Session, l logger.Logger) SessionService {
 }
 
 func (s *sessionService) Create(ctx context.Context, userId, userAgent string) (*session.Session, error) {
-	convertedUserId, err := base.UUIDFromString(userId)
+	convertedUserId, err := uuid.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -43,7 +43,7 @@ func (s *sessionService) Create(ctx context.Context, userId, userAgent string) (
 }
 
 func (s *sessionService) GetAllByUserId(ctx context.Context, userId string) ([]*session.Session, error) {
-	convertedUserId, err := base.UUIDFromString(userId)
+	convertedUserId, err := uuid.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -55,7 +55,7 @@ func (s *sessionService) GetAllByUserId(ctx context.Context, userId string) ([]*
 }
 
 func (s *sessionService) GetOneBySession(ctx context.Context, session string) (*session.Session, error) {
-	convertedToken, err := base.UUIDFromString(session)
+	convertedToken, err := uuid.UUIDFromString(session)
 	if err != nil {
 		return nil, err
 	}
@@ -63,7 +63,7 @@ func (s *sessionService) GetOneBySession(ctx context.Context, session string) (*
 }
 
 func (s *sessionService) DeleteAllSessionsByUserId(ctx context.Context, userId string) error {
-	convertedUserId, err := base.UUIDFromString(userId)
+	convertedUserId, err := uuid.UUIDFromString(userId)
 	if err != nil {
 		return err
 	}
@@ -71,7 +71,7 @@ func (s *sessionService) DeleteAllSessionsByUserId(ctx context.Context, userId s
 }
 
 func (s *sessionService) DeleteOneBySessionId(ctx context.Context, sessionId string) error {
-	convertedSessionId, err := base.UUIDFromString(sessionId)
+	convertedSessionId, err := uuid.UUIDFromString(sessionId)
 	if err != nil {
 		return err
 	}
@@ -79,7 +79,7 @@ func (s *sessionService) DeleteOneBySessionId(ctx context.Context, sessionId str
 }
 
 func (s *sessionService) DeleteOneByToken(ctx context.Context, token string) error {
-	convertedToken, err := base.UUIDFromString(token)
+	convertedToken, err := uuid.UUIDFromString(token)
 	if err != nil {
 		return err
 	}
@@ -87,7 +87,7 @@ func (s *sessionService) DeleteOneByToken(ctx context.Context, token string) err
 }
 
 func (s *sessionService) UpdateLastActionAt(ctx context.Context, sessionId string) error {
-	convertedSession, err := base.UUIDFromString(sessionId)
+	convertedSession, err := uuid.UUIDFromString(sessionId)
 	if err != nil {
 		return err
 	}

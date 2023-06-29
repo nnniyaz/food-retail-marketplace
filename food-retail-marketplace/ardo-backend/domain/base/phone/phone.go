@@ -1,4 +1,4 @@
-package base
+package phone
 
 import "github/nnniyaz/ardo/pkg/core"
 

@@ -1,45 +1,45 @@
 package session
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/session/valueobject"
 	"time"
 )
 
 type Session struct {
-	id           base.UUID
-	userID       base.UUID
-	session      base.UUID
+	id           uuid.UUID
+	userId       uuid.UUID
+	session      uuid.UUID
 	userAgent    valueobject.UserAgent
 	lastActionAt time.Time
 	createdAt    time.Time
 }
 
-func NewSession(userID base.UUID, userAgent string) (*Session, error) {
+func NewSession(userId uuid.UUID, userAgent string) (*Session, error) {
 	ua, err := valueobject.NewUserAgent(userAgent)
 	if err != nil {
 		return nil, err
 	}
 
 	return &Session{
-		id:           base.NewUUID(),
-		userID:       userID,
-		session:      base.NewUUID(),
+		id:           uuid.NewUUID(),
+		userId:       userId,
+		session:      uuid.NewUUID(),
 		userAgent:    ua,
 		lastActionAt: time.Now(),
 		createdAt:    time.Now(),
 	}, nil
 }
 
-func (s *Session) GetId() base.UUID {
+func (s *Session) GetId() uuid.UUID {
 	return s.id
 }
 
-func (s *Session) GetUserId() base.UUID {
-	return s.userID
+func (s *Session) GetUserId() uuid.UUID {
+	return s.userId
 }
 
-func (s *Session) GetSession() base.UUID {
+func (s *Session) GetSession() uuid.UUID {
 	return s.session
 }
 
@@ -59,14 +59,14 @@ func (s *Session) UpdateLastActionAt() {
 	s.lastActionAt = time.Now()
 }
 
-func UnmarshalSessionFromDatabase(id base.UUID, userID base.UUID, session base.UUID, userAgent string, createdAt time.Time) (*Session, error) {
+func UnmarshalSessionFromDatabase(id uuid.UUID, userId uuid.UUID, session uuid.UUID, userAgent string, createdAt time.Time) (*Session, error) {
 	ua, err := valueobject.NewUserAgent(userAgent)
 	if err != nil {
 		return nil, err
 	}
 	return &Session{
 		id:        id,
-		userID:    userID,
+		userId:    userId,
 		session:   session,
 		userAgent: ua,
 		createdAt: createdAt,

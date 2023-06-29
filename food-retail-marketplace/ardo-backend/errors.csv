@@ -40,3 +40,5 @@ org_name_too_short,Название организации должно быть
 org_name_too_long,Название организации должно быть не более 50 символов,Organization name must be no more than 50 characters
 do_not_have_an_access,У вас нет доступа,You do not have an access
 old_password_does_not_match,Старый пароль не совпадает,Old password does not match
+empty_org_logo,Логотип организаций не может быть пустым, Organization logo can not be empty
+org_not_found,Организация не найдена,Organization not found

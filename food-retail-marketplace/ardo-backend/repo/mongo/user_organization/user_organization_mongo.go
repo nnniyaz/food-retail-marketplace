@@ -2,7 +2,7 @@ package user_organization
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user_organization"
 	"github/nnniyaz/ardo/domain/user_organization/valueobject"
 	"go.mongodb.org/mongo-driver/bson"
@@ -23,8 +23,8 @@ func (r *RepoUserOrganization) Coll() *mongo.Collection {
 }
 
 type mongoUserOrganization struct {
-	Id        base.UUID `bson:"_id"`
-	UserID    base.UUID `bson:"userID"`
+	Id        uuid.UUID `bson:"_id"`
+	UserID    uuid.UUID `bson:"userId"`
 	Role      string    `bson:"role"`
 	CreatedAt time.Time `bson:"createdAt"`
 	UpdatedAt time.Time `bson:"updatedAt"`
@@ -65,7 +65,7 @@ func (r *RepoUserOrganization) Find(ctx context.Context) ([]*user_organization.U
 	return result, nil
 }
 
-func (r *RepoUserOrganization) FindOneByOrgId(ctx context.Context, orgId base.UUID) (*user_organization.UserOrganization, error) {
+func (r *RepoUserOrganization) FindOneByOrgId(ctx context.Context, orgId uuid.UUID) (*user_organization.UserOrganization, error) {
 	var org mongoUserOrganization
 	err := r.Coll().FindOne(ctx, bson.M{"_id": orgId}).Decode(&org)
 	if err != nil {
@@ -82,7 +82,7 @@ func (r *RepoUserOrganization) Create(ctx context.Context, organization *user_or
 	return err
 }
 
-func (r *RepoUserOrganization) UpdateMerchantRole(ctx context.Context, orgId base.UUID, role valueobject.MerchantRole) error {
+func (r *RepoUserOrganization) UpdateMerchantRole(ctx context.Context, orgId uuid.UUID, role valueobject.MerchantRole) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": orgId,
 	}, bson.M{
@@ -93,7 +93,7 @@ func (r *RepoUserOrganization) UpdateMerchantRole(ctx context.Context, orgId bas
 	return err
 }
 
-func (r *RepoUserOrganization) Delete(ctx context.Context, orgId base.UUID) error {
+func (r *RepoUserOrganization) Delete(ctx context.Context, orgId uuid.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": orgId,
 	}, bson.M{

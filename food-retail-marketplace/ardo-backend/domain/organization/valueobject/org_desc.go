@@ -1,4 +1,4 @@
-package org_desc
+package valueobject
 
 import (
 	"github/nnniyaz/ardo/pkg/core"
@@ -10,11 +10,11 @@ var (
 
 type OrgDesc core.MlString
 
-func New(desc core.MlString) (OrgDesc, error) {
+func NewOrgDesc(desc *core.MlString) (OrgDesc, error) {
 	if desc.IsEmpty() {
 		return nil, ErrEmptyMlString
 	}
-	return OrgDesc(desc), nil
+	return OrgDesc(*desc), nil
 }
 
 func UnmarshalOrgDescFromDatabase(desc core.MlString) (*OrgDesc, error) {

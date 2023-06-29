@@ -1,12 +1,12 @@
 package section
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"time"
 )
 
 type Section struct {
-	id         base.UUID
+	id         uuid.UUID
 	imgUrl     string
 	isDeleted  bool
 	isDisabled bool
@@ -14,9 +14,9 @@ type Section struct {
 	updatedAt  time.Time
 }
 
-func NewSection(id base.UUID, imgUrl string) *Section {
+func NewSection(id uuid.UUID, imgUrl string) *Section {
 	return &Section{
-		id:         base.NewUUID(),
+		id:         id.NewUUID(),
 		imgUrl:     imgUrl,
 		isDeleted:  false,
 		isDisabled: false,
@@ -25,7 +25,7 @@ func NewSection(id base.UUID, imgUrl string) *Section {
 	}
 }
 
-func (s *Section) GetId() base.UUID {
+func (s *Section) GetId() uuid.UUID {
 	return s.id
 }
 
@@ -49,7 +49,7 @@ func (s *Section) GetUpdatedAt() time.Time {
 	return s.updatedAt
 }
 
-func UnmarshalSectionFromDatabase(id base.UUID, imgUrl string, isDeleted, isDisabled bool, createdAt, updatedAt time.Time) *Section {
+func UnmarshalSectionFromDatabase(id uuid.UUID, imgUrl string, isDeleted, isDisabled bool, createdAt, updatedAt time.Time) *Section {
 	return &Section{
 		id:         id,
 		imgUrl:     imgUrl,

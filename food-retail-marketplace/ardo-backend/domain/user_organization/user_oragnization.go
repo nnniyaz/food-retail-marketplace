@@ -1,27 +1,27 @@
 package user_organization
 
 import (
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user_organization/valueobject"
 	"time"
 )
 
 type UserOrganization struct {
-	id        base.UUID
-	userId    base.UUID
+	id        uuid.UUID
+	userId    uuid.UUID
 	role      valueobject.MerchantRole
 	createdAt time.Time
 	updatedAt time.Time
 }
 
-func NewUserOrganization(userId base.UUID, role string) (*UserOrganization, error) {
+func NewUserOrganization(userId uuid.UUID, role string) (*UserOrganization, error) {
 	merchantRole, err := valueobject.NewMerchantRole(role)
 	if err != nil {
 		return nil, err
 	}
 
 	userOrganization := &UserOrganization{
-		id:        base.NewUUID(),
+		id:        uuid.NewUUID(),
 		userId:    userId,
 		role:      merchantRole,
 		createdAt: time.Now(),
@@ -30,11 +30,11 @@ func NewUserOrganization(userId base.UUID, role string) (*UserOrganization, erro
 	return userOrganization, nil
 }
 
-func (o *UserOrganization) GetId() base.UUID {
+func (o *UserOrganization) GetId() uuid.UUID {
 	return o.id
 }
 
-func (o *UserOrganization) GetUserId() base.UUID {
+func (o *UserOrganization) GetUserId() uuid.UUID {
 	return o.userId
 }
 
@@ -50,7 +50,7 @@ func (o *UserOrganization) GetUpdatedAt() time.Time {
 	return o.updatedAt
 }
 
-func UnmarshalUserOrganizationFromDatabase(id base.UUID, userId base.UUID, role string, createdAt time.Time, updatedAt time.Time) *UserOrganization {
+func UnmarshalUserOrganizationFromDatabase(id uuid.UUID, userId uuid.UUID, role string, createdAt time.Time, updatedAt time.Time) *UserOrganization {
 	return &UserOrganization{
 		id:        id,
 		userId:    userId,

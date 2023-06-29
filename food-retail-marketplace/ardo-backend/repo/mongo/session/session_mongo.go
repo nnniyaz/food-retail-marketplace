@@ -2,7 +2,7 @@ package session
 
 import (
 	"context"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/session"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -22,9 +22,9 @@ func (r *RepoSession) Coll() *mongo.Collection {
 }
 
 type mongoSession struct {
-	Id           base.UUID `bson:"_id"`
-	UserID       base.UUID `bson:"userID"`
-	Session      base.UUID `bson:"session"`
+	Id           uuid.UUID `bson:"_id"`
+	UserID       uuid.UUID `bson:"userId"`
+	Session      uuid.UUID `bson:"session"`
 	UserAgent    string    `bson:"userAgent"`
 	LastActionAt time.Time `bson:"lastActionAt"`
 	CreatedAt    time.Time `bson:"createdAt"`
@@ -45,8 +45,8 @@ func (m *mongoSession) ToAggregate() (*session.Session, error) {
 	return session.UnmarshalSessionFromDatabase(m.Id, m.UserID, m.Session, m.UserAgent, m.CreatedAt)
 }
 
-func (r *RepoSession) FindManyByUserId(ctx context.Context, userId base.UUID) ([]*session.Session, error) {
-	cur, err := r.Coll().Find(ctx, bson.M{"userID": userId})
+func (r *RepoSession) FindManyByUserId(ctx context.Context, userId uuid.UUID) ([]*session.Session, error) {
+	cur, err := r.Coll().Find(ctx, bson.M{"userId": userId})
 	if err != nil {
 		if err == mongo.ErrNoDocuments {
 			return nil, nil
@@ -70,7 +70,7 @@ func (r *RepoSession) FindManyByUserId(ctx context.Context, userId base.UUID) ([
 	return sessions, nil
 }
 
-func (r *RepoSession) FindOneBySession(ctx context.Context, session base.UUID) (*session.Session, error) {
+func (r *RepoSession) FindOneBySession(ctx context.Context, session uuid.UUID) (*session.Session, error) {
 	var s mongoSession
 	if err := r.Coll().FindOne(ctx, bson.M{"session": session}).Decode(&s); err != nil {
 		if err == mongo.ErrNoDocuments {
@@ -90,7 +90,7 @@ func (r *RepoSession) Create(ctx context.Context, session *session.Session) erro
 	return err
 }
 
-func (r *RepoSession) UpdateLastActionAt(ctx context.Context, sessionId base.UUID) error {
+func (r *RepoSession) UpdateLastActionAt(ctx context.Context, sessionId uuid.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": sessionId,
 	}, bson.M{
@@ -101,17 +101,17 @@ func (r *RepoSession) UpdateLastActionAt(ctx context.Context, sessionId base.UUI
 	return err
 }
 
-func (r *RepoSession) DeleteAllByUserId(ctx context.Context, userId base.UUID) error {
-	_, err := r.Coll().DeleteMany(ctx, bson.M{"userID": userId})
+func (r *RepoSession) DeleteAllByUserId(ctx context.Context, userId uuid.UUID) error {
+	_, err := r.Coll().DeleteMany(ctx, bson.M{"userId": userId})
 	return err
 }
 
-func (r *RepoSession) DeleteById(ctx context.Context, id base.UUID) error {
+func (r *RepoSession) DeleteById(ctx context.Context, id uuid.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.M{"_id": id})
 	return err
 }
 
-func (r *RepoSession) DeleteByToken(ctx context.Context, token base.UUID) error {
+func (r *RepoSession) DeleteByToken(ctx context.Context, token uuid.UUID) error {
 	_, err := r.Coll().DeleteOne(ctx, bson.M{"session": token})
 	return err
 }

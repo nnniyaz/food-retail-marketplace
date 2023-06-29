@@ -1,4 +1,4 @@
-package management
+package management_user
 
 import (
 	"encoding/json"
@@ -12,11 +12,11 @@ import (
 )
 
 type HttpDelivery struct {
-	service service.ManagementService
+	service service.ManagementUserService
 	logger  logger.Logger
 }
 
-func NewHttpDelivery(s service.ManagementService, l logger.Logger) *HttpDelivery {
+func NewHttpDelivery(s service.ManagementUserService, l logger.Logger) *HttpDelivery {
 	return &HttpDelivery{service: s, logger: l}
 }
 
@@ -54,7 +54,7 @@ func NewUsers(users []*user.User) []User {
 	return us
 }
 
-func (hd *HttpDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
+func (hd *HttpDelivery) GetUsersByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
 	isDeleted := r.Context().Value("is_deleted").(bool)
@@ -63,18 +63,16 @@ func (hd *HttpDelivery) GetAllUsers(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, NewUsers(users))
 }
 
-func (hd *HttpDelivery) GetById(w http.ResponseWriter, r *http.Request) {
+func (hd *HttpDelivery) GetUserById(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	u, err := hd.service.GetUserById(r.Context(), userId)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, NewUser(u))
 }
 
@@ -96,12 +94,10 @@ func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Password, in.UserType); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
@@ -118,12 +114,10 @@ func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Req
 		response.NewBad(hd.logger, w, r, err)
 		return
 	}
-
 	if err := hd.service.UpdateUserCredentials(r.Context(), userId, in.FirstName, in.LastName, in.Email); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
@@ -138,12 +132,10 @@ func (hd *HttpDelivery) UpdateUserPassword(w http.ResponseWriter, r *http.Reques
 		response.NewBad(hd.logger, w, r, err)
 		return
 	}
-
 	if err := hd.service.UpdateUserPassword(r.Context(), userId, in.Password); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
@@ -153,6 +145,5 @@ func (hd *HttpDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-
 	response.NewSuccess(hd.logger, w, r, nil)
 }

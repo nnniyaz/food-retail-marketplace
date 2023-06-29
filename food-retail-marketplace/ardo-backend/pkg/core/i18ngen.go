@@ -44,6 +44,8 @@ const (
 	TXT_ORG_NAME_TOO_LONG           TxtKey = 39
 	TXT_DO_NOT_HAVE_AN_ACCESS       TxtKey = 40
 	TXT_OLD_PASSWORD_DOES_NOT_MATCH TxtKey = 41
+	TXT_EMPTY_ORG_LOGO              TxtKey = 42
+	TXT_ORG_NOT_FOUND               TxtKey = 43
 )
 
 var Txts = TxtResource{
@@ -211,6 +213,14 @@ var Txts = TxtResource{
 		RU: `Старый пароль не совпадает`,
 		EN: `Old password does not match`,
 	},
+	TXT_EMPTY_ORG_LOGO: MlString{
+		RU: `Логотип организаций не может быть пустым`,
+		EN: ` Organization logo can not be empty`,
+	},
+	TXT_ORG_NOT_FOUND: MlString{
+		RU: `Организация не найдена`,
+		EN: `Organization not found`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -297,6 +307,10 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "do_not_have_an_access"
 	case TXT_OLD_PASSWORD_DOES_NOT_MATCH:
 		return "old_password_does_not_match"
+	case TXT_EMPTY_ORG_LOGO:
+		return "empty_org_logo"
+	case TXT_ORG_NOT_FOUND:
+		return "org_not_found"
 
 	default:
 		return ""

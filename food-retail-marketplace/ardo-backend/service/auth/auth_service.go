@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 	"github/nnniyaz/ardo/config"
-	"github/nnniyaz/ardo/domain/base"
+	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
@@ -29,7 +29,7 @@ var (
 )
 
 type AuthService interface {
-	Login(ctx context.Context, email, password, userAgent string) (base.UUID, error)
+	Login(ctx context.Context, email, password, userAgent string) (uuid.UUID, error)
 	Register(ctx context.Context, firstName, lastName, email, password string) error
 	Logout(ctx context.Context, session string) error
 	Confirm(ctx context.Context, link string) error
@@ -49,32 +49,32 @@ func NewAuthService(userService userService.UserService, sessionService sessionS
 	return &authService{linkService: linkService, userService: userService, sessionService: sessionService, logger: l, config: config, emailService: emailService}
 }
 
-func (a *authService) Login(ctx context.Context, email, password, userAgent string) (base.UUID, error) {
+func (a *authService) Login(ctx context.Context, email, password, userAgent string) (uuid.UUID, error) {
 	u, err := a.userService.GetByEmail(ctx, email)
 	if err != nil {
-		return base.Nil, ErrEmailNotFound
+		return uuid.Nil, ErrEmailNotFound
 	}
 
 	if u == nil || u.GetIsDeleted() {
-		return base.Nil, ErrEmailNotFound
+		return uuid.Nil, ErrEmailNotFound
 	}
 
 	ok := u.ComparePassword(password)
 	if !ok {
-		return base.Nil, ErrInvalidPassword
+		return uuid.Nil, ErrInvalidPassword
 	}
 
 	foundActivationLink, err := a.linkService.GetByUserId(ctx, u.GetId().String())
 	if err != nil {
-		return base.Nil, err
+		return uuid.Nil, err
 	}
 	if !foundActivationLink.GetIsActivated() {
-		return base.Nil, ErrAccountNotActive
+		return uuid.Nil, ErrAccountNotActive
 	}
 
 	sessions, err := a.sessionService.GetAllByUserId(ctx, u.GetId().String())
 	if err != nil {
-		return base.Nil, err
+		return uuid.Nil, err
 	}
 
 	if len(sessions) >= maxSessionsCount {
@@ -84,14 +84,14 @@ func (a *authService) Login(ctx context.Context, email, password, userAgent stri
 
 		for i := 0; i < len(sessions)-maxSessionsCount+1; i++ {
 			if err = a.sessionService.DeleteOneBySessionId(ctx, sessions[i].GetId().String()); err != nil {
-				return base.Nil, err
+				return uuid.Nil, err
 			}
 		}
 	}
 
 	newSession, err := a.sessionService.Create(ctx, u.GetId().String(), userAgent)
 	if err != nil {
-		return base.Nil, err
+		return uuid.Nil, err
 	}
 	return newSession.GetSession(), nil
 }
