@@ -1,4 +1,4 @@
-import {FC, useState} from "react";
+import {FC, useEffect, useState} from "react";
 import {Button, Form} from "antd";
 import {useNavigate} from "react-router-dom";
 import {RouteNames} from "pages/index";
@@ -8,19 +8,18 @@ import {FormInput} from "shared/ui/FormInput/FormInput";
 import {useActions} from "shared/lib/hooks/useActions";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import classes from "./LoginForm.module.scss";
-import {useForm} from "antd/es/form/Form";
 
 export const LoginForm: FC = () => {
     const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
     const {isLoadingAuth} = useTypedSelector(state => state.auth);
     const {login} = useActions();
-    const [form] = useForm();
     const [email, setEmail] = useState<string>("");
     const [password, setPassword] = useState<string>("");
     const handleLogin = () => {
         login({email, password}, {navigate: navigate, to: RouteNames.LOGIN});
     }
+
     return (
         <Form className={classes.form} layout={"vertical"} onFinish={handleLogin} name={"form"}>
             <FormInput
@@ -46,17 +45,19 @@ export const LoginForm: FC = () => {
                 setValue={setPassword}
                 placeholder={txt.enter_password[currentLang]}
             />
-            <Button
-                loading={isLoadingAuth}
-                className={classes.form__btn}
-                type={"primary"}
-                size={"large"}
-                htmlType={"submit"}
-            >
+            <Form.Item>
+                <Button
+                    loading={isLoadingAuth}
+                    className={classes.form__btn}
+                    type={"primary"}
+                    size={"large"}
+                    htmlType={"submit"}
+                >
                 <span className={classes.form__btn__text}>
                     {txt.login[currentLang]}
                 </span>
-            </Button>
+                </Button>
+            </Form.Item>
         </Form>
     )
 }

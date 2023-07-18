@@ -1,14 +1,16 @@
 import {MlString} from "../base/MlString";
 import {OrgContact} from "./valueobject/orgContact";
 import {Paginate} from "../base/paginate";
+import {Currency} from "../base/currency";
 
 type OrgLogoImgUrl = string;
+type OrgName = string;
 
 export type Organization = {
     id: UUID;
     logo: OrgLogoImgUrl;
     currency: Currency;
-    orgName: MlString;
+    name: OrgName;
     orgDesc: MlString;
     orgContact: OrgContact;
     createdAt: Timestamp;
@@ -16,8 +18,8 @@ export type Organization = {
 }
 
 export type OrganizationsData = {
-    organizations: Organization[];
-    organizationsCount: number;
+    orgs: Organization[];
+    count: number;
 }
 
 export type OrganizationsGetRequest = Paginate;

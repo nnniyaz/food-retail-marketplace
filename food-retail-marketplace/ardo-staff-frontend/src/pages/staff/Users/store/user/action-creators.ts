@@ -23,7 +23,7 @@ export const UsersActionCreators = {
             const res = await UsersService.getUsers(request, controller);
             if (res.data.success) {
                 dispatch(UsersActionCreators.setUsers(res.data.data.users));
-                dispatch(UsersActionCreators.setUsersCount(res.data.data.usersCount));
+                dispatch(UsersActionCreators.setUsersCount(res.data.data.count));
             } else {
                 FailedResponseHandler({
                     message: res.data?.message,

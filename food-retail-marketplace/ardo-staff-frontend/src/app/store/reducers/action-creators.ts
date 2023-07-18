@@ -1,7 +1,7 @@
 import {LangActionCreators} from "./lang/action-creators";
 import {AuthActionCreators} from "pages/public/Login/store/auth/action-creators";
 import {UserActionCreators} from "./user/action-creators";
-import {UsersActionCreators} from "pages/staff/Users/user/action-creators";
+import {UsersActionCreators} from "pages/staff/Users/store/user/action-creators";
 import {OrganizationActionCreators} from "pages/staff/Organizations/store/organizations/action-creators";
 
 export const allActionCreators = {

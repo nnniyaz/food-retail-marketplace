@@ -1,11 +1,11 @@
-import {AppDispatch} from "../../../app/store";
-import {AuthActionCreators} from "../../../pages/public/Login/store/auth/action-creators";
-import {Notify} from "../notification/notification";
-import {LangsList, MlString} from "../../../entities/base/MlString";
-import {txt} from "../../core/i18ngen";
-import {NavigateCallback} from "../../../entities/base/navigateCallback";
-import {RouteNames} from "../../../pages";
 import {isEmpty} from "lodash";
+import {AppDispatch} from "app/store";
+import {UserActionCreators} from "app/store/reducers/user/action-creators";
+import {RouteNames} from "pages";
+import {NavigateCallback} from "entities/base/navigateCallback";
+import {LangsList, MlString} from "entities/base/MlString";
+import {txt} from "../../core/i18ngen";
+import {Notify} from "../notification/notification";
 
 interface HttpHandlerProps {
     error: any;
@@ -17,7 +17,7 @@ interface HttpHandlerProps {
 
 export const httpHandler = ({error, httpStatus, dispatch, currentLang, navigateCallback}: HttpHandlerProps) => {
     if (httpStatus === 401) {
-        dispatch(AuthActionCreators.setAuth(false));
+        dispatch(UserActionCreators.setAuth(false));
         Notify.Warning({title: txt.authorization[currentLang], message: txt.session_expired[currentLang]});
         navigateCallback?.navigate(RouteNames.LOGIN);
     } else if (httpStatus === 403) {

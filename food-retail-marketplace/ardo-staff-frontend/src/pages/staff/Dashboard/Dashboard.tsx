@@ -10,7 +10,7 @@ const requestOptions = {
     offset: 0,
     limit: 5,
     search: "",
-    isDeleted: false,
+    is_deleted: false,
 }
 
 export const Dashboard: FC = () => {
@@ -23,17 +23,17 @@ export const Dashboard: FC = () => {
         {title: txt.fullName[currentLang], dataIndex: "fullName"},
         {title: txt.type[currentLang], dataIndex: "userType"}
     ];
-    const usersData = users.slice(0, 5).map(user => ({
+    const usersData = users?.slice(0, 5)?.map(user => ({
         fullName: `${user.firstName} ${user.lastName}`,
         userType: user.userType,
-    }));
+    })) || [];
 
     const organizationsColumns = [
         {title: txt.org_name[currentLang], dataIndex: "orgName"},
     ];
-    const organizationsData = organizations.slice(0, 5).map(org => ({
-        orgName: org.orgName[currentLang],
-    }));
+    const organizationsData = organizations?.slice(0, 5)?.map(org => ({
+        orgName: org.name,
+    })) || [];
 
     const applicationsColumns = [];
     const applicationsData = [];
@@ -58,7 +58,9 @@ export const Dashboard: FC = () => {
             <Block label={txt.organizations[currentLang]}>
                 <Table data={organizationsData} columns={organizationsColumns} loading={isLoadingGetOrganizations}/>
             </Block>
-            <Block label={txt.applications[currentLang]}>Applications</Block>
+            <Block label={txt.applications[currentLang]}>
+                <Table data={[]} columns={[]} loading={false}/>
+            </Block>
         </div>
     )
 }

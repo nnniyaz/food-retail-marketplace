@@ -3,10 +3,11 @@ import {UserActionCreators} from "app/store/reducers/user/action-creators";
 import {NavigateCallback} from "entities/base/navigateCallback";
 import {FailedResponseHandler, httpHandler,} from "shared/lib/http-handler/httpHandler";
 import AuthService, {LoginRequest} from "../../api/authService";
-import {SetAuthAction, SetIsLoadingAuthAction, AuthActionEnum} from "./types";
+import {SetIsLoadingAuthAction, AuthActionEnum} from "./types";
+import {Notify} from "../../../../../shared/lib/notification/notification";
+import {txt} from "../../../../../shared/core/i18ngen";
 
 export const AuthActionCreators = {
-    setAuth: (payload: boolean): SetAuthAction => ({type: AuthActionEnum.SET_AUTH, payload}),
     setIsLoadingAuth: (payload: boolean): SetIsLoadingAuthAction => ({
         type: AuthActionEnum.SET_IS_LOADING_AUTH,
         payload
@@ -18,6 +19,12 @@ export const AuthActionCreators = {
             const res = await AuthService.login(request);
             if (res.data.success) {
                 await UserActionCreators.getCurrentUser(navigateCallback)(dispatch, getState);
+                if (getState().user?.isAuth) {
+                    Notify.Success({
+                        title: txt.authorization[currentLang],
+                        message: txt.welcome_to_the_system[currentLang]
+                    });
+                }
             } else {
                 FailedResponseHandler({
                     message: res.data?.message,

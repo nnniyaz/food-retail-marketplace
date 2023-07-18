@@ -50,7 +50,7 @@ export const publicRoutes: IRoute[] = [
 
 export const staffRoutes: IRoute[] = [
     {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>},
-    {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <UnorderedListOutlined />},
+    {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <UnorderedListOutlined/>},
     {path: RouteNames.USERS, element: Users, name: txt.users, icon: <UserOutlined/>},
     {path: RouteNames.ORGANIZATIONS, element: Organizations, name: txt.organizations, icon: <ShopOutlined/>},
     {path: RouteNames.APPLICATIONS, element: Applications, name: txt.applications, icon: <BookOutlined/>},
@@ -59,7 +59,7 @@ export const staffRoutes: IRoute[] = [
 
 const AppRouter = () => {
     const location = useLocation();
-    const {isAuth} = useTypedSelector(state => state.auth);
+    const {isAuth} = useTypedSelector(state => state.user);
     const [initialLocation] = useState(localStorage.getItem("lastLocation") || RouteNames.LOGIN);
     const locationPathname = location.pathname;
 

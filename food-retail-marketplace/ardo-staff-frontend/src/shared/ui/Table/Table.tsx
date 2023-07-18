@@ -1,6 +1,7 @@
 import React, {FC} from "react";
 import {Loader} from "../Loader";
 import classes from "./Table.module.scss";
+import {Empty} from "../Empty";
 
 export type TableColumn = {
     title: string;
@@ -22,12 +23,23 @@ export const Table: FC<TableProps> = ({data, columns, loading}) => {
     const rows = data.map((item, index) => (
         <tr className={classes.table__row} key={index}>
             {columns.map(column => (
-                <td className={classes.table__data_cell} key={column.dataIndex}>
+                <td className={classes.table__data__cell} key={column.dataIndex}>
                     {column.render ? column.render(item[column.dataIndex]) : item[column.dataIndex]}
                 </td>
             ))}
         </tr>
     ));
+
+    if (rows?.length === 0) {
+        return (
+            <div
+                className={classes.table__container}
+                style={{display: "flex", justifyContent: "center", alignItems: "center"}}
+            >
+                <Empty/>
+            </div>
+        )
+    }
 
     return (
         <div className={classes.table__container}>

@@ -8,6 +8,9 @@ const $api = axios.create({
     },
     timeout: 20000,
     timeoutErrorMessage: 'Timeout error',
+    validateStatus: function (status) {
+        return status >= 200 && status < 500;
+    }
 });
 
 $api.interceptors.request.use((config) => {
@@ -30,6 +33,9 @@ const $apiBlob = axios.create({
     responseType: 'blob',
     timeout: 20000,
     timeoutErrorMessage: 'Timeout error',
+    validateStatus: function (status) {
+        return status >= 200 && status < 500;
+    }
 });
 
 export {$apiBlob};
@@ -42,6 +48,9 @@ const $apiFormData = axios.create({
     },
     timeout: 20000,
     timeoutErrorMessage: 'Timeout error',
+    validateStatus: function (status) {
+        return status >= 200 && status < 500;
+    }
 });
 
 export {$apiFormData};

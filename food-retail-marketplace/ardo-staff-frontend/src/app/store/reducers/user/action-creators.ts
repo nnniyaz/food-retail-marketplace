@@ -1,15 +1,15 @@
+import UserService from "pages/public/Login/api/userService";
 import {User} from "entities/user/user";
 import {NavigateCallback} from "entities/base/navigateCallback";
 import {txt} from "shared/core/i18ngen";
 import {Notify} from "shared/lib/notification/notification";
 import {FailedResponseHandler, httpHandler} from "shared/lib/http-handler/httpHandler";
-import UserService from "pages/public/Login/api/userService";
-import {AuthActionCreators} from "pages/public/Login/store/auth/action-creators";
 import {AppDispatch, RootState} from "../../index";
-import {SetUserAction, SetIsLoadingGetUserAction, UserActionEnum} from "./types";
+import {SetUserAction, SetIsLoadingGetUserAction, SetIsAuthAction, UserActionEnum} from "./types";
 
 export const UserActionCreators = {
     setUser: (payload: User): SetUserAction => ({type: UserActionEnum.SET_USER, payload}),
+    setAuth: (payload: boolean): SetIsAuthAction => ({type: UserActionEnum.SET_IS_AUTH, payload}),
     setIsLoadingGetUser: (payload: boolean): SetIsLoadingGetUserAction => ({
         type: UserActionEnum.SET_IS_LOADING_GET_USER,
         payload
@@ -32,11 +32,7 @@ export const UserActionCreators = {
                     return;
                 }
                 dispatch(UserActionCreators.setUser(res.data.data));
-                dispatch(AuthActionCreators.setAuth(true));
-                Notify.Success({
-                    title: txt.authorization[currentLang],
-                    message: txt.welcome_to_the_system[currentLang]
-                });
+                dispatch(UserActionCreators.setAuth(true));
             } else {
                 FailedResponseHandler({
                     message: res.data?.message,

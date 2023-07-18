@@ -6,6 +6,6 @@ import {ErrorResponse, SuccessResponse} from "shared/api/response/response";
 
 export default class UserService {
     static getCurrentUser(): Promise<AxiosResponse<SuccessResponse<User> | ErrorResponse>> {
-        return $api.get<SuccessResponse<User> | ErrorResponse>(ApiRoutes.ME);
+        return $api.get<SuccessResponse<User> | ErrorResponse>(ApiRoutes.GET_ME);
     }
 }

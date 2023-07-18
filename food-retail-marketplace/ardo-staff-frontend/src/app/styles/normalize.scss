@@ -9,20 +9,20 @@
 
 /* Light mode */
 @media (prefers-color-scheme: light) {
-  * {
+  body {
     background-color: $global-color-light-bg-secondary-white;
   }
 }
 
 /* Dark mode */
 @media (prefers-color-scheme: dark) {
-  * {
+  body {
     background-color: $global-color-light-bg-secondary-black;
   }
 }
 
 @media (max-width: 1340px) {
-  * {
+  body {
     -webkit-tap-highlight-color: transparent;
   }
 }

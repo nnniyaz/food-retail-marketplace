@@ -28,8 +28,8 @@ export const OrganizationActionCreators = {
             dispatch(OrganizationActionCreators.setIsLoadingGetOrganizations(true));
             const res = await OrganizationsService.getOrganizations(request, controller);
             if (res.data.success) {
-                dispatch(OrganizationActionCreators.setOrganizations(res.data.data.organizations));
-                dispatch(OrganizationActionCreators.setOrganizationsCount(res.data.data.organizationsCount));
+                dispatch(OrganizationActionCreators.setOrganizations(res.data.data.orgs));
+                dispatch(OrganizationActionCreators.setOrganizationsCount(res.data.data.count));
             } else {
                 FailedResponseHandler({
                     message: res.data?.message,

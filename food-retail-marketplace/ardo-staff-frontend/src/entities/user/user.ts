@@ -19,7 +19,7 @@ export type User = {
 
 export type UsersData = {
     users: User[];
-    usersCount: number;
+    count: number;
 }
 
 export type UsersGetRequest = Paginate;
