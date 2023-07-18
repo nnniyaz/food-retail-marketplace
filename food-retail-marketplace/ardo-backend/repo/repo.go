@@ -23,7 +23,7 @@ import (
 )
 
 type User interface {
-	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error)
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error)
 	FindOneByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, user *user.User) error
@@ -53,7 +53,7 @@ type ActivationLink interface {
 }
 
 type Organization interface {
-	FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool) ([]*organization.Organization, error)
+	FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool) ([]*organization.Organization, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*organization.Organization, error)
 	Create(ctx context.Context, o *organization.Organization) error
 	UpdateOrgInfo(ctx context.Context, id uuid.UUID, name OrgValueObject.OrgName, logo string, desc OrgValueObject.OrgDesc, contacts OrgValueObject.OrgContact, currency OrgValueObject.Currency) error
@@ -63,10 +63,13 @@ type Organization interface {
 
 type UserOrganization interface {
 	Find(ctx context.Context) ([]*user_organization.UserOrganization, error)
-	FindOneByOrgId(ctx context.Context, orgId uuid.UUID) (*user_organization.UserOrganization, error)
+	FindOneByUserIdAndOrgId(ctx context.Context, userId, orgId uuid.UUID, isDeleted bool) (*user_organization.UserOrganization, error)
+	FindUsersByOrgId(ctx context.Context, orgId uuid.UUID, offset, limit int64, isDeleted bool) ([]*user_organization.UserOrganization, int64, error)
 	Create(ctx context.Context, organization *user_organization.UserOrganization) error
-	UpdateMerchantRole(ctx context.Context, orgId uuid.UUID, role UserOrgValueObject.MerchantRole) error
-	Delete(ctx context.Context, orgId uuid.UUID) error
+	UpdateMerchantRole(ctx context.Context, orgId, userId uuid.UUID, role UserOrgValueObject.MerchantRole) error
+	DeleteOrg(ctx context.Context, orgId uuid.UUID) error
+	DeleteUserFromAllOrgs(ctx context.Context, userId uuid.UUID) error
+	DeleteUserFromOrg(ctx context.Context, orgId, userId uuid.UUID) error
 }
 
 type Product interface {
@@ -95,7 +98,7 @@ func NewRepository(client *mongo.Client) *Repository {
 		RepoSession:          sessionMongo.NewRepoSession(client),
 		RepoActivationLink:   activationLinkMongo.NewRepoActivationLink(client),
 		RepoOrganization:     organizationMongo.NewRepoOrganization(client),
-		RepoUserOrganization: userOrganizationMongo.NewRepoOrganization(client),
+		RepoUserOrganization: userOrganizationMongo.NewRepoUserOrganization(client),
 		RepoProduct:          productMongo.NewRepoProduct(client),
 	}
 }

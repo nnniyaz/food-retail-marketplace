@@ -6,17 +6,17 @@ import (
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/handler/http/response"
 	"github/nnniyaz/ardo/pkg/logger"
-	service "github/nnniyaz/ardo/service/management"
+	"github/nnniyaz/ardo/service/management"
 	"net/http"
 	"time"
 )
 
 type HttpDelivery struct {
-	service service.ManagementUserService
+	service management.ManagementUserService
 	logger  logger.Logger
 }
 
-func NewHttpDelivery(s service.ManagementUserService, l logger.Logger) *HttpDelivery {
+func NewHttpDelivery(s management.ManagementUserService, l logger.Logger) *HttpDelivery {
 	return &HttpDelivery{service: s, logger: l}
 }
 
@@ -46,24 +46,29 @@ func NewUser(u *user.User) User {
 	}
 }
 
-func NewUsers(users []*user.User) []User {
+type UsersData struct {
+	Users []User `json:"users"`
+	Count int64  `json:"count"`
+}
+
+func NewUsers(users []*user.User, count int64) UsersData {
 	var us []User
 	for _, u := range users {
 		us = append(us, NewUser(u))
 	}
-	return us
+	return UsersData{Users: us, Count: count}
 }
 
 func (hd *HttpDelivery) GetUsersByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
 	isDeleted := r.Context().Value("is_deleted").(bool)
-	users, err := hd.service.GetUsersByFilters(r.Context(), offset, limit, isDeleted)
+	users, count, err := hd.service.GetUsersByFilters(r.Context(), offset, limit, isDeleted)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	response.NewSuccess(hd.logger, w, r, NewUsers(users))
+	response.NewSuccess(hd.logger, w, r, NewUsers(users, count))
 }
 
 func (hd *HttpDelivery) GetUserById(w http.ResponseWriter, r *http.Request) {

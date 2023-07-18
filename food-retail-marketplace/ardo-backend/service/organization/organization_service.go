@@ -10,7 +10,7 @@ import (
 )
 
 type OrganizationService interface {
-	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*organization.Organization, error)
+	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*organization.Organization, int64, error)
 	GetById(ctx context.Context, id string) (*organization.Organization, error)
 	Create(ctx context.Context, logo, name, currency, phone, email, address string, desc *core.MlString) error
 	UpdateOrgInfo(ctx context.Context, id, name, currency, phone, email, address string, desc *core.MlString) error
@@ -27,7 +27,7 @@ func NewOrganizationService(repo repo.Organization, l logger.Logger) Organizatio
 	return &organizationService{organizationRepo: repo, logger: l}
 }
 
-func (o *organizationService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*organization.Organization, error) {
+func (o *organizationService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*organization.Organization, int64, error) {
 	if offset < 0 {
 		offset = 0
 	}

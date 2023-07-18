@@ -6,6 +6,7 @@ import (
 	"github/nnniyaz/ardo/domain/base/email"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
+	"github/nnniyaz/ardo/domain/user/exceptions"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -73,10 +74,14 @@ func (m *mongoUser) ToAggregate() *user.User {
 	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt)
 }
 
-func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
+func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
+	count, err := r.Coll().CountDocuments(ctx, bson.M{"isDeleted": isDeleted})
+	if err != nil {
+		return nil, 0, err
+	}
 	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer cur.Close(ctx)
 
@@ -84,17 +89,20 @@ func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDel
 	for cur.Next(ctx) {
 		var internal mongoUser
 		if err = cur.Decode(&internal); err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		result = append(result, internal.ToAggregate())
 	}
-	return result, nil
+	return result, count, nil
 }
 
 func (r *RepoUser) FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error) {
 	var foundUser mongoUser
 	err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundUser)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, exceptions.ErrUserNotFound
+		}
 		return nil, err
 	}
 	return foundUser.ToAggregate(), nil
@@ -102,13 +110,10 @@ func (r *RepoUser) FindOneById(ctx context.Context, id uuid.UUID) (*user.User, e
 
 func (r *RepoUser) FindOneByEmail(ctx context.Context, email string) (*user.User, error) {
 	var foundUser mongoUser
-	err := r.Coll().FindOne(ctx, bson.M{
-		"email":     email,
-		"isDeleted": false,
-	}).Decode(&foundUser)
+	err := r.Coll().FindOne(ctx, bson.M{"email": email}).Decode(&foundUser)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
-			return nil, nil
+			return nil, exceptions.ErrUserNotFound
 		}
 		return nil, err
 	}

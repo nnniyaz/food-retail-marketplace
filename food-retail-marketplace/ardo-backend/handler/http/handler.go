@@ -97,6 +97,9 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Put("/{org_id}", h.ManagementOrg.UpdateOrgInfo)
 				r.Put("/{org_id}/logo", h.ManagementOrg.UpdateOrgLogo)
 				r.Delete("/{org_id}", h.ManagementOrg.DeleteOrg)
+
+				r.With(h.Middleware.PaginationParams).Get("/{org_id}/users", h.ManagementOrg.GetUsersByOrgId)
+				r.Post("/{org_id}/users", h.ManagementOrg.AddUserToOrg)
 			})
 		})
 	})

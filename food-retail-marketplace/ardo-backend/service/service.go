@@ -12,6 +12,7 @@ import (
 	"github/nnniyaz/ardo/service/organization"
 	"github/nnniyaz/ardo/service/session"
 	"github/nnniyaz/ardo/service/user"
+	"github/nnniyaz/ardo/service/user_organization"
 )
 
 type Services struct {
@@ -26,11 +27,12 @@ func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, 
 	sessionService := session.NewSessionService(repos.RepoSession, l)
 	linkService := link.NewActivationLinkService(repos.RepoActivationLink, l)
 	organizationService := organization.NewOrganizationService(repos.RepoOrganization, l)
+	userOrganizationService := user_organization.NewUserOrgService(repos.RepoUserOrganization, l)
 
 	return &Services{
 		Auth:                   auth.NewAuthService(userService, sessionService, linkService, l, config, emailService),
 		ManagementUser:         management.NewManagementUserService(userService, l),
-		ManagementOrganization: management.NewManagementOrgService(organizationService, l),
+		ManagementOrganization: management.NewManagementOrgService(organizationService, userOrganizationService, l),
 		CurrentUser:            current_user.NewCurrentUser(userService, sessionService, l),
 	}
 }

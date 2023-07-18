@@ -4,17 +4,13 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
-	"github/nnniyaz/ardo/pkg/core"
+	"github/nnniyaz/ardo/domain/user/exceptions"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
 )
 
-var (
-	ErrUserNotFound = core.NewI18NError(core.ENOTFOUND, core.TXT_USER_NOT_FOUND)
-)
-
 type UserService interface {
-	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error)
+	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
 	GetById(ctx context.Context, id string) (*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error)
@@ -32,7 +28,7 @@ func NewUserService(repo repo.User, l logger.Logger) UserService {
 	return &userService{userRepo: repo, logger: l}
 }
 
-func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
+func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
 	if offset < 0 {
 		offset = 0
 	}
@@ -55,6 +51,13 @@ func (u *userService) GetByEmail(ctx context.Context, email string) (*user.User,
 }
 
 func (u *userService) Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error) {
+	foundUser, err := u.userRepo.FindOneByEmail(ctx, email)
+	if err != nil {
+		return nil, err
+	}
+	if foundUser != nil && !foundUser.GetIsDeleted() {
+		return nil, exceptions.ErrUserAlreadyExist
+	}
 	newUser, err := user.NewUser(firstName, lastName, email, password, userType)
 	if err != nil {
 		return nil, err
@@ -71,6 +74,9 @@ func (u *userService) UpdateCredentials(ctx context.Context, userId, firstName, 
 	if err != nil {
 		return err
 	}
+	if foundUser.GetIsDeleted() {
+		return exceptions.ErrUserNotFound
+	}
 	err = foundUser.UpdateCredentials(firstName, lastName, email)
 	if err != nil {
 		return err
@@ -82,6 +88,9 @@ func (u *userService) UpdatePassword(ctx context.Context, id, password string) e
 	foundUser, err := u.GetById(ctx, id)
 	if err != nil {
 		return err
+	}
+	if foundUser.GetIsDeleted() {
+		return exceptions.ErrUserNotFound
 	}
 	err = foundUser.ChangePassword(password)
 	if err != nil {
@@ -96,7 +105,7 @@ func (u *userService) Delete(ctx context.Context, id string) error {
 		return err
 	}
 	if foundUser.GetIsDeleted() {
-		return ErrUserNotFound
+		return exceptions.ErrUserNotFound
 	}
 	return u.userRepo.Delete(ctx, foundUser.GetId())
 }

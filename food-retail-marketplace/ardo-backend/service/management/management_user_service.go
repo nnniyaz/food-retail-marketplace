@@ -8,7 +8,7 @@ import (
 )
 
 type ManagementUserService interface {
-	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error)
+	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
 	GetUserById(ctx context.Context, userId string) (*user.User, error)
 	AddUser(ctx context.Context, firstName, lastName, email, password, userType string) error
 	DeleteUser(ctx context.Context, userId string) error
@@ -25,12 +25,12 @@ func NewManagementUserService(userService userService.UserService, l logger.Logg
 	return &managementUserService{userService: userService, logger: l}
 }
 
-func (m *managementUserService) GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, error) {
-	users, err := m.userService.GetByFilters(ctx, offset, limit, isDeleted)
+func (m *managementUserService) GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
+	users, count, err := m.userService.GetByFilters(ctx, offset, limit, isDeleted)
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
-	return users, nil
+	return users, count, nil
 }
 
 func (m *managementUserService) GetUserById(ctx context.Context, userId string) (*user.User, error) {
@@ -43,6 +43,7 @@ func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName
 }
 
 func (m *managementUserService) DeleteUser(ctx context.Context, userId string) error {
+
 	return m.userService.Delete(ctx, userId)
 }
 

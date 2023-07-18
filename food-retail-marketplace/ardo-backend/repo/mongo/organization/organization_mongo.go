@@ -84,10 +84,14 @@ func (m *mongoOrganization) ToAggregate() (*organization.Organization, error) {
 	return organization.UnmarshalOrganizationFromDatabase(m.Id, m.Logo, m.Name, m.Currency, m.Desc, contacts, m.IsDeleted, m.CreatedAt, m.UpdatedAt)
 }
 
-func (r *RepoOrganization) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*organization.Organization, error) {
+func (r *RepoOrganization) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*organization.Organization, int64, error) {
+	count, err := r.Coll().CountDocuments(ctx, bson.M{"isDeleted": isDeleted})
+	if err != nil {
+		return nil, 0, err
+	}
 	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
 	if err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 	defer cur.Close(nil)
 
@@ -95,15 +99,15 @@ func (r *RepoOrganization) FindByFilters(ctx context.Context, offset, limit int6
 	for cur.Next(nil) {
 		var o mongoOrganization
 		if err = cur.Decode(&o); err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		org, err := o.ToAggregate()
 		if err != nil {
-			return nil, err
+			return nil, 0, err
 		}
 		organizations = append(organizations, org)
 	}
-	return organizations, nil
+	return organizations, count, nil
 }
 
 func (r *RepoOrganization) FindOneById(ctx context.Context, id uuid.UUID) (*organization.Organization, error) {
@@ -143,7 +147,8 @@ func (r *RepoOrganization) UpdateOrgLogo(ctx context.Context, id uuid.UUID, logo
 		"_id": id,
 	}, bson.M{
 		"$set": bson.M{
-			"logo": logo,
+			"logo":      logo,
+			"updatedAt": time.Now(),
 		},
 	})
 	return err
@@ -155,6 +160,7 @@ func (r *RepoOrganization) Delete(ctx context.Context, id uuid.UUID) error {
 	}, bson.M{
 		"$set": bson.M{
 			"isDeleted": true,
+			"updatedAt": time.Now(),
 		},
 	})
 	return err

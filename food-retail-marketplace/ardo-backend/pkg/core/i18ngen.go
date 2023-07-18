@@ -46,6 +46,7 @@ const (
 	TXT_OLD_PASSWORD_DOES_NOT_MATCH TxtKey = 41
 	TXT_EMPTY_ORG_LOGO              TxtKey = 42
 	TXT_ORG_NOT_FOUND               TxtKey = 43
+	TXT_USER_ALREADY_IN_ORG         TxtKey = 44
 )
 
 var Txts = TxtResource{
@@ -221,6 +222,10 @@ var Txts = TxtResource{
 		RU: `Организация не найдена`,
 		EN: `Organization not found`,
 	},
+	TXT_USER_ALREADY_IN_ORG: MlString{
+		RU: `Пользователь уже состоит в организации`,
+		EN: `User already in organization`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -311,6 +316,8 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "empty_org_logo"
 	case TXT_ORG_NOT_FOUND:
 		return "org_not_found"
+	case TXT_USER_ALREADY_IN_ORG:
+		return "user_already_in_org"
 
 	default:
 		return ""
