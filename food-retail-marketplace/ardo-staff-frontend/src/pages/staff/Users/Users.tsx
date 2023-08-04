@@ -7,12 +7,13 @@ import {txt} from "shared/core/i18ngen";
 import {useActions} from "shared/lib/hooks/useActions";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import classes from "./Users.module.scss";
+import {TableParams} from "../../../entities/base/tableParams";
 
 export const Users: FC = () => {
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {users, isLoadingGetUsers} = useTypedSelector(state => state.users);
+    const {users, usersCount, isLoadingGetUsers} = useTypedSelector(state => state.users);
     const {fetchUsers} = useActions();
-    const [pagination, setPagination] = useState<Paginate>({offset: 1, limit: 25, is_deleted: false});
+    const [pagination, setPagination] = useState<TableParams>({pagination: {current: 1, pageSize: 25, total: usersCount}});
 
     const columns: ColumnsType<User> = [
         {title: txt.id[currentLang], dataIndex: "id"},
@@ -29,7 +30,7 @@ export const Users: FC = () => {
 
     useEffect(() => {
         const controller = new AbortController();
-        fetchUsers({...pagination, offset: pagination.offset! - 1}, controller);
+        fetchUsers({...pagination, offset: pagination.pagination?.current! - 1}, controller);
         return () => controller.abort();
     }, []);
 

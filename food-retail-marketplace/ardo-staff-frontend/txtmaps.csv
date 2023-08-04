@@ -36,3 +36,5 @@
 "is_deleted","Удален","Is deleted"
 "created_at","Дата создания","Created at"
 "updated_at","Дата обновления","Updated at"
+"name","Название","Name"
+"currency","Валюта","Currency"
