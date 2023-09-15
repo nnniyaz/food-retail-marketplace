@@ -2,8 +2,8 @@ import {isEmpty} from "lodash";
 import {AppDispatch} from "app/store";
 import {UserActionCreators} from "app/store/reducers/user/action-creators";
 import {RouteNames} from "pages";
+import {LangsList} from "entities/base/MlString";
 import {NavigateCallback} from "entities/base/navigateCallback";
-import {LangsList, MlString} from "entities/base/MlString";
 import {txt} from "../../core/i18ngen";
 import {Notify} from "../notification/notification";
 
@@ -13,42 +13,67 @@ interface HttpHandlerProps {
     dispatch: AppDispatch;
     currentLang: LangsList;
     navigateCallback?: NavigateCallback;
+    hideNotify?: boolean;
 }
 
-export const httpHandler = ({error, httpStatus, dispatch, currentLang, navigateCallback}: HttpHandlerProps) => {
+export const httpHandler = (
+    {
+        error,
+        httpStatus,
+        dispatch,
+        currentLang,
+        navigateCallback,
+        hideNotify
+    }: HttpHandlerProps
+) => {
     if (httpStatus === 401) {
         dispatch(UserActionCreators.setAuth(false));
-        Notify.Warning({title: txt.authorization[currentLang], message: txt.session_expired[currentLang]});
+        if (!hideNotify) {
+            Notify.Warning({title: txt.authorization[currentLang], message: txt.session_expired[currentLang]});
+        }
         navigateCallback?.navigate(RouteNames.LOGIN);
     } else if (httpStatus === 403) {
-        Notify.Warning({
-            title: txt.internal_system[currentLang],
-            message: txt.you_dont_have_access[currentLang]
-        });
+        if (!hideNotify) {
+            Notify.Warning({
+                title: txt.internal_system[currentLang],
+                message: txt.you_dont_have_access[currentLang]
+            });
+        }
         navigateCallback?.navigate(-1);
     } else if (httpStatus === 404) {
-        Notify.Warning({title: txt.page_not_found[currentLang], message: ""});
+        if (!hideNotify) {
+            Notify.Warning({title: txt.page_not_found[currentLang], message: ""});
+        }
         navigateCallback?.navigate(-1);
     } else if (httpStatus >= 400 && httpStatus < 500) {
         return;
+    } else if (error?.code === "ERR_CANCELED") {
+        return;
     } else {
-        Notify.Error({
-            title: txt.critical_error[currentLang],
-            message: txt.please_try_again_or_contact_support[currentLang]
-        });
+        if (!hideNotify) {
+            Notify.Error({
+                title: txt.critical_error[currentLang],
+                message: txt.please_try_again_or_contact_support[currentLang]
+            });
+        }
         navigateCallback?.navigate(-1);
         console.log(error)
     }
 }
 
 interface FailedResponseHandlerProps {
-    message: MlString;
+    messages: string[];
     httpStatus: number;
-    currentLang: LangsList;
+    hideNotify?: boolean;
 }
 
-export const FailedResponseHandler = ({message, httpStatus, currentLang}: FailedResponseHandlerProps) => {
-    if (httpStatus >= 400 && httpStatus < 500 && !isEmpty(message)) {
-        Notify.Warning({title: message[currentLang], message: ""});
+export const FailedResponseHandler = ({messages, httpStatus, hideNotify}: FailedResponseHandlerProps) => {
+    if (hideNotify) {
+        return;
+    }
+    if (httpStatus >= 400 && httpStatus < 500 && !isEmpty(messages)) {
+        messages.forEach((msg) => {
+            Notify.Warning({title: msg, message: ""});
+        });
     }
 }

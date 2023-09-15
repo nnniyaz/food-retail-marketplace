@@ -1,12 +1,10 @@
-import {MlString} from "../../../entities/base/MlString";
-
 export interface ErrorResponse {
     success: false;
-    message: MlString;
+    messages: string[];
 }
 
 export interface SuccessResponse<T> {
     success: true;
-    message: MlString;
+    messages: string[];
     data: T;
 }

@@ -1,5 +1,9 @@
 import axios from "axios";
 
+const validateStatus = (status: number) => {
+    return (status >= 200 && status < 401) || (status > 401 && status !== 403 && status !== 404 && status < 500) ;
+}
+
 const $api = axios.create({
     baseURL: process.env.REACT_APP_API_URL || '',
     withCredentials: true,
@@ -8,19 +12,8 @@ const $api = axios.create({
     },
     timeout: 20000,
     timeoutErrorMessage: 'Timeout error',
-    validateStatus: function (status) {
-        return status >= 200 && status < 500;
-    }
+    validateStatus: validateStatus
 });
-
-$api.interceptors.request.use((config) => {
-    // @ts-ignore
-    return config;
-})
-
-$api.interceptors.response.use((config) => {
-    return config;
-})
 
 export default $api;
 
@@ -33,9 +26,7 @@ const $apiBlob = axios.create({
     responseType: 'blob',
     timeout: 20000,
     timeoutErrorMessage: 'Timeout error',
-    validateStatus: function (status) {
-        return status >= 200 && status < 500;
-    }
+    validateStatus: validateStatus
 });
 
 export {$apiBlob};
@@ -48,9 +39,7 @@ const $apiFormData = axios.create({
     },
     timeout: 20000,
     timeoutErrorMessage: 'Timeout error',
-    validateStatus: function (status) {
-        return status >= 200 && status < 500;
-    }
+    validateStatus: validateStatus
 });
 
 export {$apiFormData};

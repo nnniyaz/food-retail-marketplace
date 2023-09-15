@@ -7,6 +7,7 @@ import {
     SettingOutlined,
     ShopOutlined,
     UnorderedListOutlined,
+    UserAddOutlined,
     UserOutlined
 } from "@ant-design/icons";
 import {txt} from "shared/core/i18ngen";
@@ -20,6 +21,7 @@ import {Users} from "./staff/Users";
 import {Organizations} from "./staff/Organizations";
 import {Applications} from "./staff/Applications";
 import {Settings} from "./staff/Settings";
+import {UsersAdd} from "./staff/Users/pages/UsersAdd";
 
 export interface IRoute {
     path: string;
@@ -36,6 +38,7 @@ export enum RouteNames {
     DASHBOARD = "/",
     CATALOG = "/catalog",
     USERS = "/users",
+    USERS_ADD = "/users/add",
     ORGANIZATIONS = "/organizations",
     APPLICATIONS = "/applications",
     SETTINGS = "/settings",
@@ -48,13 +51,17 @@ export const publicRoutes: IRoute[] = [
     {path: RouteNames.LOGIN, element: Login, name: txt.login},
 ];
 
-export const staffRoutes: IRoute[] = [
+export const staffRoutesSidebar: IRoute[] = [
     {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>},
     {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <UnorderedListOutlined/>},
     {path: RouteNames.USERS, element: Users, name: txt.users, icon: <UserOutlined/>},
     {path: RouteNames.ORGANIZATIONS, element: Organizations, name: txt.organizations, icon: <ShopOutlined/>},
     {path: RouteNames.APPLICATIONS, element: Applications, name: txt.applications, icon: <BookOutlined/>},
     {path: RouteNames.SETTINGS, element: Settings, name: txt.settings, icon: <SettingOutlined/>},
+];
+
+export const staffRoutes: IRoute[] = [
+    {path: RouteNames.USERS_ADD, element: UsersAdd, name: txt.new_user, icon: <UserAddOutlined/>},
 ];
 
 const AppRouter = () => {
@@ -79,7 +86,7 @@ const AppRouter = () => {
             {isAuth
                 ?
                 <Route element={<StaffLayout/>}>
-                    {staffRoutes.map(route => (
+                    {[...staffRoutesSidebar, ...staffRoutes].map(route => (
                         <Route path={route.path} element={<route.element/>} key={route.path}/>
                     ))}
                     <Route path={"*"} element={<Navigate to={from()}/>}/>

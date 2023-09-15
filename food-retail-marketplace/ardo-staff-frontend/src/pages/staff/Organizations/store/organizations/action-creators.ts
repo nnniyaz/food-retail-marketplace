@@ -32,9 +32,8 @@ export const OrganizationActionCreators = {
                 dispatch(OrganizationActionCreators.setOrganizationsCount(res.data.data.count));
             } else {
                 FailedResponseHandler({
-                    message: res.data?.message,
+                    messages: res.data?.messages,
                     httpStatus: res.status,
-                    currentLang: currentLang,
                 });
             }
         } catch (e: any) {

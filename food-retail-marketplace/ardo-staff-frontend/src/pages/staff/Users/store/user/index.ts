@@ -4,6 +4,7 @@ const initialState: UsersState = {
     users: [],
     usersCount: 0,
     isLoadingGetUsers: false,
+    isLoadingAddUsers: false,
 }
 
 export default function userReducer(state = initialState, action: UsersAction): UsersState {
@@ -14,6 +15,8 @@ export default function userReducer(state = initialState, action: UsersAction): 
             return {...state, usersCount: action.payload}
         case UsersActionEnum.SET_IS_LOADING_GET_USERS:
             return {...state, isLoadingGetUsers: action.payload}
+        case UsersActionEnum.SET_IS_LOADING_ADD_USERS:
+            return {...state, isLoadingAddUsers: action.payload}
         default:
             return state;
     }

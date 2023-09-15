@@ -1,6 +1,7 @@
 import React, {FC, useEffect} from "react";
+import {useNavigate} from "react-router-dom";
 import {txt} from "shared/core/i18ngen";
-import {Table} from "shared/ui/Table";
+import {Table} from "shared/ui/TableTools/Table";
 import {useActions} from "shared/lib/hooks/useActions";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import {Block} from "./components/Block";
@@ -14,6 +15,7 @@ const requestOptions = {
 }
 
 export const Dashboard: FC = () => {
+    const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
     const {isLoadingGetUsers, users} = useTypedSelector(state => state.users);
     const {isLoadingGetOrganizations, organizations} = useTypedSelector(state => state.organizations);
@@ -40,7 +42,7 @@ export const Dashboard: FC = () => {
 
     useEffect(() => {
         const controller = new AbortController();
-        fetchUsers(requestOptions, controller);
+        fetchUsers(requestOptions, controller, {navigate});
         return () => controller.abort();
     }, [])
 

@@ -1,9 +1,12 @@
-import {FormRule} from "antd";
+import {FormInstance, FormRule} from "antd";
+import {LangsList} from "entities/base/MlString";
+import {txt} from "shared/core/i18ngen";
 
 interface IRules {
     required: (message: string) => FormRule,
     email: (message: string) => FormRule,
     minmaxLen: (message: string, min: number, max: number) => FormRule,
+    matchPass: (form: FormInstance, lang: LangsList) => FormRule,
 }
 
 export const rules: IRules = {
@@ -19,5 +22,13 @@ export const rules: IRules = {
             }
             return Promise.resolve();
         }
+    }),
+    matchPass: (form, lang) => ({
+        validator(_, value) {
+            if (!value || form.getFieldValue('password') === value) {
+                return Promise.resolve();
+            }
+            return Promise.reject(new Error(txt.password_does_not_match[lang]));
+        },
     }),
 }

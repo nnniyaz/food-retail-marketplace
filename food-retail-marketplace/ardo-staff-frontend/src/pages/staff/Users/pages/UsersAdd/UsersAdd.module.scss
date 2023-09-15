@@ -1,0 +1,40 @@
+.main {
+  width: 100%;
+
+  .form__row {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+
+    .form__item {
+      width: 100%;
+
+      &:nth-child(1) {
+        width: 50%;
+      }
+
+      &:nth-child(2) {
+        width: 50%;
+      }
+
+      &:nth-child(5) {
+        width: 50%;
+      }
+
+      &:nth-child(6) {
+        width: 50%;
+      }
+    }
+  }
+
+  .form__btns {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-top: 20px;
+    gap: 10px;
+  }
+}

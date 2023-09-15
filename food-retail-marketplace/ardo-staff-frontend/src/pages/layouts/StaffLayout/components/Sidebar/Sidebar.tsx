@@ -1,32 +1,37 @@
-import React, {FC, useMemo} from "react";
-import {MenuFoldOutlined} from "@ant-design/icons";
+import React, {FC, useEffect, useState} from "react";
 import {Transition, TransitionStatus} from "react-transition-group";
-import {NavLink, useLocation} from "react-router-dom";
-import {RouteNames, staffRoutes} from "pages";
+import {NavLink, useLocation, useNavigate} from "react-router-dom";
+import {LogoutOutlined, MenuFoldOutlined} from "@ant-design/icons";
+import {IRoute, RouteNames, staffRoutesSidebar} from "pages";
+import {txt} from "shared/core/i18ngen";
 import {Logo} from "shared/ui/Logo";
 import {Text} from "shared/ui/Text";
 import {Divider} from "shared/ui/Divider";
+import {Credits} from "shared/ui/Credits";
+import {useActions} from "shared/lib/hooks/useActions";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import classes from "./Sidebar.module.scss";
-import {Credits} from "../../../../../shared/ui/Credits";
 
 interface HeaderProps {
     isShown: boolean;
     setIsShown: React.Dispatch<React.SetStateAction<boolean>>
 }
 
+const logoutSideBarItem: IRoute = {
+    name: txt.logout,
+    icon: <LogoutOutlined/>,
+    path: "",
+    element: <></> as any
+}
+
 export const Sidebar: FC<HeaderProps> = ({isShown, setIsShown}) => {
-    const location = useLocation();
-    const upperSlice = staffRoutes.filter(item => item.path !== RouteNames.SETTINGS);
-    const lowerSlice = staffRoutes.filter(item => item.path === RouteNames.SETTINGS);
-    const {currentLang} = useTypedSelector(state => state.lang);
-    const width = useMemo(() => window.innerWidth, [window.innerWidth]);
-    const activeLink = (path: string) => {
-        if (path === "/") {
-            return path === location.pathname;
-        }
-        return location.pathname.includes(path);
-    }
+    const navigate = useNavigate();
+    const upperSlice = staffRoutesSidebar.filter(item => item.path !== RouteNames.SETTINGS);
+    const lowerSlice = staffRoutesSidebar.filter(item => item.path === RouteNames.SETTINGS);
+    const {logout} = useActions();
+
+    const [windowSize, setWindowSize] = useState(window.innerWidth);
+
     const transitionClasses: Record<TransitionStatus, string> = {
         entering: classes.sidebar__enter__active,
         entered: classes.sidebar__enter__done,
@@ -39,7 +44,21 @@ export const Sidebar: FC<HeaderProps> = ({isShown, setIsShown}) => {
         setIsShown(false);
     }
 
-    if (width <= 1340) {
+    const handleLogout = async () => {
+        logout({navigate});
+    }
+
+    useEffect(() => {
+        const handleWindowResize = () => setWindowSize(window.innerWidth);
+
+        window.addEventListener('resize', handleWindowResize);
+
+        return () => {
+            window.removeEventListener('resize', handleWindowResize);
+        };
+    }, []);
+
+    if (windowSize <= 1340) {
         return (
             <Transition in={isShown} timeout={300} mountOnEnter unmountOnExit>
                 {state => (
@@ -49,29 +68,10 @@ export const Sidebar: FC<HeaderProps> = ({isShown, setIsShown}) => {
                             <Logo/>
                         </div>
                         <Divider/>
-                        {upperSlice.map((item, index) => (
-                            <NavLink
-                                to={item.path}
-                                onClick={handleOnClick}
-                                className={activeLink(item.path) ? classes.sidebar__item__active : classes.sidebar__item}
-                                key={index}
-                            >
-                                <div className={classes.sidebar__item__icon}>{item.icon}</div>
-                                <Text text={item.name[currentLang]} light={activeLink(item.path)}/>
-                            </NavLink>
-                        ))}
+                        {upperSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>)}
                         <Divider/>
-                        {lowerSlice.map((item, index) => (
-                            <NavLink
-                                to={item.path}
-                                onClick={handleOnClick}
-                                className={activeLink(item.path) ? classes.sidebar__item__active : classes.sidebar__item}
-                                key={index}
-                            >
-                                <div className={classes.sidebar__item__icon}>{item.icon}</div>
-                                <Text text={item.name[currentLang]} light={activeLink(item.path)}/>
-                            </NavLink>
-                        ))}
+                        {lowerSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>)}
+                        <SideBarItem item={logoutSideBarItem} onClick={handleLogout}/>
                         <Credits/>
                     </div>
                 )}
@@ -86,30 +86,34 @@ export const Sidebar: FC<HeaderProps> = ({isShown, setIsShown}) => {
                 <Logo/>
                 <Divider/>
             </div>
-            {upperSlice.map((item, index) => (
-                <NavLink
-                    to={item.path}
-                    onClick={handleOnClick}
-                    className={activeLink(item.path) ? classes.sidebar__item__active : classes.sidebar__item}
-                    key={index}
-                >
-                    <div className={classes.sidebar__item__icon}>{item.icon}</div>
-                    <Text text={item.name[currentLang]} light={activeLink(item.path)}/>
-                </NavLink>
-            ))}
+            {upperSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>)}
             <Divider/>
-            {lowerSlice.map((item, index) => (
-                <NavLink
-                    to={item.path}
-                    onClick={handleOnClick}
-                    className={activeLink(item.path) ? classes.sidebar__item__active : classes.sidebar__item}
-                    key={index}
-                >
-                    <div className={classes.sidebar__item__icon}>{item.icon}</div>
-                    <Text text={item.name[currentLang]} light={activeLink(item.path)}/>
-                </NavLink>
-            ))}
+            {lowerSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>)}
+            <SideBarItem item={logoutSideBarItem} onClick={handleLogout}/>
             <Credits/>
         </div>
+    )
+}
+
+const SideBarItem: FC<{ item: IRoute, onClick: (...args: any[]) => void }> = ({item, onClick}) => {
+    const {currentLang} = useTypedSelector(state => state.lang);
+    const location = useLocation();
+    const activeLink = (path: string) => {
+        if (!path) return false;
+        if (path === "/") {
+            return path === location.pathname;
+        }
+        return location.pathname.includes(path);
+    }
+
+    return (
+        <NavLink
+            to={item.path}
+            onClick={onClick}
+            className={activeLink(item.path) ? classes.sidebar__item__active : classes.sidebar__item}
+        >
+            <div className={classes.sidebar__item__icon}>{item.icon}</div>
+            <Text text={item.name[currentLang]} light={activeLink(item.path)}/>
+        </NavLink>
     )
 }

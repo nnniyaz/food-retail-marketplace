@@ -4,12 +4,14 @@ export type UsersState = {
     users: User[];
     usersCount: number;
     isLoadingGetUsers: boolean;
+    isLoadingAddUsers: boolean;
 }
 
 export enum UsersActionEnum {
     SET_USERS = "SET_USERS",
     SET_USERS_COUNT = "SET_USERS_COUNT",
     SET_IS_LOADING_GET_USERS = "SET_IS_LOADING_GET_USERS",
+    SET_IS_LOADING_ADD_USERS = "SET_IS_LOADING_ADD_USERS",
 }
 
 export type SetUsersAction = {
@@ -27,7 +29,13 @@ export type SetIsLoadingGetUsersAction = {
     payload: boolean;
 }
 
+export type SetIsLoadingAddUsersAction = {
+    type: UsersActionEnum.SET_IS_LOADING_ADD_USERS;
+    payload: boolean;
+}
+
 export type UsersAction =
     SetUsersAction |
     SetUsersCountAction |
-    SetIsLoadingGetUsersAction;
+    SetIsLoadingGetUsersAction |
+    SetIsLoadingAddUsersAction;

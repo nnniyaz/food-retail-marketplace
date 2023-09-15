@@ -1,10 +1,11 @@
-import {Paginate} from "../base/paginate";
-
 type UserFirstName = string;
 type UserLastName = string;
 
 export enum UserType {
     STAFF = "STAFF",
+    MODERATOR = "MODERATOR",
+    OWNER = "OWNER",
+    MANAGER = "MANAGER",
 }
 
 export type User = {
@@ -21,5 +22,3 @@ export type UsersData = {
     users: User[];
     count: number;
 }
-
-export type UsersGetRequest = Paginate;

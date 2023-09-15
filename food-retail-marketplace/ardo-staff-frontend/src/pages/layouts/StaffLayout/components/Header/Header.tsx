@@ -14,9 +14,9 @@ interface HeaderProps {
 export const Header: FC<HeaderProps> = ({isShown, setIsShown}) => {
     const {user} = useTypedSelector(state => state.user);
     const data = {
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        role: user.userType || "",
+        firstName: user.firstName || "-",
+        lastName: user.lastName || "-",
+        role: user.userType || "Role",
     }
     const transitionClasses: Record<TransitionStatus, string> = {
         entering: classes.header__enter__active,
@@ -37,18 +37,30 @@ export const Header: FC<HeaderProps> = ({isShown, setIsShown}) => {
                         <MenuUnfoldOutlined className={classes.burger} onClick={() => setIsShown(true)}/>
                     </div>
                     <div className={classes.header__item}>
-                        <div className={classes.account__block}>
-                            <div className={classes.account__avatar}>
-                                {`${data.firstName[0]}${data.lastName[0]}`}
-                            </div>
-                            <div className={classes.account__info}>
-                                <Text text={`${data.firstName} ${data.lastName}`} type={"text-small"}/>
-                                <Text text={data.role} type={"text-small"}/>
-                            </div>
-                        </div>
+                        <AccountBlock firstName={data.firstName} lastName={data.lastName} role={data.role}/>
                     </div>
                 </div>
             )}
         </Transition>
+    )
+}
+
+interface AccountBlockProps {
+    firstName: string;
+    lastName: string;
+    role: string;
+}
+
+const AccountBlock: FC<AccountBlockProps> = ({firstName, lastName, role}) => {
+    return (
+        <div className={classes.account__block}>
+            <div className={classes.account__avatar}>
+                {`${firstName[0]}${lastName[0]}`}
+            </div>
+            <div className={classes.account__info}>
+                <Text text={`${firstName} ${lastName}`} type={"text-small"}/>
+                <Text text={role} type={"text-small"}/>
+            </div>
+        </div>
     )
 }

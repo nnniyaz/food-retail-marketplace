@@ -14,7 +14,7 @@ export const UserActionCreators = {
         type: UserActionEnum.SET_IS_LOADING_GET_USER,
         payload
     }),
-    getCurrentUser: (navigateCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    getCurrentUser: (navigateCallback: NavigateCallback, hideNotify?: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(UserActionCreators.setIsLoadingGetUser(true));
@@ -35,9 +35,9 @@ export const UserActionCreators = {
                 dispatch(UserActionCreators.setAuth(true));
             } else {
                 FailedResponseHandler({
-                    message: res.data?.message,
+                    messages: res.data?.messages,
                     httpStatus: res.status,
-                    currentLang: currentLang,
+                    hideNotify: hideNotify,
                 });
             }
         } catch (e: any) {
@@ -46,10 +46,15 @@ export const UserActionCreators = {
                 httpStatus: e?.response?.status,
                 dispatch: dispatch,
                 currentLang: currentLang,
-                navigateCallback: navigateCallback
+                navigateCallback: navigateCallback,
+                hideNotify: hideNotify,
             });
         } finally {
             dispatch(UserActionCreators.setIsLoadingGetUser(false));
         }
     },
+    clearUser: () => (dispatch: AppDispatch) => {
+        dispatch(UserActionCreators.setUser({} as User));
+        dispatch(UserActionCreators.setAuth(false));
+    }
 }

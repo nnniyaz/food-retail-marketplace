@@ -15,7 +15,7 @@ export const Login: FC = () => {
     const {getCurrentUser} = useActions();
 
     useEffect(() => {
-        getCurrentUser({navigate: navigate, to: RouteNames.LOGIN});
+        getCurrentUser({navigate: navigate, to: RouteNames.LOGIN}, true);
     }, []);
 
     return (

@@ -1,7 +1,7 @@
 import React, {FC} from "react";
-import {Loader} from "../Loader";
+import {Loader} from "../../Loader";
 import classes from "./Table.module.scss";
-import {Empty} from "../Empty";
+import {Empty} from "../../Empty";
 
 export type TableColumn = {
     title: string;
