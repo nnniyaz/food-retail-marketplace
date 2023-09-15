@@ -1,15 +1,16 @@
-import React, {FC} from 'react';
+import React, {FC, useEffect} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Form, Input, Select} from "antd";
-import {useForm} from "antd/es/form/Form";
+import {useForm, useWatch} from "antd/es/form/Form";
 import {UserType} from "entities/user/user";
 import {txt} from "shared/core/i18ngen";
 import {rules} from "shared/lib/form-rules/rules";
 import {useActions} from "shared/lib/hooks/useActions";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {userTypeTranslate} from "shared/lib/utils/user-type-translate";
+import {RouteNames} from "../../../../index";
 import {AddUserReq} from "../../api/usersService";
 import classes from "./UsersAdd.module.scss";
-import {RouteNames} from "../../../../index";
 
 const initialFormValues = {
     firstName: "",
@@ -22,16 +23,19 @@ const initialFormValues = {
 export const UsersAdd: FC = () => {
     const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {isLoadingAddUsers} = useTypedSelector(state => state.users);
+    const {isLoadingAddUser} = useTypedSelector(state => state.users);
     const {addUser} = useActions();
     const [form] = useForm();
+    const values = useWatch([], form);
+
+    const [submittable, setSubmittable] = React.useState(false);
 
     const userTypes = [
-        {value: UserType.OWNER, label: txt.owner[currentLang]},
-        {value: UserType.MANAGER, label: txt.manager[currentLang]},
-        {value: UserType.STAFF, label: txt.staff[currentLang]},
-        {value: UserType.MODERATOR, label: txt.moderator[currentLang]},
-    ]
+        {value: UserType.OWNER, label: userTypeTranslate(UserType.OWNER, currentLang)},
+        {value: UserType.MANAGER, label: userTypeTranslate(UserType.MANAGER, currentLang)},
+        {value: UserType.STAFF, label: userTypeTranslate(UserType.STAFF, currentLang)},
+        {value: UserType.MODERATOR, label: userTypeTranslate(UserType.MODERATOR, currentLang)},
+    ];
 
     const handleSubmit = async () => {
         const values = form.getFieldsValue();
@@ -45,9 +49,16 @@ export const UsersAdd: FC = () => {
         await addUser(req, {navigate, to: RouteNames.USERS});
     }
 
-    const handleReset = () => {
-        form.resetFields();
+    const handleCancel = () => {
+        navigate(RouteNames.USERS);
     }
+
+    useEffect(() => {
+        form.validateFields({validateOnly: true}).then(
+            () => setSubmittable(true),
+            () => setSubmittable(false),
+        );
+    }, [values]);
 
     return (
         <div className={classes.main}>
@@ -120,21 +131,17 @@ export const UsersAdd: FC = () => {
 
                     <Form.Item style={{margin: "0"}}>
                         <div className={classes.form__btns}>
+                            <Button onClick={handleCancel} type={"primary"} style={{margin: "0"}}>
+                                {txt.back[currentLang]}
+                            </Button>
                             <Button
-                                loading={isLoadingAddUsers}
-                                disabled={isLoadingAddUsers}
+                                loading={isLoadingAddUser}
+                                disabled={isLoadingAddUser || !submittable}
                                 type={"primary"}
                                 htmlType={"submit"}
                                 style={{margin: "0"}}
                             >
                                 {txt.add[currentLang]}
-                            </Button>
-                            <Button
-                                onClick={handleReset}
-                                type={"primary"}
-                                style={{margin: "0"}}
-                            >
-                                {txt.reset[currentLang]}
                             </Button>
                         </div>
                     </Form.Item>

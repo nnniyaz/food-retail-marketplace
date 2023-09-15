@@ -12,17 +12,17 @@ export enum OrganizationsActionEnum {
     SET_IS_LOADING_GET_ORGANIZATIONS = "SET_IS_LOADING_GET_ORGANIZATIONS",
 }
 
-export type SetOrganizationsAction = {
+export interface SetOrganizationsAction {
     type: OrganizationsActionEnum.SET_ORGANIZATIONS;
     payload: Organization[];
 }
 
-export type SetOrganizationsCountAction = {
+export interface SetOrganizationsCountAction {
     type: OrganizationsActionEnum.SET_ORGANIZATIONS_COUNT;
     payload: number;
 }
 
-export type SetIsLoadingGetOrganizationsAction = {
+export interface SetIsLoadingGetOrganizationsAction {
     type: OrganizationsActionEnum.SET_IS_LOADING_GET_ORGANIZATIONS;
     payload: boolean;
 }

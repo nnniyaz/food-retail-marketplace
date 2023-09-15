@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
-import {MlString} from "entities/base/MlString";
 import {
     BookOutlined,
     DashboardOutlined,
@@ -8,8 +7,10 @@ import {
     ShopOutlined,
     UnorderedListOutlined,
     UserAddOutlined,
-    UserOutlined
+    UserOutlined,
+    UserSwitchOutlined
 } from "@ant-design/icons";
+import {MlString} from "entities/base/MlString";
 import {txt} from "shared/core/i18ngen";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
 import {Layout} from "./layouts/Layout";
@@ -22,6 +23,7 @@ import {Organizations} from "./staff/Organizations";
 import {Applications} from "./staff/Applications";
 import {Settings} from "./staff/Settings";
 import {UsersAdd} from "./staff/Users/pages/UsersAdd";
+import {UsersEdit} from "./staff/Users/pages/UsersEdit";
 
 export interface IRoute {
     path: string;
@@ -39,6 +41,7 @@ export enum RouteNames {
     CATALOG = "/catalog",
     USERS = "/users",
     USERS_ADD = "/users/add",
+    USERS_EDIT = "/users/edit/:id",
     ORGANIZATIONS = "/organizations",
     APPLICATIONS = "/applications",
     SETTINGS = "/settings",
@@ -62,6 +65,7 @@ export const staffRoutesSidebar: IRoute[] = [
 
 export const staffRoutes: IRoute[] = [
     {path: RouteNames.USERS_ADD, element: UsersAdd, name: txt.new_user, icon: <UserAddOutlined/>},
+    {path: RouteNames.USERS_EDIT, element: UsersEdit, name: txt.user_profile, icon: <UserSwitchOutlined />},
 ];
 
 const AppRouter = () => {

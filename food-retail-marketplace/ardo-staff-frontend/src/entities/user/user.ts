@@ -16,6 +16,7 @@ export type User = {
     userType: UserType;
     createdAt: Timestamp;
     updatedAt: Timestamp;
+    isDeleted: boolean;
 }
 
 export type UsersData = {

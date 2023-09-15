@@ -13,7 +13,17 @@ export const StaffLayout: FC = () => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {isLoadingLogout} = useTypedSelector(state => state.auth);
     const [isSidebarShown, setIsSidebarShown] = useState<boolean>(false);
-    const currentRoute = [...staffRoutesSidebar, ...staffRoutes].find(route => route.path.includes(location.pathname));
+    const currentRoute = [...staffRoutesSidebar, ...staffRoutes].find(route => {
+        let path = route.path;
+        let locationPath = location.pathname;
+        if (route.path.includes("edit")) {
+            path = route.path.split("/:id")[0];
+        }
+        if (location.pathname.includes("edit")) {
+            locationPath = path.split("/edit")[0] + "/edit";
+        }
+        return path.includes(locationPath);
+    });
 
     const loadingStyle: CSSProperties = {
         opacity: isLoadingLogout ? .5 : 1,

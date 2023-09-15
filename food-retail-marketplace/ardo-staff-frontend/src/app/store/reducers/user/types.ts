@@ -12,17 +12,17 @@ export enum UserActionEnum {
     SET_IS_LOADING_GET_USER = "SET_IS_LOADING_GET_USER",
 }
 
-export type SetUserAction = {
+export interface SetUserAction {
     type: UserActionEnum.SET_USER;
     payload: User;
 }
 
-export type SetIsAuthAction = {
+export interface SetIsAuthAction {
     type: UserActionEnum.SET_IS_AUTH;
     payload: boolean;
 }
 
-export type SetIsLoadingGetUserAction = {
+export interface SetIsLoadingGetUserAction {
     type: UserActionEnum.SET_IS_LOADING_GET_USER;
     payload: boolean;
 }

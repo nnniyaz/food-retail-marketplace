@@ -1,14 +1,15 @@
 import {FC, useEffect, useState} from "react";
-import {useNavigate} from "react-router-dom";
-import {Button, Card, Input, Table} from "antd";
+import {Link, useNavigate} from "react-router-dom";
+import {Card, Select, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {User} from "entities/user/user";
+import {User, UserType} from "entities/user/user";
 import {TableParams} from "entities/base/tableParams";
 import {txt} from "shared/core/i18ngen";
 import {useActions} from "shared/lib/hooks/useActions";
 import {dateFormat} from "shared/lib/utils/date-format";
 import {TableHeader} from "shared/ui/TableTools/TableHeader";
 import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {userTypeTranslate} from "shared/lib/utils/user-type-translate";
 import {RouteNames} from "../../index";
 import classes from "./Users.module.scss";
 
@@ -24,31 +25,55 @@ export const Users: FC = () => {
             total: usersCount
         }
     });
+    const [filters, setFilters] = useState({isDeleted: false});
 
     const columns: ColumnsType<User> = [
-        {title: txt.id[currentLang], dataIndex: "id"},
-        {title: txt.first_name[currentLang], dataIndex: "firstName"},
-        {title: txt.last_name[currentLang], dataIndex: "lastName"},
-        {title: txt.email[currentLang], dataIndex: "email"},
-        {title: txt.user_type[currentLang], dataIndex: "userType"},
         {
+            key: "action",
+            title: txt.action[currentLang],
+            dataIndex: "action",
+            render: (_, record) => (
+                <Link to={RouteNames.USERS_EDIT.replace(":id", record?.id)}>
+                    {txt.details[currentLang]}
+                </Link>
+            )
+        },
+        {key: "id", title: txt.id[currentLang], dataIndex: "id"},
+        {key: "firstName", title: txt.first_name[currentLang], dataIndex: "firstName"},
+        {key: "lastName", title: txt.last_name[currentLang], dataIndex: "lastName"},
+        {key: "email", title: txt.email[currentLang], dataIndex: "email"},
+        {
+            key: "userType",
+            title: txt.user_type[currentLang],
+            dataIndex: "userType",
+            render: (userType: UserType) => userTypeTranslate(userType, currentLang)
+        },
+        {
+            key: "isDeleted",
             title: txt.is_deleted[currentLang],
             dataIndex: "isDeleted",
             render: (isDeleted: boolean) => isDeleted ? txt.yes[currentLang] : txt.no[currentLang]
         },
         {
+            key: "createdAt",
             title: txt.created_at[currentLang],
             dataIndex: "createdAt",
             render: (createdAt: Timestamp) => dateFormat(createdAt)
         },
         {
+            key: "updatedAt",
             title: txt.updated_at[currentLang],
             dataIndex: "updatedAt",
             render: (updateAt: Timestamp) => dateFormat(updateAt)
         },
     ];
 
-    const data: User[] = users || [];
+    const data: User[] = users?.map(user => ({...user, key: user.id})) || [];
+
+    const filterIsDeletedOptions = [
+        {label: txt.yes[currentLang], value: true},
+        {label: txt.no[currentLang], value: false}
+    ];
 
     const handleSearch = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
@@ -64,9 +89,10 @@ export const Users: FC = () => {
         fetchUsers({
             limit: pagination.pagination?.pageSize || 25,
             offset: pagination.pagination?.current! - 1,
+            is_deleted: filters.isDeleted
         }, controller, {navigate: navigate});
         return () => controller.abort();
-    }, [pagination.pagination?.current, pagination.pagination?.pageSize]);
+    }, [pagination.pagination?.current, pagination.pagination?.pageSize, filters.isDeleted]);
 
     return (
         <div className={classes.main}>
@@ -78,6 +104,17 @@ export const Users: FC = () => {
                     onSubButtonClick={handleOnAddUser}
                     onSubButtonText={txt.add_user[currentLang]}
                 />
+                <Filters
+                    filters={[
+                        {
+                            label: txt.deleted_users[currentLang],
+                            value: filters.isDeleted,
+                            onChange: (value) => setFilters({...filters, isDeleted: value}),
+                            options: filterIsDeletedOptions,
+                            defaultValue: false
+                        }
+                    ]}
+                />
                 <Table
                     columns={columns}
                     dataSource={data}
@@ -86,6 +123,49 @@ export const Users: FC = () => {
                     onChange={(pagination) => setPagination({pagination})}
                 />
             </Card>
+        </div>
+    )
+}
+
+interface FilterItemProps {
+    label: string;
+    value: any;
+    onChange: (...args: any[]) => void;
+    options: { value: any, label: string }[];
+    defaultValue: any;
+}
+
+const FilterItem: FC<FilterItemProps> = ({label, value, onChange, options, defaultValue}) => {
+    return (
+        <div className={classes.filters__item}>
+            <div className={classes.filters__item__label}>{`${label}:`}</div>
+            <Select
+                value={value}
+                onChange={onChange}
+                options={options}
+                defaultValue={defaultValue}
+            />
+        </div>
+    )
+}
+
+interface FiltersProps {
+    filters: FilterItemProps[];
+}
+
+const Filters: FC<FiltersProps> = ({filters}) => {
+    return (
+        <div className={classes.filters}>
+            {filters.map((filter, index) => (
+                <FilterItem
+                    key={index}
+                    label={filter.label}
+                    value={filter.value}
+                    onChange={filter.onChange}
+                    options={filter.options}
+                    defaultValue={filter.defaultValue}
+                />
+            ))}
         </div>
     )
 }

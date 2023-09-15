@@ -15,6 +15,7 @@ export enum ApiRoutes {
     POST_USER = "/management/users",
     PUT_USER = "/management/users/:user_id",
     PUT_USER_PASSWORD = "/management/users/:user_id/password",
+    PUT_USER_RECOVER = "/management/users/:user_id/recover",
     DELETE_USER = "/management/users/:user_id",
 
     // ---------------------- MANAGEMENT OF ORGANIZATIONS ----------------------

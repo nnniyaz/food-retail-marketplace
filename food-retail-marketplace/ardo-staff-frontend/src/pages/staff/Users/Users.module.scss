@@ -1,3 +1,22 @@
 .main {
   width: 100%;
+
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 20px;
+    padding: 0 5px;
+    margin-bottom: 20px;
+
+    .filters__item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+
+      .filters__item__label {
+
+      }
+    }
+  }
 }
