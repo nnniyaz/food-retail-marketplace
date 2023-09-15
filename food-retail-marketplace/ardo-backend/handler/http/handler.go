@@ -65,11 +65,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			r.Post("/login", h.Auth.Login)
 			r.Post("/logout", h.Auth.Logout)
 			r.Post("/register", h.Auth.Register)
-
-			r.Route("/confirm/{link}", func(r chi.Router) {
-				r.Use(h.Middleware.ConfirmationLink)
-				r.Get("/", h.Auth.Confirm)
-			})
+			r.With(h.Middleware.ConfirmationLink).Get("/confirm/{link}", h.Auth.Confirm)
 		})
 
 		r.Route("/me", func(r chi.Router) {
@@ -97,7 +93,6 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Put("/{org_id}", h.ManagementOrg.UpdateOrgInfo)
 				r.Put("/{org_id}/logo", h.ManagementOrg.UpdateOrgLogo)
 				r.Delete("/{org_id}", h.ManagementOrg.DeleteOrg)
-
 				r.With(h.Middleware.PaginationParams).Get("/{org_id}/users", h.ManagementOrg.GetUsersByOrgId)
 				r.Post("/{org_id}/users", h.ManagementOrg.AddUserToOrg)
 			})

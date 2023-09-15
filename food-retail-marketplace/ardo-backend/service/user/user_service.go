@@ -52,7 +52,7 @@ func (u *userService) GetByEmail(ctx context.Context, email string) (*user.User,
 
 func (u *userService) Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error) {
 	foundUser, err := u.userRepo.FindOneByEmail(ctx, email)
-	if err != nil {
+	if err != nil && err != exceptions.ErrUserNotFound {
 		return nil, err
 	}
 	if foundUser != nil && !foundUser.GetIsDeleted() {
