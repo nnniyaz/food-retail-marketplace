@@ -29,4 +29,7 @@ export enum ApiRoutes {
     // ------------------- MANAGEMENT OF ORGANIZATION'S USERS -------------------
     GET_ORGANIZATION_USERS = "/management/organizations/:org_id/users", // with query params: offset, limit, is_deleted
     POST_ORGANIZATION_USER = "/management/organizations/:org_id/users",
+
+    // ---------------------------------- UPLOAD --------------------------------
+    POST_UPLOAD = "/upload",
 }

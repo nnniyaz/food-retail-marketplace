@@ -24,13 +24,32 @@
 
       .content__title {
         display: flex;
-        align-items: center;
-        padding-top: 10px;
-        gap: 10px;
+        flex-direction: column;
 
-        .content__title__icon {
-          path {
-            fill: $global-font-color-light-black;
+        .breadcrumb {
+          color: rgba(0, 0, 0, 0.45);
+          transition: .1s linear;
+
+          &:hover {
+            color: rgba(0, 0, 0, 0.88);
+          }
+        }
+
+        .breadcrumb__active {
+          color: #4096ff;
+          transition: .1s linear;
+        }
+
+        .content__title__header {
+          display: flex;
+          align-items: center;
+          padding: 10px 0;
+          gap: 10px;
+
+          .content__title__icon {
+            path {
+              fill: $global-font-color-light-black;
+            }
           }
         }
       }

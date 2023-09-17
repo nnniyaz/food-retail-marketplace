@@ -1,4 +1,5 @@
-import {Organization, OrganizationsGetRequest} from "entities/organization/organization";
+import {Paginate} from "entities/base/paginate";
+import {Organization} from "entities/organization/organization";
 import {AppDispatch, RootState} from "app/store";
 import {FailedResponseHandler, httpHandler} from "shared/lib/http-handler/httpHandler";
 import {
@@ -22,7 +23,7 @@ export const OrganizationActionCreators = {
         type: OrganizationsActionEnum.SET_IS_LOADING_GET_ORGANIZATIONS,
         payload: payload
     }),
-    fetchOrganizations: (request: OrganizationsGetRequest, controller: AbortController) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    fetchOrganizations: (request: Paginate, controller: AbortController) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(OrganizationActionCreators.setIsLoadingGetOrganizations(true));

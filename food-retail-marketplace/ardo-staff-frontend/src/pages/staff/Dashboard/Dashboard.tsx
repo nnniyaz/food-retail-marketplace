@@ -44,13 +44,13 @@ export const Dashboard: FC = () => {
         const controller = new AbortController();
         fetchUsers(requestOptions, controller, {navigate});
         return () => controller.abort();
-    }, [])
+    }, []);
 
     useEffect(() => {
         const controller = new AbortController();
         fetchOrganizations(requestOptions, controller);
         return () => controller.abort();
-    }, [])
+    }, []);
 
     return (
         <div className={classes.main}>

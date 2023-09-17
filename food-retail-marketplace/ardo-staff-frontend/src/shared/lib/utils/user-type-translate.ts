@@ -2,7 +2,7 @@ import {UserType} from "entities/user/user";
 import {LangsList} from "entities/base/MlString";
 import {txt} from "shared/core/i18ngen";
 
-export const userTypeTranslate = (userType: UserType | undefined, currentLang: LangsList) => {
+export const userTypeTranslate = (userType: UserType | undefined, currentLang: LangsList): string => {
     switch (userType) {
         case UserType.STAFF:
             return txt.staff[currentLang];

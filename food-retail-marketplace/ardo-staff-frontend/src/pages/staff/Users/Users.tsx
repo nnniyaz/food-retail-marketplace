@@ -1,10 +1,11 @@
-import {FC, useEffect, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {Card, Select, Table} from "antd";
+import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {User, UserType} from "entities/user/user";
 import {TableParams} from "entities/base/tableParams";
 import {txt} from "shared/core/i18ngen";
+import {Filters} from "shared/ui/Filters";
 import {useActions} from "shared/lib/hooks/useActions";
 import {dateFormat} from "shared/lib/utils/date-format";
 import {TableHeader} from "shared/ui/TableTools/TableHeader";
@@ -118,54 +119,12 @@ export const Users: FC = () => {
                 <Table
                     columns={columns}
                     dataSource={data}
-                    loading={isLoadingGetUsers} scroll={{x: 500}}
+                    loading={isLoadingGetUsers}
+                    scroll={{x: 500}}
                     pagination={pagination.pagination}
                     onChange={(pagination) => setPagination({pagination})}
                 />
             </Card>
-        </div>
-    )
-}
-
-interface FilterItemProps {
-    label: string;
-    value: any;
-    onChange: (...args: any[]) => void;
-    options: { value: any, label: string }[];
-    defaultValue: any;
-}
-
-const FilterItem: FC<FilterItemProps> = ({label, value, onChange, options, defaultValue}) => {
-    return (
-        <div className={classes.filters__item}>
-            <div className={classes.filters__item__label}>{`${label}:`}</div>
-            <Select
-                value={value}
-                onChange={onChange}
-                options={options}
-                defaultValue={defaultValue}
-            />
-        </div>
-    )
-}
-
-interface FiltersProps {
-    filters: FilterItemProps[];
-}
-
-const Filters: FC<FiltersProps> = ({filters}) => {
-    return (
-        <div className={classes.filters}>
-            {filters.map((filter, index) => (
-                <FilterItem
-                    key={index}
-                    label={filter.label}
-                    value={filter.value}
-                    onChange={filter.onChange}
-                    options={filter.options}
-                    defaultValue={filter.defaultValue}
-                />
-            ))}
         </div>
     )
 }

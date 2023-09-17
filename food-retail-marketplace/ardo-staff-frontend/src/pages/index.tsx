@@ -1,6 +1,8 @@
 import React, {useState} from "react";
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
 import {
+    AppstoreAddOutlined,
+    AppstoreOutlined,
     BookOutlined,
     DashboardOutlined,
     SettingOutlined,
@@ -24,6 +26,8 @@ import {Applications} from "./staff/Applications";
 import {Settings} from "./staff/Settings";
 import {UsersAdd} from "./staff/Users/pages/UsersAdd";
 import {UsersEdit} from "./staff/Users/pages/UsersEdit";
+import {OrgAdd} from "./staff/Organizations/pages/OrgAdd";
+import {OrgEdit} from "./staff/Organizations/pages/OrgEdit";
 
 export interface IRoute {
     path: string;
@@ -43,6 +47,8 @@ export enum RouteNames {
     USERS_ADD = "/users/add",
     USERS_EDIT = "/users/edit/:id",
     ORGANIZATIONS = "/organizations",
+    ORGANIZATIONS_ADD = "/organizations/add",
+    ORGANIZATIONS_EDIT = "/organizations/edit/:id",
     APPLICATIONS = "/applications",
     SETTINGS = "/settings",
 
@@ -65,7 +71,9 @@ export const staffRoutesSidebar: IRoute[] = [
 
 export const staffRoutes: IRoute[] = [
     {path: RouteNames.USERS_ADD, element: UsersAdd, name: txt.new_user, icon: <UserAddOutlined/>},
-    {path: RouteNames.USERS_EDIT, element: UsersEdit, name: txt.user_profile, icon: <UserSwitchOutlined />},
+    {path: RouteNames.USERS_EDIT, element: UsersEdit, name: txt.user_profile, icon: <UserSwitchOutlined/>},
+    {path: RouteNames.ORGANIZATIONS_ADD, element: OrgAdd, name: txt.new_organization, icon: <AppstoreAddOutlined/>},
+    {path: RouteNames.ORGANIZATIONS_EDIT, element: OrgEdit, name: txt.organization_info, icon: <AppstoreOutlined />},
 ];
 
 const AppRouter = () => {
