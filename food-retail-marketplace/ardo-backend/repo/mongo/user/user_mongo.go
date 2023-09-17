@@ -151,6 +151,18 @@ func (r *RepoUser) UpdateUserPassword(ctx context.Context, userId uuid.UUID, pas
 	return err
 }
 
+func (r *RepoUser) Recover(ctx context.Context, id uuid.UUID) error {
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"$set": bson.M{
+			"isDeleted": false,
+			"updatedAt": time.Now(),
+		},
+	})
+	return err
+}
+
 func (r *RepoUser) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": id,

@@ -83,6 +83,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Post("/", h.ManagementUser.AddUser)
 				r.Put("/{user_id}", h.ManagementUser.UpdateUserCredentials)
 				r.Put("/{user_id}/password", h.ManagementUser.UpdateUserPassword)
+				r.Put("/{user_id}/recover", h.ManagementUser.RecoverUser)
 				r.Delete("/{user_id}", h.ManagementUser.DeleteUser)
 			})
 
@@ -96,6 +97,11 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.With(h.Middleware.PaginationParams).Get("/{org_id}/users", h.ManagementOrg.GetUsersByOrgId)
 				r.Post("/{org_id}/users", h.ManagementOrg.AddUserToOrg)
 			})
+		})
+
+		r.Route("/upload", func(r chi.Router) {
+			r.Use(h.Middleware.UserAuth)
+			r.Post("/organization-logo", h.User.UploadFile)
 		})
 	})
 	return r

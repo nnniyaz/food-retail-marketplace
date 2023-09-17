@@ -16,6 +16,7 @@ type UserService interface {
 	Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error)
 	UpdateCredentials(ctx context.Context, userId, firstName, lastName, email string) error
 	UpdatePassword(ctx context.Context, id, password string) error
+	Recover(ctx context.Context, id string) error
 	Delete(ctx context.Context, id string) error
 }
 
@@ -97,6 +98,17 @@ func (u *userService) UpdatePassword(ctx context.Context, id, password string) e
 		return err
 	}
 	return u.userRepo.UpdateUserPassword(ctx, foundUser.GetId(), foundUser.GetPassword())
+}
+
+func (u *userService) Recover(ctx context.Context, id string) error {
+	foundUser, err := u.GetById(ctx, id)
+	if err != nil {
+		return err
+	}
+	if !foundUser.GetIsDeleted() {
+		return exceptions.ErrUserAlreadyExist
+	}
+	return u.userRepo.Recover(ctx, foundUser.GetId())
 }
 
 func (u *userService) Delete(ctx context.Context, id string) error {

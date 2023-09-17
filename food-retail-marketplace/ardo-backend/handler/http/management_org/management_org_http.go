@@ -36,6 +36,7 @@ type Org struct {
 	Email     string              `json:"email"`
 	Address   string              `json:"address"`
 	Desc      valueobject.OrgDesc `json:"desc"`
+	IsDeleted bool                `json:"isDeleted"`
 	CreatedAt time.Time           `json:"createdAt"`
 	UpdatedAt time.Time           `json:"updatedAt"`
 }
@@ -50,6 +51,7 @@ func NewOrg(u *organization.Organization) Org {
 		Email:     u.GetContacts().GetEmail().String(),
 		Address:   u.GetContacts().GetAddress(),
 		Desc:      u.GetDesc(),
+		IsDeleted: u.GetIsDeleted(),
 		CreatedAt: u.GetCreatedAt(),
 		UpdatedAt: u.GetUpdatedAt(),
 	}

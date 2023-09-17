@@ -51,7 +51,7 @@ func (m *Middleware) PaginationParams(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		limit, err := getParamInt64(r, "limit")
 		if err != nil {
-			limit = 10
+			limit = 25
 		}
 
 		offset, err := getParamInt64(r, "offset")

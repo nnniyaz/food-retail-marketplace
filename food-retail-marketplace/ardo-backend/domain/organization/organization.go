@@ -83,7 +83,7 @@ func (o *Organization) GetCurrency() valueobject.Currency {
 	return o.currency
 }
 
-func (o *Organization) IsDeleted() bool {
+func (o *Organization) GetIsDeleted() bool {
 	return o.isDeleted
 }
 

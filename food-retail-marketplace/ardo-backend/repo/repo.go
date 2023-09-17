@@ -29,6 +29,7 @@ type User interface {
 	Create(ctx context.Context, user *user.User) error
 	UpdateUserCredentials(ctx context.Context, userId uuid.UUID, firstName UserValueObject.FirstName, lastName UserValueObject.LastName, email email.Email) error
 	UpdateUserPassword(ctx context.Context, userId uuid.UUID, password UserValueObject.Password) error
+	Recover(ctx context.Context, id uuid.UUID) error
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 

@@ -70,7 +70,7 @@ func newFromOrganization(o *organization.Organization) *mongoOrganization {
 		Desc:      o.GetDesc(),
 		Contacts:  newFromContacts(o.GetContacts()),
 		Currency:  o.GetCurrency().String(),
-		IsDeleted: o.IsDeleted(),
+		IsDeleted: o.GetIsDeleted(),
 		CreatedAt: o.GetCreatedAt(),
 		UpdatedAt: o.GetUpdatedAt(),
 	}

@@ -30,6 +30,7 @@ type User struct {
 	FirstName string    `json:"firstName"`
 	LastName  string    `json:"lastName"`
 	UserType  string    `json:"userType"`
+	IsDeleted bool      `json:"isDeleted"`
 	CreatedAt time.Time `json:"createdAt"`
 	UpdatedAt time.Time `json:"updatedAt"`
 }
@@ -41,6 +42,7 @@ func NewUser(u *user.User) User {
 		FirstName: u.GetFirstName().String(),
 		LastName:  u.GetLastName().String(),
 		UserType:  u.GetUserType().String(),
+		IsDeleted: u.GetIsDeleted(),
 		CreatedAt: u.GetCreatedAt(),
 		UpdatedAt: u.GetUpdatedAt(),
 	}
@@ -138,6 +140,15 @@ func (hd *HttpDelivery) UpdateUserPassword(w http.ResponseWriter, r *http.Reques
 		return
 	}
 	if err := hd.service.UpdateUserPassword(r.Context(), userId, in.Password); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+func (hd *HttpDelivery) RecoverUser(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	if err := hd.service.RecoverUser(r.Context(), userId); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

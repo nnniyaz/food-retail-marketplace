@@ -11,6 +11,7 @@ type ManagementUserService interface {
 	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
 	GetUserById(ctx context.Context, userId string) (*user.User, error)
 	AddUser(ctx context.Context, firstName, lastName, email, password, userType string) error
+	RecoverUser(ctx context.Context, userId string) error
 	DeleteUser(ctx context.Context, userId string) error
 	UpdateUserCredentials(ctx context.Context, userId, firstName, lastName, email string) error
 	UpdateUserPassword(ctx context.Context, userId, password string) error
@@ -42,8 +43,11 @@ func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName
 	return err
 }
 
-func (m *managementUserService) DeleteUser(ctx context.Context, userId string) error {
+func (m *managementUserService) RecoverUser(ctx context.Context, userId string) error {
+	return m.userService.Recover(ctx, userId)
+}
 
+func (m *managementUserService) DeleteUser(ctx context.Context, userId string) error {
 	return m.userService.Delete(ctx, userId)
 }
 
