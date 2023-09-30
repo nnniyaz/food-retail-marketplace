@@ -39,12 +39,10 @@ export const httpHandler = (
                 message: txt.you_dont_have_access[currentLang]
             });
         }
-        navigateCallback?.navigate(-1);
     } else if (httpStatus === 404) {
         if (!hideNotify) {
             Notify.Warning({title: txt.page_not_found[currentLang], message: ""});
         }
-        navigateCallback?.navigate(-1);
     } else if (httpStatus >= 400 && httpStatus < 500) {
         return;
     } else if (error?.code === "ERR_CANCELED") {
@@ -56,7 +54,6 @@ export const httpHandler = (
                 message: txt.please_try_again_or_contact_support[currentLang]
             });
         }
-        navigateCallback?.navigate(-1);
         console.log(error)
     }
 }

@@ -6,9 +6,13 @@ import {
     SetOrganizationsAction,
     SetOrganizationsCountAction,
     SetIsLoadingGetOrganizationsAction,
+    SetIsLoadingAddOrganizationAction,
     OrganizationsActionEnum
 } from "./types";
-import OrganizationsService from "../../api/organizationsService";
+import OrganizationsService, {AddOrganizationReq} from "../../api/organizationsService";
+import {NavigateCallback} from "../../../../../entities/base/navigateCallback";
+import {Notify} from "../../../../../shared/lib/notification/notification";
+import {txt} from "../../../../../shared/core/i18ngen";
 
 export const OrganizationActionCreators = {
     setOrganizations: (payload: Organization[]): SetOrganizationsAction => ({
@@ -23,6 +27,11 @@ export const OrganizationActionCreators = {
         type: OrganizationsActionEnum.SET_IS_LOADING_GET_ORGANIZATIONS,
         payload: payload
     }),
+    setIsLoadingAddOrganization: (payload: boolean): SetIsLoadingAddOrganizationAction => ({
+        type: OrganizationsActionEnum.SET_IS_LOADING_ADD_ORGANIZATION,
+        payload: payload
+    }),
+
     fetchOrganizations: (request: Paginate, controller: AbortController) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
@@ -48,4 +57,32 @@ export const OrganizationActionCreators = {
             dispatch(OrganizationActionCreators.setIsLoadingGetOrganizations(false));
         }
     },
+
+    addOrganization: (request: AddOrganizationReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(OrganizationActionCreators.setIsLoadingAddOrganization(true));
+            const res = await OrganizationsService.addOrganization(request);
+            if (res.data.success) {
+                Notify.Success({title: txt.organization_successfully_added[currentLang], message: ""});
+                if (navigationCallback?.navigate && navigationCallback?.to) {
+                    navigationCallback?.navigate(navigationCallback?.to);
+                }
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+            });
+        } finally {
+            dispatch(OrganizationActionCreators.setIsLoadingAddOrganization(false));
+        }
+    }
 }

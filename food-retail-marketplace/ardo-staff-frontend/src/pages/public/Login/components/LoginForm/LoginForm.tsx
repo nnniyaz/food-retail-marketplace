@@ -45,7 +45,7 @@ export const LoginForm: FC = () => {
                 setValue={setPassword}
                 placeholder={txt.enter_password[currentLang]}
             />
-            <Form.Item>
+            <Form.Item style={{margin: "0", width: "100%"}}>
                 <Button
                     loading={isLoadingAuth}
                     className={classes.form__btn}
@@ -53,9 +53,7 @@ export const LoginForm: FC = () => {
                     size={"large"}
                     htmlType={"submit"}
                 >
-                <span className={classes.form__btn__text}>
-                    {txt.login[currentLang]}
-                </span>
+                    <span className={classes.form__btn__text}>{txt.login[currentLang]}</span>
                 </Button>
             </Form.Item>
         </Form>

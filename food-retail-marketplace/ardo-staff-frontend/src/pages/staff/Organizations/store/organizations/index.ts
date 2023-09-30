@@ -4,6 +4,7 @@ const initialState: OrganizationsState = {
     organizations: [],
     organizationsCount: 0,
     isLoadingGetOrganizations: false,
+    isLoadingAddOrganization: false,
 }
 
 export default function (state: OrganizationsState = initialState, action: OrganizationsAction): OrganizationsState {
@@ -14,6 +15,8 @@ export default function (state: OrganizationsState = initialState, action: Organ
             return {...state, organizationsCount: action.payload}
         case OrganizationsActionEnum.SET_IS_LOADING_GET_ORGANIZATIONS:
             return {...state, isLoadingGetOrganizations: action.payload}
+        case OrganizationsActionEnum.SET_IS_LOADING_ADD_ORGANIZATION:
+            return {...state, isLoadingAddOrganization: action.payload}
         default:
             return state;
     }
