@@ -43,3 +43,6 @@ old_password_does_not_match,Старый пароль не совпадает,Ol
 empty_org_logo,Логотип организаций не может быть пустым, Organization logo can not be empty
 org_not_found,Организация не найдена,Organization not found
 user_already_in_org,Пользователь уже состоит в организации,User already in organization
+file_is_nil,Файл не может быть пустым,File can not be empty
+uploaded_img_invalid,Загруженное изображение неверно,Uploaded image is invalid
+file_not_found,Файл не найден,File not found

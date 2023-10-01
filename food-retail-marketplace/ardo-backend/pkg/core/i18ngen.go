@@ -47,6 +47,9 @@ const (
 	TXT_EMPTY_ORG_LOGO              TxtKey = 42
 	TXT_ORG_NOT_FOUND               TxtKey = 43
 	TXT_USER_ALREADY_IN_ORG         TxtKey = 44
+	TXT_FILE_IS_NIL                 TxtKey = 45
+	TXT_UPLOADED_IMG_INVALID        TxtKey = 46
+	TXT_FILE_NOT_FOUND              TxtKey = 47
 )
 
 var Txts = TxtResource{
@@ -226,6 +229,18 @@ var Txts = TxtResource{
 		RU: `Пользователь уже состоит в организации`,
 		EN: `User already in organization`,
 	},
+	TXT_FILE_IS_NIL: MlString{
+		RU: `Файл не может быть пустым`,
+		EN: `File can not be empty`,
+	},
+	TXT_UPLOADED_IMG_INVALID: MlString{
+		RU: `Загруженное изображение неверно`,
+		EN: `Uploaded image is invalid`,
+	},
+	TXT_FILE_NOT_FOUND: MlString{
+		RU: `Файл не найден`,
+		EN: `File not found`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -318,6 +333,12 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "org_not_found"
 	case TXT_USER_ALREADY_IN_ORG:
 		return "user_already_in_org"
+	case TXT_FILE_IS_NIL:
+		return "file_is_nil"
+	case TXT_UPLOADED_IMG_INVALID:
+		return "uploaded_img_invalid"
+	case TXT_FILE_NOT_FOUND:
+		return "file_not_found"
 
 	default:
 		return ""

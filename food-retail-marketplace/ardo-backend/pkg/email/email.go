@@ -1,24 +1,20 @@
 package email
 
-import "gopkg.in/gomail.v2"
+import (
+	"github/nnniyaz/ardo/config"
+	"gopkg.in/gomail.v2"
+)
 
 type Email interface {
 	SendMail(to []string, subject string, htmlBody string) error
-}
-
-type Config struct {
-	Host     string
-	Port     int
-	Username string
-	Password string
 }
 
 type email struct {
 	dialer *gomail.Dialer
 }
 
-func New(cfg Config) (Email, error) {
-	d := gomail.NewDialer(cfg.Host, cfg.Port, cfg.Username, cfg.Password)
+func New(cfg *config.CfgEmail) (Email, error) {
+	d := gomail.NewDialer(cfg.GetSmtpHost(), cfg.GetSmtpPort(), cfg.GetSmtpUser(), cfg.GetSmtpPass())
 	if err := d.DialAndSend(); err != nil {
 		return nil, err
 	}

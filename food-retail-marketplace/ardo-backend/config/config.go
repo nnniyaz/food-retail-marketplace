@@ -1,26 +1,37 @@
 package config
 
 type Config struct {
-	mongoUri  string
-	isDevMode bool
-	smtpUser  string
-	smtpPass  string
-	smtpHost  string
-	smtpPort  int
-	apiUri    string
-	clientUri string
+	mongoUri    string
+	isDevMode   bool
+	emailCfg    *CfgEmail
+	apiUri      string
+	clientUri   string
+	spaceKey    string
+	spaceSecret string
 }
 
-func New(isDevMode bool, apiUri, clientUri string) *Config {
+func New(isDevMode bool, smtpPort int, smtpUser, smtpPass, smtpHost, mongoUri, apiUri, clientUri, spaceKey, spaceSecret string) *Config {
 	return &Config{
-		isDevMode: isDevMode,
-		apiUri:    apiUri,
-		clientUri: clientUri,
+		mongoUri:    mongoUri,
+		isDevMode:   isDevMode,
+		emailCfg:    NewCfgEmail(smtpPort, smtpUser, smtpPass, smtpHost),
+		apiUri:      apiUri,
+		clientUri:   clientUri,
+		spaceKey:    spaceKey,
+		spaceSecret: spaceSecret,
 	}
+}
+
+func (c *Config) GetMongoUri() string {
+	return c.mongoUri
 }
 
 func (c *Config) GetIsDevMode() bool {
 	return c.isDevMode
+}
+
+func (c *Config) GetEmailCfg() *CfgEmail {
+	return c.emailCfg
 }
 
 func (c *Config) GetApiUri() string {
@@ -29,4 +40,44 @@ func (c *Config) GetApiUri() string {
 
 func (c *Config) GetClientUri() string {
 	return c.clientUri
+}
+
+func (c *Config) GetSpaceKey() string {
+	return c.spaceKey
+}
+
+func (c *Config) GetSpaceSecret() string {
+	return c.spaceSecret
+}
+
+type CfgEmail struct {
+	smtpUser string
+	smtpPass string
+	smtpHost string
+	smtpPort int
+}
+
+func NewCfgEmail(smtpPort int, smtpUser, smtpPass, smtpHost string) *CfgEmail {
+	return &CfgEmail{
+		smtpUser: smtpUser,
+		smtpPass: smtpPass,
+		smtpHost: smtpHost,
+		smtpPort: smtpPort,
+	}
+}
+
+func (c *CfgEmail) GetSmtpUser() string {
+	return c.smtpUser
+}
+
+func (c *CfgEmail) GetSmtpPass() string {
+	return c.smtpPass
+}
+
+func (c *CfgEmail) GetSmtpHost() string {
+	return c.smtpHost
+}
+
+func (c *CfgEmail) GetSmtpPort() int {
+	return c.smtpPort
 }

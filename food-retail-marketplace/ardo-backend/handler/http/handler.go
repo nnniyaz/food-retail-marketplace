@@ -20,9 +20,10 @@ type Handler struct {
 	ManagementOrg  *management_org.HttpDelivery
 	Middleware     *middleware2.Middleware
 	User           *current_user.HttpDelivery
+	//Upload         *upload.HttpDelivery
 }
 
-func NewHandler(s *service.Services, l logger.Logger, clientUri string) *Handler {
+func NewHandler(s *service.Services, clientUri string, l logger.Logger) *Handler {
 	return &Handler{
 		Auth:           auth.NewHttpDelivery(s.Auth, l, clientUri),
 		ManagementUser: management_user.NewHttpDelivery(s.ManagementUser, l),
@@ -99,10 +100,10 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			})
 		})
 
-		r.Route("/upload", func(r chi.Router) {
-			r.Use(h.Middleware.UserAuth)
-			r.Post("/organization-logo", h.User.UploadFile)
-		})
+		//r.Route("/upload", func(r chi.Router) {
+		//	r.Use(h.Middleware.UserAuth)
+		//r.Post("/organization-logo", h.Upload.UploadOrgLogo)
+		//})
 	})
 	return r
 }
