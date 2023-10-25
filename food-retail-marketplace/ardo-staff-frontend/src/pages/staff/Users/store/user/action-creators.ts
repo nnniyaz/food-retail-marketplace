@@ -1,11 +1,11 @@
-import {AppDispatch, RootState} from "app/store";
-import UsersService, {AddUserReq, EditUserReq} from "pages/staff/Users/api/usersService";
-import {User} from "entities/user/user";
-import {Paginate} from "entities/base/paginate";
-import {NavigateCallback} from "entities/base/navigateCallback";
-import {txt} from "shared/core/i18ngen";
-import {Notify} from "shared/lib/notification/notification";
-import {FailedResponseHandler, httpHandler} from "shared/lib/http-handler/httpHandler";
+import {AppDispatch, RootState} from "@app/store";
+import UsersService, {AddUserReq, EditUserReq} from "@pages/staff/Users/api/usersService";
+import {User} from "@entities/user/user";
+import {Paginate} from "@entities/base/paginate";
+import {NavigateCallback} from "@entities/base/navigateCallback";
+import {txt} from "@shared/core/i18ngen";
+import {Notify} from "@shared/lib/notification/notification";
+import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {
     SetUsersAction,
     SetUsersCountAction,

@@ -1,12 +1,12 @@
 import {FormInstance, FormRule} from "antd";
-import {LangsList} from "entities/base/MlString";
-import {txt} from "shared/core/i18ngen";
+import {Lang} from "@entities/base/MlString";
+import {txt} from "@shared/core/i18ngen";
 
 interface IRules {
     required: (message: string) => FormRule,
     email: (message: string) => FormRule,
     minmaxLen: (message: string, min: number, max: number) => FormRule,
-    matchPass: (form: FormInstance, lang: LangsList) => FormRule,
+    matchPass: (form: FormInstance, lang: Lang) => FormRule,
 }
 
 export const rules: IRules = {

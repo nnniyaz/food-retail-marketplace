@@ -1,4 +1,4 @@
-import {IRoute} from "pages";
+import {IRoute} from "@pages//";
 import {SystemActionEnum, SetBreadcrumbsAction} from "./types";
 
 export const SystemActionCreators = {

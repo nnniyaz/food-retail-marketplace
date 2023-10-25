@@ -99,3 +99,7 @@
 "usd","Доллар США","US Dollar"
 "kzt","Казахский Тенге","Kazakhstan Tenge"
 "organization_successfully_added","Организация успешно добавлена","Organization successfully added"
+"not_translated","Нет перевода","Not translated"
+"not_valid_mlstring","Неверный формат Multi Language String","Not Valid Multi Language String"
+"does_not_exist_in_dictionary","Не существует в словаре","Does not exist in dictionary"
+"to_main_menu","На главное меню","To Main Menu"

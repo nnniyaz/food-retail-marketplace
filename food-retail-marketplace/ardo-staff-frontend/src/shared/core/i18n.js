@@ -25,7 +25,7 @@ function TxtGen() {
         })
         fs.writeFile("./src/shared/core/i18ngen.js", "export const txt = " + JSON.stringify(txtMap), (err) => {
             if (err != null) {
-                console.log("error write to txt.js", err)
+                console.log("error write to i18ngen.js", err)
                 process.exit(1)
             }
         })

@@ -1,10 +1,10 @@
-import {User} from "entities/user/user";
+import {User} from "@entities/user/user";
 import {UserAction, UserActionEnum, UserState} from "./types";
 
 const initialState: UserState = {
     user: {} as User,
-    isAuth: false,
-    isLoadingGetUser: false,
+    isAuth: true,
+    isLoadingGetUser: true,
 }
 
 export default function userReducer(state = initialState, action: UserAction): UserState {

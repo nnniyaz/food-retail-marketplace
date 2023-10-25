@@ -1,4 +1,4 @@
-import {IRoute} from "pages";
+import {IRoute} from "@pages//";
 
 export interface SystemState {
     breadcrumbs: IRoute[];

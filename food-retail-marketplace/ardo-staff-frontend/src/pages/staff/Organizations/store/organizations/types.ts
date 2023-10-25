@@ -1,4 +1,4 @@
-import {Organization} from "entities/organization/organization";
+import {Organization} from "@entities/organization/organization";
 
 export type OrganizationsState = {
     organizations: Organization[];

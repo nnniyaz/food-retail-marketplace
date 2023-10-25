@@ -1,7 +1,7 @@
-import {LangsList} from "entities/base/MlString";
+import {Lang} from "@entities/base/MlString";
 
 export interface LangState {
-    currentLang: LangsList;
+    currentLang: Lang;
 }
 
 export enum LangActionEnum {
@@ -10,7 +10,7 @@ export enum LangActionEnum {
 
 export interface SetLangAction {
     type: LangActionEnum.SET_LANG;
-    payload: LangsList;
+    payload: Lang;
 }
 
 export type LangAction = SetLangAction;

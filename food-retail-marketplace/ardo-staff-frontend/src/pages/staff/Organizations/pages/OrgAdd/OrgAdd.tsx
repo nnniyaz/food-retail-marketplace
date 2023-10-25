@@ -2,12 +2,12 @@ import React, {FC} from 'react';
 import {Card, Form, Input, Select, Upload} from "antd";
 import {useForm} from "antd/es/form/Form";
 import {PlusOutlined} from "@ant-design/icons";
-import {Currency} from "entities/base/currency";
-import {txt} from "shared/core/i18ngen";
-import {rules} from "shared/lib/form-rules/rules";
-import {useActions} from "shared/lib/hooks/useActions";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
-import {currencyTranslate} from "shared/lib/utils/currency-translate";
+import {Currency} from "@entities/base/currency";
+import {txt} from "@shared/core/i18ngen";
+import {rules} from "@shared/lib/form-rules/rules";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
+import {currencyTranslate} from "@shared/lib/utils/currency-translate";
 import classes from "./OrgAdd.module.scss";
 import {HttpStatusCode} from "axios";
 import {ApiRoutes} from "../../../../../shared/api/api-routes";
@@ -111,7 +111,7 @@ export const OrgAdd: FC = () => {
                             multiple={false}
                             onChange={(e) => console.log(e)}
                             method={"post"}
-                            action={process.env.REACT_APP_API_URL + ApiRoutes.POST_UPLOAD}
+                            action={process.env.VITE_API_URL + ApiRoutes.POST_UPLOAD}
                         >
                             <div style={{backgroundColor: "transparent"}}>
                                 <PlusOutlined/>

@@ -1,7 +1,7 @@
 import React, {FC} from "react";
 import {LoadingOutlined} from "@ant-design/icons";
-import {Text} from "shared/ui/Text";
-import {Divider} from "shared/ui/Divider";
+import {Text} from "@shared/ui/Text";
+import {Divider} from "@shared/ui/Divider";
 import classes from "./Block.module.scss";
 
 interface BlockProps {
