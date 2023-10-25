@@ -2,14 +2,14 @@ import React, {FC, useEffect, useState} from "react";
 import {Transition, TransitionStatus} from "react-transition-group";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {LogoutOutlined, MenuFoldOutlined} from "@ant-design/icons";
-import {IRoute, RouteNames, staffRoutesSidebar} from "pages";
-import {txt} from "shared/core/i18ngen";
-import {Logo} from "shared/ui/Logo";
-import {Text} from "shared/ui/Text";
-import {Divider} from "shared/ui/Divider";
-import {Credits} from "shared/ui/Credits";
-import {useActions} from "shared/lib/hooks/useActions";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {IRoute, RouteNames, staffRoutesSidebar} from "@pages//";
+import {txt} from "@shared/core/i18ngen";
+import {Logo} from "@shared/ui/Logo";
+import {Text} from "@shared/ui/Text";
+import {Divider} from "@shared/ui/Divider";
+import {Credits} from "@shared/ui/Credits";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./Sidebar.module.scss";
 
 interface HeaderProps {

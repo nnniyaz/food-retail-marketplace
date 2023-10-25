@@ -1,10 +1,10 @@
 import {AxiosResponse} from "axios";
-import {MlString} from "entities/base/MlString";
-import {Paginate} from "entities/base/paginate";
-import {OrganizationsData} from "entities/organization/organization";
-import $api from "shared/api";
-import {ApiRoutes} from "shared/api/api-routes";
-import {ErrorResponse, SuccessResponse} from "shared/api/response/response";
+import {MlString} from "@entities/base/MlString";
+import {Paginate} from "@entities/base/paginate";
+import {OrganizationsData} from "@entities/organization/organization";
+import $api from "@shared/api";
+import {ApiRoutes} from "@shared/api/api-routes";
+import {ErrorResponse, SuccessResponse} from "@shared/api/response/response";
 
 export interface AddOrganizationReq {
     logo: string;

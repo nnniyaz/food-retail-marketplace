@@ -1,10 +1,10 @@
-import UserService from "pages/public/Login/api/userService";
-import {User} from "entities/user/user";
-import {NavigateCallback} from "entities/base/navigateCallback";
-import {txt} from "shared/core/i18ngen";
-import {Notify} from "shared/lib/notification/notification";
-import {FailedResponseHandler, httpHandler} from "shared/lib/http-handler/httpHandler";
-import {AppDispatch, RootState} from "../../index";
+import {AppDispatch, RootState} from "@app/store";
+import UserService from "@pages/public/Login/api/userService";
+import {User} from "@entities/user/user";
+import {NavigateCallback} from "@entities/base/navigateCallback";
+import {txt} from "@shared/core/i18ngen";
+import {Notify} from "@shared/lib/notification/notification";
+import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {SetUserAction, SetIsLoadingGetUserAction, SetIsAuthAction, UserActionEnum} from "./types";
 
 export const UserActionCreators = {
@@ -21,12 +21,12 @@ export const UserActionCreators = {
             const res = await UserService.getCurrentUser();
             if (res.data.success) {
                 if (res.data.data.userType !== "STAFF") {
-                    const mainClientUri = process.env.REACT_APP_MAIN_CLIENT_URI;
+                    const mainClientUri = process.env.VITE_MAIN_CLIENT_URI;
                     if (mainClientUri) {
                         window.location.href = mainClientUri;
                     }
                     Notify.Info({
-                        title: txt.internal_system[currentLang],
+                        title: txt.email[currentLang],
                         message: txt.you_dont_have_access_to_the_system[currentLang],
                     })
                     return;

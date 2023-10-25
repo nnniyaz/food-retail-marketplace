@@ -1,9 +1,9 @@
 import {AxiosResponse} from "axios";
-import {Paginate} from "entities/base/paginate";
-import {User, UsersData, UserType} from "entities/user/user";
-import $api from "shared/api";
-import {ApiRoutes} from "shared/api/api-routes";
-import {ErrorResponse, SuccessResponse} from "shared/api/response/response";
+import {Paginate} from "@entities/base/paginate";
+import {User, UsersData, UserType} from "@entities/user/user";
+import $api from "@shared/api";
+import {ApiRoutes} from "@shared/api/api-routes";
+import {ErrorResponse, SuccessResponse} from "@shared/api/response/response";
 
 export interface AddUserReq {
     firstName: string;

@@ -12,9 +12,9 @@ import {
     UserOutlined,
     UserSwitchOutlined
 } from "@ant-design/icons";
-import {MlString} from "entities/base/MlString";
-import {txt} from "shared/core/i18ngen";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {MlString} from "@entities/base/MlString";
+import {txt} from "@shared/core/i18ngen";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {Layout} from "./layouts/Layout";
 import {StaffLayout} from "./layouts/StaffLayout";
 import {Login} from "./public/Login";
@@ -28,6 +28,7 @@ import {UsersAdd} from "./staff/Users/pages/UsersAdd";
 import {UsersEdit} from "./staff/Users/pages/UsersEdit";
 import {OrgAdd} from "./staff/Organizations/pages/OrgAdd";
 import {OrgEdit} from "./staff/Organizations/pages/OrgEdit";
+import {NotFound} from "@pages/staff/NotFound";
 
 export interface IRoute {
     path: string;
@@ -77,21 +78,7 @@ export const staffRoutes: IRoute[] = [
 ];
 
 const AppRouter = () => {
-    const location = useLocation();
     const {isAuth} = useTypedSelector(state => state.user);
-    const [initialLocation] = useState(localStorage.getItem("lastLocation") || RouteNames.LOGIN);
-    const locationPathname = location.pathname;
-
-    window.addEventListener("beforeunload", function (e) {
-        localStorage.setItem("lastLocation", locationPathname);
-    });
-
-    const from = () => {
-        if (isAuth) {
-            return initialLocation || RouteNames.DASHBOARD;
-        }
-        return RouteNames.LOGIN;
-    };
 
     return (
         <Routes>
@@ -101,7 +88,7 @@ const AppRouter = () => {
                     {[...staffRoutesSidebar, ...staffRoutes].map(route => (
                         <Route path={route.path} element={<route.element/>} key={route.path}/>
                     ))}
-                    <Route path={"*"} element={<Navigate to={from()}/>}/>
+                    <Route path={"*"} element={<NotFound/>}/>
                 </Route>
                 :
                 <Route element={<Layout/>}>

@@ -1,8 +1,8 @@
-import {LangsList} from "entities/base/MlString";
+import {Lang} from "@entities/base/MlString";
 import {LangAction, LangActionEnum, LangState} from "./types";
 
 const initialState: LangState = {
-    currentLang: LangsList.RU,
+    currentLang: Lang.RU,
 }
 
 export default function LangReducer(state = initialState, action: LangAction): LangState {

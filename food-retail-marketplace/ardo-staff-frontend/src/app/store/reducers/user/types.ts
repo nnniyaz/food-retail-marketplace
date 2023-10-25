@@ -1,4 +1,4 @@
-import {User} from "entities/user/user";
+import {User} from "@entities/user/user";
 
 export type UserState = {
     user: User;

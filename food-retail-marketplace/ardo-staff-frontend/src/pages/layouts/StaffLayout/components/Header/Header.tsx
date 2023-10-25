@@ -1,9 +1,9 @@
 import React, {FC} from "react";
 import {MenuUnfoldOutlined} from "@ant-design/icons";
 import {Transition, TransitionStatus} from "react-transition-group";
-import {Logo} from "shared/ui/Logo";
-import {Text} from "shared/ui/Text";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {Logo} from "@shared/ui/Logo";
+import {Text} from "@shared/ui/Text";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./Header.module.scss";
 
 interface HeaderProps {

@@ -2,16 +2,17 @@ import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {TableParams} from "entities/base/tableParams";
-import {Organization} from "entities/organization/organization";
-import {txt} from "shared/core/i18ngen";
-import {Filters} from "shared/ui/Filters";
-import {useActions} from "shared/lib/hooks/useActions";
-import {dateFormat} from "shared/lib/utils/date-format";
-import {TableHeader} from "shared/ui/TableTools/TableHeader";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
-import {RouteNames} from "../../index";
+import {RouteNames} from "@pages//";
+import {TableParams} from "@entities/base/tableParams";
+import {Organization} from "@entities/organization/organization";
+import {txt} from "@shared/core/i18ngen";
+import {Filters} from "@shared/ui/Filters";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {dateFormat} from "@shared/lib/utils/date-format";
+import {TableHeader} from "@shared/ui/TableTools/TableHeader";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./Organizations.module.scss";
+import {Translate} from "@features/Translate";
 
 export const Organizations: FC = () => {
     const navigate = useNavigate();
@@ -34,7 +35,7 @@ export const Organizations: FC = () => {
     const columns: ColumnsType<Organization> = [
         {
             key: "action",
-            title: txt.action[currentLang],
+            title: Translate("action"),
             dataIndex: "action",
             render: (_, record) => (
                 <Link to={RouteNames.ORGANIZATIONS_EDIT.replace(":id", record?.id)}>
@@ -42,9 +43,21 @@ export const Organizations: FC = () => {
                 </Link>
             )
         },
-        {key: "id", title: txt.id[currentLang], dataIndex: "id"},
-        {key: "name", title: txt.name[currentLang], dataIndex: "name"},
-        {key: "currency", title: txt.currency[currentLang], dataIndex: "currency"},
+        {
+            key: "id",
+            title: txt.id[currentLang],
+            dataIndex: "id"
+        },
+        {
+            key: "name",
+            title: txt.name[currentLang],
+            dataIndex: "name"
+        },
+        {
+            key: "currency",
+            title: txt.currency[currentLang],
+            dataIndex: "currency"
+        },
         {
             key: "isDeleted",
             title: txt.is_deleted[currentLang],

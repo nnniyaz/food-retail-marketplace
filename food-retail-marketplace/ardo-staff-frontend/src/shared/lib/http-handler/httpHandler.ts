@@ -1,9 +1,9 @@
 import {isEmpty} from "lodash";
-import {AppDispatch} from "app/store";
-import {UserActionCreators} from "app/store/reducers/user/action-creators";
-import {RouteNames} from "pages";
-import {LangsList} from "entities/base/MlString";
-import {NavigateCallback} from "entities/base/navigateCallback";
+import {AppDispatch} from "@app/store";
+import {UserActionCreators} from "@app/store/reducers/user/action-creators";
+import {RouteNames} from "@pages//";
+import {Lang} from "@entities/base/MlString";
+import {NavigateCallback} from "@entities/base/navigateCallback";
 import {txt} from "../../core/i18ngen";
 import {Notify} from "../notification/notification";
 
@@ -11,7 +11,7 @@ interface HttpHandlerProps {
     error: any;
     httpStatus: number;
     dispatch: AppDispatch;
-    currentLang: LangsList;
+    currentLang: Lang;
     navigateCallback?: NavigateCallback;
     hideNotify?: boolean;
 }

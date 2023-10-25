@@ -1,12 +1,12 @@
 import {FC, useEffect, useState} from "react";
 import {Button, Form} from "antd";
 import {useNavigate} from "react-router-dom";
-import {RouteNames} from "pages/index";
-import {txt} from "shared/core/i18ngen";
-import {rules} from "shared/lib/form-rules/rules";
-import {FormInput} from "shared/ui/FormInput/FormInput";
-import {useActions} from "shared/lib/hooks/useActions";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {RouteNames} from "@pages/index";
+import {txt} from "@shared/core/i18ngen";
+import {rules} from "@shared/lib/form-rules/rules";
+import {FormInput} from "@shared/ui/FormInput/FormInput";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./LoginForm.module.scss";
 
 export const LoginForm: FC = () => {

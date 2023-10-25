@@ -1,10 +1,10 @@
-import {AppDispatch, RootState} from "app/store";
-import {UserActionCreators} from "app/store/reducers/user/action-creators";
-import {RouteNames} from "pages";
-import {NavigateCallback} from "entities/base/navigateCallback";
-import {txt} from "shared/core/i18ngen";
-import {Notify} from "shared/lib/notification/notification";
-import {FailedResponseHandler, httpHandler,} from "shared/lib/http-handler/httpHandler";
+import {AppDispatch, RootState} from "@app/store";
+import {UserActionCreators} from "@app/store/reducers/user/action-creators";
+import {RouteNames} from "@pages//";
+import {NavigateCallback} from "@entities/base/navigateCallback";
+import {txt} from "@shared/core/i18ngen";
+import {Notify} from "@shared/lib/notification/notification";
+import {FailedResponseHandler, httpHandler,} from "@shared/lib/http-handler/httpHandler";
 import AuthService, {LoginRequest} from "../../api/authService";
 import {SetIsLoadingAuthAction, SetIsLoadingLogoutAction, AuthActionEnum} from "./types";
 

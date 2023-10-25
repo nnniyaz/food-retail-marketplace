@@ -1,7 +1,7 @@
-import {Paginate} from "entities/base/paginate";
-import {Organization} from "entities/organization/organization";
-import {AppDispatch, RootState} from "app/store";
-import {FailedResponseHandler, httpHandler} from "shared/lib/http-handler/httpHandler";
+import {Paginate} from "@entities/base/paginate";
+import {Organization} from "@entities/organization/organization";
+import {AppDispatch, RootState} from "@app/store";
+import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {
     SetOrganizationsAction,
     SetOrganizationsCountAction,

@@ -1,7 +1,7 @@
 import React, {FC} from 'react';
 import {Button, Input} from "antd";
-import {txt} from "shared/core/i18ngen";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {txt} from "@shared/core/i18ngen";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./TableHeader.module.scss";
 
 interface TableHeaderProps {

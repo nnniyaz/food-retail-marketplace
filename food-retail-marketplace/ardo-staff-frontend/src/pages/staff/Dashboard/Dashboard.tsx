@@ -1,9 +1,9 @@
 import React, {FC, useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {txt} from "shared/core/i18ngen";
-import {Table} from "shared/ui/TableTools/Table";
-import {useActions} from "shared/lib/hooks/useActions";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
+import {txt} from "@shared/core/i18ngen";
+import {Table} from "@shared/ui/TableTools/Table";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {Block} from "./components/Block";
 import classes from "./Dashboard.module.scss";
 

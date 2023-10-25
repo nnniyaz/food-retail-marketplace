@@ -2,16 +2,16 @@ import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {User, UserType} from "entities/user/user";
-import {TableParams} from "entities/base/tableParams";
-import {txt} from "shared/core/i18ngen";
-import {Filters} from "shared/ui/Filters";
-import {useActions} from "shared/lib/hooks/useActions";
-import {dateFormat} from "shared/lib/utils/date-format";
-import {TableHeader} from "shared/ui/TableTools/TableHeader";
-import {useTypedSelector} from "shared/lib/hooks/useTypedSelector";
-import {userTypeTranslate} from "shared/lib/utils/user-type-translate";
-import {RouteNames} from "../../index";
+import {User, UserType} from "@entities/user/user";
+import {TableParams} from "@entities/base/tableParams";
+import {txt} from "@shared/core/i18ngen";
+import {Filters} from "@shared/ui/Filters";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {dateFormat} from "@shared/lib/utils/date-format";
+import {TableHeader} from "@shared/ui/TableTools/TableHeader";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
+import {userTypeTranslate} from "@shared/lib/utils/user-type-translate";
+import {RouteNames} from "@pages//";
 import classes from "./Users.module.scss";
 
 export const Users: FC = () => {
