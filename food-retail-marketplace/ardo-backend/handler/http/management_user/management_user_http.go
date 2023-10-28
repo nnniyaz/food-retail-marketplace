@@ -25,26 +25,28 @@ func NewHttpDelivery(s management.ManagementUserService, l logger.Logger) *HttpD
 // -----------------------------------------------------------------------------
 
 type User struct {
-	Id        string    `json:"id"`
-	Email     string    `json:"email"`
-	FirstName string    `json:"firstName"`
-	LastName  string    `json:"lastName"`
-	UserType  string    `json:"userType"`
-	IsDeleted bool      `json:"isDeleted"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
+	Id            string    `json:"id"`
+	Email         string    `json:"email"`
+	FirstName     string    `json:"firstName"`
+	LastName      string    `json:"lastName"`
+	UserType      string    `json:"userType"`
+	PreferredLang string    `json:"preferredLang"`
+	IsDeleted     bool      `json:"isDeleted"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
 }
 
 func NewUser(u *user.User) User {
 	return User{
-		Id:        u.GetId().String(),
-		Email:     u.GetEmail().String(),
-		FirstName: u.GetFirstName().String(),
-		LastName:  u.GetLastName().String(),
-		UserType:  u.GetUserType().String(),
-		IsDeleted: u.GetIsDeleted(),
-		CreatedAt: u.GetCreatedAt(),
-		UpdatedAt: u.GetUpdatedAt(),
+		Id:            u.GetId().String(),
+		Email:         u.GetEmail().String(),
+		FirstName:     u.GetFirstName().String(),
+		LastName:      u.GetLastName().String(),
+		UserType:      u.GetUserType().String(),
+		PreferredLang: u.GetUserPreferredLang().String(),
+		IsDeleted:     u.GetIsDeleted(),
+		CreatedAt:     u.GetCreatedAt(),
+		UpdatedAt:     u.GetUpdatedAt(),
 	}
 }
 
@@ -88,11 +90,12 @@ func (hd *HttpDelivery) GetUserById(w http.ResponseWriter, r *http.Request) {
 // -----------------------------------------------------------------------------
 
 type AddUserIn struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
-	UserType  string `json:"userType"`
+	FirstName     string `json:"firstName"`
+	LastName      string `json:"lastName"`
+	Email         string `json:"email"`
+	Password      string `json:"password"`
+	UserType      string `json:"userType"`
+	PreferredLang string `json:"preferredLang"`
 }
 
 func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
@@ -101,7 +104,7 @@ func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Password, in.UserType); err != nil {
+	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Password, in.UserType, in.PreferredLang); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
@@ -109,9 +112,10 @@ func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 }
 
 type UpdateUserCredentialsIn struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
+	FirstName     string `json:"firstName"`
+	LastName      string `json:"lastName"`
+	Email         string `json:"email"`
+	PreferredLang string `json:"preferredLang"`
 }
 
 func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Request) {
@@ -121,7 +125,7 @@ func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Req
 		response.NewBad(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.UpdateUserCredentials(r.Context(), userId, in.FirstName, in.LastName, in.Email); err != nil {
+	if err := hd.service.UpdateUserCredentials(r.Context(), userId, in.FirstName, in.LastName, in.Email, in.PreferredLang); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

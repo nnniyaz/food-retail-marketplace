@@ -46,3 +46,5 @@ user_already_in_org,Пользователь уже состоит в орган
 file_is_nil,Файл не может быть пустым,File can not be empty
 uploaded_img_invalid,Загруженное изображение неверно,Uploaded image is invalid
 file_not_found,Файл не найден,File not found
+empty_lang,Предпочитаемый язык интерфейса не может быть пустым,Preferred language of web-interface can not be empty
+invalid_lang,Данный язык отсутствует в системе,This language is not available in the system

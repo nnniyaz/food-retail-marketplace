@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github/nnniyaz/ardo/domain/base/email"
+	"github/nnniyaz/ardo/domain/base/lang"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/exceptions"
@@ -45,33 +46,35 @@ func (m *mongoPassword) ToAggregate() valueobject.Password {
 }
 
 type mongoUser struct {
-	Id        uuid.UUID     `bson:"_id"`
-	FirstName string        `bson:"firstName"`
-	LastName  string        `bson:"lastName"`
-	Email     string        `bson:"email"`
-	Password  mongoPassword `bson:"password"`
-	UserType  string        `bson:"userType"`
-	IsDeleted bool          `bson:"isDeleted"`
-	CreatedAt time.Time     `bson:"createdAt"`
-	UpdatedAt time.Time     `bson:"updatedAt"`
+	Id            uuid.UUID     `bson:"_id"`
+	FirstName     string        `bson:"firstName"`
+	LastName      string        `bson:"lastName"`
+	Email         string        `bson:"email"`
+	Password      mongoPassword `bson:"password"`
+	UserType      string        `bson:"userType"`
+	PreferredLang string        `bson:"preferredLang"`
+	IsDeleted     bool          `bson:"isDeleted"`
+	CreatedAt     time.Time     `bson:"createdAt"`
+	UpdatedAt     time.Time     `bson:"updatedAt"`
 }
 
 func newFromUser(u *user.User) *mongoUser {
 	return &mongoUser{
-		Id:        u.GetId(),
-		FirstName: u.GetFirstName().String(),
-		LastName:  u.GetLastName().String(),
-		Email:     u.GetEmail().String(),
-		Password:  newFromPassword(u.GetPassword()),
-		UserType:  u.GetUserType().String(),
-		IsDeleted: u.GetIsDeleted(),
-		CreatedAt: u.GetCreatedAt(),
-		UpdatedAt: u.GetUpdatedAt(),
+		Id:            u.GetId(),
+		FirstName:     u.GetFirstName().String(),
+		LastName:      u.GetLastName().String(),
+		Email:         u.GetEmail().String(),
+		Password:      newFromPassword(u.GetPassword()),
+		UserType:      u.GetUserType().String(),
+		PreferredLang: u.GetUserPreferredLang().String(),
+		IsDeleted:     u.GetIsDeleted(),
+		CreatedAt:     u.GetCreatedAt(),
+		UpdatedAt:     u.GetUpdatedAt(),
 	}
 }
 
 func (m *mongoUser) ToAggregate() *user.User {
-	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt)
+	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.PreferredLang, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt)
 }
 
 func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
@@ -125,15 +128,16 @@ func (r *RepoUser) Create(ctx context.Context, user *user.User) error {
 	return err
 }
 
-func (r *RepoUser) UpdateUserCredentials(ctx context.Context, userId uuid.UUID, firstName valueobject.FirstName, lastName valueobject.LastName, email email.Email) error {
+func (r *RepoUser) UpdateUserCredentials(ctx context.Context, userId uuid.UUID, firstName valueobject.FirstName, lastName valueobject.LastName, email email.Email, preferredLang lang.Lang) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": userId,
 	}, bson.M{
 		"$set": bson.M{
-			"firstName": firstName.String(),
-			"lastName":  lastName.String(),
-			"email":     email.String(),
-			"updatedAt": time.Now(),
+			"firstName":     firstName.String(),
+			"lastName":      lastName.String(),
+			"email":         email.String(),
+			"preferredLang": preferredLang.String(),
+			"updatedAt":     time.Now(),
 		},
 	})
 	return err

@@ -4,6 +4,7 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base/email"
+	"github/nnniyaz/ardo/domain/base/lang"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/organization"
 	OrgValueObject "github/nnniyaz/ardo/domain/organization/valueobject"
@@ -27,7 +28,7 @@ type User interface {
 	FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error)
 	FindOneByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, user *user.User) error
-	UpdateUserCredentials(ctx context.Context, userId uuid.UUID, firstName UserValueObject.FirstName, lastName UserValueObject.LastName, email email.Email) error
+	UpdateUserCredentials(ctx context.Context, userId uuid.UUID, firstName UserValueObject.FirstName, lastName UserValueObject.LastName, email email.Email, preferredLang lang.Lang) error
 	UpdateUserPassword(ctx context.Context, userId uuid.UUID, password UserValueObject.Password) error
 	Recover(ctx context.Context, id uuid.UUID) error
 	Delete(ctx context.Context, id uuid.UUID) error
