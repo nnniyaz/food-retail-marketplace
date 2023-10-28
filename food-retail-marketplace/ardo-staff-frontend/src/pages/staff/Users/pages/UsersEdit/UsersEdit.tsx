@@ -1,24 +1,31 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useMemo, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {Button, Card, Form, Input, Select} from "antd";
+import {isEmpty} from "lodash";
 import {RouteNames} from "@pages//";
 import {UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {dateFormat} from "@shared/lib/utils/date-format";
+import {langOptions} from "@shared/lib/options/langOptions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import {userTypeTranslate} from "@shared/lib/utils/user-type-translate";
+import {userTypeOptions, userTypeTranslate} from "@shared/lib/options/userTypeOptions";
 import classes from "./UsersEdit.module.scss";
-import {isEmpty} from "lodash";
 
 export const UsersEdit: FC = () => {
     const {id} = useParams();
     const navigate = useNavigate();
-
+    const {user} = useTypedSelector(state => state.user);
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {userById, isLoadingGetUserById, isLoadingEditUser} = useTypedSelector(state => state.users);
+    const {
+        userById,
+        isLoadingGetUserById,
+        isLoadingEditUser,
+        isLoadingDeleteUser,
+        isLoadingRecoverUser
+    } = useTypedSelector(state => state.users);
     const {getUserById, editUser, deleteUser, recoverUser} = useActions();
     const [form] = useForm();
     const values = useWatch([], form);
@@ -27,13 +34,15 @@ export const UsersEdit: FC = () => {
     const [formInitialValues, setFormInitialValues] = useState({});
     const [submittable, setSubmittable] = React.useState(false);
 
-
-    const userTypes = [
-        {value: UserType.OWNER, label: userTypeTranslate(UserType.OWNER, currentLang)},
-        {value: UserType.MANAGER, label: userTypeTranslate(UserType.MANAGER, currentLang)},
-        {value: UserType.STAFF, label: userTypeTranslate(UserType.STAFF, currentLang)},
-        {value: UserType.MODERATOR, label: userTypeTranslate(UserType.MODERATOR, currentLang)},
-    ];
+    const userOptionsAccordingToUserAccess = useMemo(() => {
+        const options = userTypeOptions.map(opt => ({...opt, label: userTypeTranslate(opt.label, currentLang)}));
+        switch (user.userType) {
+            case UserType.ADMIN:
+                return options;
+            default:
+                return options.filter(opt => opt.value !== UserType.ADMIN && opt.value !== UserType.DEVELOPER);
+        }
+    }, [user.userType]);
 
     const handleCancel = () => {
         navigate(RouteNames.USERS);
@@ -90,6 +99,7 @@ export const UsersEdit: FC = () => {
             lastName: userById?.lastName || "",
             email: userById?.email || "",
             userType: userById?.userType || "",
+            preferredLang: userById?.preferredLang
         });
     }, [userById]);
 
@@ -146,7 +156,18 @@ export const UsersEdit: FC = () => {
                             label={txt.user_type[currentLang]}
                             rules={[rules.required(txt.please_select_usertype[currentLang])]}
                         >
-                            <Select options={userTypes} placeholder={txt.select_usertype[currentLang]}/>
+                            <Select
+                                placeholder={txt.select_usertype[currentLang]}
+                                options={userOptionsAccordingToUserAccess}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name={"preferredLang"}
+                            label={txt.preferred_lang[currentLang]}
+                            rules={[rules.required(txt.please_select_preferred_lang[currentLang])]}
+                        >
+                            <Select placeholder={txt.select_preferred_lang[currentLang]} options={langOptions}/>
                         </Form.Item>
 
                         <Form.Item style={{marginBottom: "0"}}>
@@ -158,7 +179,7 @@ export const UsersEdit: FC = () => {
                                     {txt.reset[currentLang]}
                                 </Button>
                                 <Button
-                                    loading={isLoadingGetUserById}
+                                    loading={isLoadingEditUser}
                                     disabled={isLoadingEditUser || !submittable}
                                     type={"primary"}
                                     htmlType={"submit"}
@@ -173,13 +194,26 @@ export const UsersEdit: FC = () => {
                 <Card bodyStyle={{padding: "10px", borderRadius: "8px"}} loading={isLoadingGetUserById}>
                     <h1 className={classes.title}>{`${userById?.firstName} ${userById?.lastName || ""}`}</h1>
                     <h3 className={classes.subtitle}>{userById?.id || "-"}</h3>
-                    <RowInfo label={txt.email[currentLang]} value={userById?.email || "-"}/>
+                    <RowInfo
+                        label={txt.email[currentLang]}
+                        value={userById?.email || "-"}
+                    />
                     <RowInfo
                         label={txt.user_type[currentLang]}
                         value={userTypeTranslate(userById?.userType, currentLang) || "-"}
                     />
-                    <RowInfo label={txt.created_at[currentLang]} value={dateFormat(userById?.createdAt || "") || "-"}/>
-                    <RowInfo label={txt.updated_at[currentLang]} value={dateFormat(userById?.updatedAt || "") || "-"}/>
+                    <RowInfo
+                        label={txt.preferred_lang[currentLang]}
+                        value={userById?.preferredLang || "-"}
+                    />
+                    <RowInfo
+                        label={txt.created_at[currentLang]}
+                        value={dateFormat(userById?.createdAt || "") || "-"}
+                    />
+                    <RowInfo
+                        label={txt.updated_at[currentLang]}
+                        value={dateFormat(userById?.updatedAt || "") || "-"}
+                    />
 
                     <div className={classes.row__btns}>
                         <Button onClick={handleCancel}>
@@ -187,6 +221,7 @@ export const UsersEdit: FC = () => {
                         </Button>
                         <Button
                             onClick={userById?.isDeleted ? handleRecovers : handleDelete}
+                            loading={isLoadingDeleteUser || isLoadingRecoverUser}
                             danger={!userById?.isDeleted}
                             type={"primary"}
                         >
@@ -204,7 +239,7 @@ export const UsersEdit: FC = () => {
 
 const RowInfo: FC<{ label: string, value: string }> = ({label, value}) => (
     <div className={classes.row__info}>
-        <div className={classes.row__info__label}>{`${label}:`}</div>
+        <div className={classes.row__info__label}>{label}</div>
         <div className={classes.row__info__value}>{value}</div>
     </div>
 );

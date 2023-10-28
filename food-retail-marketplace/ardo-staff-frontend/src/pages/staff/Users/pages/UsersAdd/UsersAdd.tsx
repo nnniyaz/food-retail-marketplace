@@ -1,14 +1,16 @@
-import React, {FC, useEffect} from 'react';
+import React, {FC, useEffect, useMemo, useState} from 'react';
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Form, Input, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
+import {RouteNames} from "@pages//";
+import {Lang} from "@entities/base/MlString";
 import {UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
 import {useActions} from "@shared/lib/hooks/useActions";
+import {langOptions} from "@shared/lib/options/langOptions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import {userTypeTranslate} from "@shared/lib/utils/user-type-translate";
-import {RouteNames} from "@pages//";
+import {userTypeOptions, userTypeTranslate} from "@shared/lib/options/userTypeOptions";
 import {AddUserReq} from "../../api/usersService";
 import classes from "./UsersAdd.module.scss";
 
@@ -17,25 +19,30 @@ const initialFormValues = {
     lastName: "",
     email: "",
     password: "",
-    userType: UserType.OWNER
+    userType: UserType.CLIENT,
+    preferredLang: Lang.EN,
 }
 
 export const UsersAdd: FC = () => {
     const navigate = useNavigate();
+    const {user} = useTypedSelector(state => state.user);
     const {currentLang} = useTypedSelector(state => state.lang);
     const {isLoadingAddUser} = useTypedSelector(state => state.users);
     const {addUser} = useActions();
     const [form] = useForm();
     const values = useWatch([], form);
 
-    const [submittable, setSubmittable] = React.useState(false);
+    const [submittable, setSubmittable] = useState(false);
 
-    const userTypes = [
-        {value: UserType.OWNER, label: userTypeTranslate(UserType.OWNER, currentLang)},
-        {value: UserType.MANAGER, label: userTypeTranslate(UserType.MANAGER, currentLang)},
-        {value: UserType.STAFF, label: userTypeTranslate(UserType.STAFF, currentLang)},
-        {value: UserType.MODERATOR, label: userTypeTranslate(UserType.MODERATOR, currentLang)},
-    ];
+    const userOptionsAccordingToUserAccess = useMemo(() => {
+        const options = userTypeOptions.map(opt => ({...opt, label: userTypeTranslate(opt.label, currentLang)}));
+        switch (user.userType) {
+            case UserType.ADMIN:
+                return options;
+            default:
+                return options.filter(opt => opt.value !== UserType.ADMIN && opt.value !== UserType.DEVELOPER);
+        }
+    }, [user.userType]);
 
     const handleSubmit = async () => {
         const values = form.getFieldsValue();
@@ -44,7 +51,8 @@ export const UsersAdd: FC = () => {
             lastName: values.lastName,
             email: values.email,
             password: values.password,
-            userType: values.userType
+            userType: values.userType,
+            preferredLang: values.preferredLang
         }
         await addUser(req, {navigate, to: RouteNames.USERS});
     }
@@ -100,7 +108,18 @@ export const UsersAdd: FC = () => {
                         label={txt.user_type[currentLang]}
                         rules={[rules.required(txt.please_select_usertype[currentLang])]}
                     >
-                        <Select placeholder={txt.select_usertype[currentLang]} options={userTypes}/>
+                        <Select
+                            placeholder={txt.select_usertype[currentLang]}
+                            options={userOptionsAccordingToUserAccess}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name={"preferredLang"}
+                        label={txt.preferred_lang[currentLang]}
+                        rules={[rules.required(txt.please_select_preferred_lang[currentLang])]}
+                    >
+                        <Select placeholder={txt.select_preferred_lang[currentLang]} options={langOptions}/>
                     </Form.Item>
 
                     <div className={classes.form__row}>
@@ -131,7 +150,11 @@ export const UsersAdd: FC = () => {
 
                     <Form.Item style={{margin: "0"}}>
                         <div className={classes.form__btns}>
-                            <Button onClick={handleCancel} type={"primary"} style={{margin: "0"}}>
+                            <Button
+                                onClick={handleCancel}
+                                type={"primary"}
+                                style={{margin: "0"}}
+                            >
                                 {txt.back[currentLang]}
                             </Button>
                             <Button

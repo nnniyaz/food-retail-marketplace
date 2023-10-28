@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from "react";
+import React, {FC, FunctionComponent, useEffect, useRef, useState} from "react";
 import {Transition, TransitionStatus} from "react-transition-group";
 import {NavLink, useLocation, useNavigate} from "react-router-dom";
 import {LogoutOutlined, MenuFoldOutlined} from "@ant-design/icons";
@@ -11,6 +11,30 @@ import {Credits} from "@shared/ui/Credits";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./Sidebar.module.scss";
+
+const useOutsideDetecter = (ref: React.MutableRefObject<any>, setIsShown: React.Dispatch<boolean>) => {
+    useEffect(() => {
+        const handleClickOutside = (event: any) => {
+            if (ref.current && !ref.current.contains(event.target)) {
+                setIsShown(false);
+            }
+        }
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref]);
+}
+
+const OutsideDetecter: FunctionComponent<{ children: React.ReactNode, setIsShown: React.Dispatch<boolean> }> = (
+    {children, setIsShown}
+) => {
+    const wrapperRef = useRef(null);
+    useOutsideDetecter(wrapperRef, setIsShown);
+    return <div style={{width: "100%"}} ref={wrapperRef}>{children}</div>;
+}
 
 interface HeaderProps {
     isShown: boolean;
@@ -50,9 +74,7 @@ export const Sidebar: FC<HeaderProps> = ({isShown, setIsShown}) => {
 
     useEffect(() => {
         const handleWindowResize = () => setWindowSize(window.innerWidth);
-
         window.addEventListener('resize', handleWindowResize);
-
         return () => {
             window.removeEventListener('resize', handleWindowResize);
         };
@@ -63,16 +85,20 @@ export const Sidebar: FC<HeaderProps> = ({isShown, setIsShown}) => {
             <Transition in={isShown} timeout={300} mountOnEnter unmountOnExit>
                 {state => (
                     <div className={`${classes.sidebar} ${transitionClasses[state]}`}>
-                        <div className={classes.sidebar__header}>
-                            <MenuFoldOutlined className={classes.burger} onClick={() => setIsShown(false)}/>
-                            <Logo/>
-                        </div>
-                        <Divider/>
-                        {upperSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>)}
-                        <Divider/>
-                        {lowerSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>)}
-                        <SideBarItem item={logoutSideBarItem} onClick={handleLogout}/>
-                        <Credits/>
+                        <OutsideDetecter setIsShown={setIsShown}>
+                            <div className={classes.sidebar__header}>
+                                <MenuFoldOutlined className={classes.burger} onClick={() => setIsShown(false)}/>
+                                <Logo/>
+                            </div>
+                            <Divider/>
+                            {upperSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick}
+                                                                   key={item.path}/>)}
+                            <Divider/>
+                            {lowerSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick}
+                                                                   key={item.path}/>)}
+                            <SideBarItem item={logoutSideBarItem} onClick={handleLogout}/>
+                            <Credits/>
+                        </OutsideDetecter>
                     </div>
                 )}
             </Transition>

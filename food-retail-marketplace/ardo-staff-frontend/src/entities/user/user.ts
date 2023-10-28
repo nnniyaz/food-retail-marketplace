@@ -1,11 +1,15 @@
+import {Lang} from "@entities/base/MlString";
+
 type UserFirstName = string;
 type UserLastName = string;
 
 export enum UserType {
-    STAFF = "STAFF",
+    ADMIN = "ADMIN",
+    DEVELOPER = "DEVELOPER",
     MODERATOR = "MODERATOR",
-    OWNER = "OWNER",
+    MERCHANT = "MERCHANT",
     MANAGER = "MANAGER",
+    CLIENT = "CLIENT",
 }
 
 export type User = {
@@ -14,6 +18,7 @@ export type User = {
     lastName: UserLastName;
     email: Email;
     userType: UserType;
+    preferredLang: Lang;
     createdAt: Timestamp;
     updatedAt: Timestamp;
     isDeleted: boolean;

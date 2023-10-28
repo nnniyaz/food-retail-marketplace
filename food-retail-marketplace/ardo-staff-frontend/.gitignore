@@ -3,6 +3,7 @@
 
 # dependencies
 /node_modules
+/src/shared/core/i18ngen.js
 /.pnp
 .pnp.js
 

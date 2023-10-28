@@ -5,6 +5,7 @@ import {Logo} from "@shared/ui/Logo";
 import {Text} from "@shared/ui/Text";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./Header.module.scss";
+import {userTypeTranslate} from "@shared/lib/options/userTypeOptions";
 
 interface HeaderProps {
     isShown: boolean;
@@ -13,6 +14,7 @@ interface HeaderProps {
 
 export const Header: FC<HeaderProps> = ({isShown, setIsShown}) => {
     const {user} = useTypedSelector(state => state.user);
+    const {currentLang} = useTypedSelector(state => state.lang);
     const data = {
         firstName: user.firstName || "-",
         lastName: user.lastName || "-",
@@ -37,7 +39,11 @@ export const Header: FC<HeaderProps> = ({isShown, setIsShown}) => {
                         <MenuUnfoldOutlined className={classes.burger} onClick={() => setIsShown(true)}/>
                     </div>
                     <div className={classes.header__item}>
-                        <AccountBlock firstName={data.firstName} lastName={data.lastName} role={data.role}/>
+                        <AccountBlock
+                            firstName={data.firstName}
+                            lastName={data.lastName}
+                            role={userTypeTranslate(data.role, currentLang)}
+                        />
                     </div>
                 </div>
             )}
