@@ -1,3 +1,5 @@
+import {Lang} from "@entities/base/MlString";
+
 type UserFirstName = string;
 type UserLastName = string;
 
@@ -16,6 +18,7 @@ export type User = {
     lastName: UserLastName;
     email: Email;
     userType: UserType;
+    preferredLang: Lang;
     createdAt: Timestamp;
     updatedAt: Timestamp;
     isDeleted: boolean;
@@ -24,8 +27,4 @@ export type User = {
 export type UsersData = {
     users: User[];
     count: number;
-}
-
-export const checkCurrentUserAccess = (userType: UserType) => {
-
 }

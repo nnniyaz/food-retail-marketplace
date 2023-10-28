@@ -105,3 +105,6 @@
 "not_valid_mlstring","Неверный формат Multi Language String","Not Valid Multi Language String"
 "does_not_exist_in_dictionary","Не существует в словаре","Does not exist in dictionary"
 "to_main_menu","На главное меню","To Main Menu"
+"preferred_lang","Предпочитаемый язык","Preferred language"
+"please_select_preferred_lang","Пожалуйста, выберите предпочитаемый язык","Please, select preferred language"
+"select_preferred_lang","Выберите предпочитаемый язык","Select preferred language"

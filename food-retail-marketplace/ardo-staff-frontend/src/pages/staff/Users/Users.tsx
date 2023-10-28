@@ -13,6 +13,7 @@ import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {userTypeTranslate} from "@shared/lib/options/userTypeOptions";
 import {RouteNames} from "@pages//";
 import classes from "./Users.module.scss";
+import {Lang} from "@entities/base/MlString";
 
 export const Users: FC = () => {
     const navigate = useNavigate();
@@ -64,6 +65,12 @@ export const Users: FC = () => {
             title: txt.user_type[currentLang],
             dataIndex: "userType",
             render: (userType: UserType) => userTypeTranslate(userType, currentLang)
+        },
+        {
+            key: "preferredLang",
+            title: txt.preferred_lang[currentLang],
+            dataIndex: "preferredLang",
+            render: (preferredLang: Lang) => preferredLang
         },
         {
             key: "isDeleted",

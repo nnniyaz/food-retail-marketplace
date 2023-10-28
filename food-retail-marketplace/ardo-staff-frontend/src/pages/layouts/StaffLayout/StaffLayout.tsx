@@ -1,13 +1,13 @@
 import React, {CSSProperties, FC, useEffect, useState} from "react";
 import {Link, Outlet, useLocation} from "react-router-dom";
 import {Breadcrumb} from "antd";
+import {IRoute, RouteNames, staffRoutes, staffRoutesSidebar} from "@pages//";
 import {Text} from "@shared/ui/Text";
 import {Loader} from "@shared/ui/Loader";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {Header} from "./components/Header";
 import {Sidebar} from "./components/Sidebar";
-import {IRoute, RouteNames, staffRoutes, staffRoutesSidebar} from "@pages//";
 import classes from "./StaffLayout.module.scss";
 
 export const StaffLayout: FC = () => {
