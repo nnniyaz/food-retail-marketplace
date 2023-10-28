@@ -1,7 +1,8 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, {FC, useEffect, useMemo, useState} from 'react';
 import {useNavigate, useParams} from "react-router-dom";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {Button, Card, Form, Input, Select} from "antd";
+import {isEmpty} from "lodash";
 import {RouteNames} from "@pages//";
 import {UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
@@ -9,14 +10,13 @@ import {rules} from "@shared/lib/form-rules/rules";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {dateFormat} from "@shared/lib/utils/date-format";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import {userTypeTranslate} from "@shared/lib/utils/user-type-translate";
+import {userTypeOptions, userTypeTranslate} from "@shared/lib/options/userTypeOptions";
 import classes from "./UsersEdit.module.scss";
-import {isEmpty} from "lodash";
 
 export const UsersEdit: FC = () => {
     const {id} = useParams();
     const navigate = useNavigate();
-
+    const {user} = useTypedSelector(state => state.user);
     const {currentLang} = useTypedSelector(state => state.lang);
     const {userById, isLoadingGetUserById, isLoadingEditUser} = useTypedSelector(state => state.users);
     const {getUserById, editUser, deleteUser, recoverUser} = useActions();
@@ -27,13 +27,15 @@ export const UsersEdit: FC = () => {
     const [formInitialValues, setFormInitialValues] = useState({});
     const [submittable, setSubmittable] = React.useState(false);
 
-
-    const userTypes = [
-        {value: UserType.OWNER, label: userTypeTranslate(UserType.OWNER, currentLang)},
-        {value: UserType.MANAGER, label: userTypeTranslate(UserType.MANAGER, currentLang)},
-        {value: UserType.STAFF, label: userTypeTranslate(UserType.STAFF, currentLang)},
-        {value: UserType.MODERATOR, label: userTypeTranslate(UserType.MODERATOR, currentLang)},
-    ];
+    const userOptionsAccordingToUserAccess = useMemo(() => {
+        const options = userTypeOptions.map(opt => ({...opt, label: userTypeTranslate(opt.label, currentLang)}));
+        switch (user.userType) {
+            case UserType.ADMIN:
+                return options;
+            default:
+                return options.filter(opt => opt.value !== UserType.ADMIN && opt.value !== UserType.DEVELOPER);
+        }
+    }, [user.userType]);
 
     const handleCancel = () => {
         navigate(RouteNames.USERS);
@@ -146,7 +148,10 @@ export const UsersEdit: FC = () => {
                             label={txt.user_type[currentLang]}
                             rules={[rules.required(txt.please_select_usertype[currentLang])]}
                         >
-                            <Select options={userTypes} placeholder={txt.select_usertype[currentLang]}/>
+                            <Select
+                                placeholder={txt.select_usertype[currentLang]}
+                                options={userOptionsAccordingToUserAccess}
+                            />
                         </Form.Item>
 
                         <Form.Item style={{marginBottom: "0"}}>

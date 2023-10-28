@@ -1,6 +1,6 @@
 import {AppDispatch, RootState} from "@app/store";
 import UserService from "@pages/public/Login/api/userService";
-import {User} from "@entities/user/user";
+import {User, UserType} from "@entities/user/user";
 import {NavigateCallback} from "@entities/base/navigateCallback";
 import {txt} from "@shared/core/i18ngen";
 import {Notify} from "@shared/lib/notification/notification";
@@ -20,7 +20,7 @@ export const UserActionCreators = {
             dispatch(UserActionCreators.setIsLoadingGetUser(true));
             const res = await UserService.getCurrentUser();
             if (res.data.success) {
-                if (res.data.data.userType !== "STAFF") {
+                if (res.data.data.userType !== UserType.CLIENT) {
                     const mainClientUri = process.env.VITE_MAIN_CLIENT_URI;
                     if (mainClientUri) {
                         window.location.href = mainClientUri;

@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useMemo} from "react";
 import {useNavigate} from "react-router-dom";
 import AppRouter, {RouteNames} from "@pages//";
 import {useActions} from "@shared/lib/hooks/useActions";
@@ -11,7 +11,7 @@ export function App() {
     const navigate = useNavigate();
     const {getCurrentUser} = useActions();
 
-    useEffect(() => {
+    useMemo(() => {
         getCurrentUser({navigate: navigate, to: RouteNames.LOGIN}, true);
     }, []);
 
