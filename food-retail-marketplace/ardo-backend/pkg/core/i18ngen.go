@@ -50,6 +50,8 @@ const (
 	TXT_FILE_IS_NIL                 TxtKey = 45
 	TXT_UPLOADED_IMG_INVALID        TxtKey = 46
 	TXT_FILE_NOT_FOUND              TxtKey = 47
+	TXT_EMPTY_LANG                  TxtKey = 48
+	TXT_INVALID_LANG                TxtKey = 49
 )
 
 var Txts = TxtResource{
@@ -241,6 +243,14 @@ var Txts = TxtResource{
 		RU: `Файл не найден`,
 		EN: `File not found`,
 	},
+	TXT_EMPTY_LANG: MlString{
+		RU: `Предпочитаемый язык интерфейса не может быть пустым`,
+		EN: `Preferred language of web-interface can not be empty`,
+	},
+	TXT_INVALID_LANG: MlString{
+		RU: `Данный язык отсутствует в системе`,
+		EN: `This language is not available in the system`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -339,6 +349,10 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "uploaded_img_invalid"
 	case TXT_FILE_NOT_FOUND:
 		return "file_not_found"
+	case TXT_EMPTY_LANG:
+		return "empty_lang"
+	case TXT_INVALID_LANG:
+		return "invalid_lang"
 
 	default:
 		return ""

@@ -11,13 +11,13 @@ import (
 
 type UserService interface {
 	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
-	GetById(ctx context.Context, id string) (*user.User, error)
+	GetById(ctx context.Context, userId string) (*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
-	Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error)
-	UpdateCredentials(ctx context.Context, userId, firstName, lastName, email string) error
-	UpdatePassword(ctx context.Context, id, password string) error
-	Recover(ctx context.Context, id string) error
-	Delete(ctx context.Context, id string) error
+	Create(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) (*user.User, error)
+	UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error
+	UpdatePassword(ctx context.Context, userId, password string) error
+	Recover(ctx context.Context, userId string) error
+	Delete(ctx context.Context, userId string) error
 }
 
 type userService struct {
@@ -39,8 +39,8 @@ func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isD
 	return u.userRepo.FindByFilters(ctx, offset, limit, isDeleted)
 }
 
-func (u *userService) GetById(ctx context.Context, id string) (*user.User, error) {
-	convertedId, err := uuid.UUIDFromString(id)
+func (u *userService) GetById(ctx context.Context, userId string) (*user.User, error) {
+	convertedId, err := uuid.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
 	}
@@ -51,7 +51,7 @@ func (u *userService) GetByEmail(ctx context.Context, email string) (*user.User,
 	return u.userRepo.FindOneByEmail(ctx, email)
 }
 
-func (u *userService) Create(ctx context.Context, firstName, lastName, email, password, userType string) (*user.User, error) {
+func (u *userService) Create(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) (*user.User, error) {
 	foundUser, err := u.userRepo.FindOneByEmail(ctx, email)
 	if err != nil && err != exceptions.ErrUserNotFound {
 		return nil, err
@@ -59,7 +59,7 @@ func (u *userService) Create(ctx context.Context, firstName, lastName, email, pa
 	if foundUser != nil && !foundUser.GetIsDeleted() {
 		return nil, exceptions.ErrUserAlreadyExist
 	}
-	newUser, err := user.NewUser(firstName, lastName, email, password, userType)
+	newUser, err := user.NewUser(firstName, lastName, email, password, userType, preferredLang)
 	if err != nil {
 		return nil, err
 	}
@@ -70,7 +70,7 @@ func (u *userService) Create(ctx context.Context, firstName, lastName, email, pa
 	return newUser, nil
 }
 
-func (u *userService) UpdateCredentials(ctx context.Context, userId, firstName, lastName, email string) error {
+func (u *userService) UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error {
 	foundUser, err := u.GetById(ctx, userId)
 	if err != nil {
 		return err
@@ -78,15 +78,15 @@ func (u *userService) UpdateCredentials(ctx context.Context, userId, firstName, 
 	if foundUser.GetIsDeleted() {
 		return exceptions.ErrUserNotFound
 	}
-	err = foundUser.UpdateCredentials(firstName, lastName, email)
+	err = foundUser.UpdateCredentials(firstName, lastName, email, preferredLang)
 	if err != nil {
 		return err
 	}
-	return u.userRepo.UpdateUserCredentials(ctx, foundUser.GetId(), foundUser.GetFirstName(), foundUser.GetLastName(), foundUser.GetEmail())
+	return u.userRepo.UpdateUserCredentials(ctx, foundUser.GetId(), foundUser.GetFirstName(), foundUser.GetLastName(), foundUser.GetEmail(), foundUser.GetUserPreferredLang())
 }
 
-func (u *userService) UpdatePassword(ctx context.Context, id, password string) error {
-	foundUser, err := u.GetById(ctx, id)
+func (u *userService) UpdatePassword(ctx context.Context, userId, password string) error {
+	foundUser, err := u.GetById(ctx, userId)
 	if err != nil {
 		return err
 	}
@@ -100,8 +100,8 @@ func (u *userService) UpdatePassword(ctx context.Context, id, password string) e
 	return u.userRepo.UpdateUserPassword(ctx, foundUser.GetId(), foundUser.GetPassword())
 }
 
-func (u *userService) Recover(ctx context.Context, id string) error {
-	foundUser, err := u.GetById(ctx, id)
+func (u *userService) Recover(ctx context.Context, userId string) error {
+	foundUser, err := u.GetById(ctx, userId)
 	if err != nil {
 		return err
 	}
@@ -111,8 +111,8 @@ func (u *userService) Recover(ctx context.Context, id string) error {
 	return u.userRepo.Recover(ctx, foundUser.GetId())
 }
 
-func (u *userService) Delete(ctx context.Context, id string) error {
-	foundUser, err := u.GetById(ctx, id)
+func (u *userService) Delete(ctx context.Context, userId string) error {
+	foundUser, err := u.GetById(ctx, userId)
 	if err != nil {
 		return err
 	}

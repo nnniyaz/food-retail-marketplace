@@ -10,10 +10,10 @@ import (
 type ManagementUserService interface {
 	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
 	GetUserById(ctx context.Context, userId string) (*user.User, error)
-	AddUser(ctx context.Context, firstName, lastName, email, password, userType string) error
+	AddUser(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) error
 	RecoverUser(ctx context.Context, userId string) error
 	DeleteUser(ctx context.Context, userId string) error
-	UpdateUserCredentials(ctx context.Context, userId, firstName, lastName, email string) error
+	UpdateUserCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error
 	UpdateUserPassword(ctx context.Context, userId, password string) error
 }
 
@@ -38,8 +38,8 @@ func (m *managementUserService) GetUserById(ctx context.Context, userId string) 
 	return m.userService.GetById(ctx, userId)
 }
 
-func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, password, userType string) error {
-	_, err := m.userService.Create(ctx, firstName, lastName, email, password, userType)
+func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) error {
+	_, err := m.userService.Create(ctx, firstName, lastName, email, password, userType, preferredLang)
 	return err
 }
 
@@ -51,8 +51,8 @@ func (m *managementUserService) DeleteUser(ctx context.Context, userId string) e
 	return m.userService.Delete(ctx, userId)
 }
 
-func (m *managementUserService) UpdateUserCredentials(ctx context.Context, userId, firstName, lastName, email string) error {
-	return m.userService.UpdateCredentials(ctx, userId, firstName, lastName, email)
+func (m *managementUserService) UpdateUserCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error {
+	return m.userService.UpdateCredentials(ctx, userId, firstName, lastName, email, preferredLang)
 }
 
 func (m *managementUserService) UpdateUserPassword(ctx context.Context, userId, password string) error {

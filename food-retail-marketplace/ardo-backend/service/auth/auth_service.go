@@ -6,6 +6,7 @@ import (
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
+	exceptionsUser "github/nnniyaz/ardo/domain/user/exceptions"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/email"
@@ -30,7 +31,7 @@ var (
 
 type AuthService interface {
 	Login(ctx context.Context, email, password, userAgent string) (uuid.UUID, error)
-	Register(ctx context.Context, firstName, lastName, email, password string) error
+	Register(ctx context.Context, firstName, lastName, email, password, preferredLang string) error
 	Logout(ctx context.Context, session string) error
 	Confirm(ctx context.Context, link string) error
 	UserCheck(ctx context.Context, session string, userAgent string) (*user.User, error)
@@ -100,9 +101,9 @@ func (a *authService) Logout(ctx context.Context, token string) error {
 	return a.sessionService.DeleteOneByToken(ctx, token)
 }
 
-func (a *authService) Register(ctx context.Context, firstName, lastName, email, password string) error {
-	if u, err := a.userService.GetByEmail(ctx, email); err != nil || u != nil {
-		if err != nil {
+func (a *authService) Register(ctx context.Context, firstName, lastName, email, password, preferredLang string) error {
+	if u, err := a.userService.GetByEmail(ctx, email); err != nil && err != exceptionsUser.ErrUserNotFound || u != nil {
+		if err != nil && err != exceptionsUser.ErrUserNotFound {
 			return err
 		}
 
@@ -130,7 +131,7 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 		}
 	}
 
-	newUser, err := a.userService.Create(ctx, firstName, lastName, email, password, defaultUserType.String())
+	newUser, err := a.userService.Create(ctx, firstName, lastName, email, password, defaultUserType.String(), preferredLang)
 	if err != nil {
 		return err
 	}

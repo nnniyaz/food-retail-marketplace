@@ -2,6 +2,7 @@ package user
 
 import (
 	"github/nnniyaz/ardo/domain/base/email"
+	"github/nnniyaz/ardo/domain/base/lang"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
@@ -13,18 +14,19 @@ var (
 )
 
 type User struct {
-	id        uuid.UUID
-	firstName valueobject.FirstName
-	lastName  valueobject.LastName
-	email     email.Email
-	password  valueobject.Password
-	userType  valueobject.UserType
-	isDeleted bool
-	createdAt time.Time
-	updatedAt time.Time
+	id            uuid.UUID
+	firstName     valueobject.FirstName
+	lastName      valueobject.LastName
+	email         email.Email
+	password      valueobject.Password
+	userType      valueobject.UserType
+	preferredLang lang.Lang
+	isDeleted     bool
+	createdAt     time.Time
+	updatedAt     time.Time
 }
 
-func NewUser(firstName, lastName, mail, password, userType string) (*User, error) {
+func NewUser(firstName, lastName, mail, password, userType, preferredLang string) (*User, error) {
 	userId := uuid.NewUUID()
 
 	userFirstName, err := valueobject.NewFirstName(firstName)
@@ -52,16 +54,22 @@ func NewUser(firstName, lastName, mail, password, userType string) (*User, error
 		return nil, err
 	}
 
+	userPreferredLang, err := lang.NewLang(preferredLang)
+	if err != nil {
+		return nil, err
+	}
+
 	return &User{
-		id:        userId,
-		firstName: userFirstName,
-		lastName:  userLastName,
-		email:     userEmail,
-		password:  userPassword,
-		userType:  userUserType,
-		isDeleted: false,
-		createdAt: time.Now(),
-		updatedAt: time.Now(),
+		id:            userId,
+		firstName:     userFirstName,
+		lastName:      userLastName,
+		email:         userEmail,
+		password:      userPassword,
+		userType:      userUserType,
+		preferredLang: userPreferredLang,
+		isDeleted:     false,
+		createdAt:     time.Now(),
+		updatedAt:     time.Now(),
 	}, nil
 }
 
@@ -87,6 +95,10 @@ func (u *User) GetPassword() valueobject.Password {
 
 func (u *User) GetUserType() valueobject.UserType {
 	return u.userType
+}
+
+func (u *User) GetUserPreferredLang() lang.Lang {
+	return u.preferredLang
 }
 
 func (u *User) GetIsDeleted() bool {
@@ -117,7 +129,7 @@ func (u *User) ChangePassword(password string) error {
 	return nil
 }
 
-func (u *User) UpdateCredentials(firstName, lastName, mail string) error {
+func (u *User) UpdateCredentials(firstName, lastName, mail, preferredLang string) error {
 	userFirstName, err := valueobject.NewFirstName(firstName)
 	if err != nil {
 		return err
@@ -130,22 +142,37 @@ func (u *User) UpdateCredentials(firstName, lastName, mail string) error {
 	if err != nil {
 		return err
 	}
+	userPreferredLang, err := lang.NewLang(preferredLang)
+	if err != nil {
+		return err
+	}
 	u.firstName = userFirstName
 	u.lastName = userLastName
 	u.email = userEmail
+	u.preferredLang = userPreferredLang
 	return nil
 }
 
-func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, userType string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
+func (u *User) UpdateLanguage(preferredLang string) error {
+	userPreferredLang, err := lang.NewLang(preferredLang)
+	if err != nil {
+		return err
+	}
+	u.preferredLang = userPreferredLang
+	return nil
+}
+
+func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, userType, preferredLang string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
 	return &User{
-		id:        id,
-		firstName: valueobject.FirstName(firstName),
-		lastName:  valueobject.LastName(lastName),
-		email:     email.Email(mail),
-		password:  password,
-		userType:  valueobject.UserType(userType),
-		isDeleted: isDeleted,
-		createdAt: createdAt,
-		updatedAt: updatedAt,
+		id:            id,
+		firstName:     valueobject.FirstName(firstName),
+		lastName:      valueobject.LastName(lastName),
+		email:         email.Email(mail),
+		password:      password,
+		userType:      valueobject.UserType(userType),
+		preferredLang: lang.Lang(preferredLang),
+		isDeleted:     isDeleted,
+		createdAt:     createdAt,
+		updatedAt:     updatedAt,
 	}
 }

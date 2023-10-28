@@ -70,10 +70,11 @@ func (hd *HttpDelivery) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 type RegisterIn struct {
-	FirstName string `json:"firstName"`
-	LastName  string `json:"lastName"`
-	Email     string `json:"email"`
-	Password  string `json:"password"`
+	FirstName     string `json:"firstName"`
+	LastName      string `json:"lastName"`
+	Email         string `json:"email"`
+	Password      string `json:"password"`
+	PreferredLang string `json:"preferredLang"`
 }
 
 func (hd *HttpDelivery) Register(w http.ResponseWriter, r *http.Request) {
@@ -83,7 +84,7 @@ func (hd *HttpDelivery) Register(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err := hd.service.Register(r.Context(), in.FirstName, in.LastName, in.Email, in.Password)
+	err := hd.service.Register(r.Context(), in.FirstName, in.LastName, in.Email, in.Password, in.PreferredLang)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

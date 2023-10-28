@@ -124,7 +124,16 @@ func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
 			return
 		}
 
-		if u.GetUserType() != valueobject.UserTypeStaff {
+		allowedUserTypes := map[valueobject.UserType]bool{
+			valueobject.UserTypeAdmin:     true,
+			valueobject.UserTypeDeveloper: true,
+			valueobject.UserTypeModerator: true,
+			valueobject.UserTypeMerchant:  false,
+			valueobject.UserTypeManager:   false,
+			valueobject.UserTypeClient:    false,
+		}
+
+		if !allowedUserTypes[u.GetUserType()] {
 			response.NewError(m.logger, w, r, ErrDoNotHaveAnAccess)
 			return
 		}

@@ -13,8 +13,8 @@ var (
 )
 
 type CurrentUserService interface {
-	UpdateCredentials(ctx context.Context, id string, firstName string, lastName string, email string) error
-	ChangePassword(ctx context.Context, id string, oldPassword string, newPassword string) error
+	UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error
+	ChangePassword(ctx context.Context, userId, oldPassword, newPassword string) error
 }
 
 type currentUserService struct {
@@ -27,12 +27,12 @@ func NewCurrentUser(userService userService.UserService, sessionService sessionS
 	return &currentUserService{userService: userService, sessionService: sessionService, logger: logger}
 }
 
-func (s *currentUserService) UpdateCredentials(ctx context.Context, id string, firstName string, lastName string, email string) error {
-	return s.userService.UpdateCredentials(ctx, id, firstName, lastName, email)
+func (s *currentUserService) UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error {
+	return s.userService.UpdateCredentials(ctx, userId, firstName, lastName, email, preferredLang)
 }
 
-func (s *currentUserService) ChangePassword(ctx context.Context, id string, oldPassword, newPassword string) error {
-	foundUser, err := s.userService.GetById(ctx, id)
+func (s *currentUserService) ChangePassword(ctx context.Context, userId string, oldPassword, newPassword string) error {
+	foundUser, err := s.userService.GetById(ctx, userId)
 	if err != nil {
 		return err
 	}
@@ -43,5 +43,5 @@ func (s *currentUserService) ChangePassword(ctx context.Context, id string, oldP
 	if err != nil {
 		return err
 	}
-	return s.sessionService.DeleteAllSessionsByUserId(ctx, id)
+	return s.sessionService.DeleteAllSessionsByUserId(ctx, userId)
 }

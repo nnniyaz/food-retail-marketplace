@@ -6,7 +6,6 @@ import (
 )
 
 var (
-	ErrorEmailIsEmpty   = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_EMAIL)
 	ErrorEmailIsInvalid = core.NewI18NError(core.EINVALID, core.TXT_INVALID_EMAIL)
 )
 
