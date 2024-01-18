@@ -13,7 +13,7 @@ type UserService interface {
 	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
 	GetById(ctx context.Context, userId string) (*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
-	Create(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) (*user.User, error)
+	Create(ctx context.Context, newUser *user.User) error
 	UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error
 	UpdateEmail(ctx context.Context, user *user.User, email string) error
 	UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error
@@ -53,23 +53,15 @@ func (u *userService) GetByEmail(ctx context.Context, email string) (*user.User,
 	return u.userRepo.FindOneByEmail(ctx, email)
 }
 
-func (u *userService) Create(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) (*user.User, error) {
-	foundUser, err := u.userRepo.FindOneByEmail(ctx, email)
+func (u *userService) Create(ctx context.Context, newUser *user.User) error {
+	foundUser, err := u.userRepo.FindOneByEmail(ctx, newUser.GetEmail().String())
 	if err != nil && err != exceptions.ErrUserNotFound {
-		return nil, err
+		return err
 	}
 	if foundUser != nil && !foundUser.GetIsDeleted() {
-		return nil, exceptions.ErrUserAlreadyExist
+		return exceptions.ErrUserAlreadyExist
 	}
-	newUser, err := user.NewUser(firstName, lastName, email, password, userType, preferredLang)
-	if err != nil {
-		return nil, err
-	}
-	err = u.userRepo.Create(ctx, newUser)
-	if err != nil {
-		return nil, err
-	}
-	return newUser, nil
+	return u.userRepo.Create(ctx, newUser)
 }
 
 func (u *userService) UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error {

@@ -41,16 +41,11 @@ func (m *managementUserService) GetUserById(ctx context.Context, userId string) 
 }
 
 func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) error {
-	_, err := m.userService.Create(ctx, firstName, lastName, email, password, userType, preferredLang)
-	return err
-}
-
-func (m *managementUserService) RecoverUser(ctx context.Context, userId string) error {
-	return m.userService.Recover(ctx, userId)
-}
-
-func (m *managementUserService) DeleteUser(ctx context.Context, userId string) error {
-	return m.userService.Delete(ctx, userId)
+	newUser, err := user.NewUser(firstName, lastName, email, password, userType, preferredLang)
+	if err != nil {
+		return err
+	}
+	return m.userService.Create(ctx, newUser)
 }
 
 func (m *managementUserService) UpdateUserCredentials(ctx context.Context, userId, firstName, lastName string) error {
@@ -83,4 +78,12 @@ func (m *managementUserService) UpdateUserPassword(ctx context.Context, userId, 
 		return err
 	}
 	return m.userService.UpdatePassword(ctx, foundUser, password)
+}
+
+func (m *managementUserService) RecoverUser(ctx context.Context, userId string) error {
+	return m.userService.Recover(ctx, userId)
+}
+
+func (m *managementUserService) DeleteUser(ctx context.Context, userId string) error {
+	return m.userService.Delete(ctx, userId)
 }

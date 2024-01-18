@@ -134,8 +134,8 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 		}
 	}
 
-	newUser, err := a.userService.Create(ctx, firstName, lastName, email, password, defaultUserType.String(), preferredLang)
-	if err != nil {
+	newUser, err := user.NewUser(firstName, lastName, email, password, defaultUserType.String(), preferredLang)
+	if err = a.userService.Create(ctx, newUser); err != nil {
 		return err
 	}
 
