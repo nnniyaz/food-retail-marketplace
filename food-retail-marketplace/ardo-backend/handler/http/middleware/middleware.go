@@ -13,7 +13,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 	"net/http"
-	"strconv"
 )
 
 var (
@@ -45,16 +44,18 @@ func (m *Middleware) Recover(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) RequestInfo(next http.Handler) http.Handler {
+func (m *Middleware) Trace(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "requestInfo", web.GetRequestInfo(r))
+		traceId := web.GenerateTraceId()
+		ctx := context.WithValue(r.Context(), "traceId", traceId)
+		ctx = context.WithValue(ctx, middleware.RequestIDKey, traceId)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
 
-func (m *Middleware) Trace(next http.Handler) http.Handler {
+func (m *Middleware) RequestInfo(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		ctx := context.WithValue(r.Context(), "traceId", web.GenerateTraceId())
+		ctx := context.WithValue(r.Context(), "requestInfo", web.GetRequestInfo(r))
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -209,16 +210,4 @@ func (m *Middleware) NoAuth(next http.Handler) http.Handler {
 
 		next.ServeHTTP(w, r)
 	})
-}
-
-func getParam(r *http.Request, name string) string {
-	return r.URL.Query().Get(name)
-}
-
-func getParamInt64(r *http.Request, name string) (int64, error) {
-	return strconv.ParseInt(getParam(r, name), 10, 64)
-}
-
-func getParamBool(r *http.Request, name string) (bool, error) {
-	return strconv.ParseBool(getParam(r, name))
 }

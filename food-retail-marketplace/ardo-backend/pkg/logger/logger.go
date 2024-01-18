@@ -28,6 +28,7 @@ func NewLogger(isDevMode bool) (Logger, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	return &logger{logger: l}, nil
 }
 
