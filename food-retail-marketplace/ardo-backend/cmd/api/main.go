@@ -67,7 +67,7 @@ func main() {
 
 	repos := repo.NewRepository(db)
 	services := service.NewService(repos, cf, lg, emailService)
-	handlers := http.NewHandler(services, cf.GetClientUri(), lg)
+	handlers := http.NewHandler(db, cf.GetClientUri(), services, lg)
 
 	srv := new(ardo.Server)
 	go func() {

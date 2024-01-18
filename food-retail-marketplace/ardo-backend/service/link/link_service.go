@@ -10,9 +10,9 @@ import (
 
 type ActivationLinkService interface {
 	GetByUserId(ctx context.Context, userId string) (*activationLink.ActivationLink, error)
-	Create(ctx context.Context, userId string) (*activationLink.ActivationLink, error)
+	Create(ctx context.Context, newActivationLink *activationLink.ActivationLink) error
 	UpdateIsActivated(ctx context.Context, link string, isActivated bool) error
-	UpdateLink(ctx context.Context, userId string) error
+	UpdateLink(ctx context.Context, link *activationLink.ActivationLink) error
 }
 
 type activationLinkService struct {
@@ -36,17 +36,8 @@ func (a *activationLinkService) GetByUserId(ctx context.Context, userId string) 
 	return foundActivationLink, nil
 }
 
-func (a *activationLinkService) Create(ctx context.Context, userId string) (*activationLink.ActivationLink, error) {
-	convertedUserId, err := uuid.UUIDFromString(userId)
-	if err != nil {
-		return nil, err
-	}
-	newActivationLink := activationLink.NewActivationLink(convertedUserId)
-	err = a.linkRepo.Create(ctx, newActivationLink)
-	if err != nil {
-		return nil, err
-	}
-	return newActivationLink, nil
+func (a *activationLinkService) Create(ctx context.Context, newActivationLink *activationLink.ActivationLink) error {
+	return a.linkRepo.Create(ctx, newActivationLink)
 }
 
 func (a *activationLinkService) UpdateIsActivated(ctx context.Context, link string, isActivated bool) error {
@@ -54,7 +45,7 @@ func (a *activationLinkService) UpdateIsActivated(ctx context.Context, link stri
 	if err != nil {
 		return err
 	}
-	foundActivationLink, err := a.linkRepo.FindOneByLink(ctx, convertedLink)
+	foundActivationLink, err := a.linkRepo.FindOneByLinkId(ctx, convertedLink)
 	if err != nil {
 		return err
 	}
@@ -66,15 +57,6 @@ func (a *activationLinkService) UpdateIsActivated(ctx context.Context, link stri
 	return a.linkRepo.Update(ctx, foundActivationLink)
 }
 
-func (a *activationLinkService) UpdateLink(ctx context.Context, userId string) error {
-	convertedUserId, err := uuid.UUIDFromString(userId)
-	if err != nil {
-		return err
-	}
-	foundActivationLink, err := a.linkRepo.FindOneByUserId(ctx, convertedUserId)
-	if err != nil {
-		return err
-	}
-	foundActivationLink.UpdateLink()
-	return a.linkRepo.Update(ctx, foundActivationLink)
+func (a *activationLinkService) UpdateLink(ctx context.Context, updatedLink *activationLink.ActivationLink) error {
+	return a.linkRepo.Update(ctx, updatedLink)
 }

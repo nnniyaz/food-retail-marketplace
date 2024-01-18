@@ -2,12 +2,16 @@ package middleware
 
 import (
 	"context"
+	"fmt"
+	"github.com/go-chi/chi/v5/middleware"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"github/nnniyaz/ardo/handler/http/response"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/pkg/web"
 	"github/nnniyaz/ardo/service/auth"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 	"net/http"
 	"strconv"
 )
@@ -17,12 +21,28 @@ var (
 )
 
 type Middleware struct {
+	client  *mongo.Client
 	service auth.AuthService
 	logger  logger.Logger
 }
 
-func New(s auth.AuthService, l logger.Logger) *Middleware {
-	return &Middleware{service: s, logger: l}
+func New(c *mongo.Client, s auth.AuthService, l logger.Logger) *Middleware {
+	return &Middleware{client: c, service: s, logger: l}
+}
+
+func (m *Middleware) Recover(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		defer func() {
+			if err := recover(); err != nil {
+				if e, ok := err.(error); ok {
+					response.NewInternal(m.logger, w, r, e, zap.Any("panic", err))
+				} else {
+					response.NewInternal(m.logger, w, r, nil, zap.Any("panic", err))
+				}
+			}
+		}()
+		next.ServeHTTP(w, r)
+	})
 }
 
 func (m *Middleware) RequestInfo(next http.Handler) http.Handler {
@@ -36,6 +56,37 @@ func (m *Middleware) Trace(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ctx := context.WithValue(r.Context(), "traceId", web.GenerateTraceId())
 		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
+func (m *Middleware) WithTransaction(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == http.MethodPost || r.Method == http.MethodPut || r.Method == http.MethodPatch || r.Method == http.MethodDelete {
+			session, err := m.client.StartSession()
+			if err != nil {
+				response.NewError(m.logger, w, r, err)
+				return
+			}
+			defer session.EndSession(r.Context())
+
+			_, err = session.WithTransaction(r.Context(), func(sessCtx mongo.SessionContext) (interface{}, error) {
+				ww := middleware.NewWrapResponseWriter(w, r.ProtoMajor)
+
+				next.ServeHTTP(ww, r.WithContext(sessCtx))
+
+				if ww.Status() >= 400 {
+					return nil, fmt.Errorf("status code %d", ww.Status())
+				}
+
+				return nil, nil
+			})
+			if err != nil {
+				m.logger.Error("error while executing transaction", zap.Error(err))
+				return
+			}
+		} else {
+			next.ServeHTTP(w, r)
+		}
 	})
 }
 
@@ -126,10 +177,7 @@ func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
 
 		allowedUserTypes := map[valueobject.UserType]bool{
 			valueobject.UserTypeAdmin:     true,
-			valueobject.UserTypeDeveloper: true,
 			valueobject.UserTypeModerator: true,
-			valueobject.UserTypeMerchant:  false,
-			valueobject.UserTypeManager:   false,
 			valueobject.UserTypeClient:    false,
 		}
 

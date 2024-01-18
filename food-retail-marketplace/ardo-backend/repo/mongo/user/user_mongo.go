@@ -3,8 +3,6 @@ package user
 import (
 	"context"
 	"errors"
-	"github/nnniyaz/ardo/domain/base/email"
-	"github/nnniyaz/ardo/domain/base/lang"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/exceptions"
@@ -128,29 +126,11 @@ func (r *RepoUser) Create(ctx context.Context, user *user.User) error {
 	return err
 }
 
-func (r *RepoUser) UpdateUserCredentials(ctx context.Context, userId uuid.UUID, firstName valueobject.FirstName, lastName valueobject.LastName, email email.Email, preferredLang lang.Lang) error {
+func (r *RepoUser) Update(ctx context.Context, user *user.User) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
-		"_id": userId,
+		"_id": user.GetId(),
 	}, bson.M{
-		"$set": bson.M{
-			"firstName":     firstName.String(),
-			"lastName":      lastName.String(),
-			"email":         email.String(),
-			"preferredLang": preferredLang.String(),
-			"updatedAt":     time.Now(),
-		},
-	})
-	return err
-}
-
-func (r *RepoUser) UpdateUserPassword(ctx context.Context, userId uuid.UUID, password valueobject.Password) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.M{
-		"_id": userId,
-	}, bson.M{
-		"$set": bson.M{
-			"password":  newFromPassword(password),
-			"updatedAt": time.Now(),
-		},
+		"$set": newFromUser(user),
 	})
 	return err
 }

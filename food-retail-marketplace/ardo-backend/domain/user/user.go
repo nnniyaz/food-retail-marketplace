@@ -4,13 +4,9 @@ import (
 	"github/nnniyaz/ardo/domain/base/email"
 	"github/nnniyaz/ardo/domain/base/lang"
 	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/user/exceptions"
 	"github/nnniyaz/ardo/domain/user/valueobject"
-	"github/nnniyaz/ardo/pkg/core"
 	"time"
-)
-
-var (
-	ErrSamePassword = core.NewI18NError(core.EINVALID, core.TXT_SAME_PASSWORD)
 )
 
 type User struct {
@@ -113,23 +109,7 @@ func (u *User) GetUpdatedAt() time.Time {
 	return u.updatedAt
 }
 
-func (u *User) ComparePassword(password string) bool {
-	return u.password.Compare(password)
-}
-
-func (u *User) ChangePassword(password string) error {
-	if u.ComparePassword(password) {
-		return ErrSamePassword
-	}
-	newPassword, err := valueobject.NewPassword(password)
-	if err != nil {
-		return err
-	}
-	u.password = newPassword
-	return nil
-}
-
-func (u *User) UpdateCredentials(firstName, lastName, mail, preferredLang string) error {
+func (u *User) UpdateCredentials(firstName, lastName string) error {
 	userFirstName, err := valueobject.NewFirstName(firstName)
 	if err != nil {
 		return err
@@ -138,18 +118,19 @@ func (u *User) UpdateCredentials(firstName, lastName, mail, preferredLang string
 	if err != nil {
 		return err
 	}
+	u.firstName = userFirstName
+	u.lastName = userLastName
+	u.updatedAt = time.Now()
+	return nil
+}
+
+func (u *User) UpdateEmail(mail string) error {
 	userEmail, err := email.NewEmail(mail)
 	if err != nil {
 		return err
 	}
-	userPreferredLang, err := lang.NewLang(preferredLang)
-	if err != nil {
-		return err
-	}
-	u.firstName = userFirstName
-	u.lastName = userLastName
 	u.email = userEmail
-	u.preferredLang = userPreferredLang
+	u.updatedAt = time.Now()
 	return nil
 }
 
@@ -159,6 +140,24 @@ func (u *User) UpdateLanguage(preferredLang string) error {
 		return err
 	}
 	u.preferredLang = userPreferredLang
+	u.updatedAt = time.Now()
+	return nil
+}
+
+func (u *User) ComparePassword(password string) bool {
+	return u.password.Compare(password)
+}
+
+func (u *User) ChangePassword(password string) error {
+	if u.ComparePassword(password) {
+		return exceptions.ErrSamePassword
+	}
+	newPassword, err := valueobject.NewPassword(password)
+	if err != nil {
+		return err
+	}
+	u.password = newPassword
+	u.updatedAt = time.Now()
 	return nil
 }
 

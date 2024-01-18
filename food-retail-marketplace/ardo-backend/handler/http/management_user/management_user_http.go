@@ -112,10 +112,8 @@ func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 }
 
 type UpdateUserCredentialsIn struct {
-	FirstName     string `json:"firstName"`
-	LastName      string `json:"lastName"`
-	Email         string `json:"email"`
-	PreferredLang string `json:"preferredLang"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Request) {
@@ -125,7 +123,43 @@ func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Req
 		response.NewBad(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.UpdateUserCredentials(r.Context(), userId, in.FirstName, in.LastName, in.Email, in.PreferredLang); err != nil {
+	if err := hd.service.UpdateUserCredentials(r.Context(), userId, in.FirstName, in.LastName); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateUserEmailIn struct {
+	Email string `json:"email"`
+}
+
+func (hd *HttpDelivery) UpdateUserEmail(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := UpdateUserEmailIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.UpdateUserEmail(r.Context(), userId, in.Email); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateUserPreferredLangIn struct {
+	Lang string `json:"lang"`
+}
+
+func (hd *HttpDelivery) UpdateUserPreferredLang(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := UpdateUserPreferredLangIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.UpdateUserPreferredLang(r.Context(), userId, in.Lang); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

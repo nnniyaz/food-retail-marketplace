@@ -14,8 +14,10 @@ type UserService interface {
 	GetById(ctx context.Context, userId string) (*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) (*user.User, error)
-	UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error
-	UpdatePassword(ctx context.Context, userId, password string) error
+	UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error
+	UpdateEmail(ctx context.Context, user *user.User, email string) error
+	UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error
+	UpdatePassword(ctx context.Context, user *user.User, password string) error
 	Recover(ctx context.Context, userId string) error
 	Delete(ctx context.Context, userId string) error
 }
@@ -70,34 +72,48 @@ func (u *userService) Create(ctx context.Context, firstName, lastName, email, pa
 	return newUser, nil
 }
 
-func (u *userService) UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error {
-	foundUser, err := u.GetById(ctx, userId)
-	if err != nil {
-		return err
-	}
-	if foundUser.GetIsDeleted() {
+func (u *userService) UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error {
+	if user.GetIsDeleted() {
 		return exceptions.ErrUserNotFound
 	}
-	err = foundUser.UpdateCredentials(firstName, lastName, email, preferredLang)
+	err := user.UpdateCredentials(firstName, lastName)
 	if err != nil {
 		return err
 	}
-	return u.userRepo.UpdateUserCredentials(ctx, foundUser.GetId(), foundUser.GetFirstName(), foundUser.GetLastName(), foundUser.GetEmail(), foundUser.GetUserPreferredLang())
+	return u.userRepo.Update(ctx, user)
 }
 
-func (u *userService) UpdatePassword(ctx context.Context, userId, password string) error {
-	foundUser, err := u.GetById(ctx, userId)
-	if err != nil {
-		return err
-	}
-	if foundUser.GetIsDeleted() {
+func (u *userService) UpdateEmail(ctx context.Context, user *user.User, email string) error {
+	if user.GetIsDeleted() {
 		return exceptions.ErrUserNotFound
 	}
-	err = foundUser.ChangePassword(password)
+	err := user.UpdateEmail(email)
 	if err != nil {
 		return err
 	}
-	return u.userRepo.UpdateUserPassword(ctx, foundUser.GetId(), foundUser.GetPassword())
+	return u.userRepo.Update(ctx, user)
+}
+
+func (u *userService) UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error {
+	if user.GetIsDeleted() {
+		return exceptions.ErrUserNotFound
+	}
+	err := user.UpdateLanguage(preferredLang)
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
+}
+
+func (u *userService) UpdatePassword(ctx context.Context, user *user.User, password string) error {
+	if user.GetIsDeleted() {
+		return exceptions.ErrUserNotFound
+	}
+	err := user.ChangePassword(password)
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
 }
 
 func (u *userService) Recover(ctx context.Context, userId string) error {

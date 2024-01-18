@@ -9,30 +9,28 @@ import (
 	"github/nnniyaz/ardo/service/current_user"
 	"github/nnniyaz/ardo/service/link"
 	"github/nnniyaz/ardo/service/management"
-	"github/nnniyaz/ardo/service/organization"
+	"github/nnniyaz/ardo/service/product"
 	"github/nnniyaz/ardo/service/session"
 	"github/nnniyaz/ardo/service/user"
-	"github/nnniyaz/ardo/service/user_organization"
 )
 
 type Services struct {
-	Auth                   auth.AuthService
-	ManagementUser         management.ManagementUserService
-	ManagementOrganization management.ManagementOrgService
-	CurrentUser            current_user.CurrentUserService
+	Auth              auth.AuthService
+	ManagementUser    management.ManagementUserService
+	ManagementProduct management.ManagementProductService
+	CurrentUser       current_user.CurrentUserService
 }
 
 func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, emailService email.Email) *Services {
 	userService := user.NewUserService(repos.RepoUser, l)
 	sessionService := session.NewSessionService(repos.RepoSession, l)
 	linkService := link.NewActivationLinkService(repos.RepoActivationLink, l)
-	organizationService := organization.NewOrganizationService(repos.RepoOrganization, l)
-	userOrganizationService := user_organization.NewUserOrgService(repos.RepoUserOrganization, l)
+	productService := product.NewProductService(repos.RepoProduct, l)
 
 	return &Services{
-		Auth:                   auth.NewAuthService(userService, sessionService, linkService, l, config, emailService),
-		ManagementUser:         management.NewManagementUserService(userService, l),
-		ManagementOrganization: management.NewManagementOrgService(organizationService, userOrganizationService, l),
-		CurrentUser:            current_user.NewCurrentUser(userService, sessionService, l),
+		Auth:              auth.NewAuthService(userService, sessionService, linkService, l, config, emailService),
+		ManagementUser:    management.NewManagementUserService(userService, l),
+		ManagementProduct: management.NewManagementProductService(productService, l),
+		CurrentUser:       current_user.NewCurrentUser(userService, sessionService, l),
 	}
 }

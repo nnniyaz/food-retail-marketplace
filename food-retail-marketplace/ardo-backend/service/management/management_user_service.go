@@ -13,7 +13,9 @@ type ManagementUserService interface {
 	AddUser(ctx context.Context, firstName, lastName, email, password, userType, preferredLang string) error
 	RecoverUser(ctx context.Context, userId string) error
 	DeleteUser(ctx context.Context, userId string) error
-	UpdateUserCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error
+	UpdateUserCredentials(ctx context.Context, userId, firstName, lastName string) error
+	UpdateUserEmail(ctx context.Context, userId, email string) error
+	UpdateUserPreferredLang(ctx context.Context, userId, preferredLang string) error
 	UpdateUserPassword(ctx context.Context, userId, password string) error
 }
 
@@ -51,10 +53,34 @@ func (m *managementUserService) DeleteUser(ctx context.Context, userId string) e
 	return m.userService.Delete(ctx, userId)
 }
 
-func (m *managementUserService) UpdateUserCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error {
-	return m.userService.UpdateCredentials(ctx, userId, firstName, lastName, email, preferredLang)
+func (m *managementUserService) UpdateUserCredentials(ctx context.Context, userId, firstName, lastName string) error {
+	foundUser, err := m.userService.GetById(ctx, userId)
+	if err != nil {
+		return err
+	}
+	return m.userService.UpdateCredentials(ctx, foundUser, firstName, lastName)
+}
+
+func (m *managementUserService) UpdateUserEmail(ctx context.Context, userId, email string) error {
+	foundUser, err := m.userService.GetById(ctx, userId)
+	if err != nil {
+		return err
+	}
+	return m.userService.UpdateEmail(ctx, foundUser, email)
+}
+
+func (m *managementUserService) UpdateUserPreferredLang(ctx context.Context, userId, preferredLang string) error {
+	foundUser, err := m.userService.GetById(ctx, userId)
+	if err != nil {
+		return err
+	}
+	return m.userService.UpdatePreferredLang(ctx, foundUser, preferredLang)
 }
 
 func (m *managementUserService) UpdateUserPassword(ctx context.Context, userId, password string) error {
-	return m.userService.UpdatePassword(ctx, userId, password)
+	foundUser, err := m.userService.GetById(ctx, userId)
+	if err != nil {
+		return err
+	}
+	return m.userService.UpdatePassword(ctx, foundUser, password)
 }

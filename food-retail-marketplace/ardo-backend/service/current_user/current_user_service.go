@@ -2,6 +2,7 @@ package current_user
 
 import (
 	"context"
+	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
 	sessionService "github/nnniyaz/ardo/service/session"
@@ -13,8 +14,10 @@ var (
 )
 
 type CurrentUserService interface {
-	UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error
-	ChangePassword(ctx context.Context, userId, oldPassword, newPassword string) error
+	UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error
+	UpdateEmail(ctx context.Context, user *user.User, email string) error
+	UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error
+	ChangePassword(ctx context.Context, user *user.User, oldPassword, newPassword string) error
 }
 
 type currentUserService struct {
@@ -27,21 +30,25 @@ func NewCurrentUser(userService userService.UserService, sessionService sessionS
 	return &currentUserService{userService: userService, sessionService: sessionService, logger: logger}
 }
 
-func (s *currentUserService) UpdateCredentials(ctx context.Context, userId, firstName, lastName, email, preferredLang string) error {
-	return s.userService.UpdateCredentials(ctx, userId, firstName, lastName, email, preferredLang)
+func (s *currentUserService) UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error {
+	return s.userService.UpdateCredentials(ctx, user, firstName, lastName)
 }
 
-func (s *currentUserService) ChangePassword(ctx context.Context, userId string, oldPassword, newPassword string) error {
-	foundUser, err := s.userService.GetById(ctx, userId)
-	if err != nil {
-		return err
-	}
-	if !foundUser.GetPassword().Compare(oldPassword) {
+func (s *currentUserService) UpdateEmail(ctx context.Context, user *user.User, email string) error {
+	return s.userService.UpdateEmail(ctx, user, email)
+}
+
+func (s *currentUserService) UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error {
+	return s.userService.UpdatePreferredLang(ctx, user, preferredLang)
+}
+
+func (s *currentUserService) ChangePassword(ctx context.Context, user *user.User, oldPassword, newPassword string) error {
+	if !user.GetPassword().Compare(oldPassword) {
 		return ErrOldPasswordDoesNotMatch
 	}
-	err = s.userService.UpdatePassword(ctx, foundUser.GetId().String(), newPassword)
+	err := s.userService.UpdatePassword(ctx, user, newPassword)
 	if err != nil {
 		return err
 	}
-	return s.sessionService.DeleteAllSessionsByUserId(ctx, userId)
+	return s.sessionService.DeleteAllSessionsByUserId(ctx, user.GetId().String())
 }

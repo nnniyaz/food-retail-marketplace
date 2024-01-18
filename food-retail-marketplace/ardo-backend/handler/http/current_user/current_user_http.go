@@ -24,10 +24,8 @@ func NewHttpDelivery(s currentUserService.CurrentUserService, l logger.Logger) *
 // -----------------------------------------------------------------------------
 
 type UpdateCurrentUserCredentialsIn struct {
-	FirstName     string `json:"firstName"`
-	LastName      string `json:"lastName"`
-	Email         string `json:"email"`
-	PreferredLang string `json:"preferredLang"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
 }
 
 func (hd *HttpDelivery) UpdateCurrentUserCredentials(w http.ResponseWriter, r *http.Request) {
@@ -37,7 +35,45 @@ func (hd *HttpDelivery) UpdateCurrentUserCredentials(w http.ResponseWriter, r *h
 		return
 	}
 	u := r.Context().Value("user").(user.User)
-	err := hd.service.UpdateCredentials(r.Context(), u.GetId().String(), in.FirstName, in.LastName, in.Email, in.PreferredLang)
+	err := hd.service.UpdateCredentials(r.Context(), &u, in.FirstName, in.LastName)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateCurrentUserEmailIn struct {
+	Email string `json:"email"`
+}
+
+func (hd *HttpDelivery) UpdateCurrentUserEmail(w http.ResponseWriter, r *http.Request) {
+	var in UpdateCurrentUserEmailIn
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	u := r.Context().Value("user").(user.User)
+	err := hd.service.UpdateEmail(r.Context(), &u, in.Email)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateCurrentLanguageIn struct {
+	Lang string `json:"lang"`
+}
+
+func (hd *HttpDelivery) UpdateCurrentUserPreferredLang(w http.ResponseWriter, r *http.Request) {
+	var in UpdateCurrentLanguageIn
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	u := r.Context().Value("user").(user.User)
+	err := hd.service.UpdatePreferredLang(r.Context(), &u, in.Lang)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
@@ -57,16 +93,12 @@ func (hd *HttpDelivery) UpdateCurrentUserPassword(w http.ResponseWriter, r *http
 		return
 	}
 	u := r.Context().Value("user").(user.User)
-	err := hd.service.ChangePassword(r.Context(), u.GetId().String(), in.OldPassword, in.NewPassword)
+	err := hd.service.ChangePassword(r.Context(), &u, in.OldPassword, in.NewPassword)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
 	response.NewSuccess(hd.logger, w, r, nil)
-}
-
-type UpdateCurrentLanguageIn struct {
-	Lang string `json:"lang"`
 }
 
 // -----------------------------------------------------------------------------

@@ -2,24 +2,29 @@ package activationLink
 
 import (
 	"github/nnniyaz/ardo/domain/base/uuid"
+	"time"
 )
 
 type ActivationLink struct {
-	link        uuid.UUID
+	linkId      uuid.UUID
 	userId      uuid.UUID
 	isActivated bool
+	createdAt   time.Time
+	updatedAt   time.Time
 }
 
 func NewActivationLink(userId uuid.UUID) *ActivationLink {
 	return &ActivationLink{
-		link:        uuid.NewUUID(),
+		linkId:      uuid.NewUUID(),
 		userId:      userId,
 		isActivated: false,
+		createdAt:   time.Now(),
+		updatedAt:   time.Now(),
 	}
 }
 
-func (a *ActivationLink) GetLink() uuid.UUID {
-	return a.link
+func (a *ActivationLink) GetLinkId() uuid.UUID {
+	return a.linkId
 }
 
 func (a *ActivationLink) GetUserId() uuid.UUID {
@@ -30,22 +35,35 @@ func (a *ActivationLink) GetIsActivated() bool {
 	return a.isActivated
 }
 
+func (a *ActivationLink) GetCreatedAt() time.Time {
+	return a.createdAt
+}
+
+func (a *ActivationLink) GetUpdatedAt() time.Time {
+	return a.updatedAt
+}
+
 func (a *ActivationLink) Activate() {
 	a.isActivated = true
+	a.updatedAt = time.Now()
 }
 
 func (a *ActivationLink) Deactivate() {
 	a.isActivated = false
+	a.updatedAt = time.Now()
 }
 
-func (a *ActivationLink) UpdateLink() {
-	a.link = uuid.NewUUID()
+func (a *ActivationLink) UpdateLinkId() {
+	a.linkId = uuid.NewUUID()
+	a.updatedAt = time.Now()
 }
 
-func UnmarshalActivationLinkFromDatabase(link uuid.UUID, userId uuid.UUID, isActivated bool) *ActivationLink {
+func UnmarshalActivationLinkFromDatabase(linkId, userId uuid.UUID, isActivated bool, createdAt, updatedAt time.Time) *ActivationLink {
 	return &ActivationLink{
-		link:        link,
+		linkId:      linkId,
 		userId:      userId,
 		isActivated: isActivated,
+		createdAt:   createdAt,
+		updatedAt:   updatedAt,
 	}
 }
