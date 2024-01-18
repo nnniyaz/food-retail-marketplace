@@ -45,7 +45,7 @@ func newFromProduct(p *product.Product) *mongoProduct {
 		Quantity:  p.GetQuantity(),
 		Img:       p.GetImg(),
 		Status:    p.GetStatus().String(),
-		IsDeleted: p.IsDeleted(),
+		IsDeleted: p.GetIsDeleted(),
 		CreatedAt: p.GetCreatedAt(),
 		UpdatedAt: p.GetUpdatedAt(),
 	}

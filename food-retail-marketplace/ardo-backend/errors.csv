@@ -48,3 +48,5 @@ uploaded_img_invalid,Загруженное изображение неверн�
 file_not_found,Файл не найден,File not found
 empty_lang,Предпочитаемый язык интерфейса не может быть пустым,Preferred language of web-interface can not be empty
 invalid_lang,Данный язык отсутствует в системе,This language is not available in the system
+product_already_exists,Продукт уже существует,Product already exists
+product_not_found,Продукт не найден,Product not found

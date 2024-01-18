@@ -4,6 +4,7 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/product"
+	"github/nnniyaz/ardo/domain/product/exceptions"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
@@ -11,11 +12,11 @@ import (
 
 type ProductService interface {
 	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
-	GetById(ctx context.Context, id string) (*product.Product, error)
-	Create(ctx context.Context, name, desc core.MlString, price float64, quantity int, img, status string) error
-	Update(ctx context.Context, product *product.Product) error
-	Delete(ctx context.Context, id string) error
-	Recover(ctx context.Context, id string) error
+	GetById(ctx context.Context, productId string) (*product.Product, error)
+	Create(ctx context.Context, product *product.Product) error
+	Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int, img, status string) error
+	Recover(ctx context.Context, productId string) error
+	Delete(ctx context.Context, productId string) error
 }
 
 type productService struct {
@@ -37,38 +38,44 @@ func (p *productService) GetByFilters(ctx context.Context, offset, limit int64, 
 	return p.productRepo.FindByFilters(ctx, offset, limit, isDeleted)
 }
 
-func (p *productService) GetById(ctx context.Context, id string) (*product.Product, error) {
-	convertedId, err := uuid.UUIDFromString(id)
+func (p *productService) GetById(ctx context.Context, productId string) (*product.Product, error) {
+	convertedId, err := uuid.UUIDFromString(productId)
 	if err != nil {
 		return nil, err
 	}
 	return p.productRepo.FindOneById(ctx, convertedId)
 }
 
-func (p *productService) Create(ctx context.Context, name, desc core.MlString, price float64, quantity int, img, status string) error {
-	newProduct, err := product.NewProduct(name, desc, price, quantity, img, status)
-	if err != nil {
-		return err
-	}
+func (p *productService) Create(ctx context.Context, newProduct *product.Product) error {
 	return p.productRepo.Create(ctx, newProduct)
 }
 
-func (p *productService) Update(ctx context.Context, product *product.Product) error {
+func (p *productService) Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int, img, status string) error {
+	err := product.Update(name, desc, price, quantity, img, status)
+	if err != nil {
+		return err
+	}
 	return p.productRepo.Update(ctx, product)
 }
 
-func (p *productService) Delete(ctx context.Context, id string) error {
-	convertedId, err := uuid.UUIDFromString(id)
+func (p *productService) Recover(ctx context.Context, productId string) error {
+	foundProduct, err := p.GetById(ctx, productId)
 	if err != nil {
 		return err
 	}
-	return p.productRepo.Delete(ctx, convertedId)
+	if !foundProduct.GetIsDeleted() {
+		return exceptions.ErrProductAlreadyExist
+	}
+	return p.productRepo.Recover(ctx, foundProduct.GetId())
 }
 
-func (p *productService) Recover(ctx context.Context, id string) error {
-	convertedId, err := uuid.UUIDFromString(id)
+func (p *productService) Delete(ctx context.Context, productId string) error {
+	foundProduct, err := p.GetById(ctx, productId)
 	if err != nil {
 		return err
 	}
-	return p.productRepo.Recover(ctx, convertedId)
+	if foundProduct.GetIsDeleted() {
+		return exceptions.ErrProductNotFound
+	}
+	return p.productRepo.Delete(ctx, foundProduct.GetId())
 }

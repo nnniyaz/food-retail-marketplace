@@ -52,6 +52,8 @@ const (
 	TXT_FILE_NOT_FOUND              TxtKey = 47
 	TXT_EMPTY_LANG                  TxtKey = 48
 	TXT_INVALID_LANG                TxtKey = 49
+	TXT_PRODUCT_ALREADY_EXISTS      TxtKey = 50
+	TXT_PRODUCT_NOT_FOUND           TxtKey = 51
 )
 
 var Txts = TxtResource{
@@ -251,6 +253,14 @@ var Txts = TxtResource{
 		RU: `Данный язык отсутствует в системе`,
 		EN: `This language is not available in the system`,
 	},
+	TXT_PRODUCT_ALREADY_EXISTS: MlString{
+		RU: `Продукт уже существует`,
+		EN: `Product already exists`,
+	},
+	TXT_PRODUCT_NOT_FOUND: MlString{
+		RU: `Продукт не найден`,
+		EN: `Product not found`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -353,6 +363,10 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "empty_lang"
 	case TXT_INVALID_LANG:
 		return "invalid_lang"
+	case TXT_PRODUCT_ALREADY_EXISTS:
+		return "product_already_exists"
+	case TXT_PRODUCT_NOT_FOUND:
+		return "product_not_found"
 
 	default:
 		return ""

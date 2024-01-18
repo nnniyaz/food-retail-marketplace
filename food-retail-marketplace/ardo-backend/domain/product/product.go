@@ -86,7 +86,7 @@ func (p *Product) GetStatus() valueobject.ProductStatus {
 	return p.status
 }
 
-func (p *Product) IsDeleted() bool {
+func (p *Product) GetIsDeleted() bool {
 	return p.isDeleted
 }
 
@@ -96,6 +96,44 @@ func (p *Product) GetCreatedAt() time.Time {
 
 func (p *Product) GetUpdatedAt() time.Time {
 	return p.updatedAt
+}
+
+func (p *Product) Update(name, desc core.MlString, price float64, quantity int, img, status string) error {
+	if name.IsEmpty() {
+		return ErrEmptyMlString
+	}
+
+	if price < 0 {
+		return ErrInvalidPrice
+	}
+
+	if quantity < 0 {
+		return ErrInvalidQuantity
+	}
+
+	productStatus, err := valueobject.NewProductStatus(status)
+	if err != nil {
+		return err
+	}
+
+	p.name = name
+	p.desc = desc
+	p.price = price
+	p.quantity = quantity
+	p.img = img
+	p.status = productStatus
+	p.updatedAt = time.Now()
+	return nil
+}
+
+func (p *Product) Delete() {
+	p.isDeleted = true
+	p.updatedAt = time.Now()
+}
+
+func (p *Product) Recover() {
+	p.isDeleted = false
+	p.updatedAt = time.Now()
 }
 
 func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price float64, quantity int, img string, status string, isDeleted bool, createdAt, updatedAt time.Time) (*Product, error) {

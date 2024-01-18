@@ -1,0 +1,155 @@
+package management_product
+
+import (
+	"encoding/json"
+	"github.com/go-chi/chi/v5"
+	"github/nnniyaz/ardo/domain/product"
+	"github/nnniyaz/ardo/handler/http/response"
+	"github/nnniyaz/ardo/pkg/core"
+	"github/nnniyaz/ardo/pkg/logger"
+	"github/nnniyaz/ardo/service/management"
+	"net/http"
+)
+
+type HttpDelivery struct {
+	service management.ManagementProductService
+	logger  logger.Logger
+}
+
+func NewHttpDelivery(s management.ManagementProductService, l logger.Logger) *HttpDelivery {
+	return &HttpDelivery{service: s, logger: l}
+}
+
+// -----------------------------------------------------------------------------
+// Queries
+// -----------------------------------------------------------------------------
+
+type Product struct {
+	Id        string        `json:"id"`
+	Name      core.MlString `json:"name"`
+	Desc      core.MlString `json:"desc"`
+	Price     float64       `json:"price"`
+	Quantity  int           `json:"quantity"`
+	Img       string        `json:"img"`
+	Status    string        `json:"status"`
+	IsDeleted bool          `json:"isDeleted"`
+	CreatedAt string        `json:"createdAt"`
+	UpdatedAt string        `json:"updatedAt"`
+}
+
+func NewProduct(p *product.Product) Product {
+	return Product{
+		Id:        p.GetId().String(),
+		Name:      p.GetName(),
+		Desc:      p.GetDesc(),
+		Price:     p.GetPrice(),
+		Quantity:  p.GetQuantity(),
+		Img:       p.GetImg(),
+		Status:    p.GetStatus().String(),
+		IsDeleted: p.GetIsDeleted(),
+		CreatedAt: p.GetCreatedAt().String(),
+		UpdatedAt: p.GetUpdatedAt().String(),
+	}
+}
+
+type ProductsData struct {
+	Products []Product `json:"products"`
+	Count    int64     `json:"count"`
+}
+
+func NewProducts(products []*product.Product, count int64) ProductsData {
+	var ps []Product
+	for _, p := range products {
+		ps = append(ps, NewProduct(p))
+	}
+	return ProductsData{Products: ps, Count: count}
+}
+
+func (hd *HttpDelivery) GetProductsByFilters(w http.ResponseWriter, r *http.Request) {
+	offset := r.Context().Value("offset").(int64)
+	limit := r.Context().Value("limit").(int64)
+	isDeleted := r.Context().Value("is_deleted").(bool)
+	products, count, err := hd.service.GetProductsByFilters(r.Context(), offset, limit, isDeleted)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, NewProducts(products, count))
+}
+
+func (hd *HttpDelivery) GetProductById(w http.ResponseWriter, r *http.Request) {
+	productId := chi.URLParam(r, "product_id")
+	p, err := hd.service.GetProductById(r.Context(), productId)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, NewProduct(p))
+}
+
+// -----------------------------------------------------------------------------
+// Commands
+// -----------------------------------------------------------------------------
+
+type AddProductRequest struct {
+	Name     core.MlString `json:"name"`
+	Desc     core.MlString `json:"desc"`
+	Price    float64       `json:"price"`
+	Quantity int           `json:"quantity"`
+	Img      string        `json:"img"`
+	Status   string        `json:"status"`
+}
+
+func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
+	in := AddProductRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.AddProduct(r.Context(), in.Name, in.Desc, in.Price, in.Quantity, in.Img, in.Status); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateProductRequest struct {
+	Name     core.MlString `json:"name"`
+	Desc     core.MlString `json:"desc"`
+	Price    float64       `json:"price"`
+	Quantity int           `json:"quantity"`
+	Img      string        `json:"img"`
+	Status   string        `json:"status"`
+}
+
+func (hd *HttpDelivery) UpdateProduct(w http.ResponseWriter, r *http.Request) {
+	productId := chi.URLParam(r, "product_id")
+	in := UpdateProductRequest{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.UpdateProduct(r.Context(), productId, in.Name, in.Desc, in.Price, in.Quantity, in.Img, in.Status); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+func (hd *HttpDelivery) RecoverProduct(w http.ResponseWriter, r *http.Request) {
+	productId := chi.URLParam(r, "product_id")
+	if err := hd.service.RecoverProduct(r.Context(), productId); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+func (hd *HttpDelivery) DeleteProduct(w http.ResponseWriter, r *http.Request) {
+	productId := chi.URLParam(r, "product_id")
+	if err := hd.service.DeleteProduct(r.Context(), productId); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
