@@ -2,8 +2,10 @@ package product
 
 import (
 	"context"
+	"errors"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/product"
+	"github/nnniyaz/ardo/domain/product/exceptions"
 	"github/nnniyaz/ardo/pkg/core"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -51,45 +53,41 @@ func newFromProduct(p *product.Product) *mongoProduct {
 	}
 }
 
-func (m *mongoProduct) ToAggregate() (*product.Product, error) {
+func (m *mongoProduct) ToAggregate() *product.Product {
 	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.Quantity, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt)
 }
 
-func (r *RepoProduct) FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool) ([]*product.Product, int64, error) {
+func (r *RepoProduct) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {
 	count, err := r.Coll().CountDocuments(ctx, bson.M{"isDeleted": isDeleted})
 	if err != nil {
 		return nil, 0, err
 	}
-	cursor, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
+	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
 	if err != nil {
 		return nil, 0, err
 	}
-	defer cursor.Close(nil)
+	defer cur.Close(ctx)
 
 	var products []*product.Product
-	for cursor.Next(nil) {
-		var mp mongoProduct
-		if err := cursor.Decode(&mp); err != nil {
+	for cur.Next(ctx) {
+		var internal mongoProduct
+		if err = cur.Decode(&internal); err != nil {
 			return nil, 0, err
 		}
-		p, err := mp.ToAggregate()
-		if err != nil {
-			return nil, 0, err
-		}
-		products = append(products, p)
+		products = append(products, internal.ToAggregate())
 	}
-
 	return products, count, nil
 }
 
 func (r *RepoProduct) FindOneById(ctx context.Context, id uuid.UUID) (*product.Product, error) {
-	var mp mongoProduct
-	if err := r.Coll().FindOne(ctx, bson.M{
-		"_id": id,
-	}).Decode(&mp); err != nil {
+	var foundProduct mongoProduct
+	if err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundProduct); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, exceptions.ErrProductNotFound
+		}
 		return nil, err
 	}
-	return mp.ToAggregate()
+	return foundProduct.ToAggregate(), nil
 }
 
 func (r *RepoProduct) Create(ctx context.Context, p *product.Product) error {

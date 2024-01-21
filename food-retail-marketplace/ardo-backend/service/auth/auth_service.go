@@ -6,6 +6,7 @@ import (
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
 	exceptionsUser "github/nnniyaz/ardo/domain/user/exceptions"
 	"github/nnniyaz/ardo/domain/user/valueobject"
@@ -91,8 +92,8 @@ func (a *authService) Login(ctx context.Context, email, password, userAgent stri
 		}
 	}
 
-	newSession, err := a.sessionService.Create(ctx, u.GetId().String(), userAgent)
-	if err != nil {
+	newSession, err := session.NewSession(u.GetId(), userAgent)
+	if err = a.sessionService.Create(ctx, newSession); err != nil {
 		return uuid.Nil, err
 	}
 	return newSession.GetSession(), nil

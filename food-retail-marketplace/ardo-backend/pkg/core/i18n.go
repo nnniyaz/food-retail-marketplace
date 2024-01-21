@@ -21,6 +21,8 @@ type TxtKey int
 // MlString
 // ----------------------------------------------------------------------------
 
+var ErrEmptyMlString = NewI18NError(EINVALID, TXT_WRONG_MLSTRING_FORMAT)
+
 type MlString map[Lang]string
 
 func (m MlString) IsEmpty() bool {

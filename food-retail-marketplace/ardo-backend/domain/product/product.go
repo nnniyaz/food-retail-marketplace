@@ -2,15 +2,10 @@ package product
 
 import (
 	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/product/exceptions"
 	"github/nnniyaz/ardo/domain/product/valueobject"
 	"github/nnniyaz/ardo/pkg/core"
 	"time"
-)
-
-var (
-	ErrEmptyMlString   = core.NewI18NError(core.EINVALID, core.TXT_WRONG_MLSTRING_FORMAT)
-	ErrInvalidPrice    = core.NewI18NError(core.EINVALID, core.TXT_INVALID_PRODUCT_PRICE)
-	ErrInvalidQuantity = core.NewI18NError(core.EINVALID, core.TXT_INVALID_PRODUCT_QUANTITY)
 )
 
 type Product struct {
@@ -28,15 +23,15 @@ type Product struct {
 
 func NewProduct(name, desc core.MlString, price float64, quantity int, img, status string) (*Product, error) {
 	if name.IsEmpty() {
-		return nil, ErrEmptyMlString
+		return nil, exceptions.ErrEmptyProductName
 	}
 
 	if price < 0 {
-		return nil, ErrInvalidPrice
+		return nil, exceptions.ErrInvalidProductPrice
 	}
 
 	if quantity < 0 {
-		return nil, ErrInvalidQuantity
+		return nil, exceptions.ErrInvalidProductQuantity
 	}
 
 	productStatus, err := valueobject.NewProductStatus(status)
@@ -100,15 +95,15 @@ func (p *Product) GetUpdatedAt() time.Time {
 
 func (p *Product) Update(name, desc core.MlString, price float64, quantity int, img, status string) error {
 	if name.IsEmpty() {
-		return ErrEmptyMlString
+		return core.ErrEmptyMlString
 	}
 
 	if price < 0 {
-		return ErrInvalidPrice
+		return exceptions.ErrInvalidProductPrice
 	}
 
 	if quantity < 0 {
-		return ErrInvalidQuantity
+		return exceptions.ErrInvalidProductQuantity
 	}
 
 	productStatus, err := valueobject.NewProductStatus(status)
@@ -126,34 +121,7 @@ func (p *Product) Update(name, desc core.MlString, price float64, quantity int, 
 	return nil
 }
 
-func (p *Product) Delete() {
-	p.isDeleted = true
-	p.updatedAt = time.Now()
-}
-
-func (p *Product) Recover() {
-	p.isDeleted = false
-	p.updatedAt = time.Now()
-}
-
-func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price float64, quantity int, img string, status string, isDeleted bool, createdAt, updatedAt time.Time) (*Product, error) {
-	productStatus, err := valueobject.NewProductStatus(status)
-	if err != nil {
-		return nil, err
-	}
-
-	if name.IsEmpty() {
-		return nil, ErrEmptyMlString
-	}
-
-	if price < 0 {
-		return nil, ErrInvalidPrice
-	}
-
-	if quantity < 0 {
-		return nil, ErrInvalidQuantity
-	}
-
+func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price float64, quantity int, img string, status string, isDeleted bool, createdAt, updatedAt time.Time) *Product {
 	return &Product{
 		id:        id,
 		name:      name,
@@ -161,9 +129,9 @@ func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price 
 		price:     price,
 		quantity:  quantity,
 		img:       img,
-		status:    productStatus,
+		status:    valueobject.ProductStatus(status),
 		isDeleted: isDeleted,
 		createdAt: createdAt,
 		updatedAt: updatedAt,
-	}, nil
+	}
 }

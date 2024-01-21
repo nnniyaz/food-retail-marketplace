@@ -9,13 +9,13 @@ import (
 )
 
 type SessionService interface {
-	Create(ctx context.Context, userId, userAgent string) (*session.Session, error)
 	GetAllByUserId(ctx context.Context, userId string) ([]*session.Session, error)
 	GetOneBySession(ctx context.Context, session string) (*session.Session, error)
+	Create(ctx context.Context, session *session.Session) error
+	UpdateLastActionAt(ctx context.Context, session string) error
 	DeleteAllSessionsByUserId(ctx context.Context, userId string) error
 	DeleteOneBySessionId(ctx context.Context, id string) error
 	DeleteOneByToken(ctx context.Context, token string) error
-	UpdateLastActionAt(ctx context.Context, session string) error
 }
 
 type sessionService struct {
@@ -25,21 +25,6 @@ type sessionService struct {
 
 func NewSessionService(repo repo.Session, l logger.Logger) SessionService {
 	return &sessionService{sessionRepo: repo, logger: l}
-}
-
-func (s *sessionService) Create(ctx context.Context, userId, userAgent string) (*session.Session, error) {
-	convertedUserId, err := uuid.UUIDFromString(userId)
-	if err != nil {
-		return nil, err
-	}
-	newSession, err := session.NewSession(convertedUserId, userAgent)
-	if err != nil {
-		return nil, err
-	}
-	if err = s.sessionRepo.Create(ctx, newSession); err != nil {
-		return nil, err
-	}
-	return newSession, nil
 }
 
 func (s *sessionService) GetAllByUserId(ctx context.Context, userId string) ([]*session.Session, error) {
@@ -60,6 +45,18 @@ func (s *sessionService) GetOneBySession(ctx context.Context, session string) (*
 		return nil, err
 	}
 	return s.sessionRepo.FindOneBySession(ctx, convertedToken)
+}
+
+func (s *sessionService) Create(ctx context.Context, session *session.Session) error {
+	return s.sessionRepo.Create(ctx, session)
+}
+
+func (s *sessionService) UpdateLastActionAt(ctx context.Context, sessionId string) error {
+	convertedSession, err := uuid.UUIDFromString(sessionId)
+	if err != nil {
+		return err
+	}
+	return s.sessionRepo.UpdateLastActionAt(ctx, convertedSession)
 }
 
 func (s *sessionService) DeleteAllSessionsByUserId(ctx context.Context, userId string) error {
@@ -84,12 +81,4 @@ func (s *sessionService) DeleteOneByToken(ctx context.Context, token string) err
 		return err
 	}
 	return s.sessionRepo.DeleteByToken(ctx, convertedToken)
-}
-
-func (s *sessionService) UpdateLastActionAt(ctx context.Context, sessionId string) error {
-	convertedSession, err := uuid.UUIDFromString(sessionId)
-	if err != nil {
-		return err
-	}
-	return s.sessionRepo.UpdateLastActionAt(ctx, convertedSession)
 }

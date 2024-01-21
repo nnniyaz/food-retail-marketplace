@@ -86,21 +86,20 @@ func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDel
 	}
 	defer cur.Close(ctx)
 
-	var result []*user.User
+	var users []*user.User
 	for cur.Next(ctx) {
 		var internal mongoUser
 		if err = cur.Decode(&internal); err != nil {
 			return nil, 0, err
 		}
-		result = append(result, internal.ToAggregate())
+		users = append(users, internal.ToAggregate())
 	}
-	return result, count, nil
+	return users, count, nil
 }
 
 func (r *RepoUser) FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error) {
 	var foundUser mongoUser
-	err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundUser)
-	if err != nil {
+	if err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundUser); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, exceptions.ErrUserNotFound
 		}

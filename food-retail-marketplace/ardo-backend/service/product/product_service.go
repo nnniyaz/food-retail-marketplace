@@ -51,8 +51,7 @@ func (p *productService) Create(ctx context.Context, newProduct *product.Product
 }
 
 func (p *productService) Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int, img, status string) error {
-	err := product.Update(name, desc, price, quantity, img, status)
-	if err != nil {
+	if err := product.Update(name, desc, price, quantity, img, status); err != nil {
 		return err
 	}
 	return p.productRepo.Update(ctx, product)

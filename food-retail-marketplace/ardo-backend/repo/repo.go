@@ -4,10 +4,12 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/product"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
 	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
+	orderMongo "github/nnniyaz/ardo/repo/mongo/order"
 	productMongo "github/nnniyaz/ardo/repo/mongo/product"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
@@ -50,11 +52,22 @@ type Product interface {
 	Recover(ctx context.Context, id uuid.UUID) error
 }
 
+type Order interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error)
+	FindUserOrdersByFilters(ctx context.Context, offset, limit int64, isDeleted bool, userId uuid.UUID) ([]*order.Order, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*order.Order, error)
+	Create(ctx context.Context, order *order.Order) error
+	Update(ctx context.Context, order *order.Order) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
 type Repository struct {
 	RepoUser           User
 	RepoSession        Session
 	RepoActivationLink ActivationLink
 	RepoProduct        Product
+	RepoOrder          Order
 }
 
 func NewRepository(client *mongo.Client) *Repository {
@@ -63,5 +76,6 @@ func NewRepository(client *mongo.Client) *Repository {
 		RepoSession:        sessionMongo.NewRepoSession(client),
 		RepoActivationLink: activationLinkMongo.NewRepoActivationLink(client),
 		RepoProduct:        productMongo.NewRepoProduct(client),
+		RepoOrder:          orderMongo.NewRepoOrder(client),
 	}
 }

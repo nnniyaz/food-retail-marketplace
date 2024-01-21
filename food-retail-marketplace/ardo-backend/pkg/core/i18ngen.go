@@ -54,6 +54,13 @@ const (
 	TXT_INVALID_LANG                TxtKey = 49
 	TXT_PRODUCT_ALREADY_EXISTS      TxtKey = 50
 	TXT_PRODUCT_NOT_FOUND           TxtKey = 51
+	TXT_EMPTY_PRODUCT_NAME          TxtKey = 52
+	TXT_EMPTY_DELIVERY_ADDRESS      TxtKey = 53
+	TXT_INVALID_ORDER_QUANTITY      TxtKey = 54
+	TXT_INVALID_ORDER_PRICE         TxtKey = 55
+	TXT_INVALID_ORDER_STATUS        TxtKey = 56
+	TXT_EMPTY_CUSTOMER_NAME         TxtKey = 57
+	TXT_EMPTY_CUSTOMER_PHONE        TxtKey = 58
 )
 
 var Txts = TxtResource{
@@ -261,6 +268,34 @@ var Txts = TxtResource{
 		RU: `Продукт не найден`,
 		EN: `Product not found`,
 	},
+	TXT_EMPTY_PRODUCT_NAME: MlString{
+		RU: `Название продукта не может быть пустым`,
+		EN: `Product name can not be empty`,
+	},
+	TXT_EMPTY_DELIVERY_ADDRESS: MlString{
+		RU: `Адрес доставки не может быть пустым`,
+		EN: `Delivery address can not be empty`,
+	},
+	TXT_INVALID_ORDER_QUANTITY: MlString{
+		RU: `Неверное количество заказа`,
+		EN: `Invalid order quantity`,
+	},
+	TXT_INVALID_ORDER_PRICE: MlString{
+		RU: `Неверное количество заказа`,
+		EN: `Invalid order quantity`,
+	},
+	TXT_INVALID_ORDER_STATUS: MlString{
+		RU: `Неверный статус заказа`,
+		EN: `Invalid order status`,
+	},
+	TXT_EMPTY_CUSTOMER_NAME: MlString{
+		RU: `Имя клиента не может быть пустым`,
+		EN: `Customer name can not be empty`,
+	},
+	TXT_EMPTY_CUSTOMER_PHONE: MlString{
+		RU: `Телефон клиента не может быть пустым`,
+		EN: `Customer phone can not be empty`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -367,6 +402,20 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "product_already_exists"
 	case TXT_PRODUCT_NOT_FOUND:
 		return "product_not_found"
+	case TXT_EMPTY_PRODUCT_NAME:
+		return "empty_product_name"
+	case TXT_EMPTY_DELIVERY_ADDRESS:
+		return "empty_delivery_address"
+	case TXT_INVALID_ORDER_QUANTITY:
+		return "invalid_order_quantity"
+	case TXT_INVALID_ORDER_PRICE:
+		return "invalid_order_price"
+	case TXT_INVALID_ORDER_STATUS:
+		return "invalid_order_status"
+	case TXT_EMPTY_CUSTOMER_NAME:
+		return "empty_customer_name"
+	case TXT_EMPTY_CUSTOMER_PHONE:
+		return "empty_customer_phone"
 
 	default:
 		return ""

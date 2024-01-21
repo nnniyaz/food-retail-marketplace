@@ -21,3 +21,10 @@ func NewEmail(email string) (Email, error) {
 func (e Email) String() string {
 	return string(e)
 }
+
+func (e Email) Validate() error {
+	if _, err := mail.ParseAddress(e.String()); err != nil {
+		return ErrorEmailIsInvalid
+	}
+	return nil
+}

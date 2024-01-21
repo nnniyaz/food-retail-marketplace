@@ -50,3 +50,10 @@ empty_lang,Предпочитаемый язык интерфейса не мо�
 invalid_lang,Данный язык отсутствует в системе,This language is not available in the system
 product_already_exists,Продукт уже существует,Product already exists
 product_not_found,Продукт не найден,Product not found
+empty_product_name,Название продукта не может быть пустым,Product name can not be empty
+empty_delivery_address,Адрес доставки не может быть пустым,Delivery address can not be empty
+invalid_order_quantity,Неверное количество заказа,Invalid order quantity
+invalid_order_price,Неверное количество заказа,Invalid order quantity
+invalid_order_status,Неверный статус заказа,Invalid order status
+empty_customer_name,Имя клиента не может быть пустым,Customer name can not be empty
+empty_customer_phone,Телефон клиента не может быть пустым,Customer phone can not be empty
