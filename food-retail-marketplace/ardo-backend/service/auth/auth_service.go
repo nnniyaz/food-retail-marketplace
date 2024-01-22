@@ -2,6 +2,7 @@ package auth
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/domain/activationLink"
@@ -16,6 +17,7 @@ import (
 	linkService "github/nnniyaz/ardo/service/link"
 	sessionService "github/nnniyaz/ardo/service/session"
 	userService "github/nnniyaz/ardo/service/user"
+	"go.mongodb.org/mongo-driver/mongo"
 	"go.uber.org/zap"
 	"sort"
 )
@@ -68,10 +70,10 @@ func (a *authService) Login(ctx context.Context, email, password, userAgent stri
 	}
 
 	foundActivationLink, err := a.linkService.GetByUserId(ctx, u.GetId().String())
-	if err != nil {
+	if err != nil && !errors.Is(mongo.ErrNoDocuments, err) {
 		return uuid.Nil, err
 	}
-	if !foundActivationLink.GetIsActivated() {
+	if foundActivationLink == nil || !foundActivationLink.GetIsActivated() {
 		return uuid.Nil, ErrAccountNotActive
 	}
 
