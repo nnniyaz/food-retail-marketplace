@@ -22,11 +22,12 @@ type Order struct {
 	deliveryInfo     valueobject.DeliveryInfo
 	orderComment     string
 	status           valueobject.OrderStatus
+	isDeleted        bool
 	createdAt        time.Time
 	updatedAt        time.Time
 }
 
-func NewOrder(userId string, products []valueobject.OrderProduct, quantity int, totalPrice float64, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment, status string) (*Order, error) {
+func NewOrder(userId string, products []valueobject.OrderProduct, quantity int, totalPrice float64, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment string) (*Order, error) {
 	convertedUserId, err := uuid.UUIDFromString(userId)
 	if err != nil {
 		return nil, err
@@ -52,11 +53,6 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int, 
 		return nil, err
 	}
 
-	orderStatus, err := valueobject.NewOrderStatus(status)
-	if err != nil {
-		return nil, err
-	}
-
 	return &Order{
 		id:               uuid.NewUUID(),
 		userId:           convertedUserId,
@@ -66,7 +62,10 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int, 
 		customerContacts: customerContacts,
 		deliveryInfo:     deliveryInfo,
 		orderComment:     orderComment,
-		status:           orderStatus,
+		status:           valueobject.NEW,
+		isDeleted:        false,
+		createdAt:        time.Now(),
+		updatedAt:        time.Now(),
 	}, nil
 }
 
@@ -106,6 +105,10 @@ func (o *Order) GetStatus() valueobject.OrderStatus {
 	return o.status
 }
 
+func (o *Order) GetIsDeleted() bool {
+	return o.isDeleted
+}
+
 func (o *Order) GetCreatedAt() time.Time {
 	return o.createdAt
 }
@@ -124,7 +127,7 @@ func (o *Order) UpdateStatus(status string) error {
 	return nil
 }
 
-func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, products []valueobject.OrderProduct, quantity int, totalPrice float64, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment, status string) *Order {
+func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, products []valueobject.OrderProduct, quantity int, totalPrice float64, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment, status string, isDeleted bool, createdAt, updatedAt time.Time) *Order {
 	return &Order{
 		id:               id,
 		userId:           userId,
@@ -135,5 +138,8 @@ func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, products []value
 		deliveryInfo:     deliveryInfo,
 		orderComment:     orderComment,
 		status:           valueobject.OrderStatus(status),
+		isDeleted:        isDeleted,
+		createdAt:        createdAt,
+		updatedAt:        updatedAt,
 	}
 }

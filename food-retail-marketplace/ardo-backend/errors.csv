@@ -57,3 +57,5 @@ invalid_order_price,Неверное количество заказа,Invalid o
 invalid_order_status,Неверный статус заказа,Invalid order status
 empty_customer_name,Имя клиента не может быть пустым,Customer name can not be empty
 empty_customer_phone,Телефон клиента не может быть пустым,Customer phone can not be empty
+order_already_exists,Заказ уже существует,Order already exists
+order_not_found,Заказ не найден,Order not found

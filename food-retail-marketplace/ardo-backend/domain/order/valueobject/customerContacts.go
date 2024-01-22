@@ -16,6 +16,14 @@ type CustomerContacts struct {
 	email email.Email
 }
 
+func NewCustomerContacts(name, phone string, mail string) CustomerContacts {
+	return CustomerContacts{
+		name:  name,
+		phone: phone,
+		email: email.Email(mail),
+	}
+}
+
 func (c *CustomerContacts) GetName() string {
 	return c.name
 }

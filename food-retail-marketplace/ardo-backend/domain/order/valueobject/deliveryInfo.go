@@ -11,6 +11,15 @@ type DeliveryInfo struct {
 	deliveryComment string
 }
 
+func NewDeliveryInfo(address, floor, apartment, deliveryComment string) DeliveryInfo {
+	return DeliveryInfo{
+		address:         address,
+		floor:           floor,
+		apartment:       apartment,
+		deliveryComment: deliveryComment,
+	}
+}
+
 func (d *DeliveryInfo) GetAddress() string {
 	return d.address
 }

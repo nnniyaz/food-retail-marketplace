@@ -6,6 +6,7 @@ import (
 	"github.com/go-chi/cors"
 	"github/nnniyaz/ardo/handler/http/auth"
 	"github/nnniyaz/ardo/handler/http/current_user"
+	"github/nnniyaz/ardo/handler/http/management_order"
 	"github/nnniyaz/ardo/handler/http/management_product"
 	"github/nnniyaz/ardo/handler/http/management_user"
 	middleware2 "github/nnniyaz/ardo/handler/http/middleware"
@@ -16,20 +17,22 @@ import (
 )
 
 type Handler struct {
+	Middleware        *middleware2.Middleware
 	Auth              *auth.HttpDelivery
+	User              *current_user.HttpDelivery
 	ManagementUser    *management_user.HttpDelivery
 	ManagementProduct *management_product.HttpDelivery
-	Middleware        *middleware2.Middleware
-	User              *current_user.HttpDelivery
+	ManagementOrder   *management_order.HttpDelivery
 }
 
 func NewHandler(c *mongo.Client, clientUri string, s *service.Services, l logger.Logger) *Handler {
 	return &Handler{
+		Middleware:        middleware2.New(c, s.Auth, l),
 		Auth:              auth.NewHttpDelivery(s.Auth, l, clientUri),
+		User:              current_user.NewHttpDelivery(s.CurrentUser, l),
 		ManagementUser:    management_user.NewHttpDelivery(s.ManagementUser, l),
 		ManagementProduct: management_product.NewHttpDelivery(s.ManagementProduct, l),
-		Middleware:        middleware2.New(c, s.Auth, l),
-		User:              current_user.NewHttpDelivery(s.CurrentUser, l),
+		ManagementOrder:   management_order.NewHttpDelivery(s.ManagementOrder, l),
 	}
 }
 
@@ -85,10 +88,10 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.With(h.Middleware.PaginationParams).Get("/", h.ManagementUser.GetUsersByFilters)
 				r.Get("/{user_id}", h.ManagementUser.GetUserById)
 				r.Post("/", h.ManagementUser.AddUser)
-				r.Put("/{user_id}/credentials", h.ManagementUser.UpdateUserCredentials)
-				r.Put("/{user_id}/email", h.ManagementUser.UpdateUserEmail)
-				r.Put("/{user_id}/preferred-lang", h.ManagementUser.UpdateUserPreferredLang)
-				r.Put("/{user_id}/password", h.ManagementUser.UpdateUserPassword)
+				r.Put("/credentials/{user_id}", h.ManagementUser.UpdateUserCredentials)
+				r.Put("/email/{user_id}", h.ManagementUser.UpdateUserEmail)
+				r.Put("/preferred-lang/{user_id}", h.ManagementUser.UpdateUserPreferredLang)
+				r.Put("/password/{user_id}", h.ManagementUser.UpdateUserPassword)
 				r.Put("/{user_id}", h.ManagementUser.RecoverUser)
 				r.Delete("/{user_id}", h.ManagementUser.DeleteUser)
 			})
@@ -97,9 +100,19 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.With(h.Middleware.PaginationParams).Get("/", h.ManagementProduct.GetProductsByFilters)
 				r.Get("/{product_id}", h.ManagementProduct.GetProductById)
 				r.Post("/", h.ManagementProduct.AddProduct)
-				r.Put("/{product_id}/credentials", h.ManagementProduct.UpdateProduct)
+				r.Put("/credentials/{product_id}", h.ManagementProduct.UpdateProduct)
 				r.Put("/{product_id}", h.ManagementProduct.RecoverProduct)
 				r.Delete("/{product_id}", h.ManagementProduct.DeleteProduct)
+			})
+
+			r.Route("/orders", func(r chi.Router) {
+				r.With(h.Middleware.PaginationParams).Get("/", h.ManagementOrder.GetAllByFilters)
+				r.With(h.Middleware.PaginationParams).Get("/user/{user_id}", h.ManagementOrder.GetByUserId)
+				r.Get("/{order_id}", h.ManagementOrder.GetOneById)
+				r.Post("/", h.ManagementOrder.CreateOrder)
+				r.Put("/status/{order_id}", h.ManagementOrder.UpdateOrderStatus)
+				r.Put("/{order_id}", h.ManagementOrder.RecoverOrder)
+				r.Delete("/{order_id}", h.ManagementOrder.DeleteOrder)
 			})
 		})
 	})

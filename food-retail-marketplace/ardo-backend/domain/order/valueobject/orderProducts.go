@@ -13,6 +13,19 @@ type OrderProduct struct {
 	totalPrice  float64
 }
 
+func NewOrderProduct(productId string, productName core.MlString, quantity int, totalPrice float64) OrderProduct {
+	convertedProductId, err := uuid.UUIDFromString(productId)
+	if err != nil {
+		panic(err)
+	}
+	return OrderProduct{
+		productId:   convertedProductId,
+		productName: productName,
+		quantity:    quantity,
+		totalPrice:  totalPrice,
+	}
+}
+
 func (o *OrderProduct) GetProductId() uuid.UUID {
 	return o.productId
 }

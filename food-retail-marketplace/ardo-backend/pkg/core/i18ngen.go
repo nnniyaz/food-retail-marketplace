@@ -61,6 +61,8 @@ const (
 	TXT_INVALID_ORDER_STATUS        TxtKey = 56
 	TXT_EMPTY_CUSTOMER_NAME         TxtKey = 57
 	TXT_EMPTY_CUSTOMER_PHONE        TxtKey = 58
+	TXT_ORDER_ALREADY_EXISTS        TxtKey = 59
+	TXT_ORDER_NOT_FOUND             TxtKey = 60
 )
 
 var Txts = TxtResource{
@@ -296,6 +298,14 @@ var Txts = TxtResource{
 		RU: `Телефон клиента не может быть пустым`,
 		EN: `Customer phone can not be empty`,
 	},
+	TXT_ORDER_ALREADY_EXISTS: MlString{
+		RU: `Заказ уже существует`,
+		EN: `Order already exists`,
+	},
+	TXT_ORDER_NOT_FOUND: MlString{
+		RU: `Заказ не найден`,
+		EN: `Order not found`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -416,6 +426,10 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "empty_customer_name"
 	case TXT_EMPTY_CUSTOMER_PHONE:
 		return "empty_customer_phone"
+	case TXT_ORDER_ALREADY_EXISTS:
+		return "order_already_exists"
+	case TXT_ORDER_NOT_FOUND:
+		return "order_not_found"
 
 	default:
 		return ""

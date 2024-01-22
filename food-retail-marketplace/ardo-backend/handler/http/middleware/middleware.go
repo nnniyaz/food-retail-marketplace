@@ -126,14 +126,6 @@ func (m *Middleware) PaginationParams(next http.Handler) http.Handler {
 	})
 }
 
-func (m *Middleware) UserIdParam(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		id := getParam(r, "user_id")
-		ctx := context.WithValue(r.Context(), "user_id", id)
-		next.ServeHTTP(w, r.WithContext(ctx))
-	})
-}
-
 // -----------------------------------------------------------------------------
 // Main
 // -----------------------------------------------------------------------------

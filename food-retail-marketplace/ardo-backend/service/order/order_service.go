@@ -4,6 +4,7 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/order"
+	"github/nnniyaz/ardo/domain/order/exceptions"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
 )
@@ -70,18 +71,24 @@ func (o *orderService) UpdateStatus(ctx context.Context, order *order.Order, sta
 	return o.orderRepo.Update(ctx, order)
 }
 
-func (o *orderService) Recover(ctx context.Context, id string) error {
-	convertedId, err := uuid.UUIDFromString(id)
+func (o *orderService) Recover(ctx context.Context, orderId string) error {
+	foundOrder, err := o.GetOneById(ctx, orderId)
 	if err != nil {
 		return err
 	}
-	return o.orderRepo.Recover(ctx, convertedId)
+	if !foundOrder.GetIsDeleted() {
+		return exceptions.ErrOrderAlreadyExist
+	}
+	return o.orderRepo.Recover(ctx, foundOrder.GetId())
 }
 
-func (o *orderService) Delete(ctx context.Context, id string) error {
-	convertedId, err := uuid.UUIDFromString(id)
+func (o *orderService) Delete(ctx context.Context, orderId string) error {
+	foundOrder, err := o.GetOneById(ctx, orderId)
 	if err != nil {
 		return err
 	}
-	return o.orderRepo.Delete(ctx, convertedId)
+	if foundOrder.GetIsDeleted() {
+		return exceptions.ErrOrderNotFound
+	}
+	return o.orderRepo.Delete(ctx, foundOrder.GetId())
 }
