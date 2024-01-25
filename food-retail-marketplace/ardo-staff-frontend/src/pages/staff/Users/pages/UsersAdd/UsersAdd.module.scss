@@ -37,6 +37,12 @@
     justify-content: flex-end;
     margin-top: 20px;
     gap: 10px;
+
+    .btn {
+      >span {
+        background-color: transparent;
+      }
+    }
   }
 }
 

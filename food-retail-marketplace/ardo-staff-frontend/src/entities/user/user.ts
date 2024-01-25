@@ -5,10 +5,10 @@ type UserLastName = string;
 
 export enum UserType {
     ADMIN = "ADMIN",
-    DEVELOPER = "DEVELOPER",
+    // DEVELOPER = "DEVELOPER",
     MODERATOR = "MODERATOR",
-    MERCHANT = "MERCHANT",
-    MANAGER = "MANAGER",
+    // MERCHANT = "MERCHANT",
+    // MANAGER = "MANAGER",
     CLIENT = "CLIENT",
 }
 

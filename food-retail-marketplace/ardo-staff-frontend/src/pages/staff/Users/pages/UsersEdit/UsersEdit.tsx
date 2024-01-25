@@ -40,7 +40,7 @@ export const UsersEdit: FC = () => {
             case UserType.ADMIN:
                 return options;
             default:
-                return options.filter(opt => opt.value !== UserType.ADMIN && opt.value !== UserType.DEVELOPER);
+                return options.filter(opt => opt.value !== UserType.ADMIN);
         }
     }, [user.userType]);
 
@@ -183,6 +183,8 @@ export const UsersEdit: FC = () => {
                                     disabled={isLoadingEditUser || !submittable}
                                     type={"primary"}
                                     htmlType={"submit"}
+                                    style={{margin: "0"}}
+                                    className={classes.btn}
                                 >
                                     {txt.edit[currentLang]}
                                 </Button>

@@ -44,6 +44,10 @@ export const UsersAdd: FC = () => {
         }
     }, [user.userType]);
 
+    const handleCancel = () => {
+        navigate(RouteNames.USERS);
+    }
+
     const handleSubmit = async () => {
         const values = form.getFieldsValue();
         const req: AddUserReq = {
@@ -55,10 +59,6 @@ export const UsersAdd: FC = () => {
             preferredLang: values.preferredLang
         }
         await addUser(req, {navigate, to: RouteNames.USERS});
-    }
-
-    const handleCancel = () => {
-        navigate(RouteNames.USERS);
     }
 
     useEffect(() => {
@@ -163,6 +163,7 @@ export const UsersAdd: FC = () => {
                                 type={"primary"}
                                 htmlType={"submit"}
                                 style={{margin: "0"}}
+                                className={classes.btn}
                             >
                                 {txt.add[currentLang]}
                             </Button>

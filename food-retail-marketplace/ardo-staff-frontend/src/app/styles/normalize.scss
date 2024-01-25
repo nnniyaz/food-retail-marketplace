@@ -15,11 +15,11 @@
 }
 
 /* Dark mode */
-@media (prefers-color-scheme: dark) {
-  body {
-    background-color: $global-color-light-bg-secondary-black;
-  }
-}
+//@media (prefers-color-scheme: dark) {
+//  body {
+//    background-color: $global-color-light-bg-secondary-black;
+//  }
+//}
 
 @media (max-width: 1340px) {
   body {

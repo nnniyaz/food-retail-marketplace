@@ -28,11 +28,11 @@
 }
 
 /* Dark mode */
-@media (prefers-color-scheme: dark) {
-  .block {
-    background-color: $global-color-light-bg-black;
-  }
-}
+//@media (prefers-color-scheme: dark) {
+//  .block {
+//    background-color: $global-color-light-bg-black;
+//  }
+//}
 
 @media (max-width: 1340px) {
   .block {

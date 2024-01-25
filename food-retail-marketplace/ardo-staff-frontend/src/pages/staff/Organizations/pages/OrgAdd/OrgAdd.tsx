@@ -1,7 +1,9 @@
-import React, {FC} from 'react';
-import {Card, Form, Input, Select, Upload} from "antd";
-import {useForm} from "antd/es/form/Form";
-import {PlusOutlined} from "@ant-design/icons";
+import React, {FC, useEffect, useState} from 'react';
+import {useNavigate} from "react-router-dom";
+import {Button, Card, Form, Input, Select} from "antd";
+import {useForm, useWatch} from "antd/es/form/Form";
+import {RouteNames} from "@pages/index";
+import {AddOrganizationReq} from "@pages/staff/Organizations/api/organizationsService";
 import {Currency} from "@entities/base/currency";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
@@ -9,8 +11,6 @@ import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {currencyTranslate} from "@shared/lib/utils/currency-translate";
 import classes from "./OrgAdd.module.scss";
-import {HttpStatusCode} from "axios";
-import {ApiRoutes} from "../../../../../shared/api/api-routes";
 
 const initialFormValues = {
     logo: "",
@@ -22,17 +22,15 @@ const initialFormValues = {
     desc: "",
 }
 
-const normFile = (e: any) => {
-    if (Array.isArray(e)) {
-        return e;
-    }
-    return e?.fileList;
-};
-
 export const OrgAdd: FC = () => {
+    const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {} = useActions();
+    const {isLoadingAddOrganization} = useTypedSelector(state => state.organizations);
+    const {addOrganization} = useActions();
     const [form] = useForm();
+    const values = useWatch([], form);
+
+    const [submittable, setSubmittable] = useState(false);
 
     const currencyOptions = [
         {value: Currency.HKD, label: currencyTranslate(Currency.HKD, currentLang, true)},
@@ -40,9 +38,30 @@ export const OrgAdd: FC = () => {
         {value: Currency.KZT, label: currencyTranslate(Currency.KZT, currentLang, true)},
     ];
 
-    const handleSubmit = () => {
-
+    const handleCancel = () => {
+        navigate(RouteNames.ORGANIZATIONS);
     }
+
+    const handleSubmit = async () => {
+        const values = form.getFieldsValue();
+        const req: AddOrganizationReq = {
+            logo: values.logo,
+            name: values.name,
+            currency: values.currency,
+            phone: values.phone,
+            email: values.email,
+            address: values.address,
+            desc: values.desc || null,
+        }
+        await addOrganization(req, {navigate, to: RouteNames.ORGANIZATIONS});
+    }
+
+    useEffect(() => {
+        form.validateFields({validateOnly: true}).then(
+            () => setSubmittable(true),
+            () => setSubmittable(false),
+        );
+    }, [values]);
 
     return (
         <div className={classes.main}>
@@ -89,6 +108,7 @@ export const OrgAdd: FC = () => {
                     <Form.Item
                         name={"address"}
                         label={txt.address[currentLang]}
+                        rules={[rules.required(txt.please_enter_phone[currentLang])]}
                     >
                         <Input placeholder={txt.enter_address[currentLang]}/>
                     </Form.Item>
@@ -100,24 +120,26 @@ export const OrgAdd: FC = () => {
                         <Input placeholder={txt.enter_desc[currentLang]}/>
                     </Form.Item>
 
-                    <Form.Item
-                        // name={"logo"}
-                        label={txt.logo[currentLang]}
-                        valuePropName="file"
-                        getValueFromEvent={normFile}
-                    >
-                        <Upload
-                            listType={"picture-card"}
-                            multiple={false}
-                            onChange={(e) => console.log(e)}
-                            method={"post"}
-                            action={process.env.VITE_API_URL + ApiRoutes.POST_UPLOAD}
-                        >
-                            <div style={{backgroundColor: "transparent"}}>
-                                <PlusOutlined/>
-                                <div style={{marginTop: 8}}>Upload</div>
-                            </div>
-                        </Upload>
+                    <Form.Item style={{margin: "0"}}>
+                        <div className={classes.form__btns}>
+                            <Button
+                                onClick={handleCancel}
+                                type={"primary"}
+                                style={{margin: "0"}}
+                            >
+                                {txt.back[currentLang]}
+                            </Button>
+                            <Button
+                                loading={isLoadingAddOrganization}
+                                disabled={isLoadingAddOrganization || !submittable}
+                                type={"primary"}
+                                htmlType={"submit"}
+                                style={{margin: "0"}}
+                                className={classes.btn}
+                            >
+                                {txt.add[currentLang]}
+                            </Button>
+                        </div>
                     </Form.Item>
                 </Form>
             </Card>

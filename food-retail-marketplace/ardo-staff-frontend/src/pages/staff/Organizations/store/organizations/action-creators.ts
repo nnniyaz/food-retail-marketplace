@@ -1,6 +1,9 @@
+import {AppDispatch, RootState} from "@app/store";
 import {Paginate} from "@entities/base/paginate";
 import {Organization} from "@entities/organization/organization";
-import {AppDispatch, RootState} from "@app/store";
+import {NavigateCallback} from "@entities/base/navigateCallback";
+import {txt} from "@shared/core/i18ngen";
+import {Notify} from "@shared/lib/notification/notification";
 import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {
     SetOrganizationsAction,
@@ -10,9 +13,6 @@ import {
     OrganizationsActionEnum
 } from "./types";
 import OrganizationsService, {AddOrganizationReq} from "../../api/organizationsService";
-import {NavigateCallback} from "../../../../../entities/base/navigateCallback";
-import {Notify} from "../../../../../shared/lib/notification/notification";
-import {txt} from "../../../../../shared/core/i18ngen";
 
 export const OrganizationActionCreators = {
     setOrganizations: (payload: Organization[]): SetOrganizationsAction => ({
