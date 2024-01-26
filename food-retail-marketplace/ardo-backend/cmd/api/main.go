@@ -22,6 +22,8 @@ import (
 const port = 8080
 
 func main() {
+	fmt.Println("starting server...")
+
 	start := time.Now()
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
