@@ -42,9 +42,9 @@ jobs:
           key: ${{ secrets.DROPLET_SSH_PRIVATE_KEY }}
           port: ${{ secrets.DROPLET_PORT }}
           passphrase: ${{ secrets.DROPLET_SSH_PASSPHRASE }}
-          script: |  
+          script: |
             # Install docker
-            brew install docker
+            curl -fsSL https://get.docker.com | sh
             
             # Login to registry
             docker login -u ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} -p ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} registry.digitalocean.com
