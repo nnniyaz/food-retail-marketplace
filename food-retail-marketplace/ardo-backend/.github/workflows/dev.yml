@@ -57,4 +57,4 @@ jobs:
             docker rm $(echo $IMAGE_NAME)
             
             # Run a new container from a new image
-            docker run -d --restart always --name $(echo $IMAGE_NAME) $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_RUN_ID)
+            docker run -e ${{ secrets.dev.MONGO_URI }} -e ${{ secrets.dev.IS_DEV_MODE }} -e ${{ secrets.dev.SMTP_USER }} -e ${{ secrets.dev.SMTP_PASS }} -e ${{ secrets.dev.SMTP_HOST }} -e ${{ secrets.dev.SMTP_PORT }} -e ${{ secrets.dev.API_URI }} -e ${{ secrets.dev.CLIENT_URI }} -e ${{ secrets.dev.SPACE_KEY }} -e ${{ secrets.dev.SPACE_SECRET }} -e ${{ secrets.dev.SPACE_ENDPOINT }} -e ${{ secrets.dev.SPACE_REGION }} -e ${{ secrets.dev.SPACE_NAME }} -e ${{ secrets.dev.SPACE_HOST }} -d --restart always --name $(echo $IMAGE_NAME) $(echo $REGISTRY)/$(echo $IMAGE_NAME):$(echo $GITHUB_RUN_ID)
