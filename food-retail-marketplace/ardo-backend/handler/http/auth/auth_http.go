@@ -48,7 +48,7 @@ func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	http.SetCookie(w, &http.Cookie{
 		Name:     "session",
 		Value:    token.String(),
-		MaxAge:   time.Now().Add(time.Second * 5).Second(),
+		MaxAge:   time.Now().Add(time.Second*1800).Nanosecond() / 1000000,
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
