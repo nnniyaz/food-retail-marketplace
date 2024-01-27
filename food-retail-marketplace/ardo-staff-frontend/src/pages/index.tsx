@@ -1,12 +1,9 @@
-import React, {useState} from "react";
-import {Navigate, Route, Routes, useLocation} from "react-router-dom";
+import React from "react";
+import {Navigate, Route, Routes} from "react-router-dom";
 import {
-    AppstoreAddOutlined,
-    AppstoreOutlined,
     BookOutlined,
     DashboardOutlined,
     SettingOutlined,
-    ShopOutlined,
     UnorderedListOutlined,
     UserAddOutlined,
     UserOutlined,
@@ -21,20 +18,20 @@ import {Login} from "./public/Login";
 import {Dashboard} from "./staff/Dashboard";
 import {Catalog} from "./staff/Catalog";
 import {Users} from "./staff/Users";
-import {Organizations} from "./staff/Organizations";
 import {Applications} from "./staff/Applications";
 import {Settings} from "./staff/Settings";
 import {UsersAdd} from "./staff/Users/pages/UsersAdd";
 import {UsersEdit} from "./staff/Users/pages/UsersEdit";
-import {OrgAdd} from "./staff/Organizations/pages/OrgAdd";
-import {OrgEdit} from "./staff/Organizations/pages/OrgEdit";
 import {NotFound} from "@pages/staff/NotFound";
+import {Products} from "@pages/staff/Products";
+import {Orders} from "@pages/staff/Orders";
 
 export interface IRoute {
     path: string;
     name: MlString;
     icon?: JSX.Element;
     element: React.ComponentType;
+    disabled?: boolean;
 }
 
 export enum RouteNames {
@@ -47,9 +44,8 @@ export enum RouteNames {
     USERS = "/users",
     USERS_ADD = "/users/add",
     USERS_EDIT = "/users/edit/:id",
-    ORGANIZATIONS = "/organizations",
-    ORGANIZATIONS_ADD = "/organizations/add",
-    ORGANIZATIONS_EDIT = "/organizations/edit/:id",
+    PRODUCTS = "/products",
+    ORDERS = "/orders",
     APPLICATIONS = "/applications",
     SETTINGS = "/settings",
 
@@ -62,19 +58,24 @@ export const publicRoutes: IRoute[] = [
 ];
 
 export const staffRoutesSidebar: IRoute[] = [
-    {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>},
+    {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>, disabled: true},
     {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <UnorderedListOutlined/>},
     {path: RouteNames.USERS, element: Users, name: txt.users, icon: <UserOutlined/>},
-    {path: RouteNames.ORGANIZATIONS, element: Organizations, name: txt.organizations, icon: <ShopOutlined/>},
-    {path: RouteNames.APPLICATIONS, element: Applications, name: txt.applications, icon: <BookOutlined/>},
+    {path: RouteNames.PRODUCTS, element: Products, name: txt.products, icon: <DashboardOutlined/>},
+    {path: RouteNames.ORDERS, element: Orders, name: txt.orders, icon: <DashboardOutlined/>},
+    {
+        path: RouteNames.APPLICATIONS,
+        element: Applications,
+        name: txt.applications,
+        icon: <BookOutlined/>,
+        disabled: true
+    },
     {path: RouteNames.SETTINGS, element: Settings, name: txt.settings, icon: <SettingOutlined/>},
 ];
 
 export const staffRoutes: IRoute[] = [
     {path: RouteNames.USERS_ADD, element: UsersAdd, name: txt.new_user, icon: <UserAddOutlined/>},
     {path: RouteNames.USERS_EDIT, element: UsersEdit, name: txt.user_profile, icon: <UserSwitchOutlined/>},
-    {path: RouteNames.ORGANIZATIONS_ADD, element: OrgAdd, name: txt.new_organization, icon: <AppstoreAddOutlined/>},
-    {path: RouteNames.ORGANIZATIONS_EDIT, element: OrgEdit, name: txt.organization_info, icon: <AppstoreOutlined />},
 ];
 
 const AppRouter = () => {
@@ -85,14 +86,14 @@ const AppRouter = () => {
             {isAuth
                 ?
                 <Route element={<StaffLayout/>}>
-                    {[...staffRoutesSidebar, ...staffRoutes].map(route => (
+                    {[...staffRoutesSidebar, ...staffRoutes].filter(route => !route.disabled).map(route => (
                         <Route path={route.path} element={<route.element/>} key={route.path}/>
                     ))}
                     <Route path={"*"} element={<NotFound/>}/>
                 </Route>
                 :
                 <Route element={<Layout/>}>
-                    {publicRoutes.map(route => (
+                    {publicRoutes.filter(route => !route.disabled).map(route => (
                         <Route path={route.path} element={<route.element/>} key={route.path}/>
                     ))}
                     <Route path={"*"} element={<Navigate to={RouteNames.LOGIN}/>}/>

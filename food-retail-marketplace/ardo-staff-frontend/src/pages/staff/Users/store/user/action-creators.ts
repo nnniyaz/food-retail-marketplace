@@ -1,5 +1,10 @@
 import {AppDispatch, RootState} from "@app/store";
-import UsersService, {AddUserReq, EditUserReq} from "@pages/staff/Users/api/usersService";
+import UsersService, {
+    AddUserReq,
+    EditUserCredentialsReq,
+    EditUserEmailReq, EditUserPasswordReq,
+    EditUserPreferredLangReq
+} from "@pages/staff/Users/api/usersService";
 import {User} from "@entities/user/user";
 import {Paginate} from "@entities/base/paginate";
 import {NavigateCallback} from "@entities/base/navigateCallback";
@@ -75,7 +80,7 @@ export const UsersActionCreators = {
         }
     },
 
-    getUserById: (userId: string, controller: AbortController, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    getUserById: (userId: UUID, controller: AbortController, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(UsersActionCreators.setIsLoadingGetUserById(true));
@@ -130,11 +135,11 @@ export const UsersActionCreators = {
         }
     },
 
-    editUser: (userId: string, request: EditUserReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    editUserCredentials: (userId: UUID, request: EditUserCredentialsReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(UsersActionCreators.setIsLoadingEditUsers(true));
-            const res = await UsersService.editUser(userId, request);
+            const res = await UsersService.editUserCredentials(userId, request);
             if (res.data.success) {
                 await UsersActionCreators.getUserById(userId, new AbortController(), navigationCallback)(dispatch, getState);
                 Notify.Success({title: txt.user_successfully_edited[currentLang], message: ""});
@@ -157,7 +162,115 @@ export const UsersActionCreators = {
         }
     },
 
-    deleteUser: (userId: string, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    editUserEmail: (userId: UUID, request: EditUserEmailReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(UsersActionCreators.setIsLoadingEditUsers(true));
+            const res = await UsersService.editUserEmail(userId, request);
+            if (res.data.success) {
+                await UsersActionCreators.getUserById(userId, new AbortController(), navigationCallback)(dispatch, getState);
+                Notify.Success({title: txt.user_successfully_edited[currentLang], message: ""});
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                navigateCallback: navigationCallback,
+            });
+        } finally {
+            dispatch(UsersActionCreators.setIsLoadingEditUsers(false));
+        }
+    },
+
+    editUserPreferredLang: (userId: UUID, request: EditUserPreferredLangReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(UsersActionCreators.setIsLoadingEditUsers(true));
+            const res = await UsersService.editUserPreferredLang(userId, request);
+            if (res.data.success) {
+                await UsersActionCreators.getUserById(userId, new AbortController(), navigationCallback)(dispatch, getState);
+                Notify.Success({title: txt.user_successfully_edited[currentLang], message: ""});
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                navigateCallback: navigationCallback,
+            });
+        } finally {
+            dispatch(UsersActionCreators.setIsLoadingEditUsers(false));
+        }
+    },
+
+    editUserPassword: (userId: UUID, request: EditUserPasswordReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(UsersActionCreators.setIsLoadingEditUsers(true));
+            const res = await UsersService.editUserPassword(userId, request);
+            if (res.data.success) {
+                await UsersActionCreators.getUserById(userId, new AbortController(), navigationCallback)(dispatch, getState);
+                Notify.Success({title: txt.user_successfully_edited[currentLang], message: ""});
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                navigateCallback: navigationCallback,
+            });
+        } finally {
+            dispatch(UsersActionCreators.setIsLoadingEditUsers(false));
+        }
+    },
+
+    recoverUser: (userId: UUID, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(UsersActionCreators.setIsLoadingRecoverUsers(true));
+            const res = await UsersService.recoverUser(userId);
+            if (res.data.success) {
+                await UsersActionCreators.getUserById(userId, new AbortController(), navigationCallback)(dispatch, getState);
+                Notify.Success({title: txt.user_successfully_recovered[currentLang], message: ""});
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                navigateCallback: navigationCallback,
+            });
+        } finally {
+            dispatch(UsersActionCreators.setIsLoadingRecoverUsers(false));
+        }
+    },
+
+    deleteUser: (userId: UUID, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(UsersActionCreators.setIsLoadingDeleteUsers(true));
@@ -183,31 +296,4 @@ export const UsersActionCreators = {
             dispatch(UsersActionCreators.setIsLoadingDeleteUsers(false));
         }
     },
-
-    recoverUser: (userId: string, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().lang;
-        try {
-            dispatch(UsersActionCreators.setIsLoadingRecoverUsers(true));
-            const res = await UsersService.recoverUser(userId);
-            if (res.data.success) {
-                await UsersActionCreators.getUserById(userId, new AbortController(), navigationCallback)(dispatch, getState);
-                Notify.Success({title: txt.user_successfully_recovered[currentLang], message: ""});
-            } else {
-                FailedResponseHandler({
-                    messages: res.data?.messages,
-                    httpStatus: res.status,
-                });
-            }
-        } catch (e: any) {
-            httpHandler({
-                error: e,
-                httpStatus: e?.response?.status,
-                dispatch: dispatch,
-                currentLang: currentLang,
-                navigateCallback: navigationCallback,
-            });
-        } finally {
-            dispatch(UsersActionCreators.setIsLoadingRecoverUsers(false));
-        }
-    }
 }

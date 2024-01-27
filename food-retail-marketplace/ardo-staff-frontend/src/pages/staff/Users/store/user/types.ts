@@ -8,8 +8,8 @@ export type UsersState = {
     isLoadingAddUser: boolean;
     isLoadingGetUserById: boolean;
     isLoadingEditUser: boolean;
-    isLoadingDeleteUser: boolean;
     isLoadingRecoverUser: boolean;
+    isLoadingDeleteUser: boolean;
 }
 
 export enum UsersActionEnum {
@@ -20,8 +20,8 @@ export enum UsersActionEnum {
     SET_IS_LOADING_GET_USER_BY_ID = "SET_IS_LOADING_GET_USER_BY_ID",
     SET_IS_LOADING_ADD_USER = "SET_IS_LOADING_ADD_USER",
     SET_IS_LOADING_EDIT_USER = "SET_IS_LOADING_EDIT_USER",
-    SET_IS_LOADING_DELETE_USER = "SET_IS_LOADING_DELETE_USER",
     SET_IS_LOADING_RECOVER_USER = "SET_IS_LOADING_RECOVER_USER",
+    SET_IS_LOADING_DELETE_USER = "SET_IS_LOADING_DELETE_USER",
 }
 
 export interface SetUsersAction {
@@ -59,13 +59,13 @@ export interface SetIsLoadingEditUserAction {
     payload: boolean;
 }
 
-export interface SetIsLoadingDeleteUserAction {
-    type: UsersActionEnum.SET_IS_LOADING_DELETE_USER;
+export interface SetIsLoadingRecoverUserAction {
+    type: UsersActionEnum.SET_IS_LOADING_RECOVER_USER;
     payload: boolean;
 }
 
-export interface SetIsLoadingRecoverUserAction {
-    type: UsersActionEnum.SET_IS_LOADING_RECOVER_USER;
+export interface SetIsLoadingDeleteUserAction {
+    type: UsersActionEnum.SET_IS_LOADING_DELETE_USER;
     payload: boolean;
 }
 
@@ -77,5 +77,5 @@ export type UsersAction =
     SetIsLoadingAddUserAction |
     SetIsLoadingGetUserByIdAction |
     SetIsLoadingEditUserAction |
-    SetIsLoadingDeleteUserAction |
-    SetIsLoadingRecoverUserAction;
+    SetIsLoadingRecoverUserAction |
+    SetIsLoadingDeleteUserAction;

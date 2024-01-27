@@ -8,8 +8,8 @@ const initialState: UsersState = {
     isLoadingAddUser: false,
     isLoadingGetUserById: false,
     isLoadingEditUser: false,
-    isLoadingDeleteUser: false,
     isLoadingRecoverUser: false,
+    isLoadingDeleteUser: false,
 }
 
 export default function userReducer(state = initialState, action: UsersAction): UsersState {
@@ -28,10 +28,10 @@ export default function userReducer(state = initialState, action: UsersAction): 
             return {...state, isLoadingGetUserById: action.payload}
         case UsersActionEnum.SET_IS_LOADING_EDIT_USER:
             return {...state, isLoadingEditUser: action.payload}
-        case UsersActionEnum.SET_IS_LOADING_DELETE_USER:
-            return {...state, isLoadingDeleteUser: action.payload}
         case UsersActionEnum.SET_IS_LOADING_RECOVER_USER:
             return {...state, isLoadingRecoverUser: action.payload}
+        case UsersActionEnum.SET_IS_LOADING_DELETE_USER:
+            return {...state, isLoadingDeleteUser: action.payload}
         default:
             return state;
     }

@@ -40,7 +40,7 @@ export const UsersAdd: FC = () => {
             case UserType.ADMIN:
                 return options;
             default:
-                return options.filter(opt => opt.value !== UserType.ADMIN && opt.value !== UserType.DEVELOPER);
+                return options.filter(opt => opt.value !== UserType.ADMIN);
         }
     }, [user.userType]);
 

@@ -15,11 +15,21 @@ export interface AddUserReq {
     preferredLang: Lang;
 }
 
-export interface EditUserReq {
+export interface EditUserCredentialsReq {
     firstName: string;
     lastName: string;
+}
+
+export interface EditUserEmailReq {
     email: string;
+}
+
+export interface EditUserPreferredLangReq {
     preferredLang: Lang;
+}
+
+export interface EditUserPasswordReq {
+    password: string;
 }
 
 export default class UsersService {
@@ -35,8 +45,20 @@ export default class UsersService {
         return $api.post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_USER, {...request});
     }
 
-    static async editUser(userId: string, request: EditUserReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER.replace(":user_id", userId), {...request});
+    static async editUserCredentials(userId: string, request: EditUserCredentialsReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_CREDENTIALS.replace(":user_id", userId), {...request});
+    }
+
+    static async editUserEmail(userId: string, request: EditUserEmailReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_EMAIL.replace(":user_id", userId), {...request});
+    }
+
+    static async editUserPreferredLang(userId: string, request: EditUserPreferredLangReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_PREFERRED_LANG.replace(":user_id", userId), {...request});
+    }
+
+    static async editUserPassword(userId: string, request: EditUserPasswordReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_PASSWORD.replace(":user_id", userId), {...request});
     }
 
     static async deleteUser(userId: string): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
