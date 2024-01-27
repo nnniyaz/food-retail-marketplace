@@ -59,15 +59,101 @@ export const UserActionCreators = {
         dispatch(UserActionCreators.setUser({} as User));
         dispatch(UserActionCreators.setAuth(false));
     },
-    updatePreferredLang: (lang: Lang) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    updateCredentials: () => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         const {user} = getState().user;
         try {
             const res = await UserService.updateCurrentUserCredentials({
                 firstName: user.firstName,
                 lastName: user.lastName,
+            });
+            if (res.data.success) {
+
+            } else {
+                dispatch(UserActionCreators.setAuth(false));
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                    hideNotify: true,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                hideNotify: true,
+            });
+        } finally {
+            dispatch(UserActionCreators.setIsLoadingGetUser(false));
+        }
+    },
+
+    updateEmail: () => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        const {user} = getState().user;
+        try {
+            const res = await UserService.updateCurrentUserEmail({
                 email: user.email,
+            });
+            if (res.data.success) {
+
+            } else {
+                dispatch(UserActionCreators.setAuth(false));
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                    hideNotify: true,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                hideNotify: true,
+            });
+        } finally {
+            dispatch(UserActionCreators.setIsLoadingGetUser(false));
+        }
+    },
+
+    updatePreferredLang: (lang: Lang) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            const res = await UserService.updateCurrentUserPreferredLang({
                 preferredLang: lang,
+            });
+            if (res.data.success) {
+
+            } else {
+                dispatch(UserActionCreators.setAuth(false));
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                    hideNotify: true,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                hideNotify: true,
+            });
+        } finally {
+            dispatch(UserActionCreators.setIsLoadingGetUser(false));
+        }
+    },
+
+    updatePassword: (password: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            const res = await UserService.updateCurrentUserPassword({
+                password: password,
             });
             if (res.data.success) {
 

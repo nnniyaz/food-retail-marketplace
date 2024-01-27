@@ -5,7 +5,7 @@ import {txt} from "@shared/core/i18ngen";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {langOptions} from "@shared/lib/options/langOptions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import classes from "@pages/staff/Organizations/Organizations.module.scss";
+import classes from "@pages/staff/Settings/Settings.module.scss";
 
 export const Settings: FC = () => {
     const {currentLang} = useTypedSelector(state => state.lang);

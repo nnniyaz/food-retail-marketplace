@@ -26,7 +26,15 @@ export const UsersEdit: FC = () => {
         isLoadingDeleteUser,
         isLoadingRecoverUser
     } = useTypedSelector(state => state.users);
-    const {getUserById, editUser, deleteUser, recoverUser} = useActions();
+    const {
+        getUserById,
+        editUserCredentials,
+        editUserEmail,
+        editUserPreferredLang,
+        editUserPassword,
+        deleteUser,
+        recoverUser
+    } = useActions();
     const [form] = useForm();
     const values = useWatch([], form);
 

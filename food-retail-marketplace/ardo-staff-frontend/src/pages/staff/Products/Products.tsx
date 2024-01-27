@@ -1,7 +1,6 @@
 import React, {FC} from 'react';
-import classes from "./OrgEdit.module.scss";
 
-export const OrgEdit: FC = () => {
+export const Products: FC = () => {
     return (
         <div>
 

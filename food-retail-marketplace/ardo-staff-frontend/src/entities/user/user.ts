@@ -5,10 +5,7 @@ type UserLastName = string;
 
 export enum UserType {
     ADMIN = "ADMIN",
-    // DEVELOPER = "DEVELOPER",
     MODERATOR = "MODERATOR",
-    // MERCHANT = "MERCHANT",
-    // MANAGER = "MANAGER",
     CLIENT = "CLIENT",
 }
 
@@ -19,9 +16,9 @@ export type User = {
     email: Email;
     userType: UserType;
     preferredLang: Lang;
+    isDeleted: boolean;
     createdAt: Timestamp;
     updatedAt: Timestamp;
-    isDeleted: boolean;
 }
 
 export type UsersData = {

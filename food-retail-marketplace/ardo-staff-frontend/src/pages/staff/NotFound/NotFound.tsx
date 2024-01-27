@@ -14,7 +14,7 @@ export const NotFound: FunctionComponent = () => {
                 <Button
                     size={"large"}
                     type={"primary"}
-                    onClick={() => navigate(RouteNames.DASHBOARD)}
+                    onClick={() => navigate(RouteNames.USERS)}
                 >
                     {Translate("to_main_menu")}
                 </Button>

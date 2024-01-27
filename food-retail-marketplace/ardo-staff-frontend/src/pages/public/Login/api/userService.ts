@@ -1,6 +1,11 @@
 import {AxiosResponse} from "axios";
 import {User} from "@entities/user/user";
-import {EditUserReq} from "@pages/staff/Users/api/usersService";
+import {
+    EditUserCredentialsReq,
+    EditUserEmailReq,
+    EditUserPreferredLangReq,
+    EditUserPasswordReq
+} from "@pages/staff/Users/api/usersService";
 import $api from "@shared/api";
 import {ApiRoutes} from "@shared/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@shared/api/response/response";
@@ -10,11 +15,19 @@ export default class UserService {
         return $api.get<SuccessResponse<User> | ErrorResponse>(ApiRoutes.GET_ME);
     }
 
-    static updateCurrentUserCredentials(request: EditUserReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_ME, request);
+    static updateCurrentUserCredentials(request: EditUserCredentialsReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_CREDENTIALS, request);
     }
 
-    static updateCurrentUserPassword(): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_ME_PASSWORD);
+    static updateCurrentUserEmail(request: EditUserEmailReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_ME_EMAIL, request);
+    }
+
+    static updateCurrentUserPreferredLang(request: EditUserPreferredLangReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_ME_PREFERRED_LANG, request);
+    }
+
+    static updateCurrentUserPassword(request: EditUserPasswordReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_ME_PASSWORD, request);
     }
 }
