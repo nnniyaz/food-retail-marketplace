@@ -1,4 +1,4 @@
-import React, {FunctionComponent} from 'react';
+import React, {FunctionComponent} from "react";
 import {useNavigate} from "react-router-dom";
 import {Button} from "antd";
 import {RouteNames} from "@pages/index";

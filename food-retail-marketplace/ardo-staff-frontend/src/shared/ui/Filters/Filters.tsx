@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC} from "react";
 import {Select} from "antd";
 import classes from "./Filters.module.scss";
 

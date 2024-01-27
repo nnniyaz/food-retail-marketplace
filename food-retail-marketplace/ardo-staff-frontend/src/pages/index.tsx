@@ -25,6 +25,8 @@ import {UsersEdit} from "./staff/Users/pages/UsersEdit";
 import {NotFound} from "@pages/staff/NotFound";
 import {Products} from "@pages/staff/Products";
 import {Orders} from "@pages/staff/Orders";
+import {ProductsAdd} from "@pages/staff/Products/pages/ProductsAdd";
+import {ProductsEdit} from "@pages/staff/Products/pages/ProductsEdit";
 
 export interface IRoute {
     path: string;
@@ -45,6 +47,8 @@ export enum RouteNames {
     USERS_ADD = "/users/add",
     USERS_EDIT = "/users/edit/:id",
     PRODUCTS = "/products",
+    PRODUCTS_ADD = "/products/add",
+    PRODUCTS_EDIT = "/products/edit/:id",
     ORDERS = "/orders",
     APPLICATIONS = "/applications",
     SETTINGS = "/settings",
@@ -76,6 +80,8 @@ export const staffRoutesSidebar: IRoute[] = [
 export const staffRoutes: IRoute[] = [
     {path: RouteNames.USERS_ADD, element: UsersAdd, name: txt.new_user, icon: <UserAddOutlined/>},
     {path: RouteNames.USERS_EDIT, element: UsersEdit, name: txt.user_profile, icon: <UserSwitchOutlined/>},
+    {path: RouteNames.PRODUCTS_ADD, element: ProductsAdd, name: txt.new_product, icon: <UserAddOutlined/>},
+    {path: RouteNames.PRODUCTS_EDIT, element: ProductsEdit, name: txt.product_details, icon: <UserSwitchOutlined/>}
 ];
 
 const AppRouter = () => {

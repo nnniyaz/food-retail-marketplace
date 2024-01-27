@@ -1,6 +1,6 @@
 import React, {FC} from "react";
 
-export const Orders: FC = () => {
+export const ProductsEdit: FC = () => {
     return (
         <div>
 

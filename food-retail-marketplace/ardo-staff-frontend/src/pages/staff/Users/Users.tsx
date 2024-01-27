@@ -2,8 +2,9 @@ import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {User, UserType} from "@entities/user/user";
+import {Lang} from "@entities/base/MlString";
 import {TableParams} from "@entities/base/tableParams";
+import {User, UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
 import {Filters} from "@shared/ui/Filters";
 import {useActions} from "@shared/lib/hooks/useActions";
@@ -13,7 +14,6 @@ import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {userTypeTranslate} from "@shared/lib/options/userTypeOptions";
 import {RouteNames} from "@pages//";
 import classes from "./Users.module.scss";
-import {Lang} from "@entities/base/MlString";
 
 export const Users: FC = () => {
     const navigate = useNavigate();
@@ -35,9 +35,7 @@ export const Users: FC = () => {
             title: txt.action[currentLang],
             dataIndex: "action",
             render: (_, record) => (
-                <Link to={RouteNames.USERS_EDIT.replace(":id", record?.id)}>
-                    {txt.details[currentLang]}
-                </Link>
+                <Link to={RouteNames.USERS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
             )
         },
         {

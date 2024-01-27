@@ -2,7 +2,7 @@ import {MlString} from "@entities/base/MlString";
 
 export enum ProductStatus {
     ACTIVE = "ACTIVE",
-    INACTIVE = "INACTIVE",
+    ARCHIVE = "ARCHIVE",
 }
 
 export interface Product {

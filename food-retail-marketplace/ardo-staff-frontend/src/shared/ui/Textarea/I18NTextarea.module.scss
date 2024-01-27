@@ -1,0 +1,14 @@
+.i18n_textarea_row_wrapper {
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+
+  .i18n_textarea_select {
+    width: 10%;
+  }
+
+  .i18n_textarea {
+    width: 90%;
+  }
+}

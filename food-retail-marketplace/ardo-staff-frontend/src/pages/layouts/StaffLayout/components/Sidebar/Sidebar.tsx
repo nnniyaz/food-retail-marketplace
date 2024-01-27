@@ -91,11 +91,13 @@ export const Sidebar: FC<HeaderProps> = ({isShown, setIsShown}) => {
                                 <Logo/>
                             </div>
                             <Divider/>
-                            {upperSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick}
-                                                                   key={item.path}/>)}
+                            {upperSlice.map((item) =>
+                                <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>
+                            )}
                             <Divider/>
-                            {lowerSlice.map((item) => <SideBarItem item={item} onClick={handleOnClick}
-                                                                   key={item.path}/>)}
+                            {lowerSlice.map((item) =>
+                                <SideBarItem item={item} onClick={handleOnClick} key={item.path}/>
+                            )}
                             <SideBarItem item={logoutSideBarItem} onClick={handleLogout}/>
                             <Credits/>
                         </OutsideDetecter>
@@ -135,7 +137,7 @@ const SideBarItem: FC<{ item: IRoute, onClick: (...args: any[]) => void }> = ({i
     return (
         <NavLink
             to={item.path}
-            onClick={item.disabled ? () => ({}) : onClick}
+            onClick={onClick}
             className={activeLink(item.path) ? classes.sidebar__item__active : classes.sidebar__item}
             style={{cursor: item.disabled ? "not-allowed" : "pointer", opacity: item.disabled ? .5 : 1}}
         >

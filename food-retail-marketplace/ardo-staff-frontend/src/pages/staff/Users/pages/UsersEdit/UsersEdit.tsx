@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useMemo, useState} from 'react';
+import React, {FC, useEffect, useMemo, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {Button, Card, Form, Input, Select} from "antd";

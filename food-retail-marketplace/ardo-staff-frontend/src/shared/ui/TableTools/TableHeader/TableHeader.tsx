@@ -1,4 +1,4 @@
-import React, {FC} from 'react';
+import React, {FC} from "react";
 import {Button, Input} from "antd";
 import {txt} from "@shared/core/i18ngen";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
