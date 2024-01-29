@@ -78,7 +78,16 @@ export const UsersEdit: FC = () => {
         if (!id) {
             return;
         }
-        await editUser(id, form.getFieldsValue(), {navigate, to: RouteNames.USERS});
+        await editUserCredentials(id, {
+            firstName: form.getFieldValue("firstName"),
+            lastName: form.getFieldValue("lastName"),
+        }, {navigate});
+        await editUserEmail(id, {
+            email: form.getFieldValue("email"),
+        }, {navigate});
+        await editUserPreferredLang(id, {
+            preferredLang: form.getFieldValue("preferredLang"),
+        }, {navigate, to: RouteNames.USERS});
         setEditMode(false);
     }
 

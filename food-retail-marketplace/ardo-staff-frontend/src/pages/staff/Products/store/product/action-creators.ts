@@ -1,5 +1,5 @@
 import {AppDispatch, RootState} from "@app/store";
-import {ProductsService} from "@pages/staff/Products/api/productsService";
+import {AddProductReq, EditProductCredentialsReq, ProductsService} from "@pages/staff/Products/api/productsService";
 import {Product} from "@entities/product/product";
 import {Paginate} from "@entities/base/paginate";
 import {NavigateCallback} from "@entities/base/navigateCallback";
@@ -89,7 +89,7 @@ export const ProductsActionCreators = {
         }
     },
 
-    addProduct: (request: Product, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    addProduct: (request: AddProductReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(ProductsActionCreators.setIsLoadingAddProduct(true));
@@ -118,7 +118,7 @@ export const ProductsActionCreators = {
         }
     },
 
-    editProductCredentials: (productId: UUID, request: Product, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    editProductCredentials: (productId: UUID, request: EditProductCredentialsReq, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(ProductsActionCreators.setIsLoadingEditProduct(true));

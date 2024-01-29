@@ -35,7 +35,7 @@ export const Products: FC = () => {
             title: txt.action[currentLang],
             dataIndex: "action",
             render: (_, record) => (
-                <Link to={RouteNames.USERS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
+                <Link to={RouteNames.PRODUCTS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
             )
         },
         {

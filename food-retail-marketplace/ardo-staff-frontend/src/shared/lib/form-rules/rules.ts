@@ -1,7 +1,6 @@
 import {FormInstance, FormRule} from "antd";
 import {Lang, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
-import {isEmpty} from "lodash";
 
 interface IRules {
     required: (message: string) => FormRule,

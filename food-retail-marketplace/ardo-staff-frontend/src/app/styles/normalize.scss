@@ -7,9 +7,13 @@
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
 }
 
+div, svg, span {
+  background-color: transparent;
+}
+
 /* Light mode */
 @media (prefers-color-scheme: light) {
-  body {
+  #root {
     background-color: $global-color-light-bg-secondary-white;
   }
 }

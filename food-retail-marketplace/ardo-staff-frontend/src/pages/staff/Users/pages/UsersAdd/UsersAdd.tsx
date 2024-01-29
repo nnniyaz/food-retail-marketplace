@@ -50,15 +50,14 @@ export const UsersAdd: FC = () => {
 
     const handleSubmit = async () => {
         const values = form.getFieldsValue();
-        const req: AddUserReq = {
+        await addUser({
             firstName: values.firstName,
             lastName: values.lastName,
             email: values.email,
             password: values.password,
             userType: values.userType,
             preferredLang: values.preferredLang
-        }
-        await addUser(req, {navigate, to: RouteNames.USERS});
+        }, {navigate, to: RouteNames.USERS});
     }
 
     useEffect(() => {

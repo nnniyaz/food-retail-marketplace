@@ -12,3 +12,8 @@ export const productStatusTranslate = (productStatus: ProductStatus, currentLang
             return txt.unknown[currentLang];
     }
 }
+
+export const productStatusOptions = (currentLang: Lang = Lang.EN) => ([
+    {value: ProductStatus.ACTIVE, label: txt.active[currentLang]},
+    {value: ProductStatus.ARCHIVE, label: txt.archive[currentLang]},
+]);

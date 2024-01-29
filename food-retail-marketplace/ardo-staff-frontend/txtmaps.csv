@@ -128,3 +128,5 @@
 "enter_name","Введите название","Enter name"
 "please_enter_desc","Пожалуйста, введите описание","Please, enter description"
 "please_select_status","Пожалуйста, выберите статус","Please, select status"
+"please_enter_price","Пожалуйста, введите цену","Please, enter price"
+"please_enter_quantity","Пожалуйста, введите количество","Please, enter quantity"

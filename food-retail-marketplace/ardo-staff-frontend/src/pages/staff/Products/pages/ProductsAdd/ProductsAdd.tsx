@@ -1,18 +1,19 @@
 import React, {FC, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Button, Card, Form, Input, Select} from "antd";
+import {Button, Card, Form, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
-import TextArea from "antd/lib/input/TextArea";
+import {MlString} from "@entities/base/MlString";
 import {ProductStatus} from "@entities/product/product";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
+import {I18NInput} from "@shared/ui/Input/I18NInput";
 import {useActions} from "@shared/lib/hooks/useActions";
+import {NumberInput} from "@shared/ui/Input/NumberInput";
+import {I18NTextarea} from "@shared/ui/Textarea";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
+import {productStatusOptions} from "@shared/lib/options/productStatusOptions";
 import {RouteNames} from "@pages/index";
 import classes from "./ProductsAdd.module.scss";
-import {Lang, MlString} from "@entities/base/MlString";
-import {I18NInput} from "@shared/ui/Input/I18NInput";
-import {I18NTextarea} from "@shared/ui/Textarea";
 
 const initialFormValues = {
     name: {},
@@ -38,7 +39,15 @@ export const ProductsAdd: FC = () => {
     }
 
     const handleSubmit = async () => {
-        console.log(form.getFieldsValue());
+        const values = form.getFieldsValue();
+        addProduct({
+            name: values.name,
+            desc: values.desc,
+            price: values.price,
+            quantity: values.quantity,
+            img: "",
+            status: values.status
+        }, {navigate, to: RouteNames.PRODUCTS});
     }
 
     useEffect(() => {
@@ -47,6 +56,10 @@ export const ProductsAdd: FC = () => {
             () => setSubmittable(false),
         );
     }, [values]);
+
+    useEffect(() => {
+        form.setFieldsValue(initialFormValues);
+    }, []);
 
     return (
         <div className={classes.main}>
@@ -78,33 +91,39 @@ export const ProductsAdd: FC = () => {
                         />
                     </Form.Item>
 
-                    {/*<div className={classes.form__row}>*/}
-                    {/*    <Form.Item*/}
-                    {/*        name={"price"}*/}
-                    {/*        label={txt.first_name[currentLang]}*/}
-                    {/*        rules={[rules.required(txt.please_enter_firstname[currentLang])]}*/}
-                    {/*        className={classes.form__item}*/}
-                    {/*    >*/}
-                    {/*        <Input placeholder={txt.enter_firstname[currentLang]}/>*/}
-                    {/*    </Form.Item>*/}
+                    <div className={classes.form__row}>
+                        <Form.Item
+                            name={"price"}
+                            label={txt.price[currentLang]}
+                            rules={[rules.required(txt.please_enter_price[currentLang])]}
+                            className={classes.form__item}
+                        >
+                            <NumberInput
+                                value={form.getFieldValue("price")}
+                                onChange={(value: number) => form.setFieldValue("price", value)}
+                            />
+                        </Form.Item>
 
-                    {/*    <Form.Item*/}
-                    {/*        name={"quantity"}*/}
-                    {/*        label={txt.last_name[currentLang]}*/}
-                    {/*        rules={[rules.required(txt.please_enter_lastname[currentLang])]}*/}
-                    {/*        className={classes.form__item}*/}
-                    {/*    >*/}
-                    {/*        <Input placeholder={txt.enter_lastname[currentLang]}/>*/}
-                    {/*    </Form.Item>*/}
-                    {/*</div>*/}
+                        <Form.Item
+                            name={"quantity"}
+                            label={txt.quantity[currentLang]}
+                            rules={[rules.required(txt.please_enter_quantity[currentLang])]}
+                            className={classes.form__item}
+                        >
+                            <NumberInput
+                                value={form.getFieldValue("quantity")}
+                                onChange={(value: number) => form.setFieldValue("quantity", value)}
+                            />
+                        </Form.Item>
+                    </div>
 
-                    {/*<Form.Item*/}
-                    {/*    name={"status"}*/}
-                    {/*    label={txt.status[currentLang]}*/}
-                    {/*    rules={[rules.required(txt.please_select_status[currentLang])]}*/}
-                    {/*>*/}
-                    {/*    <Select/>*/}
-                    {/*</Form.Item>*/}
+                    <Form.Item
+                        name={"status"}
+                        label={txt.status[currentLang]}
+                        rules={[rules.required(txt.please_select_status[currentLang])]}
+                    >
+                        <Select options={productStatusOptions(currentLang)}/>
+                    </Form.Item>
 
                     <Form.Item style={{margin: "0"}}>
                         <div className={classes.form__btns}>
