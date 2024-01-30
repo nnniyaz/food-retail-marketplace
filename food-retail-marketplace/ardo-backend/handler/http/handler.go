@@ -55,6 +55,22 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			AllowedHeaders:   []string{"*"},
 			AllowCredentials: true,
 		}))
+	} else {
+		r.Use(cors.Handler(cors.Options{
+			AllowedOrigins: []string{
+				"https://admin.ardogroup.org",
+			},
+			AllowedMethods: []string{
+				http.MethodHead,
+				http.MethodGet,
+				http.MethodPost,
+				http.MethodPut,
+				http.MethodPatch,
+				http.MethodDelete,
+			},
+			AllowedHeaders:   []string{"*"},
+			AllowCredentials: true,
+		}))
 	}
 
 	r.Use(h.Middleware.Recover)
