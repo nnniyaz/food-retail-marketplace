@@ -22,7 +22,7 @@ export default defineConfig({
     css: { modules: { localsConvention: 'camelCase' } },
     server: {
         proxy: {
-            '/api': 'http://localhost:8080/api',
+            '/api': 'https://api.ardogroup.org/api',
         },
     },
     resolve: {

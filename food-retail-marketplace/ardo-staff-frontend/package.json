@@ -46,6 +46,7 @@
     "build": "echo \"Please use build:dev or build:prod \" && exit 1",
     "build:dev": "dotenv -e .env.development concurrently \"npm run i18n\" \"tsc && vite build\"",
     "build:prod": "dotenv -e .env.production concurrently \"npm run i18n\" \"tsc && vite build\"",
+    "preview": "vite preview",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
