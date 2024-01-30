@@ -3,7 +3,7 @@ import {UserAction, UserActionEnum, UserState} from "./types";
 
 const initialState: UserState = {
     user: {} as User,
-    isAuth: true,
+    isAuth: false,
     isLoadingGetUser: true,
 }
 
