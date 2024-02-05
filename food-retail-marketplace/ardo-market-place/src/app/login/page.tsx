@@ -6,7 +6,7 @@ const Login = () => {
     return (
         <div className={classes["container"]}>
             <Block width={"400px"}>
-                
+                <></>
             </Block>
         </div>
     );
