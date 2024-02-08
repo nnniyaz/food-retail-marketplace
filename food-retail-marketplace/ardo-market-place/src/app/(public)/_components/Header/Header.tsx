@@ -1,6 +1,9 @@
 import React from "react";
 import {Select} from "antd";
 import CaretDownSVG from "@/assets/icons/caret-down.svg";
+import CartSVG from "@/assets/icons/cart.svg";
+import HeartSVG from "@/assets/icons/heart.svg";
+import UserSVG from "@/assets/icons/user.svg";
 import BellSVG from "@/assets/icons/bell.svg";
 import SearchSVG from "@/assets/icons/search.svg";
 import classes from "./Header.module.scss";
@@ -23,14 +26,35 @@ export const Header = () => {
                     />
                 </label>
 
-                <div className={classes.notification}>
-                    <div className={classes.notification__number}>
-                        7
+                <nav className={classes.navbar}>
+                    <div className={classes.nav__item}>
+                        <CartSVG className={classes.nav__item__icon}/>
                     </div>
+                    <div className={classes.nav__item}>
+                        <HeartSVG className={classes.nav__item__icon}/>
+                    </div>
+                    <div className={classes.nav__item}>
+                        <UserSVG className={classes.nav__item__icon}/>
+                    </div>
+                    <div className={classes.nav__item}>
+                        <div className={classes.notification}>
+                            <div className={classes.notification__number}>7</div>
+                            <BellSVG className={classes.notification__bell}/>
+                        </div>
+                    </div>
+                </nav>
+
+                <div className={classes.notification}>
+                    <div className={classes.notification__number}>7</div>
                     <BellSVG className={classes.notification__bell}/>
                 </div>
             </div>
-            <search>
+            <search className={classes.search__wrapper}>
+                <div className={classes.burger}>
+                    <div className={classes.burger__slice}/>
+                    <div className={classes.burger__slice}/>
+                    <div className={classes.burger__slice}/>
+                </div>
                 <label className={classes.search}>
                     <SearchSVG className={classes.search__icon}/>
                     <input

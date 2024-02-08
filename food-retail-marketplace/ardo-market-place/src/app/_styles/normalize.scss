@@ -11,3 +11,11 @@
   font-family: 'SF Pro Display', sans-serif;
   -webkit-tap-highlight-color: transparent;
 }
+
+body {
+  background-color: var(--primary-bg-color);
+}
+
+div, span, p, h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-font-color);
+}
