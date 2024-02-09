@@ -1,11 +1,11 @@
 import React from "react";
 import {Select} from "antd";
+import {Search} from "@/app/_ui/Search";
 import CaretDownSVG from "@/assets/icons/caret-down.svg";
 import CartSVG from "@/assets/icons/cart.svg";
 import HeartSVG from "@/assets/icons/heart.svg";
 import UserSVG from "@/assets/icons/user.svg";
 import BellSVG from "@/assets/icons/bell.svg";
-import SearchSVG from "@/assets/icons/search.svg";
 import classes from "./Header.module.scss";
 
 export const Header = () => {
@@ -49,21 +49,7 @@ export const Header = () => {
                     <BellSVG className={classes.notification__bell}/>
                 </div>
             </div>
-            <search className={classes.search__wrapper}>
-                <div className={classes.burger}>
-                    <div className={classes.burger__slice}/>
-                    <div className={classes.burger__slice}/>
-                    <div className={classes.burger__slice}/>
-                </div>
-                <label className={classes.search}>
-                    <SearchSVG className={classes.search__icon}/>
-                    <input
-                        type="text"
-                        placeholder="Search in Restolink"
-                        className={classes.search__input}
-                    />
-                </label>
-            </search>
+            <Search/>
         </header>
     )
 }

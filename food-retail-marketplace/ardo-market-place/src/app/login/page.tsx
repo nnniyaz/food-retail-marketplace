@@ -1,5 +1,5 @@
 import React from 'react';
-import Block from "@/app/_components/Block";
+import Block from "@/app/_ui/Block";
 import classes from './page.module.scss';
 
 const Login = () => {

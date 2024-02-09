@@ -1,4 +1,4 @@
-import Link from "next/link";
+import {NavLink} from "@/app/_ui/NavLink";
 import {Routes} from "@/pkg/routes";
 import HomeSVG from "@/assets/icons/home.svg"
 import ListSVG from "@/assets/icons/list.svg"
@@ -18,29 +18,29 @@ export const Footer = () => {
             <nav className={classes.navbar}>
                 <ul className={classes.navbar__list}>
                     <li className={classes.navbar__list_item}>
-                        <Link href={Routes.HOME} className={classes.navbar__list_item__link}>
+                        <NavLink href={Routes.HOME}>
                             <HomeSVG className={classes.navbar__list_item__icon}/>
-                        </Link>
+                        </NavLink>
                     </li>
                     <li className={classes.navbar__list_item}>
-                        <Link href={Routes.CATALOG} className={classes.navbar__list_item__link}>
+                        <NavLink href={Routes.CATALOG}>
                             <ListSVG className={classes.navbar__list_item__icon}/>
-                        </Link>
+                        </NavLink>
                     </li>
                     <li className={classes.navbar__list_item}>
-                        <Link href={Routes.CART} className={classes.navbar__list_item__link}>
+                        <NavLink href={Routes.CART}>
                             <CartSVG className={classes.navbar__list_item__icon}/>
-                        </Link>
+                        </NavLink>
                     </li>
                     <li className={classes.navbar__list_item}>
-                        <Link href={Routes.FAVOURITES} className={classes.navbar__list_item__link}>
+                        <NavLink href={Routes.FAVOURITES}>
                             <HeartSVG className={classes.navbar__list_item__icon}/>
-                        </Link>
+                        </NavLink>
                     </li>
                     <li className={classes.navbar__list_item}>
-                        <Link href={Routes.PROFILE} className={classes.navbar__list_item__link}>
+                        <NavLink href={Routes.PROFILE}>
                             <UserSVG className={classes.navbar__list_item__icon}/>
-                        </Link>
+                        </NavLink>
                     </li>
                 </ul>
             </nav>
