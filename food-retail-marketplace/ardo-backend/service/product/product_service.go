@@ -14,7 +14,7 @@ type ProductService interface {
 	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
 	GetById(ctx context.Context, productId string) (*product.Product, error)
 	Create(ctx context.Context, product *product.Product) error
-	Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int, img, status string) error
+	Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int64, img, status string) error
 	Recover(ctx context.Context, productId string) error
 	Delete(ctx context.Context, productId string) error
 }
@@ -50,7 +50,7 @@ func (p *productService) Create(ctx context.Context, newProduct *product.Product
 	return p.productRepo.Create(ctx, newProduct)
 }
 
-func (p *productService) Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int, img, status string) error {
+func (p *productService) Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int64, img, status string) error {
 	if err := product.Update(name, desc, price, quantity, img, status); err != nil {
 		return err
 	}

@@ -29,7 +29,7 @@ type Product struct {
 	Name      core.MlString `json:"name"`
 	Desc      core.MlString `json:"desc"`
 	Price     float64       `json:"price"`
-	Quantity  int           `json:"quantity"`
+	Quantity  int64         `json:"quantity"`
 	Img       string        `json:"img"`
 	Status    string        `json:"status"`
 	IsDeleted bool          `json:"isDeleted"`
@@ -95,7 +95,7 @@ type AddProductRequest struct {
 	Name     core.MlString `json:"name"`
 	Desc     core.MlString `json:"desc"`
 	Price    float64       `json:"price"`
-	Quantity int           `json:"quantity"`
+	Quantity int64         `json:"quantity"`
 	Img      string        `json:"img"`
 	Status   string        `json:"status"`
 }
@@ -117,7 +117,7 @@ type UpdateProductRequest struct {
 	Name     core.MlString `json:"name"`
 	Desc     core.MlString `json:"desc"`
 	Price    float64       `json:"price"`
-	Quantity int           `json:"quantity"`
+	Quantity int64         `json:"quantity"`
 	Img      string        `json:"img"`
 	Status   string        `json:"status"`
 }

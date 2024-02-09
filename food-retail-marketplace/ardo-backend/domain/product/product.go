@@ -13,15 +13,16 @@ type Product struct {
 	name      core.MlString
 	desc      core.MlString
 	price     float64
-	quantity  int
+	quantity  int64
 	img       string
 	status    valueobject.ProductStatus
 	isDeleted bool
 	createdAt time.Time
 	updatedAt time.Time
+	version   int
 }
 
-func NewProduct(name, desc core.MlString, price float64, quantity int, img, status string) (*Product, error) {
+func NewProduct(name, desc core.MlString, price float64, quantity int64, img, status string) (*Product, error) {
 	if name.IsEmpty() {
 		return nil, exceptions.ErrEmptyProductName
 	}
@@ -50,6 +51,7 @@ func NewProduct(name, desc core.MlString, price float64, quantity int, img, stat
 		isDeleted: false,
 		createdAt: time.Now(),
 		updatedAt: time.Now(),
+		version:   1,
 	}, nil
 }
 
@@ -69,7 +71,7 @@ func (p *Product) GetPrice() float64 {
 	return p.price
 }
 
-func (p *Product) GetQuantity() int {
+func (p *Product) GetQuantity() int64 {
 	return p.quantity
 }
 
@@ -93,7 +95,11 @@ func (p *Product) GetUpdatedAt() time.Time {
 	return p.updatedAt
 }
 
-func (p *Product) Update(name, desc core.MlString, price float64, quantity int, img, status string) error {
+func (p *Product) GetVersion() int {
+	return p.version
+}
+
+func (p *Product) Update(name, desc core.MlString, price float64, quantity int64, img, status string) error {
 	if name.IsEmpty() {
 		return core.ErrEmptyMlString
 	}
@@ -118,10 +124,11 @@ func (p *Product) Update(name, desc core.MlString, price float64, quantity int, 
 	p.img = img
 	p.status = productStatus
 	p.updatedAt = time.Now()
+	p.version++
 	return nil
 }
 
-func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price float64, quantity int, img string, status string, isDeleted bool, createdAt, updatedAt time.Time) *Product {
+func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price float64, quantity int64, img string, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Product {
 	return &Product{
 		id:        id,
 		name:      name,
@@ -133,5 +140,6 @@ func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price 
 		isDeleted: isDeleted,
 		createdAt: createdAt,
 		updatedAt: updatedAt,
+		version:   version,
 	}
 }

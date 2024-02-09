@@ -14,7 +14,7 @@ func New(isDevMode bool, smtpPort int, smtpUser, smtpPass, smtpHost, mongoUri, a
 	return &Config{
 		mongoUri:    mongoUri,
 		isDevMode:   isDevMode,
-		emailCfg:    NewCfgEmail(smtpPort, smtpUser, smtpPass, smtpHost),
+		emailCfg:    NewCfgEmail(int64(smtpPort), smtpUser, smtpPass, smtpHost),
 		apiUri:      apiUri,
 		clientUri:   clientUri,
 		spaceKey:    spaceKey,
@@ -54,10 +54,10 @@ type CfgEmail struct {
 	smtpUser string
 	smtpPass string
 	smtpHost string
-	smtpPort int
+	smtpPort int64
 }
 
-func NewCfgEmail(smtpPort int, smtpUser, smtpPass, smtpHost string) *CfgEmail {
+func NewCfgEmail(smtpPort int64, smtpUser, smtpPass, smtpHost string) *CfgEmail {
 	return &CfgEmail{
 		smtpUser: smtpUser,
 		smtpPass: smtpPass,
@@ -78,6 +78,6 @@ func (c *CfgEmail) GetSmtpHost() string {
 	return c.smtpHost
 }
 
-func (c *CfgEmail) GetSmtpPort() int {
+func (c *CfgEmail) GetSmtpPort() int64 {
 	return c.smtpPort
 }

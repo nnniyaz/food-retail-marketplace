@@ -41,8 +41,8 @@ func newFromSession(s *session.Session) *mongoSession {
 	}
 }
 
-func (m *mongoSession) ToAggregate() (*session.Session, error) {
-	return session.UnmarshalSessionFromDatabase(m.Id, m.UserID, m.Session, m.UserAgent, m.CreatedAt)
+func (m *mongoSession) ToAggregate() *session.Session {
+	return session.UnmarshalSessionFromDatabase(m.Id, m.UserID, m.Session, m.UserAgent, m.LastActionAt, m.CreatedAt)
 }
 
 func (r *RepoSession) FindManyByUserId(ctx context.Context, userId uuid.UUID) ([]*session.Session, error) {
@@ -61,11 +61,7 @@ func (r *RepoSession) FindManyByUserId(ctx context.Context, userId uuid.UUID) ([
 		if err = cur.Decode(&s); err != nil {
 			return nil, err
 		}
-		ag, err := s.ToAggregate()
-		if err != nil {
-			return nil, err
-		}
-		sessions = append(sessions, ag)
+		sessions = append(sessions, s.ToAggregate())
 	}
 	return sessions, nil
 }
@@ -78,11 +74,7 @@ func (r *RepoSession) FindOneBySession(ctx context.Context, session uuid.UUID) (
 		}
 		return nil, err
 	}
-	ag, err := s.ToAggregate()
-	if err != nil {
-		return nil, err
-	}
-	return ag, nil
+	return s.ToAggregate(), nil
 }
 
 func (r *RepoSession) Create(ctx context.Context, session *session.Session) error {

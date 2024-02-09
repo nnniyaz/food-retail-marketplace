@@ -30,12 +30,13 @@ type mongoProduct struct {
 	Name      core.MlString `bson:"name"`
 	Desc      core.MlString `bson:"desc"`
 	Price     float64       `bson:"price"`
-	Quantity  int           `bson:"quantity"`
+	Quantity  int64         `bson:"quantity"`
 	Img       string        `bson:"img"`
 	Status    string        `bson:"status"`
 	IsDeleted bool          `bson:"isDeleted"`
 	CreatedAt time.Time     `bson:"createdAt"`
 	UpdatedAt time.Time     `bson:"updatedAt"`
+	Version   int           `bson:"version"`
 }
 
 func newFromProduct(p *product.Product) *mongoProduct {
@@ -50,11 +51,12 @@ func newFromProduct(p *product.Product) *mongoProduct {
 		IsDeleted: p.GetIsDeleted(),
 		CreatedAt: p.GetCreatedAt(),
 		UpdatedAt: p.GetUpdatedAt(),
+		Version:   p.GetVersion(),
 	}
 }
 
 func (m *mongoProduct) ToAggregate() *product.Product {
-	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.Quantity, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt)
+	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.Quantity, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoProduct) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {

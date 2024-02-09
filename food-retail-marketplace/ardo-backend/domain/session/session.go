@@ -59,16 +59,13 @@ func (s *Session) UpdateLastActionAt() {
 	s.lastActionAt = time.Now()
 }
 
-func UnmarshalSessionFromDatabase(id uuid.UUID, userId uuid.UUID, session uuid.UUID, userAgent string, createdAt time.Time) (*Session, error) {
-	ua, err := valueobject.NewUserAgent(userAgent)
-	if err != nil {
-		return nil, err
-	}
+func UnmarshalSessionFromDatabase(id uuid.UUID, userId uuid.UUID, session uuid.UUID, userAgent string, lastActionAt, createdAt time.Time) *Session {
 	return &Session{
-		id:        id,
-		userId:    userId,
-		session:   session,
-		userAgent: ua,
-		createdAt: createdAt,
-	}, nil
+		id:           id,
+		userId:       userId,
+		session:      session,
+		userAgent:    valueobject.UserAgent(userAgent),
+		lastActionAt: lastActionAt,
+		createdAt:    createdAt,
+	}
 }

@@ -20,6 +20,7 @@ type User struct {
 	isDeleted     bool
 	createdAt     time.Time
 	updatedAt     time.Time
+	version       int
 }
 
 func NewUser(firstName, lastName, mail, password, userType, preferredLang string) (*User, error) {
@@ -66,6 +67,7 @@ func NewUser(firstName, lastName, mail, password, userType, preferredLang string
 		isDeleted:     false,
 		createdAt:     time.Now(),
 		updatedAt:     time.Now(),
+		version:       1,
 	}, nil
 }
 
@@ -109,6 +111,10 @@ func (u *User) GetUpdatedAt() time.Time {
 	return u.updatedAt
 }
 
+func (u *User) GetVersion() int {
+	return u.version
+}
+
 func (u *User) UpdateCredentials(firstName, lastName string) error {
 	userFirstName, err := valueobject.NewFirstName(firstName)
 	if err != nil {
@@ -121,6 +127,7 @@ func (u *User) UpdateCredentials(firstName, lastName string) error {
 	u.firstName = userFirstName
 	u.lastName = userLastName
 	u.updatedAt = time.Now()
+	u.version++
 	return nil
 }
 
@@ -131,6 +138,7 @@ func (u *User) UpdateEmail(mail string) error {
 	}
 	u.email = userEmail
 	u.updatedAt = time.Now()
+	u.version++
 	return nil
 }
 
@@ -141,6 +149,7 @@ func (u *User) UpdateLanguage(preferredLang string) error {
 	}
 	u.preferredLang = userPreferredLang
 	u.updatedAt = time.Now()
+	u.version++
 	return nil
 }
 
@@ -158,10 +167,11 @@ func (u *User) ChangePassword(password string) error {
 	}
 	u.password = newPassword
 	u.updatedAt = time.Now()
+	u.version++
 	return nil
 }
 
-func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, userType, preferredLang string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time) *User {
+func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, userType, preferredLang string, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time, version int) *User {
 	return &User{
 		id:            id,
 		firstName:     valueobject.FirstName(firstName),
@@ -173,5 +183,6 @@ func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, userType
 		isDeleted:     isDeleted,
 		createdAt:     createdAt,
 		updatedAt:     updatedAt,
+		version:       version,
 	}
 }

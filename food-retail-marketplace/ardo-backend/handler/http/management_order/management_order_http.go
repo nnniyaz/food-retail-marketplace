@@ -26,18 +26,20 @@ func NewHttpDelivery(service management.ManagementOrderService, l logger.Logger)
 // -----------------------------------------------------------------------------
 
 type OrderProduct struct {
-	ProductId   string        `json:"productId"`
-	ProductName core.MlString `json:"productName"`
-	Quantity    int           `json:"quantity"`
-	TotalPrice  float64       `json:"totalPrice"`
+	ProductId    string        `json:"productId"`
+	ProductName  core.MlString `json:"productName"`
+	Quantity     int64         `json:"quantity"`
+	PricePerUnit float64       `json:"pricePerUnit"`
+	TotalPrice   float64       `json:"totalPrice"`
 }
 
 func NewOrderProduct(o valueobject.OrderProduct) OrderProduct {
 	return OrderProduct{
-		ProductId:   o.GetProductId().String(),
-		ProductName: o.GetProductName(),
-		Quantity:    o.GetQuantity(),
-		TotalPrice:  o.GetTotalPrice(),
+		ProductId:    o.GetProductId().String(),
+		ProductName:  o.GetProductName(),
+		Quantity:     o.GetQuantity(),
+		PricePerUnit: o.GetPricePerUnit(),
+		TotalPrice:   o.GetTotalPrice(),
 	}
 }
 
@@ -52,7 +54,7 @@ func NewOrderProducts(o []valueobject.OrderProduct) []OrderProduct {
 func UnmarshalOrderProductsFromRequest(orderProducts []OrderProduct) []valueobject.OrderProduct {
 	var ops []valueobject.OrderProduct
 	for _, p := range orderProducts {
-		ops = append(ops, valueobject.NewOrderProduct(p.ProductId, p.ProductName, p.Quantity, p.TotalPrice))
+		ops = append(ops, valueobject.NewOrderProduct(p.ProductId, p.ProductName, p.Quantity, p.PricePerUnit, p.TotalPrice))
 	}
 	return ops
 }
@@ -98,14 +100,16 @@ func UnmarshalOrderDeliveryInfoFromRequest(o OrderDeliveryInfo) valueobject.Deli
 type Order struct {
 	Id               string                `json:"id"`
 	UserId           string                `json:"userId"`
+	Number           string                `json:"number"`
 	Products         []OrderProduct        `json:"products"`
-	Quantity         int                   `json:"quantity"`
+	Quantity         int64                 `json:"quantity"`
 	TotalPrice       float64               `json:"totalPrice"`
+	Currency         string                `json:"currency"`
 	CustomerContacts OrderCustomerContacts `json:"customerContacts"`
 	DeliveryInfo     OrderDeliveryInfo     `json:"deliveryInfo"`
 	OrderComment     string                `json:"orderComment"`
-	IsDeleted        bool                  `json:"isDeleted"`
 	Status           string                `json:"status"`
+	IsDeleted        bool                  `json:"isDeleted"`
 	CreatedAt        string                `json:"createdAt"`
 	UpdatedAt        string                `json:"updatedAt"`
 }
@@ -114,14 +118,16 @@ func NewOrder(o *order.Order) Order {
 	return Order{
 		Id:               o.GetId().String(),
 		UserId:           o.GetUserId().String(),
+		Number:           o.GetNumber().String(),
 		Products:         NewOrderProducts(o.GetProducts()),
 		Quantity:         o.GetQuantity(),
 		TotalPrice:       o.GetTotalPrice(),
+		Currency:         o.GetCurrency().String(),
 		CustomerContacts: NewOrderCustomerContacts(o.GetCustomerContacts()),
 		DeliveryInfo:     NewOrderDeliveryInfo(o.GetDeliveryInfo()),
 		OrderComment:     o.GetOrderComment(),
-		IsDeleted:        o.GetIsDeleted(),
 		Status:           o.GetStatus().String(),
+		IsDeleted:        o.GetIsDeleted(),
 		CreatedAt:        o.GetCreatedAt().String(),
 		UpdatedAt:        o.GetUpdatedAt().String(),
 	}
@@ -182,8 +188,9 @@ func (hd *HttpDelivery) GetOneById(w http.ResponseWriter, r *http.Request) {
 type CreateOrderRequest struct {
 	UserId           string                `json:"userId"`
 	Products         []OrderProduct        `json:"products"`
-	Quantity         int                   `json:"quantity"`
+	Quantity         int64                 `json:"quantity"`
 	TotalPrice       float64               `json:"totalPrice"`
+	Currency         string                `json:"currency"`
 	CustomerContacts OrderCustomerContacts `json:"customerContacts"`
 	DeliveryInfo     OrderDeliveryInfo     `json:"deliveryInfo"`
 	OrderComment     string                `json:"orderComment"`
@@ -195,7 +202,7 @@ func (hd *HttpDelivery) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.Create(r.Context(), in.UserId, UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.OrderComment); err != nil {
+	if err := hd.service.Create(r.Context(), in.UserId, UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.OrderComment); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

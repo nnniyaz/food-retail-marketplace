@@ -20,6 +20,7 @@ user_not_found,Пользователь не найден,User not found
 account_not_active,Аккаунт не активирован,Account not activated
 empty_merchant_role,Роль не может быть пустой,Role can not be empty
 invalid_merchant_role,Неверная роль,Invalid role
+empty_currency,Валюта не может быть пустой,Currency can not be empty
 invalid_currency,Неверная валюта,Invalid currency
 empty_phone_number,Номер телефона не может быть пустым,Phone number can not be empty
 empty_address,Адрес не может быть пустым,Address can not be empty
@@ -59,3 +60,4 @@ empty_customer_name,Имя клиента не может быть пустым,
 empty_customer_phone,Телефон клиента не может быть пустым,Customer phone can not be empty
 order_already_exists,Заказ уже существует,Order already exists
 order_not_found,Заказ не найден,Order not found
+wrong_products_total_price,Неверная итоговая цена продуктов,Wrong products total price

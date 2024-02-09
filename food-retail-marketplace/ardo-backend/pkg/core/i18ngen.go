@@ -24,45 +24,47 @@ const (
 	TXT_ACCOUNT_NOT_ACTIVE          TxtKey = 19
 	TXT_EMPTY_MERCHANT_ROLE         TxtKey = 20
 	TXT_INVALID_MERCHANT_ROLE       TxtKey = 21
-	TXT_INVALID_CURRENCY            TxtKey = 22
-	TXT_EMPTY_PHONE_NUMBER          TxtKey = 23
-	TXT_EMPTY_ADDRESS               TxtKey = 24
-	TXT_INVALID_PRODUCT_STATUS      TxtKey = 25
-	TXT_INVALID_PRODUCT_PRICE       TxtKey = 26
-	TXT_INVALID_PRODUCT_QUANTITY    TxtKey = 27
-	TXT_INVALID_PRODUCT_IMG_URL     TxtKey = 28
-	TXT_INVALID_REVIEW_RATING       TxtKey = 29
-	TXT_INVALID_REVIEW_COMMENT      TxtKey = 30
-	TXT_WRONG_MLSTRING_FORMAT       TxtKey = 31
-	TXT_USER_AGENT_EMPTY            TxtKey = 32
-	TXT_USER_SESSION_ALREADY_EXISTS TxtKey = 33
-	TXT_USER_SESSION_NOT_FOUND      TxtKey = 34
-	TXT_USER_ALREADY_EXISTS         TxtKey = 35
-	TXT_UNAUTHORIZED                TxtKey = 36
-	TXT_EMPTY_ORG_NAME              TxtKey = 37
-	TXT_ORG_NAME_TOO_SHORT          TxtKey = 38
-	TXT_ORG_NAME_TOO_LONG           TxtKey = 39
-	TXT_DO_NOT_HAVE_AN_ACCESS       TxtKey = 40
-	TXT_OLD_PASSWORD_DOES_NOT_MATCH TxtKey = 41
-	TXT_EMPTY_ORG_LOGO              TxtKey = 42
-	TXT_ORG_NOT_FOUND               TxtKey = 43
-	TXT_USER_ALREADY_IN_ORG         TxtKey = 44
-	TXT_FILE_IS_NIL                 TxtKey = 45
-	TXT_UPLOADED_IMG_INVALID        TxtKey = 46
-	TXT_FILE_NOT_FOUND              TxtKey = 47
-	TXT_EMPTY_LANG                  TxtKey = 48
-	TXT_INVALID_LANG                TxtKey = 49
-	TXT_PRODUCT_ALREADY_EXISTS      TxtKey = 50
-	TXT_PRODUCT_NOT_FOUND           TxtKey = 51
-	TXT_EMPTY_PRODUCT_NAME          TxtKey = 52
-	TXT_EMPTY_DELIVERY_ADDRESS      TxtKey = 53
-	TXT_INVALID_ORDER_QUANTITY      TxtKey = 54
-	TXT_INVALID_ORDER_PRICE         TxtKey = 55
-	TXT_INVALID_ORDER_STATUS        TxtKey = 56
-	TXT_EMPTY_CUSTOMER_NAME         TxtKey = 57
-	TXT_EMPTY_CUSTOMER_PHONE        TxtKey = 58
-	TXT_ORDER_ALREADY_EXISTS        TxtKey = 59
-	TXT_ORDER_NOT_FOUND             TxtKey = 60
+	TXT_EMPTY_CURRENCY              TxtKey = 22
+	TXT_INVALID_CURRENCY            TxtKey = 23
+	TXT_EMPTY_PHONE_NUMBER          TxtKey = 24
+	TXT_EMPTY_ADDRESS               TxtKey = 25
+	TXT_INVALID_PRODUCT_STATUS      TxtKey = 26
+	TXT_INVALID_PRODUCT_PRICE       TxtKey = 27
+	TXT_INVALID_PRODUCT_QUANTITY    TxtKey = 28
+	TXT_INVALID_PRODUCT_IMG_URL     TxtKey = 29
+	TXT_INVALID_REVIEW_RATING       TxtKey = 30
+	TXT_INVALID_REVIEW_COMMENT      TxtKey = 31
+	TXT_WRONG_MLSTRING_FORMAT       TxtKey = 32
+	TXT_USER_AGENT_EMPTY            TxtKey = 33
+	TXT_USER_SESSION_ALREADY_EXISTS TxtKey = 34
+	TXT_USER_SESSION_NOT_FOUND      TxtKey = 35
+	TXT_USER_ALREADY_EXISTS         TxtKey = 36
+	TXT_UNAUTHORIZED                TxtKey = 37
+	TXT_EMPTY_ORG_NAME              TxtKey = 38
+	TXT_ORG_NAME_TOO_SHORT          TxtKey = 39
+	TXT_ORG_NAME_TOO_LONG           TxtKey = 40
+	TXT_DO_NOT_HAVE_AN_ACCESS       TxtKey = 41
+	TXT_OLD_PASSWORD_DOES_NOT_MATCH TxtKey = 42
+	TXT_EMPTY_ORG_LOGO              TxtKey = 43
+	TXT_ORG_NOT_FOUND               TxtKey = 44
+	TXT_USER_ALREADY_IN_ORG         TxtKey = 45
+	TXT_FILE_IS_NIL                 TxtKey = 46
+	TXT_UPLOADED_IMG_INVALID        TxtKey = 47
+	TXT_FILE_NOT_FOUND              TxtKey = 48
+	TXT_EMPTY_LANG                  TxtKey = 49
+	TXT_INVALID_LANG                TxtKey = 50
+	TXT_PRODUCT_ALREADY_EXISTS      TxtKey = 51
+	TXT_PRODUCT_NOT_FOUND           TxtKey = 52
+	TXT_EMPTY_PRODUCT_NAME          TxtKey = 53
+	TXT_EMPTY_DELIVERY_ADDRESS      TxtKey = 54
+	TXT_INVALID_ORDER_QUANTITY      TxtKey = 55
+	TXT_INVALID_ORDER_PRICE         TxtKey = 56
+	TXT_INVALID_ORDER_STATUS        TxtKey = 57
+	TXT_EMPTY_CUSTOMER_NAME         TxtKey = 58
+	TXT_EMPTY_CUSTOMER_PHONE        TxtKey = 59
+	TXT_ORDER_ALREADY_EXISTS        TxtKey = 60
+	TXT_ORDER_NOT_FOUND             TxtKey = 61
+	TXT_WRONG_PRODUCTS_TOTAL_PRICE  TxtKey = 62
 )
 
 var Txts = TxtResource{
@@ -149,6 +151,10 @@ var Txts = TxtResource{
 	TXT_INVALID_MERCHANT_ROLE: MlString{
 		RU: `Неверная роль`,
 		EN: `Invalid role`,
+	},
+	TXT_EMPTY_CURRENCY: MlString{
+		RU: `Валюта не может быть пустой`,
+		EN: `Currency can not be empty`,
 	},
 	TXT_INVALID_CURRENCY: MlString{
 		RU: `Неверная валюта`,
@@ -306,6 +312,10 @@ var Txts = TxtResource{
 		RU: `Заказ не найден`,
 		EN: `Order not found`,
 	},
+	TXT_WRONG_PRODUCTS_TOTAL_PRICE: MlString{
+		RU: `Неверная итоговая цена продуктов`,
+		EN: `Wrong products total price`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -352,6 +362,8 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "empty_merchant_role"
 	case TXT_INVALID_MERCHANT_ROLE:
 		return "invalid_merchant_role"
+	case TXT_EMPTY_CURRENCY:
+		return "empty_currency"
 	case TXT_INVALID_CURRENCY:
 		return "invalid_currency"
 	case TXT_EMPTY_PHONE_NUMBER:
@@ -430,6 +442,8 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "order_already_exists"
 	case TXT_ORDER_NOT_FOUND:
 		return "order_not_found"
+	case TXT_WRONG_PRODUCTS_TOTAL_PRICE:
+		return "wrong_products_total_price"
 
 	default:
 		return ""

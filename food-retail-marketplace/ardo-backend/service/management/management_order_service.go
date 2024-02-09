@@ -12,7 +12,7 @@ type ManagementOrderService interface {
 	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error)
 	GetByUserId(ctx context.Context, offset, limit int64, isDeleted bool, userId string) ([]*order.Order, int64, error)
 	GetOneById(ctx context.Context, userId string) (*order.Order, error)
-	Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int, totalPrice float64, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment string) error
+	Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment string) error
 	UpdateStatus(ctx context.Context, userId string, status string) error
 	Recover(ctx context.Context, userId string) error
 	Delete(ctx context.Context, userId string) error
@@ -39,8 +39,8 @@ func (m *managementOrderService) GetOneById(ctx context.Context, orderId string)
 	return m.orderService.GetOneById(ctx, orderId)
 }
 
-func (m *managementOrderService) Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int, totalPrice float64, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment string) error {
-	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, customerContacts, deliveryInfo, orderComment)
+func (m *managementOrderService) Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment string) error {
+	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, currency, customerContacts, deliveryInfo, orderComment)
 	if err != nil {
 		return err
 	}

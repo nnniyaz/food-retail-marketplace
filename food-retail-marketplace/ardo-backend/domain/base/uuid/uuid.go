@@ -2,9 +2,9 @@ package uuid
 
 import "github.com/google/uuid"
 
-type UUID uuid.UUID
-
 var Nil = UUID(uuid.Nil)
+
+type UUID uuid.UUID
 
 func NewUUID() UUID {
 	return UUID(uuid.New())

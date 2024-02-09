@@ -2,10 +2,12 @@ package lang
 
 import "github/nnniyaz/ardo/pkg/core"
 
-type Lang string
+var (
+	ErrEmptyLang   = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_LANG)
+	ErrInvalidLang = core.NewI18NError(core.EINVALID, core.TXT_INVALID_LANG)
+)
 
-var ErrEmptyLang = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_LANG)
-var ErrInvalidLang = core.NewI18NError(core.EINVALID, core.TXT_INVALID_LANG)
+type Lang string
 
 const (
 	RU Lang = "RU"

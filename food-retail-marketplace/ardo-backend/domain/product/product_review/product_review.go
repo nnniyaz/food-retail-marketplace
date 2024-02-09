@@ -16,13 +16,13 @@ type ProductReview struct {
 	id         uuid.UUID
 	productId  uuid.UUID
 	customerId uuid.UUID
-	rating     int
+	rating     int64
 	comment    string
 	createdAt  time.Time
 	updatedAt  time.Time
 }
 
-func NewProductReview(productId, customerId uuid.UUID, rating int, comment string) (*ProductReview, error) {
+func NewProductReview(productId, customerId uuid.UUID, rating int64, comment string) (*ProductReview, error) {
 	if rating < 1 || rating > 5 {
 		return nil, ErrInvalidRating
 	}
@@ -54,7 +54,7 @@ func (p *ProductReview) GetCustomerId() uuid.UUID {
 	return p.customerId
 }
 
-func (p *ProductReview) GetRating() int {
+func (p *ProductReview) GetRating() int64 {
 	return p.rating
 }
 
@@ -70,7 +70,7 @@ func (p *ProductReview) GetUpdatedAt() time.Time {
 	return p.updatedAt
 }
 
-func UnmarshalProductReviewFromDatabase(id, productId, customerId uuid.UUID, rating int, comment string, createdAt, updatedAt time.Time) (*ProductReview, error) {
+func UnmarshalProductReviewFromDatabase(id, productId, customerId uuid.UUID, rating int64, comment string, createdAt, updatedAt time.Time) (*ProductReview, error) {
 	if rating < 1 || rating > 5 {
 		return nil, ErrInvalidRating
 	}

@@ -25,20 +25,22 @@ func (r *RepoOrder) Coll() *mongo.Collection {
 }
 
 type mongoOrderProduct struct {
-	ProductId   uuid.UUID     `bson:"productId"`
-	ProductName core.MlString `bson:"productName"`
-	Quantity    int           `bson:"quantity"`
-	TotalPrice  float64       `bson:"totalPrice"`
+	ProductId    uuid.UUID     `bson:"productId"`
+	ProductName  core.MlString `bson:"productName"`
+	Quantity     int64         `bson:"quantity"`
+	PricePerUnit float64       `bson:"pricePerUnit"`
+	TotalPrice   float64       `bson:"totalPrice"`
 }
 
 func newFromOrderProducts(o []valueobject.OrderProduct) []mongoOrderProduct {
 	m := make([]mongoOrderProduct, len(o))
 	for i, orderProduct := range o {
 		m[i] = mongoOrderProduct{
-			ProductId:   orderProduct.GetProductId(),
-			ProductName: orderProduct.GetProductName(),
-			Quantity:    orderProduct.GetQuantity(),
-			TotalPrice:  orderProduct.GetTotalPrice(),
+			ProductId:    orderProduct.GetProductId(),
+			ProductName:  orderProduct.GetProductName(),
+			Quantity:     orderProduct.GetQuantity(),
+			PricePerUnit: orderProduct.GetPricePerUnit(),
+			TotalPrice:   orderProduct.GetTotalPrice(),
 		}
 	}
 	return m
@@ -89,9 +91,11 @@ func (m *mongoDeliveryInfo) ToAggregate() valueobject.DeliveryInfo {
 type mongoOrder struct {
 	Id               uuid.UUID             `bson:"_id"`
 	UserId           uuid.UUID             `bson:"userId"`
+	Number           string                `bson:"number"`
 	Products         []mongoOrderProduct   `bson:"products"`
-	Quantity         int                   `bson:"quantity"`
+	Quantity         int64                 `bson:"quantity"`
 	TotalPrice       float64               `bson:"totalPrice"`
+	Currency         string                `bson:"currency"`
 	CustomerContacts mongoCustomerContacts `bson:"customerContacts"`
 	DeliveryInfo     mongoDeliveryInfo     `bson:"deliveryInfo"`
 	OrderComment     string                `bson:"orderComment"`
@@ -99,15 +103,18 @@ type mongoOrder struct {
 	IsDeleted        bool                  `bson:"isDeleted"`
 	CreatedAt        time.Time             `bson:"createdAt"`
 	UpdatedAt        time.Time             `bson:"updatedAt"`
+	Version          int                   `bson:"version"`
 }
 
 func newFromOrder(o *order.Order) *mongoOrder {
 	return &mongoOrder{
 		Id:               o.GetId(),
 		UserId:           o.GetUserId(),
+		Number:           o.GetNumber().String(),
 		Products:         newFromOrderProducts(o.GetProducts()),
 		Quantity:         o.GetQuantity(),
 		TotalPrice:       o.GetTotalPrice(),
+		Currency:         o.GetCurrency().String(),
 		CustomerContacts: newFromCustomerContacts(o.GetCustomerContacts()),
 		DeliveryInfo:     newFromDeliveryInfo(o.GetDeliveryInfo()),
 		OrderComment:     o.GetOrderComment(),
@@ -115,6 +122,7 @@ func newFromOrder(o *order.Order) *mongoOrder {
 		IsDeleted:        o.GetIsDeleted(),
 		CreatedAt:        o.GetCreatedAt(),
 		UpdatedAt:        o.GetUpdatedAt(),
+		Version:          o.GetVersion(),
 	}
 }
 
@@ -123,7 +131,7 @@ func (m *mongoOrder) ToAggregate() *order.Order {
 	for _, product := range m.Products {
 		products = append(products, product.ToAggregate())
 	}
-	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, products, m.Quantity, m.TotalPrice, m.CustomerContacts.ToAggregate(), m.DeliveryInfo.ToAggregate(), m.OrderComment, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt)
+	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, m.Number, products, m.Quantity, m.TotalPrice, m.Currency, m.CustomerContacts.ToAggregate(), m.DeliveryInfo.ToAggregate(), m.OrderComment, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoOrder) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error) {

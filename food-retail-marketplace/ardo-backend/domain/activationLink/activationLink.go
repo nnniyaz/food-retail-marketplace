@@ -11,6 +11,7 @@ type ActivationLink struct {
 	isActivated bool
 	createdAt   time.Time
 	updatedAt   time.Time
+	version     int64
 }
 
 func NewActivationLink(userId uuid.UUID) *ActivationLink {

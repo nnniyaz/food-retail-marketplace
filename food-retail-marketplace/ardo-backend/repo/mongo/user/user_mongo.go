@@ -54,6 +54,7 @@ type mongoUser struct {
 	IsDeleted     bool          `bson:"isDeleted"`
 	CreatedAt     time.Time     `bson:"createdAt"`
 	UpdatedAt     time.Time     `bson:"updatedAt"`
+	Version       int           `bson:"version"`
 }
 
 func newFromUser(u *user.User) *mongoUser {
@@ -68,11 +69,12 @@ func newFromUser(u *user.User) *mongoUser {
 		IsDeleted:     u.GetIsDeleted(),
 		CreatedAt:     u.GetCreatedAt(),
 		UpdatedAt:     u.GetUpdatedAt(),
+		Version:       u.GetVersion(),
 	}
 }
 
 func (m *mongoUser) ToAggregate() *user.User {
-	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.PreferredLang, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt)
+	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.PreferredLang, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
