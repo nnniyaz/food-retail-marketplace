@@ -3,29 +3,31 @@
   min-height: 100vh;
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  padding-top: 24px;
 
   .container {
     width: 100%;
-    height: 100%;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding-top: 24px;
+    justify-content: space-between;
 
-    .wrapper {
-      width: 1200px;
-      height: 100%;
+    .container__inner {
+      position: relative;
+      max-width: 1200px;
+      min-width: 1200px;
+      width: 100%;
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
       gap: 20px;
 
       .content {
-        width: 895px;
+        max-width: 895px;
+        min-width: 895px;
+        width: 100%;
         display: flex;
         flex-direction: column;
-        gap: 16px;
+        gap: 20px;
       }
     }
   }
@@ -33,19 +35,18 @@
 
 @media (max-width: 1200px) {
   .main {
+    padding-top: 0;
 
     .container {
-      padding-top: 0;
-
-      .wrapper {
-        width: 100%;
+      .container__inner {
+        max-width: 100%;
+        min-width: 100%;
         flex-direction: column;
-        justify-content: flex-start;
-        align-items: center;
         gap: 4px;
 
         .content {
-          width: 100%;
+          max-width: 100%;
+          min-width: 100%;
           gap: 4px;
         }
       }

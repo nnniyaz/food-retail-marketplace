@@ -1,0 +1,239 @@
+.header {
+  position: sticky;
+  top: 24px;
+  max-width: 285px;
+  min-width: 285px;
+  width: 100%;
+  height: fit-content;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  .credentials {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px;
+    border-radius: 10px;
+    background-color: var(--primary-bg-color);
+
+    .logo {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 23px;
+      color: var(--link-color);
+      margin-left: 10px;
+    }
+
+    .contacts {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .contact__item {
+        width: 36px;
+        height: 36px;
+        padding: 8px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: var(--secondary-bg-color);
+      }
+    }
+  }
+
+  .navbar {
+    width: 100%;
+    padding: 10px 8px;
+    border-radius: 10px;
+    background-color: var(--primary-bg-color);
+
+    .navbar__list {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+
+      .navbar__item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: .1s linear;
+
+        &:hover {
+          background-color: var(--secondary-bg-color);
+        }
+
+        .navbar__link {
+          width: 100%;
+
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 19px;
+          color: var(--primary-font-color);
+          text-decoration: none;
+        }
+
+        .navbar__circle {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          border: 1px solid var(--secondary-font-color);
+        }
+      }
+
+      .navbar__item__active {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 12px;
+        border-radius: 10px;
+        cursor: pointer;
+        transition: .1s linear;
+        background-color: rgb(221, 234, 255);
+
+        &:hover {
+          opacity: .8;
+        }
+
+        &:active {
+          opacity: .6;
+        }
+
+        .navbar__link {
+          width: 100%;
+
+          font-size: 16px;
+          font-weight: 400;
+          line-height: 19px;
+          color: var(--primary-font-color);
+          text-decoration: none;
+        }
+
+        .navbar__circle {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+          border: 2px solid var(--accent-font-color);
+          background-color: var(--link-color);
+          animation: appear .2s linear;
+        }
+      }
+    }
+  }
+
+  .login__block {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 12px;
+    border-radius: 10px;
+    background-color: var(--primary-bg-color);
+
+    .login__title {
+      font-size: 20px;
+      font-weight: 600;
+      line-height: 23px;
+      color: var(--primary-font-color);
+    }
+
+    .login__desc {
+      font-size: 16px;
+      font-weight: 400;
+      line-height: 19px;
+      color: var(--secondary-font-color);
+    }
+
+    .btn__bar {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+
+      .btn {
+        border: none;
+
+        width: 50%;
+        padding: 12px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: .1s linear;
+        cursor: pointer;
+
+        &:hover {
+          opacity: .8;
+        }
+
+        &:active {
+          opacity: .6;
+        }
+      }
+
+      .btn__text {
+        font-size: 16px;
+        font-weight: 600;
+        line-height: 19px;
+        text-decoration: none;
+      }
+
+      .sign__in__btn {
+        @extend .btn;
+        background-color: var(--link-color);
+
+        .sign__in__link {
+          @extend .btn__text;
+          color: var(--accent-font-color);
+        }
+      }
+
+      .sign__up__btn {
+        @extend .btn;
+        background-color: var(--accent-bg-color);
+
+        .sign__up__link {
+          @extend .btn__text;
+          color: var(--accent-font-color);
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .header__layout {
+    display: none;
+  }
+
+  .header {
+    position: static;
+    max-width: 100%;
+    min-width: 100%;
+    gap: 4px;
+
+    .credentials {
+      border-radius: 0 0 10px 10px;
+    }
+
+    .navbar {
+      display: none;
+    }
+  }
+}
+
+@keyframes appear {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}

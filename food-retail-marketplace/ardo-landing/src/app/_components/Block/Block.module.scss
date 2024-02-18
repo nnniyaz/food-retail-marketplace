@@ -1,0 +1,17 @@
+.block {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 16px 12px;
+  border-radius: 16px;
+  background-color: var(--primary-bg-color);
+
+  .block__title {
+    font-size: 30px;
+    font-weight: 600;
+    line-height: 36px;
+    letter-spacing: -0.04em;
+    color: var(--primary-text-color);
+    margin-bottom: 16px;
+  }
+}
