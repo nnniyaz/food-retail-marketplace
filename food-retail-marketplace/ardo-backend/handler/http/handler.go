@@ -5,6 +5,7 @@ import (
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/cors"
 	"github/nnniyaz/ardo/handler/http/auth"
+	"github/nnniyaz/ardo/handler/http/client"
 	"github/nnniyaz/ardo/handler/http/current_user"
 	"github/nnniyaz/ardo/handler/http/management_order"
 	"github/nnniyaz/ardo/handler/http/management_product"
@@ -23,6 +24,7 @@ type Handler struct {
 	ManagementUser    *management_user.HttpDelivery
 	ManagementProduct *management_product.HttpDelivery
 	ManagementOrder   *management_order.HttpDelivery
+	Client            *client.HttpDelivery
 }
 
 func NewHandler(c *mongo.Client, clientUri string, s *service.Services, l logger.Logger) *Handler {
@@ -33,6 +35,7 @@ func NewHandler(c *mongo.Client, clientUri string, s *service.Services, l logger
 		ManagementUser:    management_user.NewHttpDelivery(s.ManagementUser, l),
 		ManagementProduct: management_product.NewHttpDelivery(s.ManagementProduct, l),
 		ManagementOrder:   management_order.NewHttpDelivery(s.ManagementOrder, l),
+		Client:            client.NewHttpDelivery(s.Client, l),
 	}
 }
 
@@ -130,6 +133,11 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Put("/{order_id}", h.ManagementOrder.RecoverOrder)
 				r.Delete("/{order_id}", h.ManagementOrder.DeleteOrder)
 			})
+		})
+
+		r.Route("/make-order", func(r chi.Router) {
+			r.Use(h.Middleware.UserAuth)
+			r.Post("/", h.Client.MakeOrder)
 		})
 	})
 	return r

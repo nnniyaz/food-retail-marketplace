@@ -42,15 +42,15 @@ type AuthService interface {
 }
 
 type authService struct {
+	logger         logger.Logger
+	config         *config.Config
 	userService    userService.UserService
 	linkService    linkService.ActivationLinkService
 	sessionService sessionService.SessionService
-	logger         logger.Logger
-	config         *config.Config
 	emailService   email.Email
 }
 
-func NewAuthService(userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService, l logger.Logger, config *config.Config, emailService email.Email) AuthService {
+func NewAuthService(l logger.Logger, config *config.Config, userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService, emailService email.Email) AuthService {
 	return &authService{linkService: linkService, userService: userService, sessionService: sessionService, logger: l, config: config, emailService: emailService}
 }
 

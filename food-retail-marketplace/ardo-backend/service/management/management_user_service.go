@@ -20,11 +20,11 @@ type ManagementUserService interface {
 }
 
 type managementUserService struct {
-	userService userService.UserService
 	logger      logger.Logger
+	userService userService.UserService
 }
 
-func NewManagementUserService(userService userService.UserService, l logger.Logger) ManagementUserService {
+func NewManagementUserService(l logger.Logger, userService userService.UserService) ManagementUserService {
 	return &managementUserService{userService: userService, logger: l}
 }
 

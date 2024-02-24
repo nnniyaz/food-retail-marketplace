@@ -6,6 +6,7 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
 	"github/nnniyaz/ardo/service/auth"
+	"github/nnniyaz/ardo/service/client"
 	"github/nnniyaz/ardo/service/current_user"
 	"github/nnniyaz/ardo/service/link"
 	"github/nnniyaz/ardo/service/management"
@@ -21,6 +22,7 @@ type Services struct {
 	ManagementUser    management.ManagementUserService
 	ManagementProduct management.ManagementProductService
 	ManagementOrder   management.ManagementOrderService
+	Client            client.ClientService
 }
 
 func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, emailService email.Email) *Services {
@@ -31,10 +33,11 @@ func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, 
 	orderService := order.NewOrderService(repos.RepoOrder, l)
 
 	return &Services{
-		Auth:              auth.NewAuthService(userService, sessionService, linkService, l, config, emailService),
-		CurrentUser:       current_user.NewCurrentUser(userService, sessionService, l),
-		ManagementUser:    management.NewManagementUserService(userService, l),
-		ManagementProduct: management.NewManagementProductService(productService, l),
-		ManagementOrder:   management.NewManagementOrderService(orderService, l),
+		Auth:              auth.NewAuthService(l, config, userService, sessionService, linkService, emailService),
+		CurrentUser:       current_user.NewCurrentUser(l, userService, sessionService),
+		ManagementUser:    management.NewManagementUserService(l, userService),
+		ManagementProduct: management.NewManagementProductService(l, productService),
+		ManagementOrder:   management.NewManagementOrderService(l, orderService),
+		Client:            client.NewClientService(l, orderService, emailService),
 	}
 }

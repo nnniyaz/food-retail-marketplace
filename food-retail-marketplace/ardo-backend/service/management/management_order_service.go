@@ -19,12 +19,12 @@ type ManagementOrderService interface {
 }
 
 type managementOrderService struct {
-	orderService orderService.OrderService
 	logger       logger.Logger
+	orderService orderService.OrderService
 }
 
-func NewManagementOrderService(orderService orderService.OrderService, l logger.Logger) ManagementOrderService {
-	return &managementOrderService{orderService: orderService, logger: l}
+func NewManagementOrderService(l logger.Logger, orderService orderService.OrderService) ManagementOrderService {
+	return &managementOrderService{logger: l, orderService: orderService}
 }
 
 func (m *managementOrderService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error) {

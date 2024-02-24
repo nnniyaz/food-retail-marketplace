@@ -5,20 +5,24 @@ import (
 	"fmt"
 	"net/http"
 	"strconv"
+	"time"
 )
 
 type Server struct {
 	httpServer *http.Server
 }
 
-func (s *Server) Run(port int, handler http.Handler) error {
+func (s *Server) Run(port int, handler http.Handler, startedAt time.Time) error {
 	s.httpServer = &http.Server{
 		Addr:           ":" + strconv.Itoa(port),
 		Handler:        handler,
 		MaxHeaderBytes: 1 << 20, // 1 MB
 	}
 
-	fmt.Printf("\nSERVER STARTED ON PORT: %d\n\n", port)
+	fmt.Println("+-----------------------------------------------+")
+	fmt.Printf("| SERVER STARTED ON PORT: %d                  |\n", port)
+	fmt.Printf("| Started at: %s         |\n", startedAt.Format("2006-01-02 15:04:05 -0700"))
+	fmt.Println("+-----------------------------------------------+")
 	return s.httpServer.ListenAndServe()
 }
 

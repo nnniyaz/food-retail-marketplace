@@ -18,12 +18,12 @@ type ManagementProductService interface {
 }
 
 type managementProductService struct {
-	productService productService.ProductService
 	logger         logger.Logger
+	productService productService.ProductService
 }
 
-func NewManagementProductService(productService productService.ProductService, l logger.Logger) ManagementProductService {
-	return &managementProductService{productService: productService, logger: l}
+func NewManagementProductService(l logger.Logger, productService productService.ProductService) ManagementProductService {
+	return &managementProductService{logger: l, productService: productService}
 }
 
 func (m *managementProductService) GetProductsByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {

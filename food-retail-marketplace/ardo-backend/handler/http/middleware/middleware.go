@@ -152,6 +152,39 @@ func (m *Middleware) UserAuth(next http.Handler) http.Handler {
 	})
 }
 
+func (m *Middleware) ClientAuth(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		session, err := r.Cookie("session")
+		if err != nil {
+			response.NewUnauthorized(m.logger, w, r)
+			return
+		}
+
+		requestInfo := r.Context().Value("requestInfo").(web.RequestInfo)
+
+		u, err := m.service.UserCheck(r.Context(), session.Value, requestInfo.UserAgent.String)
+		if err != nil {
+			response.NewError(m.logger, w, r, err)
+			return
+		}
+
+		allowedUserTypes := map[valueobject.UserType]bool{
+			valueobject.UserTypeAdmin:     false,
+			valueobject.UserTypeModerator: false,
+			valueobject.UserTypeClient:    true,
+		}
+
+		if !allowedUserTypes[u.GetUserType()] {
+			response.NewError(m.logger, w, r, ErrDoNotHaveAnAccess)
+			return
+		}
+
+		ctx := context.WithValue(r.Context(), "sessionKey", session.Value)
+		ctx = context.WithValue(ctx, "user", *u)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}
+
 func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		session, err := r.Cookie("session")

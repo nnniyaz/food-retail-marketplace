@@ -21,13 +21,13 @@ type CurrentUserService interface {
 }
 
 type currentUserService struct {
+	logger         logger.Logger
 	userService    userService.UserService
 	sessionService sessionService.SessionService
-	logger         logger.Logger
 }
 
-func NewCurrentUser(userService userService.UserService, sessionService sessionService.SessionService, logger logger.Logger) CurrentUserService {
-	return &currentUserService{userService: userService, sessionService: sessionService, logger: logger}
+func NewCurrentUser(logger logger.Logger, userService userService.UserService, sessionService sessionService.SessionService) CurrentUserService {
+	return &currentUserService{logger: logger, userService: userService, sessionService: sessionService}
 }
 
 func (s *currentUserService) UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error {

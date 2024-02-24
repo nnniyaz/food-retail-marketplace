@@ -8,6 +8,7 @@ import (
 	"github/nnniyaz/ardo/handler/http"
 	"github/nnniyaz/ardo/pkg/email"
 	"github/nnniyaz/ardo/pkg/env"
+	"github/nnniyaz/ardo/pkg/format"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/pkg/mongo"
 	"github/nnniyaz/ardo/repo"
@@ -22,12 +23,12 @@ import (
 const port = 8080
 
 func main() {
-	fmt.Println("starting server...")
-
 	start := time.Now()
 
 	ctx, cancel := signal.NotifyContext(context.Background(), syscall.SIGINT, syscall.SIGTERM)
 	defer cancel()
+
+	ctx = context.WithValue(ctx, "start", start)
 
 	// --- init settings
 	cf := config.New(
@@ -50,8 +51,6 @@ func main() {
 	}
 	defer lg.Sync()
 
-	lg.Info("starting", zap.Time("start", start))
-
 	// --- init mongodb db
 	db, err := mongo.New(ctx, cf.GetMongoUri())
 	if err != nil {
@@ -73,7 +72,7 @@ func main() {
 
 	srv := new(ardo.Server)
 	go func() {
-		if err = srv.Run(port, handlers.InitRoutes(cf.GetIsDevMode())); err != nil && err != nHttp.ErrServerClosed {
+		if err = srv.Run(port, handlers.InitRoutes(cf.GetIsDevMode()), start); err != nil && err != nHttp.ErrServerClosed {
 			lg.Fatal("error occurred while running http server: ", zap.Error(err))
 		}
 	}()
@@ -91,6 +90,9 @@ func main() {
 		lg.Error("error occurred on db connection close: ", zap.Error(err))
 	}
 
-	lg.Info("server shutting down", zap.Time("stopped", start))
-	fmt.Print("\nSERVER SHUTTING DOWN GRACEFULLY\n")
+	fmt.Println("\n+-----------------------------------------------+")
+	fmt.Println("| SERVER SHUTTING DOWN GRACEFULLY               |")
+	fmt.Printf("| Finished at: %s        |\n", time.Now().Format("2006-01-02 15:04:05 -0700"))
+	fmt.Printf("| Elapsed time: %s |\n", format.FormatDuration(time.Since(start)))
+	fmt.Println("+-----------------------------------------------+")
 }
