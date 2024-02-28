@@ -20,12 +20,12 @@ type OrderService interface {
 }
 
 type orderService struct {
-	orderRepo repo.Order
 	logger    logger.Logger
+	orderRepo repo.Order
 }
 
-func NewOrderService(repo repo.Order, l logger.Logger) OrderService {
-	return &orderService{orderRepo: repo, logger: l}
+func NewOrderService(l logger.Logger, repo repo.Order) OrderService {
+	return &orderService{logger: l, orderRepo: repo}
 }
 
 func (o *orderService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error) {

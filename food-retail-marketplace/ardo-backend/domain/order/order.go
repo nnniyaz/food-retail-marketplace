@@ -72,8 +72,8 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64
 		orderComment:     orderComment,
 		status:           valueobject.NEW,
 		isDeleted:        false,
-		createdAt:        time.Now(),
-		updatedAt:        time.Now(),
+		createdAt:        ts,
+		updatedAt:        ts,
 		version:          1,
 	}, nil
 }

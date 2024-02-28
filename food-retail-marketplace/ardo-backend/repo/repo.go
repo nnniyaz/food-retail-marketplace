@@ -4,13 +4,19 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/catalog"
+	"github/nnniyaz/ardo/domain/category"
 	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/product"
+	"github/nnniyaz/ardo/domain/section"
 	"github/nnniyaz/ardo/domain/session"
 	"github/nnniyaz/ardo/domain/user"
 	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
+	catalogMongo "github/nnniyaz/ardo/repo/mongo/catalog"
+	categoryMongo "github/nnniyaz/ardo/repo/mongo/category"
 	orderMongo "github/nnniyaz/ardo/repo/mongo/order"
 	productMongo "github/nnniyaz/ardo/repo/mongo/product"
+	sectionMongo "github/nnniyaz/ardo/repo/mongo/section"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -62,12 +68,41 @@ type Order interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
+type Catalog interface {
+	FindAll(ctx context.Context) ([]*catalog.Catalog, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*catalog.Catalog, error)
+	CreateCatalog(ctx context.Context, c *catalog.Catalog) error
+	UpdateCatalog(ctx context.Context, c *catalog.Catalog) error
+	PublishCatalog(ctx context.Context, c *catalog.Catalog) error
+}
+
+type Section interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*section.Section, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*section.Section, error)
+	Create(ctx context.Context, section *section.Section) error
+	Update(ctx context.Context, section *section.Section) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
+type Category interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*category.Category, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*category.Category, error)
+	Create(ctx context.Context, category *category.Category) error
+	Update(ctx context.Context, category *category.Category) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
 type Repository struct {
 	RepoUser           User
 	RepoSession        Session
 	RepoActivationLink ActivationLink
 	RepoProduct        Product
 	RepoOrder          Order
+	RepoCatalog        Catalog
+	RepoSection        Section
+	RepoCategory       Category
 }
 
 func NewRepository(client *mongo.Client) *Repository {
@@ -77,5 +112,8 @@ func NewRepository(client *mongo.Client) *Repository {
 		RepoActivationLink: activationLinkMongo.NewRepoActivationLink(client),
 		RepoProduct:        productMongo.NewRepoProduct(client),
 		RepoOrder:          orderMongo.NewRepoOrder(client),
+		RepoCatalog:        catalogMongo.NewRepoCatalog(client),
+		RepoSection:        sectionMongo.NewRepoSection(client),
+		RepoCategory:       categoryMongo.NewRepoCategory(client),
 	}
 }

@@ -19,12 +19,12 @@ type SessionService interface {
 }
 
 type sessionService struct {
-	sessionRepo repo.Session
 	logger      logger.Logger
+	sessionRepo repo.Session
 }
 
-func NewSessionService(repo repo.Session, l logger.Logger) SessionService {
-	return &sessionService{sessionRepo: repo, logger: l}
+func NewSessionService(l logger.Logger, repo repo.Session) SessionService {
+	return &sessionService{logger: l, sessionRepo: repo}
 }
 
 func (s *sessionService) GetAllByUserId(ctx context.Context, userId string) ([]*session.Session, error) {

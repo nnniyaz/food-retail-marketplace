@@ -13,12 +13,12 @@ import (
 )
 
 type HttpDelivery struct {
-	service management.ManagementOrderService
 	logger  logger.Logger
+	service management.ManagementOrderService
 }
 
-func NewHttpDelivery(service management.ManagementOrderService, l logger.Logger) *HttpDelivery {
-	return &HttpDelivery{service: service, logger: l}
+func NewHttpDelivery(l logger.Logger, service management.ManagementOrderService) *HttpDelivery {
+	return &HttpDelivery{logger: l, service: service}
 }
 
 // -----------------------------------------------------------------------------
@@ -112,6 +112,7 @@ type Order struct {
 	IsDeleted        bool                  `json:"isDeleted"`
 	CreatedAt        string                `json:"createdAt"`
 	UpdatedAt        string                `json:"updatedAt"`
+	Version          int                   `json:"version"`
 }
 
 func NewOrder(o *order.Order) Order {
@@ -130,6 +131,7 @@ func NewOrder(o *order.Order) Order {
 		IsDeleted:        o.GetIsDeleted(),
 		CreatedAt:        o.GetCreatedAt().String(),
 		UpdatedAt:        o.GetUpdatedAt().String(),
+		Version:          o.GetVersion(),
 	}
 }
 
@@ -146,7 +148,7 @@ func NewOrders(orders []*order.Order, count int64) OrdersData {
 	return OrdersData{Orders: ord, Count: count}
 }
 
-func (hd *HttpDelivery) GetAllByFilters(w http.ResponseWriter, r *http.Request) {
+func (hd *HttpDelivery) GetOrdersByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
 	isDeleted := r.Context().Value("is_deleted").(bool)
@@ -185,7 +187,7 @@ func (hd *HttpDelivery) GetOneById(w http.ResponseWriter, r *http.Request) {
 // Commands
 // -----------------------------------------------------------------------------
 
-type CreateOrderRequest struct {
+type CreateOrderIn struct {
 	UserId           string                `json:"userId"`
 	Products         []OrderProduct        `json:"products"`
 	Quantity         int64                 `json:"quantity"`
@@ -197,7 +199,7 @@ type CreateOrderRequest struct {
 }
 
 func (hd *HttpDelivery) CreateOrder(w http.ResponseWriter, r *http.Request) {
-	in := CreateOrderRequest{}
+	in := CreateOrderIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
@@ -209,13 +211,13 @@ func (hd *HttpDelivery) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-type UpdateOrderStatusRequest struct {
+type UpdateOrderStatusIn struct {
 	Status string `json:"status"`
 }
 
 func (hd *HttpDelivery) UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
 	orderId := chi.URLParam(r, "order_id")
-	in := UpdateOrderStatusRequest{}
+	in := UpdateOrderStatusIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

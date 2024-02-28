@@ -20,13 +20,13 @@ var (
 )
 
 type Middleware struct {
+	logger  logger.Logger
 	client  *mongo.Client
 	service auth.AuthService
-	logger  logger.Logger
 }
 
-func New(c *mongo.Client, s auth.AuthService, l logger.Logger) *Middleware {
-	return &Middleware{client: c, service: s, logger: l}
+func New(l logger.Logger, c *mongo.Client, s auth.AuthService) *Middleware {
+	return &Middleware{logger: l, client: c, service: s}
 }
 
 func (m *Middleware) Recover(next http.Handler) http.Handler {
@@ -75,7 +75,7 @@ func (m *Middleware) WithTransaction(next http.Handler) http.Handler {
 
 				next.ServeHTTP(ww, r.WithContext(sessCtx))
 
-				if ww.Status() >= 400 {
+				if ww.Status() >= 500 {
 					return nil, fmt.Errorf("status code %d", ww.Status())
 				}
 

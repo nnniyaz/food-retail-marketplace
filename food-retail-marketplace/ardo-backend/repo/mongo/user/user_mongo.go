@@ -144,6 +144,9 @@ func (r *RepoUser) Recover(ctx context.Context, id uuid.UUID) error {
 			"isDeleted": false,
 			"updatedAt": time.Now(),
 		},
+		"$inc": bson.D{
+			{"version", 1},
+		},
 	})
 	return err
 }
@@ -155,6 +158,9 @@ func (r *RepoUser) Delete(ctx context.Context, id uuid.UUID) error {
 		"$set": bson.M{
 			"isDeleted": true,
 			"updatedAt": time.Now(),
+		},
+		"$inc": bson.D{
+			{"version", 1},
 		},
 	})
 	return err

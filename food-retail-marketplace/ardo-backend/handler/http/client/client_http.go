@@ -12,12 +12,12 @@ import (
 )
 
 type HttpDelivery struct {
-	service client.ClientService
 	logger  logger.Logger
+	service client.ClientService
 }
 
-func NewHttpDelivery(c client.ClientService, l logger.Logger) *HttpDelivery {
-	return &HttpDelivery{service: c, logger: l}
+func NewHttpDelivery(l logger.Logger, c client.ClientService) *HttpDelivery {
+	return &HttpDelivery{logger: l, service: c}
 }
 
 // -----------------------------------------------------------------------------
@@ -62,7 +62,6 @@ func UnmarshalOrderDeliveryInfoFromRequest(o OrderDeliveryInfo) valueobject.Deli
 }
 
 type MakeOrderIn struct {
-	UserId           string                `json:"userId"`
 	Products         []OrderProduct        `json:"products"`
 	Quantity         int64                 `json:"quantity"`
 	TotalPrice       float64               `json:"totalPrice"`
@@ -79,7 +78,7 @@ func (hd *HttpDelivery) MakeOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	u := r.Context().Value("user").(user.User)
-	orderCreds, err := hd.service.MakeOrder(r.Context(), &u, in.UserId, UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.OrderComment)
+	orderCreds, err := hd.service.MakeOrder(r.Context(), &u, u.GetId().String(), UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.OrderComment)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

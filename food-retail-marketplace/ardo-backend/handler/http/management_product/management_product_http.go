@@ -12,12 +12,12 @@ import (
 )
 
 type HttpDelivery struct {
-	service management.ManagementProductService
 	logger  logger.Logger
+	service management.ManagementProductService
 }
 
-func NewHttpDelivery(s management.ManagementProductService, l logger.Logger) *HttpDelivery {
-	return &HttpDelivery{service: s, logger: l}
+func NewHttpDelivery(l logger.Logger, s management.ManagementProductService) *HttpDelivery {
+	return &HttpDelivery{logger: l, service: s}
 }
 
 // -----------------------------------------------------------------------------
@@ -35,6 +35,7 @@ type Product struct {
 	IsDeleted bool          `json:"isDeleted"`
 	CreatedAt string        `json:"createdAt"`
 	UpdatedAt string        `json:"updatedAt"`
+	Version   int           `json:"version"`
 }
 
 func NewProduct(p *product.Product) Product {
@@ -49,6 +50,7 @@ func NewProduct(p *product.Product) Product {
 		IsDeleted: p.GetIsDeleted(),
 		CreatedAt: p.GetCreatedAt().String(),
 		UpdatedAt: p.GetUpdatedAt().String(),
+		Version:   p.GetVersion(),
 	}
 }
 
@@ -91,7 +93,7 @@ func (hd *HttpDelivery) GetProductById(w http.ResponseWriter, r *http.Request) {
 // Commands
 // -----------------------------------------------------------------------------
 
-type AddProductRequest struct {
+type AddProductIn struct {
 	Name     core.MlString `json:"name"`
 	Desc     core.MlString `json:"desc"`
 	Price    float64       `json:"price"`
@@ -101,7 +103,7 @@ type AddProductRequest struct {
 }
 
 func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
-	in := AddProductRequest{}
+	in := AddProductIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
@@ -113,7 +115,7 @@ func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-type UpdateProductRequest struct {
+type UpdateProductIn struct {
 	Name     core.MlString `json:"name"`
 	Desc     core.MlString `json:"desc"`
 	Price    float64       `json:"price"`
@@ -124,7 +126,7 @@ type UpdateProductRequest struct {
 
 func (hd *HttpDelivery) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	productId := chi.URLParam(r, "product_id")
-	in := UpdateProductRequest{}
+	in := UpdateProductIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

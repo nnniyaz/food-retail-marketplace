@@ -65,6 +65,17 @@ const (
 	TXT_ORDER_ALREADY_EXISTS        TxtKey = 60
 	TXT_ORDER_NOT_FOUND             TxtKey = 61
 	TXT_WRONG_PRODUCTS_TOTAL_PRICE  TxtKey = 62
+	TXT_EMPTY_SECTION_NAME          TxtKey = 63
+	TXT_EMPTY_CATEGORY_NAME         TxtKey = 64
+	TXT_CATEGORY_ALREADY_EXISTS     TxtKey = 65
+	TXT_CATEGORY_NOT_FOUND          TxtKey = 66
+	TXT_SECTION_ALREADY_EXISTS      TxtKey = 67
+	TXT_SECTION_NOT_FOUND           TxtKey = 68
+	TXT_UUID_INVALID_LENGTH         TxtKey = 69
+	TXT_MAXIMUM_NUMBER_OF_CATALOGS  TxtKey = 70
+	TXT_DUPLICATE_SECTION           TxtKey = 71
+	TXT_DUPLICATE_CATEGORY          TxtKey = 72
+	TXT_DUPLICATE_PRODUCT           TxtKey = 73
 )
 
 var Txts = TxtResource{
@@ -316,6 +327,50 @@ var Txts = TxtResource{
 		RU: `Неверная итоговая цена продуктов`,
 		EN: `Wrong products total price`,
 	},
+	TXT_EMPTY_SECTION_NAME: MlString{
+		RU: `Название раздела не может быть пустым`,
+		EN: `Section name can not be empty`,
+	},
+	TXT_EMPTY_CATEGORY_NAME: MlString{
+		RU: `Название категории не может быть пустым`,
+		EN: `Category name can not be empty`,
+	},
+	TXT_CATEGORY_ALREADY_EXISTS: MlString{
+		RU: `Категория уже существует`,
+		EN: `Category already exists`,
+	},
+	TXT_CATEGORY_NOT_FOUND: MlString{
+		RU: `Категория не найдена`,
+		EN: `Category not found`,
+	},
+	TXT_SECTION_ALREADY_EXISTS: MlString{
+		RU: `Раздел уже существует`,
+		EN: `Section already exists`,
+	},
+	TXT_SECTION_NOT_FOUND: MlString{
+		RU: `Раздел не найден`,
+		EN: `Section not found`,
+	},
+	TXT_UUID_INVALID_LENGTH: MlString{
+		RU: `Неверная длина UUID`,
+		EN: `Invalid UUID length`,
+	},
+	TXT_MAXIMUM_NUMBER_OF_CATALOGS: MlString{
+		RU: `Достигнуто максимальное количество каталогов`,
+		EN: `Maximum number of catalogs reached`,
+	},
+	TXT_DUPLICATE_SECTION: MlString{
+		RU: `Дубликат раздела`,
+		EN: `Duplicate section`,
+	},
+	TXT_DUPLICATE_CATEGORY: MlString{
+		RU: `Дубликат категории`,
+		EN: `Duplicate category`,
+	},
+	TXT_DUPLICATE_PRODUCT: MlString{
+		RU: `Дубликат продукта`,
+		EN: `Duplicate product`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -444,6 +499,28 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "order_not_found"
 	case TXT_WRONG_PRODUCTS_TOTAL_PRICE:
 		return "wrong_products_total_price"
+	case TXT_EMPTY_SECTION_NAME:
+		return "empty_section_name"
+	case TXT_EMPTY_CATEGORY_NAME:
+		return "empty_category_name"
+	case TXT_CATEGORY_ALREADY_EXISTS:
+		return "category_already_exists"
+	case TXT_CATEGORY_NOT_FOUND:
+		return "category_not_found"
+	case TXT_SECTION_ALREADY_EXISTS:
+		return "section_already_exists"
+	case TXT_SECTION_NOT_FOUND:
+		return "section_not_found"
+	case TXT_UUID_INVALID_LENGTH:
+		return "uuid_invalid_length"
+	case TXT_MAXIMUM_NUMBER_OF_CATALOGS:
+		return "maximum_number_of_catalogs"
+	case TXT_DUPLICATE_SECTION:
+		return "duplicate_section"
+	case TXT_DUPLICATE_CATEGORY:
+		return "duplicate_category"
+	case TXT_DUPLICATE_PRODUCT:
+		return "duplicate_product"
 
 	default:
 		return ""

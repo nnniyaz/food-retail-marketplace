@@ -44,14 +44,14 @@ type AuthService interface {
 type authService struct {
 	logger         logger.Logger
 	config         *config.Config
-	userService    userService.UserService
-	linkService    linkService.ActivationLinkService
-	sessionService sessionService.SessionService
 	emailService   email.Email
+	userService    userService.UserService
+	sessionService sessionService.SessionService
+	linkService    linkService.ActivationLinkService
 }
 
-func NewAuthService(l logger.Logger, config *config.Config, userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService, emailService email.Email) AuthService {
-	return &authService{linkService: linkService, userService: userService, sessionService: sessionService, logger: l, config: config, emailService: emailService}
+func NewAuthService(l logger.Logger, config *config.Config, emailService email.Email, userService userService.UserService, sessionService sessionService.SessionService, linkService linkService.ActivationLinkService) AuthService {
+	return &authService{logger: l, config: config, emailService: emailService, userService: userService, sessionService: sessionService, linkService: linkService}
 }
 
 func (a *authService) Login(ctx context.Context, email, password, userAgent string) (uuid.UUID, error) {

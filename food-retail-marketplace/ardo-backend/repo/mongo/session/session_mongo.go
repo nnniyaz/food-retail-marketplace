@@ -22,27 +22,25 @@ func (r *RepoSession) Coll() *mongo.Collection {
 }
 
 type mongoSession struct {
-	Id           uuid.UUID `bson:"_id"`
-	UserID       uuid.UUID `bson:"userId"`
-	Session      uuid.UUID `bson:"session"`
-	UserAgent    string    `bson:"userAgent"`
-	LastActionAt time.Time `bson:"lastActionAt"`
-	CreatedAt    time.Time `bson:"createdAt"`
+	Id        uuid.UUID `bson:"_id"`
+	UserID    uuid.UUID `bson:"userId"`
+	Session   uuid.UUID `bson:"session"`
+	UserAgent string    `bson:"userAgent"`
+	CreatedAt time.Time `bson:"createdAt"`
 }
 
 func newFromSession(s *session.Session) *mongoSession {
 	return &mongoSession{
-		Id:           s.GetId(),
-		UserID:       s.GetUserId(),
-		Session:      s.GetSession(),
-		UserAgent:    s.GetUserAgent().String(),
-		LastActionAt: s.GetLastActionAt(),
-		CreatedAt:    s.GetCreatedAt(),
+		Id:        s.GetId(),
+		UserID:    s.GetUserId(),
+		Session:   s.GetSession(),
+		UserAgent: s.GetUserAgent().String(),
+		CreatedAt: s.GetCreatedAt(),
 	}
 }
 
 func (m *mongoSession) ToAggregate() *session.Session {
-	return session.UnmarshalSessionFromDatabase(m.Id, m.UserID, m.Session, m.UserAgent, m.LastActionAt, m.CreatedAt)
+	return session.UnmarshalSessionFromDatabase(m.Id, m.UserID, m.Session, m.UserAgent, m.CreatedAt)
 }
 
 func (r *RepoSession) FindManyByUserId(ctx context.Context, userId uuid.UUID) ([]*session.Session, error) {

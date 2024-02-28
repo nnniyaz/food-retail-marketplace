@@ -7,12 +7,11 @@ import (
 )
 
 type Session struct {
-	id           uuid.UUID
-	userId       uuid.UUID
-	session      uuid.UUID
-	userAgent    valueobject.UserAgent
-	lastActionAt time.Time
-	createdAt    time.Time
+	id        uuid.UUID
+	userId    uuid.UUID
+	session   uuid.UUID
+	userAgent valueobject.UserAgent
+	createdAt time.Time
 }
 
 func NewSession(userId uuid.UUID, userAgent string) (*Session, error) {
@@ -22,12 +21,11 @@ func NewSession(userId uuid.UUID, userAgent string) (*Session, error) {
 	}
 
 	return &Session{
-		id:           uuid.NewUUID(),
-		userId:       userId,
-		session:      uuid.NewUUID(),
-		userAgent:    ua,
-		lastActionAt: time.Now(),
-		createdAt:    time.Now(),
+		id:        uuid.NewUUID(),
+		userId:    userId,
+		session:   uuid.NewUUID(),
+		userAgent: ua,
+		createdAt: time.Now(),
 	}, nil
 }
 
@@ -47,25 +45,16 @@ func (s *Session) GetUserAgent() valueobject.UserAgent {
 	return s.userAgent
 }
 
-func (s *Session) GetLastActionAt() time.Time {
-	return s.lastActionAt
-}
-
 func (s *Session) GetCreatedAt() time.Time {
 	return s.createdAt
 }
 
-func (s *Session) UpdateLastActionAt() {
-	s.lastActionAt = time.Now()
-}
-
-func UnmarshalSessionFromDatabase(id uuid.UUID, userId uuid.UUID, session uuid.UUID, userAgent string, lastActionAt, createdAt time.Time) *Session {
+func UnmarshalSessionFromDatabase(id uuid.UUID, userId uuid.UUID, session uuid.UUID, userAgent string, createdAt time.Time) *Session {
 	return &Session{
-		id:           id,
-		userId:       userId,
-		session:      session,
-		userAgent:    valueobject.UserAgent(userAgent),
-		lastActionAt: lastActionAt,
-		createdAt:    createdAt,
+		id:        id,
+		userId:    userId,
+		session:   session,
+		userAgent: valueobject.UserAgent(userAgent),
+		createdAt: createdAt,
 	}
 }

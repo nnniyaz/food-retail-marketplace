@@ -61,3 +61,14 @@ empty_customer_phone,Телефон клиента не может быть пу
 order_already_exists,Заказ уже существует,Order already exists
 order_not_found,Заказ не найден,Order not found
 wrong_products_total_price,Неверная итоговая цена продуктов,Wrong products total price
+empty_section_name,Название раздела не может быть пустым,Section name can not be empty
+empty_category_name,Название категории не может быть пустым,Category name can not be empty
+category_already_exists,Категория уже существует,Category already exists
+category_not_found,Категория не найдена,Category not found
+section_already_exists,Раздел уже существует,Section already exists
+section_not_found,Раздел не найден,Section not found
+uuid_invalid_length,Неверная длина UUID,Invalid UUID length
+maximum_number_of_catalogs,Достигнуто максимальное количество каталогов,Maximum number of catalogs reached
+duplicate_section,Дубликат раздела,Duplicate section
+duplicate_category,Дубликат категории,Duplicate category
+duplicate_product,Дубликат продукта,Duplicate product

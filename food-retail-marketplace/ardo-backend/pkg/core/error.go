@@ -34,7 +34,7 @@ func (i *I18NError) Error() string {
 }
 
 func (i *I18NError) ErrMsg() string {
-	return fmt.Sprintf(Txts[i.TxtKey].GetByLangOrEmpty(RU), i.Args...)
+	return fmt.Sprintf(Txts[i.TxtKey].GetByLangOrEmpty(EN), i.Args...)
 }
 
 type I18NErrors struct {

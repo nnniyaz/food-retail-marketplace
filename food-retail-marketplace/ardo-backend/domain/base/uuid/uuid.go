@@ -1,6 +1,9 @@
 package uuid
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+	"github/nnniyaz/ardo/pkg/core"
+)
 
 var Nil = UUID(uuid.Nil)
 
@@ -16,6 +19,9 @@ func (id UUID) String() string {
 
 func UUIDFromString(id string) (UUID, error) {
 	parsedUUID, err := uuid.Parse(id)
+	if uuid.IsInvalidLengthError(err) {
+		return Nil, core.NewI18NError(core.EINVALID, core.TXT_UUID_INVALID_LENGTH)
+	}
 	if err != nil {
 		return Nil, err
 	}

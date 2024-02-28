@@ -41,9 +41,10 @@ func (c *clientService) MakeOrder(ctx context.Context, user *user.User, userId s
 		return OrderCreds{}, err
 	}
 
+	contacts := newOrder.GetCustomerContacts()
 	subject := "Order number №" + newOrder.GetNumber().String()
 	htmlBody := format.FormatOrderConfirmation(newOrder)
-	err = c.emailService.SendMail([]string{user.GetEmail().String()}, subject, htmlBody)
+	err = c.emailService.SendMail([]string{contacts.GetEmail().String()}, subject, htmlBody)
 
 	return OrderCreds{
 		Number:    newOrder.GetNumber().String(),

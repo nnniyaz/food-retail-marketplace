@@ -20,12 +20,12 @@ type ProductService interface {
 }
 
 type productService struct {
-	productRepo repo.Product
 	logger      logger.Logger
+	productRepo repo.Product
 }
 
-func NewProductService(repo repo.Product, l logger.Logger) ProductService {
-	return &productService{productRepo: repo, logger: l}
+func NewProductService(l logger.Logger, repo repo.Product) ProductService {
+	return &productService{logger: l, productRepo: repo}
 }
 
 func (p *productService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {

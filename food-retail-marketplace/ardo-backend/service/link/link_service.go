@@ -16,12 +16,12 @@ type ActivationLinkService interface {
 }
 
 type activationLinkService struct {
-	linkRepo repo.ActivationLink
 	logger   logger.Logger
+	linkRepo repo.ActivationLink
 }
 
-func NewActivationLinkService(repo repo.ActivationLink, l logger.Logger) ActivationLinkService {
-	return &activationLinkService{linkRepo: repo, logger: l}
+func NewActivationLinkService(l logger.Logger, repo repo.ActivationLink) ActivationLinkService {
+	return &activationLinkService{logger: l, linkRepo: repo}
 }
 
 func (a *activationLinkService) GetByUserId(ctx context.Context, userId string) (*activationLink.ActivationLink, error) {

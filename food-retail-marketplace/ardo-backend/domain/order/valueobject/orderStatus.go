@@ -10,9 +10,9 @@ type OrderStatus string
 
 const (
 	NEW       OrderStatus = "NEW"
+	PENDING   OrderStatus = "PENDING"
 	ACCEPTED  OrderStatus = "ACCEPTED"
 	CANCELED  OrderStatus = "CANCELED"
-	PENDING   OrderStatus = "PENDING"
 	DELIVERED OrderStatus = "DELIVERED"
 )
 

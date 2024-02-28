@@ -107,11 +107,31 @@ func (r *RepoProduct) Update(ctx context.Context, p *product.Product) error {
 }
 
 func (r *RepoProduct) Delete(ctx context.Context, id uuid.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"isDeleted": true}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"$set": bson.M{
+			"isDeleted": true,
+			"updatedAt": time.Now(),
+		},
+		"$inc": bson.D{
+			{"version", 1},
+		},
+	})
 	return err
 }
 
 func (r *RepoProduct) Recover(ctx context.Context, id uuid.UUID) error {
-	_, err := r.Coll().UpdateOne(ctx, bson.M{"_id": id}, bson.M{"$set": bson.M{"isDeleted": false}})
+	_, err := r.Coll().UpdateOne(ctx, bson.M{
+		"_id": id,
+	}, bson.M{
+		"$set": bson.M{
+			"isDeleted": false,
+			"updatedAt": time.Now(),
+		},
+		"$inc": bson.D{
+			{"version", 1},
+		},
+	})
 	return err
 }

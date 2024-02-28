@@ -23,12 +23,12 @@ type UserService interface {
 }
 
 type userService struct {
-	userRepo repo.User
 	logger   logger.Logger
+	userRepo repo.User
 }
 
-func NewUserService(repo repo.User, l logger.Logger) UserService {
-	return &userService{userRepo: repo, logger: l}
+func NewUserService(l logger.Logger, repo repo.User) UserService {
+	return &userService{logger: l, userRepo: repo}
 }
 
 func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {

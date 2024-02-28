@@ -12,12 +12,12 @@ import (
 )
 
 type HttpDelivery struct {
-	service management.ManagementUserService
 	logger  logger.Logger
+	service management.ManagementUserService
 }
 
-func NewHttpDelivery(s management.ManagementUserService, l logger.Logger) *HttpDelivery {
-	return &HttpDelivery{service: s, logger: l}
+func NewHttpDelivery(l logger.Logger, s management.ManagementUserService) *HttpDelivery {
+	return &HttpDelivery{logger: l, service: s}
 }
 
 // -----------------------------------------------------------------------------
@@ -34,6 +34,7 @@ type User struct {
 	IsDeleted     bool      `json:"isDeleted"`
 	CreatedAt     time.Time `json:"createdAt"`
 	UpdatedAt     time.Time `json:"updatedAt"`
+	Version       int       `json:"version"`
 }
 
 func NewUser(u *user.User) User {
@@ -47,6 +48,7 @@ func NewUser(u *user.User) User {
 		IsDeleted:     u.GetIsDeleted(),
 		CreatedAt:     u.GetCreatedAt(),
 		UpdatedAt:     u.GetUpdatedAt(),
+		Version:       u.GetVersion(),
 	}
 }
 
