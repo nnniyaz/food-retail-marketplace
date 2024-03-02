@@ -73,7 +73,7 @@ type Catalog interface {
 	FindOneById(ctx context.Context, id uuid.UUID) (*catalog.Catalog, error)
 	CreateCatalog(ctx context.Context, c *catalog.Catalog) error
 	UpdateCatalog(ctx context.Context, c *catalog.Catalog) error
-	PublishCatalog(ctx context.Context, c *catalog.Catalog) error
+	PublishCatalog(ctx context.Context, c *catalog.Catalog, sections map[string]*section.Section, categories map[string]*category.Category, products map[string]*product.Product) error
 }
 
 type Section interface {

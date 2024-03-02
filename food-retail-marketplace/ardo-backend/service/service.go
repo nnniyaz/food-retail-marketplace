@@ -37,7 +37,7 @@ func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, 
 	userService := user.NewUserService(l, repos.RepoUser)
 	productService := product.NewProductService(l, repos.RepoProduct)
 	orderService := order.NewOrderService(l, repos.RepoOrder)
-	catalogService := catalog.NewCatalogService(l, repos.RepoCatalog)
+	catalogService := catalog.NewCatalogService(l, repos.RepoCatalog, repos.RepoSection, repos.RepoCategory, repos.RepoProduct)
 	sectionService := section.NewSectionService(l, repos.RepoSection)
 	categoryService := category.NewCategoryService(l, repos.RepoCategory)
 
