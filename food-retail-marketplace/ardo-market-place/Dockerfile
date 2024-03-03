@@ -1,0 +1,30 @@
+# Use a Node.js base image with a specified version
+FROM node:19.5.0-alpine
+
+# Set the working directory inside the container
+WORKDIR /app
+
+# Copy package.json and package-lock.json to the working directory
+COPY package.json package-lock.json ./
+
+# Install dependencies
+RUN npm install
+
+# Copy the entire project to the working directory
+COPY . .
+
+# Build the project
+RUN npm run build
+
+# Expose the port on which the server will run
+EXPOSE 8080
+
+ARG build_id
+ARG commit_hash
+ENV BUILD_ID=$build_id
+ENV COMMIT_HASH=$commit_hash
+ENV NODE_ENV production
+ENV PORT 8080
+
+# Command to run the server
+CMD ["npm", "start"]
