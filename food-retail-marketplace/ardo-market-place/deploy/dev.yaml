@@ -1,0 +1,7 @@
+name: dev-ardo-market-place-deployment
+services:
+  - name: web
+    git:
+      repo_clone_url: https://github.com/ardo-development/ardo-market-place.git
+      branch: main
+    dockerfile_path: Dockerfile
