@@ -37,6 +37,7 @@ async function main() {
     // Environment Variables
     const cfg = {
         PORT: getEnv("PORT"),
+        NODE_ENV: getEnv("NODE_ENV"),
     }
     // =================================================================================================================
 
