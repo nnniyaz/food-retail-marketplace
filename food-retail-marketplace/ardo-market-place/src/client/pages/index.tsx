@@ -5,6 +5,7 @@ import {Catalog} from "@pages/Catalog";
 import {Cart} from "@pages/Cart";
 import {Favourites} from "@pages/Favourites";
 import {Profile} from "@pages/Profile";
+import {Layout} from "@pages/Layout";
 
 interface IRoute {
     path: string;
@@ -34,10 +35,12 @@ interface RoutingProps {
 export const Routing = ({}: RoutingProps) => {
     return (
         <Routes>
-            {routes.map(route =>
-                <Route path={route.path} element={<route.component/>} key={route.path}/>
-            )}
-            <Route path={'*'} element={<Navigate to={RouteNames.HOME}/>}/>
+            <Route element={<Layout/>}>
+                {routes.map(route =>
+                    <Route path={route.path} element={<route.component/>} key={route.path}/>
+                )}
+                <Route path={'*'} element={<Navigate to={RouteNames.HOME}/>}/>
+            </Route>
         </Routes>
     );
 };
