@@ -1,9 +1,9 @@
-package section
+package slide
 
 import (
 	"context"
 	"github/nnniyaz/ardo/domain/base/uuid"
-	"github/nnniyaz/ardo/domain/section"
+	"github/nnniyaz/ardo/domain/slide"
 	"github/nnniyaz/ardo/pkg/core"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -11,21 +11,21 @@ import (
 	"time"
 )
 
-type RepoSection struct {
+type RepoSlide struct {
 	client *mongo.Client
 }
 
-func NewRepoSection(client *mongo.Client) *RepoSection {
-	return &RepoSection{client: client}
+func NewRepoSlide(client *mongo.Client) *RepoSlide {
+	return &RepoSlide{client: client}
 }
 
-func (r *RepoSection) Coll() *mongo.Collection {
-	return r.client.Database("main").Collection("sections")
+func (r *RepoSlide) Coll() *mongo.Collection {
+	return r.client.Database("main").Collection("slides")
 }
 
-type mongoSection struct {
+type mongoSlide struct {
 	Id        uuid.UUID     `bson:"_id"`
-	Name      core.MlString `bson:"name"`
+	Caption   core.MlString `bson:"caption"`
 	Img       string        `bson:"img"`
 	IsDeleted bool          `bson:"isDeleted"`
 	CreatedAt time.Time     `bson:"createdAt"`
@@ -33,10 +33,10 @@ type mongoSection struct {
 	Version   int           `bson:"version"`
 }
 
-func newFromSection(s *section.Section) *mongoSection {
-	return &mongoSection{
+func newFromSlide(s *slide.Slide) *mongoSlide {
+	return &mongoSlide{
 		Id:        s.GetId(),
-		Name:      s.GetName(),
+		Caption:   s.GetCaption(),
 		Img:       s.GetImg(),
 		IsDeleted: s.GetIsDeleted(),
 		CreatedAt: s.GetCreatedAt(),
@@ -45,11 +45,11 @@ func newFromSection(s *section.Section) *mongoSection {
 	}
 }
 
-func (m *mongoSection) ToAggregate() *section.Section {
-	return section.UnmarshalSectionFromDatabase(m.Id, m.Name, m.Img, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+func (m *mongoSlide) ToAggregate() *slide.Slide {
+	return slide.UnmarshalSlideFromDatabase(m.Id, m.Caption, m.Img, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
-func (r *RepoSection) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*section.Section, int64, error) {
+func (r *RepoSlide) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*slide.Slide, int64, error) {
 	count, err := r.Coll().CountDocuments(ctx, bson.M{"isDeleted": isDeleted})
 	if err != nil {
 		return nil, 0, err
@@ -60,42 +60,42 @@ func (r *RepoSection) FindByFilters(ctx context.Context, offset, limit int64, is
 	}
 	defer cur.Close(ctx)
 
-	var sections []*section.Section
+	var result []*slide.Slide
 	for cur.Next(ctx) {
-		var m mongoSection
-		err := cur.Decode(&m)
+		var s mongoSlide
+		err := cur.Decode(&s)
 		if err != nil {
 			return nil, 0, err
 		}
-		sections = append(sections, m.ToAggregate())
+		result = append(result, s.ToAggregate())
 	}
-	return sections, count, nil
+	return result, count, nil
 }
 
-func (r *RepoSection) FindOneById(ctx context.Context, id uuid.UUID) (*section.Section, error) {
-	var m mongoSection
-	err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&m)
+func (r *RepoSlide) FindById(ctx context.Context, id uuid.UUID) (*slide.Slide, error) {
+	var s mongoSlide
+	err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&s)
 	if err != nil {
 		return nil, err
 	}
-	return m.ToAggregate(), nil
+	return s.ToAggregate(), nil
 }
 
-func (r *RepoSection) Create(ctx context.Context, s *section.Section) error {
-	_, err := r.Coll().InsertOne(ctx, newFromSection(s))
+func (r *RepoSlide) Create(ctx context.Context, s *slide.Slide) error {
+	_, err := r.Coll().InsertOne(ctx, newFromSlide(s))
 	return err
 }
 
-func (r *RepoSection) Update(ctx context.Context, s *section.Section) error {
+func (r *RepoSlide) Update(ctx context.Context, s *slide.Slide) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": s.GetId(),
 	}, bson.M{
-		"$set": newFromSection(s),
+		"$set": newFromSlide(s),
 	})
 	return err
 }
 
-func (r *RepoSection) Recover(ctx context.Context, id uuid.UUID) error {
+func (r *RepoSlide) Recover(ctx context.Context, id uuid.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": id,
 	}, bson.M{
@@ -110,7 +110,7 @@ func (r *RepoSection) Recover(ctx context.Context, id uuid.UUID) error {
 	return err
 }
 
-func (r *RepoSection) Delete(ctx context.Context, id uuid.UUID) error {
+func (r *RepoSlide) Delete(ctx context.Context, id uuid.UUID) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": id,
 	}, bson.M{

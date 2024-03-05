@@ -10,6 +10,7 @@ import (
 	"github/nnniyaz/ardo/domain/product"
 	"github/nnniyaz/ardo/domain/section"
 	"github/nnniyaz/ardo/domain/session"
+	"github/nnniyaz/ardo/domain/slide"
 	"github/nnniyaz/ardo/domain/user"
 	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
 	catalogMongo "github/nnniyaz/ardo/repo/mongo/catalog"
@@ -18,6 +19,7 @@ import (
 	productMongo "github/nnniyaz/ardo/repo/mongo/product"
 	sectionMongo "github/nnniyaz/ardo/repo/mongo/section"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
+	slideMongo "github/nnniyaz/ardo/repo/mongo/slide"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
 	"go.mongodb.org/mongo-driver/mongo"
 )
@@ -52,8 +54,8 @@ type ActivationLink interface {
 type Product interface {
 	FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool) ([]*product.Product, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*product.Product, error)
-	Create(ctx context.Context, p *product.Product) error
-	Update(ctx context.Context, p *product.Product) error
+	Create(ctx context.Context, product *product.Product) error
+	Update(ctx context.Context, product *product.Product) error
 	Delete(ctx context.Context, id uuid.UUID) error
 	Recover(ctx context.Context, id uuid.UUID) error
 }
@@ -71,9 +73,9 @@ type Order interface {
 type Catalog interface {
 	FindAll(ctx context.Context) ([]*catalog.Catalog, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*catalog.Catalog, error)
-	CreateCatalog(ctx context.Context, c *catalog.Catalog) error
-	UpdateCatalog(ctx context.Context, c *catalog.Catalog) error
-	PublishCatalog(ctx context.Context, c *catalog.Catalog, sections map[string]*section.Section, categories map[string]*category.Category, products map[string]*product.Product) error
+	CreateCatalog(ctx context.Context, catalog *catalog.Catalog) error
+	UpdateCatalog(ctx context.Context, catalog *catalog.Catalog) error
+	PublishCatalog(ctx context.Context, c *catalog.Catalog) error
 }
 
 type Section interface {
@@ -94,6 +96,15 @@ type Category interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
+type Slide interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*slide.Slide, int64, error)
+	FindById(ctx context.Context, id uuid.UUID) (*slide.Slide, error)
+	Create(ctx context.Context, slide *slide.Slide) error
+	Update(ctx context.Context, slide *slide.Slide) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
 type Repository struct {
 	RepoUser           User
 	RepoSession        Session
@@ -103,6 +114,7 @@ type Repository struct {
 	RepoCatalog        Catalog
 	RepoSection        Section
 	RepoCategory       Category
+	RepoSlide          Slide
 }
 
 func NewRepository(client *mongo.Client) *Repository {
@@ -115,5 +127,6 @@ func NewRepository(client *mongo.Client) *Repository {
 		RepoCatalog:        catalogMongo.NewRepoCatalog(client),
 		RepoSection:        sectionMongo.NewRepoSection(client),
 		RepoCategory:       categoryMongo.NewRepoCategory(client),
+		RepoSlide:          slideMongo.NewRepoSlide(client),
 	}
 }

@@ -5,9 +5,6 @@ import (
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/catalog"
 	"github/nnniyaz/ardo/domain/catalog/valueObject"
-	"github/nnniyaz/ardo/domain/category"
-	"github/nnniyaz/ardo/domain/product"
-	"github/nnniyaz/ardo/domain/section"
 	"github/nnniyaz/ardo/pkg/core"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -122,6 +119,9 @@ func (m *mongoCatalog) ToAggregate() *catalog.Catalog {
 	return catalog.UnmarshalCatalogFromDatabase(m.Id, structure, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
+// -----------------------------------------------------------------------------
+// Catalog
+
 func (r *RepoCatalog) FindAll(ctx context.Context) ([]*catalog.Catalog, int64, error) {
 	count, err := r.Coll().CountDocuments(ctx, bson.M{})
 	if err != nil {
@@ -169,7 +169,7 @@ func (r *RepoCatalog) UpdateCatalog(ctx context.Context, c *catalog.Catalog) err
 // -----------------------------------------------------------------------------
 // Published Catalog
 
-type mongoSection struct {
+type mongoPublishedCatalogSection struct {
 	Id        uuid.UUID     `bson:"_id"`
 	Name      core.MlString `bson:"name"`
 	Img       string        `bson:"img"`
@@ -179,43 +179,7 @@ type mongoSection struct {
 	Version   int           `bson:"version"`
 }
 
-func newFromSection(s *section.Section) *mongoSection {
-	return &mongoSection{
-		Id:        s.GetId(),
-		Name:      s.GetName(),
-		Img:       s.GetImg(),
-		IsDeleted: s.GetIsDeleted(),
-		CreatedAt: s.GetCreatedAt(),
-		UpdatedAt: s.GetUpdatedAt(),
-		Version:   s.GetVersion(),
-	}
-}
-
-func (m *mongoSection) ToAggregate() *section.Section {
-	return section.UnmarshalSectionFromDatabase(m.Id, m.Name, m.Img, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
-}
-
-type mongoSections struct {
-	Sections map[string]*mongoSection `bson:"sections"`
-}
-
-func newFromSections(sections map[string]*section.Section) mongoSections {
-	internal := make(map[string]*mongoSection)
-	for id, section := range sections {
-		internal[id] = newFromSection(section)
-	}
-	return mongoSections{Sections: internal}
-}
-
-func (m *mongoSections) ToAggregate() map[string]*section.Section {
-	internal := make(map[string]*section.Section)
-	for id, section := range m.Sections {
-		internal[id] = section.ToAggregate()
-	}
-	return internal
-}
-
-type mongoCategory struct {
+type mongoPublishedCatalogCategory struct {
 	Id        uuid.UUID     `bson:"_id"`
 	Name      core.MlString `bson:"name"`
 	Desc      core.MlString `bson:"desc"`
@@ -226,44 +190,7 @@ type mongoCategory struct {
 	Version   int           `bson:"version"`
 }
 
-func newFromCategory(c *category.Category) *mongoCategory {
-	return &mongoCategory{
-		Id:        c.GetId(),
-		Name:      c.GetName(),
-		Desc:      c.GetDesc(),
-		Img:       c.GetImg(),
-		IsDeleted: c.GetIsDeleted(),
-		CreatedAt: c.GetCreatedAt(),
-		UpdatedAt: c.GetUpdatedAt(),
-		Version:   c.GetVersion(),
-	}
-}
-
-func (m *mongoCategory) ToAggregate() *category.Category {
-	return category.UnmarshalCategoryFromDatabase(m.Id, m.Name, m.Desc, m.Img, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
-}
-
-type mongoCategories struct {
-	Categories map[string]*mongoCategory `bson:"categories"`
-}
-
-func newFromCategories(categories map[string]*category.Category) mongoCategories {
-	internal := make(map[string]*mongoCategory)
-	for id, category := range categories {
-		internal[id] = newFromCategory(category)
-	}
-	return mongoCategories{Categories: internal}
-}
-
-func (m *mongoCategories) ToAggregate() map[string]*category.Category {
-	internal := make(map[string]*category.Category)
-	for id, category := range m.Categories {
-		internal[id] = category.ToAggregate()
-	}
-	return internal
-}
-
-type mongoProduct struct {
+type mongoPublishedCatalogProduct struct {
 	Id        uuid.UUID     `bson:"_id"`
 	Name      core.MlString `bson:"name"`
 	Desc      core.MlString `bson:"desc"`
@@ -277,56 +204,226 @@ type mongoProduct struct {
 	Version   int           `bson:"version"`
 }
 
-func newFromProduct(p *product.Product) *mongoProduct {
-	return &mongoProduct{
-		Id:        p.GetId(),
-		Name:      p.GetName(),
-		Desc:      p.GetDesc(),
-		Price:     p.GetPrice(),
-		Quantity:  p.GetQuantity(),
-		Img:       p.GetImg(),
-		Status:    p.GetStatus().String(),
-		IsDeleted: p.GetIsDeleted(),
-		CreatedAt: p.GetCreatedAt(),
-		UpdatedAt: p.GetUpdatedAt(),
-		Version:   p.GetVersion(),
+type mongoPublishedCatalog struct {
+	CatalogId uuid.UUID `bson:"catalogId"`
+	Structure []struct {
+		SectionId  uuid.UUID `bson:"sectionId"`
+		Categories []struct {
+			CategoryId uuid.UUID `bson:"categoryId"`
+			Products   []struct {
+				ProductId uuid.UUID `bson:"productId"`
+			}
+		}
+	}
+	Sections   []mongoPublishedCatalogSection  `bson:"sections"`
+	Categories []mongoPublishedCatalogCategory `bson:"categories"`
+	Products   []mongoPublishedCatalogProduct  `bson:"products"`
+	Slides     []struct {
+		Id        uuid.UUID     `bson:"_id"`
+		Caption   core.MlString `bson:"caption"`
+		Img       string        `bson:"img"`
+		IsDeleted bool          `bson:"isDeleted"`
+		CreatedAt time.Time     `bson:"createdAt"`
+		UpdatedAt time.Time     `bson:"updatedAt"`
+		Version   int           `bson:"version"`
 	}
 }
 
-func (m *mongoProduct) ToAggregate() *product.Product {
-	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.Quantity, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
-}
-
-type mongoProducts struct {
-	Products map[string]*mongoProduct `bson:"products"`
-}
-
-func newFromProducts(products map[string]*product.Product) mongoProducts {
-	internal := make(map[string]*mongoProduct)
-	for id, product := range products {
-		internal[id] = newFromProduct(product)
+func (r *RepoCatalog) PublishCatalog(ctx context.Context, c *catalog.Catalog) error {
+	pipeline := []bson.M{
+		{
+			"$match": bson.M{
+				"_id": c.GetId(),
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from": "sections",
+				"let":  bson.M{"section_id": "$structure.sectionId"},
+				"pipeline": bson.A{
+					bson.M{"$match": bson.M{"$expr": bson.M{"$in": bson.A{"$_id", "$$section_id"}}}},
+				},
+				"as": "sections",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from": "categories",
+				"let": bson.M{
+					"categoryIds": bson.M{
+						"$reduce": bson.M{
+							"input":        "$structure",
+							"initialValue": bson.A{},
+							"in": bson.M{
+								"$setUnion": bson.A{"$$value", "$$this.categories.categoryId"},
+							},
+						},
+					},
+				},
+				"pipeline": bson.A{
+					bson.M{"$match": bson.M{"$expr": bson.M{"$in": bson.A{"$_id", "$$categoryIds"}}}},
+				},
+				"as": "categories",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from": "products",
+				"let": bson.M{
+					"productIds": bson.M{
+						"$reduce": bson.M{
+							"input":        "$structure",
+							"initialValue": bson.A{},
+							"in": bson.M{
+								"$concatArrays": bson.A{
+									"$$value",
+									bson.M{
+										"$reduce": bson.M{
+											"input":        "$$this.categories",
+											"initialValue": bson.A{},
+											"in": bson.M{
+												"$concatArrays": bson.A{"$$value", "$$this.products.productId"},
+											},
+										},
+									},
+								},
+							},
+						},
+					},
+				},
+				"pipeline": bson.A{
+					bson.M{"$match": bson.M{"$expr": bson.M{"$in": bson.A{"$_id", "$$productIds"}}}},
+				},
+				"as": "products",
+			},
+		},
+		{
+			"$lookup": bson.M{
+				"from":     "slides",
+				"pipeline": bson.A{},
+				"as":       "slides",
+			},
+		},
+		{
+			"$project": bson.M{
+				"catalogId": "$_id",
+				"structure": "$structure",
+				"sections": bson.M{
+					"$map": bson.M{
+						"input": "$sections", "as": "section", "in": bson.M{
+							"_id":       "$$section._id",
+							"name":      "$$section.name",
+							"img":       "$$section.img",
+							"isDeleted": "$$section.isDeleted",
+							"createdAt": "$$section.createdAt",
+							"updatedAt": "$$section.updatedAt",
+							"version":   "$$section.version",
+						},
+					},
+				},
+				"categories": bson.M{
+					"$map": bson.M{
+						"input": "$categories", "as": "category", "in": bson.M{
+							"_id":       "$$category._id",
+							"name":      "$$category.name",
+							"desc":      "$$category.desc",
+							"img":       "$$category.img",
+							"isDeleted": "$$category.isDeleted",
+							"createdAt": "$$category.createdAt",
+							"updatedAt": "$$category.updatedAt",
+							"version":   "$$category.version",
+						},
+					},
+				},
+				"products": bson.M{
+					"$map": bson.M{
+						"input": "$products", "as": "product", "in": bson.M{
+							"_id":       "$$product._id",
+							"name":      "$$product.name",
+							"desc":      "$$product.desc",
+							"price":     "$$product.price",
+							"quantity":  "$$product.quantity",
+							"img":       "$$product.img",
+							"status":    "$$product.status",
+							"isDeleted": "$$product.isDeleted",
+							"createdAt": "$$product.createdAt",
+							"updatedAt": "$$product.updatedAt",
+							"version":   "$$product.version",
+						},
+					},
+				},
+				"slides": bson.M{
+					"$map": bson.M{
+						"input": "$slides", "as": "slide", "in": bson.M{
+							"_id":       "$$slide._id",
+							"caption":   "$$slide.caption",
+							"img":       "$$slide.img",
+							"isDeleted": "$$slide.isDeleted",
+							"createdAt": "$$slide.createdAt",
+							"updatedAt": "$$slide.updatedAt",
+							"version":   "$$slide.version",
+						},
+					},
+				},
+			},
+		},
 	}
-	return mongoProducts{Products: internal}
-}
-
-func (m *mongoProducts) ToAggregate() map[string]*product.Product {
-	internal := make(map[string]*product.Product)
-	for id, product := range m.Products {
-		internal[id] = product.ToAggregate()
+	cur, err := r.Coll().Aggregate(ctx, pipeline)
+	if err != nil {
+		return err
 	}
-	return internal
-}
+	defer cur.Close(ctx)
 
-func (r *RepoCatalog) PublishCatalog(ctx context.Context, c *catalog.Catalog, sections map[string]*section.Section, categories map[string]*category.Category, products map[string]*product.Product) error {
-	_, err := r.CollPublishedCatalog().InsertOne(ctx, bson.M{
-		"_id":        uuid.NewUUID(),
+	var publishedCatalogs []mongoPublishedCatalog
+	for cur.Next(ctx) {
+		var publishedCatalog mongoPublishedCatalog
+		if err = cur.Decode(&publishedCatalog); err != nil {
+			return err
+		}
+		publishedCatalogs = append(publishedCatalogs, publishedCatalog)
+	}
+
+	var sections = make(map[string]mongoPublishedCatalogSection)
+	for _, section := range publishedCatalogs[0].Sections {
+		sections[section.Id.String()] = section
+	}
+	var categories = make(map[string]mongoPublishedCatalogCategory)
+	for _, category := range publishedCatalogs[0].Categories {
+		categories[category.Id.String()] = category
+	}
+	var products = make(map[string]mongoPublishedCatalogProduct)
+	for _, product := range publishedCatalogs[0].Products {
+		products[product.Id.String()] = product
+	}
+
+	count, err := r.CollPublishedCatalog().CountDocuments(ctx, bson.M{"catalogId": c.GetId()})
+	if err != nil {
+		return err
+	}
+	if count > 0 {
+		_, err = r.CollPublishedCatalog().UpdateOne(ctx, bson.M{"catalogId": c.GetId()}, bson.M{
+			"$set": bson.M{
+				"structure":  publishedCatalogs[0].Structure,
+				"sections":   sections,
+				"categories": categories,
+				"products":   products,
+				"slides":     publishedCatalogs[0].Slides,
+				"updatedAt":  time.Now(),
+			},
+			"$inc": bson.M{"version": 1},
+		})
+		return err
+	}
+	_, err = r.CollPublishedCatalog().InsertOne(ctx, bson.M{
 		"catalogId":  c.GetId(),
-		"structure":  newFromCatalog(c).Structure,
-		"sections":   newFromSections(sections).Sections,
-		"categories": newFromCategories(categories).Categories,
-		"products":   newFromProducts(products).Products,
+		"structure":  publishedCatalogs[0].Structure,
+		"sections":   sections,
+		"categories": categories,
+		"products":   products,
+		"slides":     publishedCatalogs[0].Slides,
 		"createdAt":  time.Now(),
-		"version":    c.GetVersion() + 1,
+		"updatedAt":  time.Now(),
+		"version":    1,
 	})
 	return err
 }

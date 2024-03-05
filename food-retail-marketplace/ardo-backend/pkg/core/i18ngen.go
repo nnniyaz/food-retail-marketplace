@@ -76,6 +76,9 @@ const (
 	TXT_DUPLICATE_SECTION           TxtKey = 71
 	TXT_DUPLICATE_CATEGORY          TxtKey = 72
 	TXT_DUPLICATE_PRODUCT           TxtKey = 73
+	TXT_EMPTY_SLIDE_IMG             TxtKey = 74
+	TXT_SLIDE_ALREADY_EXISTS        TxtKey = 75
+	TXT_SLIDE_NOT_FOUND             TxtKey = 76
 )
 
 var Txts = TxtResource{
@@ -371,6 +374,18 @@ var Txts = TxtResource{
 		RU: `Дубликат продукта`,
 		EN: `Duplicate product`,
 	},
+	TXT_EMPTY_SLIDE_IMG: MlString{
+		RU: `Изображение слайда не может быть пустым`,
+		EN: `Slide image can not be empty`,
+	},
+	TXT_SLIDE_ALREADY_EXISTS: MlString{
+		RU: `Слайд уже существует`,
+		EN: `Slide already exists`,
+	},
+	TXT_SLIDE_NOT_FOUND: MlString{
+		RU: `Слайд не найден`,
+		EN: `Slide not found`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -521,6 +536,12 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "duplicate_category"
 	case TXT_DUPLICATE_PRODUCT:
 		return "duplicate_product"
+	case TXT_EMPTY_SLIDE_IMG:
+		return "empty_slide_img"
+	case TXT_SLIDE_ALREADY_EXISTS:
+		return "slide_already_exists"
+	case TXT_SLIDE_NOT_FOUND:
+		return "slide_not_found"
 
 	default:
 		return ""

@@ -12,6 +12,7 @@ import (
 	"github/nnniyaz/ardo/handler/http/management_order"
 	"github/nnniyaz/ardo/handler/http/management_product"
 	"github/nnniyaz/ardo/handler/http/management_section"
+	"github/nnniyaz/ardo/handler/http/management_slide"
 	"github/nnniyaz/ardo/handler/http/management_user"
 	middleware2 "github/nnniyaz/ardo/handler/http/middleware"
 	"github/nnniyaz/ardo/pkg/logger"
@@ -30,6 +31,7 @@ type Handler struct {
 	ManagementCatalog  *management_catalog.HttpDelivery
 	ManagementSection  *management_section.HttpDelivery
 	ManagementCategory *management_category.HttpDelivery
+	ManagementSlide    *management_slide.HttpDelivery
 	Client             *client.HttpDelivery
 }
 
@@ -44,6 +46,7 @@ func NewHandler(c *mongo.Client, clientUri string, s *service.Services, l logger
 		ManagementCatalog:  management_catalog.NewHttpDelivery(l, s.ManagementCatalog),
 		ManagementSection:  management_section.NewHttpDelivery(l, s.ManagementSection),
 		ManagementCategory: management_category.NewHttpDelivery(l, s.ManagementCategory),
+		ManagementSlide:    management_slide.NewHttpDelivery(l, s.ManagementSlide),
 		Client:             client.NewHttpDelivery(l, s.Client),
 	}
 }
@@ -167,6 +170,15 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Put("/{category_id}", h.ManagementCategory.UpdateCategory)
 				r.Put("/recover/{category_id}", h.ManagementCategory.RecoverCategory)
 				r.Delete("/{category_id}", h.ManagementCategory.DeleteCategory)
+			})
+
+			r.Route("/slides", func(r chi.Router) {
+				r.With(h.Middleware.PaginationParams).Get("/", h.ManagementSlide.GetSlidesByFilters)
+				r.Get("/{slide_id}", h.ManagementSlide.GetSlideById)
+				r.Post("/", h.ManagementSlide.CreateSlide)
+				r.Put("/{slide_id}", h.ManagementSlide.UpdateSlide)
+				r.Put("/recover/{slide_id}", h.ManagementSlide.RecoverSlide)
+				r.Delete("/{slide_id}", h.ManagementSlide.DeleteSlide)
 			})
 		})
 

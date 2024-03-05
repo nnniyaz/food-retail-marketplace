@@ -72,3 +72,6 @@ maximum_number_of_catalogs,Достигнуто максимальное кол�
 duplicate_section,Дубликат раздела,Duplicate section
 duplicate_category,Дубликат категории,Duplicate category
 duplicate_product,Дубликат продукта,Duplicate product
+empty_slide_img,Изображение слайда не может быть пустым,Slide image can not be empty
+slide_already_exists,Слайд уже существует,Slide already exists
+slide_not_found,Слайд не найден,Slide not found

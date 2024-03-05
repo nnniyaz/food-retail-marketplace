@@ -16,6 +16,7 @@ import (
 	"github/nnniyaz/ardo/service/product"
 	"github/nnniyaz/ardo/service/section"
 	"github/nnniyaz/ardo/service/session"
+	"github/nnniyaz/ardo/service/slide"
 	"github/nnniyaz/ardo/service/user"
 )
 
@@ -28,6 +29,7 @@ type Services struct {
 	ManagementCatalog  management.ManagementCatalogService
 	ManagementSection  management.ManagementSectionService
 	ManagementCategory management.ManagementCategoryService
+	ManagementSlide    management.ManagementSlideService
 	Client             client.ClientService
 }
 
@@ -40,6 +42,7 @@ func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, 
 	catalogService := catalog.NewCatalogService(l, repos.RepoCatalog, repos.RepoSection, repos.RepoCategory, repos.RepoProduct)
 	sectionService := section.NewSectionService(l, repos.RepoSection)
 	categoryService := category.NewCategoryService(l, repos.RepoCategory)
+	slideService := slide.NewSlideService(l, repos.RepoSlide)
 
 	return &Services{
 		Auth:               auth.NewAuthService(l, config, emailService, userService, sessionService, linkService),
@@ -50,6 +53,7 @@ func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, 
 		ManagementCatalog:  management.NewManagementCatalogService(l, catalogService),
 		ManagementSection:  management.NewManagementSectionService(l, sectionService),
 		ManagementCategory: management.NewManagementCategoryService(l, categoryService),
+		ManagementSlide:    management.NewManagementSlideService(l, slideService),
 		Client:             client.NewClientService(l, orderService, emailService),
 	}
 }
