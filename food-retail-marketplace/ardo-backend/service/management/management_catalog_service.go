@@ -4,8 +4,15 @@ import (
 	"context"
 	"github/nnniyaz/ardo/domain/catalog"
 	"github/nnniyaz/ardo/domain/catalog/valueObject"
+	"github/nnniyaz/ardo/domain/category"
+	"github/nnniyaz/ardo/domain/product"
+	"github/nnniyaz/ardo/domain/section"
 	"github/nnniyaz/ardo/pkg/logger"
 	catalogService "github/nnniyaz/ardo/service/catalog"
+	categoryService "github/nnniyaz/ardo/service/category"
+	productService "github/nnniyaz/ardo/service/product"
+	sectionService "github/nnniyaz/ardo/service/section"
+	slideService "github/nnniyaz/ardo/service/slide"
 )
 
 type ManagementCatalogService interface {
@@ -17,12 +24,16 @@ type ManagementCatalogService interface {
 }
 
 type managementCatalogService struct {
-	logger         logger.Logger
-	catalogService catalogService.CatalogService
+	logger          logger.Logger
+	catalogService  catalogService.CatalogService
+	sectionService  sectionService.SectionService
+	categoryService categoryService.CategoryService
+	productService  productService.ProductService
+	slideService    slideService.SlideService
 }
 
-func NewManagementCatalogService(l logger.Logger, catalogService catalogService.CatalogService) ManagementCatalogService {
-	return &managementCatalogService{logger: l, catalogService: catalogService}
+func NewManagementCatalogService(l logger.Logger, catalogService catalogService.CatalogService, sectionService sectionService.SectionService, categoryService categoryService.CategoryService, productService productService.ProductService, slideService slideService.SlideService) ManagementCatalogService {
+	return &managementCatalogService{logger: l, catalogService: catalogService, sectionService: sectionService, categoryService: categoryService, productService: productService, slideService: slideService}
 }
 
 func (m *managementCatalogService) GetAllCatalogs(ctx context.Context) ([]*catalog.Catalog, int64, error) {
@@ -46,5 +57,37 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 	if err != nil {
 		return err
 	}
-	return m.catalogService.Publish(ctx, foundCatalog)
+
+	selectedSections := make(map[string]*section.Section)
+	selectedCategories := make(map[string]*category.Category)
+	selectedProducts := make(map[string]*product.Product)
+	for _, catalogSection := range foundCatalog.GetStructure() {
+		foundSection, err := m.sectionService.GetOneById(ctx, catalogSection.GetId().String())
+		if err != nil {
+			return err
+		}
+		selectedSections[catalogSection.GetId().String()] = foundSection
+
+		for _, catalogCategory := range catalogSection.GetCategories() {
+			foundCategory, err := m.categoryService.GetOneById(ctx, catalogCategory.GetId().String())
+			if err != nil {
+				return err
+			}
+			selectedCategories[catalogCategory.GetId().String()] = foundCategory
+
+			for _, catalogProduct := range catalogCategory.GetProducts() {
+				foundProduct, err := m.productService.GetOneById(ctx, catalogProduct.GetId().String())
+				if err != nil {
+					return err
+				}
+				selectedProducts[catalogProduct.GetId().String()] = foundProduct
+			}
+		}
+	}
+
+	slides, _, err := m.slideService.GetAllByFilters(ctx, 0, 0, false)
+	if err != nil {
+		return err
+	}
+	return m.catalogService.Publish(ctx, foundCatalog, selectedSections, selectedCategories, selectedProducts, slides)
 }

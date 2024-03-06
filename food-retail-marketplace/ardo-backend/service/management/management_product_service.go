@@ -27,7 +27,7 @@ func NewManagementProductService(l logger.Logger, productService productService.
 }
 
 func (m *managementProductService) GetProductsByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {
-	products, count, err := m.productService.GetByFilters(ctx, offset, limit, isDeleted)
+	products, count, err := m.productService.GetAllByFilters(ctx, offset, limit, isDeleted)
 	if err != nil {
 		return nil, 0, err
 	}
@@ -35,7 +35,7 @@ func (m *managementProductService) GetProductsByFilters(ctx context.Context, off
 }
 
 func (m *managementProductService) GetProductById(ctx context.Context, productId string) (*product.Product, error) {
-	return m.productService.GetById(ctx, productId)
+	return m.productService.GetOneById(ctx, productId)
 }
 
 func (m *managementProductService) AddProduct(ctx context.Context, name, desc core.MlString, price float64, quantity int64, img, status string) error {
@@ -47,7 +47,7 @@ func (m *managementProductService) AddProduct(ctx context.Context, name, desc co
 }
 
 func (m *managementProductService) UpdateProduct(ctx context.Context, productId string, name, desc core.MlString, price float64, quantity int64, img, status string) error {
-	foundProduct, err := m.productService.GetById(ctx, productId)
+	foundProduct, err := m.productService.GetOneById(ctx, productId)
 	if err != nil {
 		return err
 	}

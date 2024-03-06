@@ -11,8 +11,8 @@ import (
 )
 
 type ProductService interface {
-	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
-	GetById(ctx context.Context, productId string) (*product.Product, error)
+	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
+	GetOneById(ctx context.Context, productId string) (*product.Product, error)
 	Create(ctx context.Context, product *product.Product) error
 	Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int64, img, status string) error
 	Recover(ctx context.Context, productId string) error
@@ -28,7 +28,7 @@ func NewProductService(l logger.Logger, repo repo.Product) ProductService {
 	return &productService{logger: l, productRepo: repo}
 }
 
-func (p *productService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {
+func (p *productService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {
 	if offset < 0 {
 		offset = 0
 	}
@@ -38,7 +38,7 @@ func (p *productService) GetByFilters(ctx context.Context, offset, limit int64, 
 	return p.productRepo.FindByFilters(ctx, offset, limit, isDeleted)
 }
 
-func (p *productService) GetById(ctx context.Context, productId string) (*product.Product, error) {
+func (p *productService) GetOneById(ctx context.Context, productId string) (*product.Product, error) {
 	convertedId, err := uuid.UUIDFromString(productId)
 	if err != nil {
 		return nil, err
@@ -58,7 +58,7 @@ func (p *productService) Update(ctx context.Context, product *product.Product, n
 }
 
 func (p *productService) Recover(ctx context.Context, productId string) error {
-	foundProduct, err := p.GetById(ctx, productId)
+	foundProduct, err := p.GetOneById(ctx, productId)
 	if err != nil {
 		return err
 	}
@@ -69,7 +69,7 @@ func (p *productService) Recover(ctx context.Context, productId string) error {
 }
 
 func (p *productService) Delete(ctx context.Context, productId string) error {
-	foundProduct, err := p.GetById(ctx, productId)
+	foundProduct, err := p.GetOneById(ctx, productId)
 	if err != nil {
 		return err
 	}

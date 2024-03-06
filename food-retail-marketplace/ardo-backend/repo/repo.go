@@ -75,7 +75,7 @@ type Catalog interface {
 	FindOneById(ctx context.Context, id uuid.UUID) (*catalog.Catalog, error)
 	CreateCatalog(ctx context.Context, catalog *catalog.Catalog) error
 	UpdateCatalog(ctx context.Context, catalog *catalog.Catalog) error
-	PublishCatalog(ctx context.Context, c *catalog.Catalog) error
+	PublishCatalog(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) error
 }
 
 type Section interface {
