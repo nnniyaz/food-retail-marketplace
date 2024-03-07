@@ -79,6 +79,10 @@ const (
 	TXT_EMPTY_SLIDE_IMG             TxtKey = 74
 	TXT_SLIDE_ALREADY_EXISTS        TxtKey = 75
 	TXT_SLIDE_NOT_FOUND             TxtKey = 76
+	TXT_CATALOG_NOT_FOUND           TxtKey = 77
+	TXT_CATALOG_SECTION_NOT_FOUND   TxtKey = 78
+	TXT_CATALOG_CATEGORY_NOT_FOUND  TxtKey = 79
+	TXT_CATALOG_PRODUCT_NOT_FOUND   TxtKey = 80
 )
 
 var Txts = TxtResource{
@@ -386,6 +390,22 @@ var Txts = TxtResource{
 		RU: `Слайд не найден`,
 		EN: `Slide not found`,
 	},
+	TXT_CATALOG_NOT_FOUND: MlString{
+		RU: `Каталог не найден`,
+		EN: `Catalog not found`,
+	},
+	TXT_CATALOG_SECTION_NOT_FOUND: MlString{
+		RU: `Раздел каталога не найден`,
+		EN: `Catalog section not found`,
+	},
+	TXT_CATALOG_CATEGORY_NOT_FOUND: MlString{
+		RU: `Категория каталога не найдена`,
+		EN: `Catalog category not found`,
+	},
+	TXT_CATALOG_PRODUCT_NOT_FOUND: MlString{
+		RU: `Продукт каталога не найден`,
+		EN: `Catalog product not found`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -542,6 +562,14 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "slide_already_exists"
 	case TXT_SLIDE_NOT_FOUND:
 		return "slide_not_found"
+	case TXT_CATALOG_NOT_FOUND:
+		return "catalog_not_found"
+	case TXT_CATALOG_SECTION_NOT_FOUND:
+		return "catalog_section_not_found"
+	case TXT_CATALOG_CATEGORY_NOT_FOUND:
+		return "catalog_category_not_found"
+	case TXT_CATALOG_PRODUCT_NOT_FOUND:
+		return "catalog_product_not_found"
 
 	default:
 		return ""

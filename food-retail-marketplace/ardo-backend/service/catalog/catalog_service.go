@@ -20,7 +20,7 @@ type CatalogService interface {
 	GetAll(ctx context.Context) ([]*catalog.Catalog, int64, error)
 	GetOneById(ctx context.Context, catalogId string) (*catalog.Catalog, error)
 	Create(ctx context.Context, catalog *catalog.Catalog) error
-	Update(ctx context.Context, catalogId string, structure []valueObject.CatalogsSection) error
+	Update(ctx context.Context, catalogId string, structure []valueObject.CatalogsSection, promo []valueObject.CatalogsSection) error
 	Publish(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategory map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) error
 }
 
@@ -59,12 +59,12 @@ func (c *catalogService) Create(ctx context.Context, catalog *catalog.Catalog) e
 	return c.catalogRepo.CreateCatalog(ctx, catalog)
 }
 
-func (c *catalogService) Update(ctx context.Context, catalogId string, structure []valueObject.CatalogsSection) error {
+func (c *catalogService) Update(ctx context.Context, catalogId string, structure []valueObject.CatalogsSection, promo []valueObject.CatalogsSection) error {
 	foundCatalog, err := c.GetOneById(ctx, catalogId)
 	if err != nil {
 		return err
 	}
-	foundCatalog.SaveStructureOrder(structure)
+	foundCatalog.UpdateCatalog(structure, promo)
 	return c.catalogRepo.UpdateCatalog(ctx, foundCatalog)
 }
 

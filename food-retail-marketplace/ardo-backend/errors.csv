@@ -75,3 +75,7 @@ duplicate_product,Дубликат продукта,Duplicate product
 empty_slide_img,Изображение слайда не может быть пустым,Slide image can not be empty
 slide_already_exists,Слайд уже существует,Slide already exists
 slide_not_found,Слайд не найден,Slide not found
+catalog_not_found,Каталог не найден,Catalog not found
+catalog_section_not_found,Раздел каталога не найден,Catalog section not found
+catalog_category_not_found,Категория каталога не найдена,Catalog category not found
+catalog_product_not_found,Продукт каталога не найден,Catalog product not found

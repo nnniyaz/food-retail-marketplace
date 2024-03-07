@@ -43,6 +43,7 @@ type Section struct {
 type Catalog struct {
 	Id        string    `json:"id"`
 	Structure []Section `json:"structure"`
+	Promo     []Section `json:"promo"`
 	CreatedAt string    `json:"createdAt"`
 	UpdatedAt string    `json:"updated_at"`
 	Version   int       `json:"version"`
@@ -61,9 +62,24 @@ func NewCatalog(catalog *catalog.Catalog) *Catalog {
 		}
 		structure = append(structure, Section{SectionId: section.GetId().String(), Categories: categories})
 	}
+
+	var promo []Section
+	for _, promoSection := range catalog.GetPromo() {
+		var promoCategories []Category
+		for _, promoCategory := range promoSection.GetCategories() {
+			var promoProducts []Product
+			for _, promoProduct := range promoCategory.GetProducts() {
+				promoProducts = append(promoProducts, Product{ProductId: promoProduct.GetId().String()})
+			}
+			promoCategories = append(promoCategories, Category{CategoryId: promoCategory.GetId().String(), Products: promoProducts})
+		}
+		promo = append(promo, Section{SectionId: promoSection.GetId().String(), Categories: promoCategories})
+	}
+
 	return &Catalog{
 		Id:        catalog.GetId().String(),
 		Structure: structure,
+		Promo:     promo,
 		CreatedAt: catalog.GetCreatedAt().String(),
 		UpdatedAt: catalog.GetUpdatedAt().String(),
 		Version:   catalog.GetVersion(),
@@ -116,14 +132,15 @@ func (hd *HttpDelivery) CreateCatalog(w http.ResponseWriter, r *http.Request) {
 
 type UpdateCatalogIn struct {
 	Structure []Section `json:"structure"`
+	Promo     []Section `json:"promo"`
 }
 
-func UnmarshalUpdateCatalogIn(structure UpdateCatalogIn) ([]valueObject.CatalogsSection, error) {
+func UnmarshalStructure(structure []Section) ([]valueObject.CatalogsSection, error) {
 	var sections []valueObject.CatalogsSection
 	sectionIds := make(map[string]bool)
 	categoryIds := make(map[string]bool)
 	productIds := make(map[string]bool)
-	for _, section := range structure.Structure {
+	for _, section := range structure {
 		var categories []valueObject.CatalogsCategory
 		for _, category := range section.Categories {
 			var products []valueObject.CatalogsProduct
@@ -172,17 +189,22 @@ func UnmarshalUpdateCatalogIn(structure UpdateCatalogIn) ([]valueObject.Catalogs
 
 func (hd *HttpDelivery) UpdateCatalog(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCatalogIn
+	catalogId := chi.URLParam(r, "catalog_id")
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	structure, err := UnmarshalUpdateCatalogIn(in)
+	structure, err := UnmarshalStructure(in.Structure)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	catalogId := chi.URLParam(r, "catalog_id")
-	if err := hd.service.UpdateCatalog(r.Context(), catalogId, structure); err != nil {
+	promo, err := UnmarshalStructure(in.Promo)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.UpdateCatalog(r.Context(), catalogId, structure, promo); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
