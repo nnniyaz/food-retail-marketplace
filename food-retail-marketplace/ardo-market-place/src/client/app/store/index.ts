@@ -1,19 +1,14 @@
 import {createStore, combineReducers, applyMiddleware} from "redux";
 import thunk from 'redux-thunk';
 import {composeWithDevTools} from '@redux-devtools/extension';
-// import logger from 'redux-logger'
 import reducers from "./reducers";
 
 const rootReducer = combineReducers(reducers);
 
-// @ts-ignore
-const middlewares: any = [!import.meta.env.SSR ? thunk : thunk.default];
+const middlewares: any = [];
 
-if (process.env.NODE_ENV === `development` && typeof window !== `undefined`) {
-    // const logger = reduxLogger.createLogger({
-    //     collapsed: true
-    // });
-    // middlewares.push(logger);
+if (!import.meta.env.SSR && typeof window !== `undefined`) {
+    middlewares.push(thunk);
 }
 
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(...middlewares)));

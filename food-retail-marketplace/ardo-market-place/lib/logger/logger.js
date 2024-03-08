@@ -1,27 +1,24 @@
 import { formattedDate } from '../date/format.js';
 
 export class Logger {
-    url;
-
     constructor() {
-        this.url = '';
     }
 
-    error(log) {
-        process.stderr.write(`${formattedDate(new Date())} [${this.url}] ${log}\n`);
+    error(url, log) {
+        process.stderr.write(`${formattedDate(new Date())} [${url}] ${log}\n`);
     }
 
-    logRequestDurations({ publishedCatalogLatency, totalDuration }) {
+    logRequestDurations({ url, publishedCatalogLatency, totalDuration }) {
         const formattedCurrentDate = formattedDate(new Date());
-        process.stdout.write(`${formattedCurrentDate} published-catalog-latency - ${publishedCatalogLatency}ms\n`);
-        process.stdout.write(`${formattedCurrentDate} total duration - ${totalDuration}ms\n\n`);
+        process.stdout.write(`${formattedCurrentDate} [${url}] published-catalog-latency - ${publishedCatalogLatency}ms\n`);
+        process.stdout.write(`${formattedCurrentDate} [${url}] total duration - ${totalDuration}ms\n`);
     }
 
     logHttp(req, res, next) {
+        const url = req.protocol + "://" + req.headers.host + req.originalUrl;
         const start = Date.now();
         const formattedCurrentDate = formattedDate(new Date());
 
-        const url = req.headers["referer"];
         const { method, ip } = req;
         const { statusCode } = res;
 

@@ -1,1 +1,1 @@
-export * from "./Cart.tsx";
+export * from "./Cart";

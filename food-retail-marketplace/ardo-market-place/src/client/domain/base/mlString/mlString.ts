@@ -1,31 +1,30 @@
-import { isEmpty } from 'lodash';
+import lodash from 'lodash';
+
+const {isEmpty} = lodash;
 
 export enum Langs {
     RU = 'RU',
     EN = 'EN'
 }
 
-function ValidateLang(lang: string): boolean {
-    return (
-        lang === Langs.RU ||
-        lang === Langs.EN
-    )
+function ValidateLang(lang: string): Error | null {
+    if (lang !== Langs.RU && lang !== Langs.EN) {
+        return new Error("Lang is invalid");
+    }
+    return null;
 }
 
 export type MlString = Record<Langs, string>
 
-export function ValidateMlString(mlString: MlString): boolean {
+export function ValidateMlString(mlString: MlString): Error | null {
     if (isEmpty(mlString)) {
-        return false;
+        throw new Error("MlString is invalid");
     }
-    let count = 0;
     Object.keys(mlString).forEach(lang => {
-        if (!ValidateLang(lang)) {
-            count++;
-        }
-        if (!mlString[lang as Langs]) {
-            count++;
+        let err = ValidateLang(lang);
+        if (err !== null) {
+            throw err;
         }
     });
-    return count === Object.keys(mlString).length;
+    return null;
 }

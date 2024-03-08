@@ -6,6 +6,7 @@ import {Cart} from "@pages/Cart";
 import {Favourites} from "@pages/Favourites";
 import {Profile} from "@pages/Profile";
 import {Layout} from "@pages/Layout";
+import {List} from "@pages/List";
 
 interface IRoute {
     path: string;
@@ -15,7 +16,11 @@ interface IRoute {
 export enum RouteNames {
     HOME = "/",
     CATALOG = "/catalog",
+    LIST = "/:sectionName/:sectionId",
+    PRODUCT = "/:sectionName/:sectionId/:categoryName/:categoryId/:productName/:productId",
     CART = "/cart",
+    CHECKOUT = "/checkout",
+    SUCCESS = "/success",
     FAVOURITES = "/favourites",
     PROFILE = "/profile",
 }
@@ -23,6 +28,7 @@ export enum RouteNames {
 const routes: IRoute[] = [
     {path: RouteNames.HOME, component: Home},
     {path: RouteNames.CATALOG, component: Catalog},
+    {path: RouteNames.LIST, component: List},
     {path: RouteNames.CART, component: Cart},
     {path: RouteNames.FAVOURITES, component: Favourites},
     {path: RouteNames.PROFILE, component: Profile},

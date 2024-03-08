@@ -1,6 +1,8 @@
 import {useEffect, useState} from "react";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Pagination, Navigation } from 'swiper';
+import {Swiper, SwiperSlide} from 'swiper/react';
+import {Autoplay, Pagination, Navigation} from 'swiper';
+import {translate} from "@pkg/translate/translate.ts";
+import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import 'swiper/css';
 import 'swiper/css/pagination';
 import classes from "./Carousel.module.scss";
@@ -24,28 +26,51 @@ export const Carousel = () => {
         }
     }, []);
 
+    const {catalog} = useTypedSelector(state => state.catalogState);
+
+    if (!catalog.slides.length) {
+        return null;
+    }
     return (
         <section className={classes.carousel}>
             <Swiper
                 slidesPerView={windowWidth <= 800 ? 1 : 3}
-                spaceBetween={windowWidth <= 800 ? 0 : 15}
+                spaceBetween={15}
                 loop={true}
+                autoplay={{
+                    delay: 2500,
+                    disableOnInteraction: false
+                }}
                 pagination={{
-                    clickable: true
+                    clickable: true,
                 }}
                 navigation={true}
-                modules={[Pagination, Navigation]}
+                modules={[Autoplay, Pagination, Navigation]}
+                style={{borderRadius: "12px"}}
             >
-                <SwiperSlide className={classes.carousel__item}>Slide 1</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 2</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 3</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 4</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 5</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 6</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 7</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 8</SwiperSlide>
-                <SwiperSlide className={classes.carousel__item}>Slide 9</SwiperSlide>
+                {catalog.slides.map((slide) => (
+                    <SwiperSlide key={slide._id} className={classes.carousel__item}>
+                        <CarouselItem img={slide.img} caption={slide.caption}/>
+                    </SwiperSlide>
+                ))}
             </Swiper>
         </section>
+    )
+}
+
+const CarouselItem = ({img, caption}) => {
+    const [imgError, setImgError] = useState(false);
+    return (
+        <div
+            className={classes.carousel__item__container}
+            style={{
+                backgroundImage: (imgError || !img) ? "url(food_placeholder.png)" : `url(${img})`,
+            }}
+            onError={() => setImgError(true)}
+        >
+            <div className={classes.carousel__item__inner__container}>
+                {translate(caption) ?? null}
+            </div>
+        </div>
     )
 }

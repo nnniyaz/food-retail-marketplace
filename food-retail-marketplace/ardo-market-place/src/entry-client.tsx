@@ -11,7 +11,7 @@ if (typeof window !== 'undefined') {
 
 ReactDOM.hydrateRoot(
     document.getElementById('root') as HTMLElement,
-    <BrowserRouter basename={pageContext.pathname}>
+    <BrowserRouter basename={"/"}>
         <Main {...pageContext}/>
     </BrowserRouter>
 )

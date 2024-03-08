@@ -32,6 +32,9 @@
       height: 30px;
       border-radius: 50%;
       background-color: var(--secondary-bg-color);
+      image-rendering: smooth;
+      object-fit: contain;
+      user-select: none;
     }
 
     .section__info {
@@ -47,24 +50,80 @@
         font-weight: 500;
         font-size: 18px;
         line-height: 21px;
-        color: var(--secondary-font-color);
+        color: var(--primary-font-color);
         user-select: none;
         transition: .1s linear;
       }
 
       .section__arrow {
-        color: var(--secondary-font-color);
+        color: var(--primary-font-color);
         transition: .1s linear;
       }
 
       .section__arrow__active {
-        color: var(--secondary-font-color);
+        color: var(--primary-font-color);
         transform: rotate(90deg);
         transition: .1s linear;
       }
     }
   }
+
+  .section__categories {
+    width: 100%;
+    height: 0;
+    overflow: hidden;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 20px;
+    list-style: none;
+    transition: height 0.3s ease;
+  }
+
+  .category__container {
+    max-width: 250px;
+    width: calc((100% - 40px) / 3);
+    height: 116px;
+  }
+
+  .category {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 10px 0;
+    text-decoration: none;
+  }
+
+  .category__preview {
+    width: 100%;
+    height: 90px;
+    background-color: var(--secondary-bg-color);
+    border-radius: 10px;
+    image-rendering: smooth;
+    object-fit: contain;
+    user-select: none;
+  }
+
+  .category__title {
+    font-style: normal;
+    font-weight: 500;
+    font-size: 16px;
+    line-height: 21px;
+    color: var(--primary-font-color);
+  }
+
+  .section__categories__active {
+    @extend .section__categories;
+    height: auto;
+    overflow: auto;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
 }
+
 
 @media only screen and (max-width: 1200px) {
   .section__container {
@@ -72,26 +131,34 @@
       &:hover {
         .section__info {
           .section__title {
-            color: var(--secondary-font-color);
+            color: var(--primary-font-color);
           }
 
           .section__arrow {
-            color: var(--secondary-font-color);
+            color: var(--primary-font-color);
           }
 
           .section__arrow__active {
-            color: var(--secondary-font-color);
+            color: var(--primary-font-color);
           }
         }
       }
     }
-  }
 
-  .section__categories {
-    height: 0;
-  }
+    .section__categories {
 
-  .section__categories__active {
-    height: auto;
+    }
+
+    .category__container {
+
+    }
+
+    .category {
+
+    }
+
+    .section__categories__active {
+
+    }
   }
 }

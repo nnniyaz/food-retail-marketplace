@@ -3,11 +3,7 @@ import {Provider} from "react-redux";
 import {App} from "@app/app.tsx";
 import {store} from "@app/store";
 
-interface EntryProps {
-
-}
-
-export const Main = (pageContext: EntryProps) => {
+export const Main = (pageContext: any) => {
     // =================================================================================================================
     // REMOVES HYDRATION WARNING
     const [mounted, setMounted] = useState(false);

@@ -3,7 +3,6 @@ import fs from "node:fs/promises";
 import express from "express";
 import {getEnv} from "./lib/env/env.js";
 import {Logger} from "./lib/logger/logger.js";
-import {isEmpty} from "./lib/isEmpty/isEmpty.js";
 
 // =====================================================================================================================
 // Init Application
@@ -38,23 +37,22 @@ async function main() {
     const cfg = {
         PORT: getEnv("PORT"),
         NODE_ENV: getEnv("NODE_ENV"),
+        MONGO_URI: getEnv("MONGO_URI"),
+        MONGO_MAIN_DB: getEnv("MONGO_MAIN_DB"),
     }
     // =================================================================================================================
 
     // =================================================================================================================
-    // Импорт необходимых модулей после сборки проект
-    let txts;
+    // Import necessary modules after project build
     let render;
-    let connectToDatabase;
+    let getPublishedCatalog;
     if (cfg.NODE_ENV !== "production") {
         // Always read fresh template in development
         render = (await vite.ssrLoadModule("/src/entry-server.tsx")).render;
-        connectToDatabase = (await vite.ssrLoadModule("/src/server/pkg/mongo/connectMongo.ts")).connectToDatabase;
-        txts = (await vite.ssrLoadModule("/src/server/pkg/core/txts.ts")).txts;
+        getPublishedCatalog = (await vite.ssrLoadModule("/src/server/pkg/mongo/getPublishedCatalog.ts")).getPublishedCatalog;
     } else {
         render = (await import("./dist/server/entry-server.js")).render;
-        connectToDatabase = (await import("./dist/server/entry-server.js")).connectToDatabase;
-        txts = (await import("./dist/server/entry-server.js")).txts;
+        getPublishedCatalog = (await import("./dist/server/entry-server.js")).getPublishedCatalog;
     }
     // =================================================================================================================
 
@@ -71,11 +69,10 @@ async function main() {
     // Serve CSR Pages
     app.get("*", async (req, res) => {
         const startTime = Date.now();
+        let url = new URL(req.protocol + "://" + req.headers.host + req.originalUrl);
         try {
-            let url = new URL(req.protocol + "://" + req.headers.host + req.originalUrl);
-
             // ---------------------------------------------------------------------------------------------------------
-            // Импорт необходимых модулей после сборки проект
+            // Import necessary modules on request
             let template;
             if (cfg.NODE_ENV !== "production") {
                 // Always read fresh template in development
@@ -87,9 +84,25 @@ async function main() {
             // ---------------------------------------------------------------------------------------------------------
 
             // ---------------------------------------------------------------------------------------------------------
-            // Логгирование длительности запросов
+            // Fetch data from database
+            let catalog;
+            let report;
+            try {
+                const data = await getPublishedCatalog({...cfg});
+                catalog = data.publishedCatalog;
+                report = data.report;
+            } catch (e) {
+                logger.error(url.toString(), e.message);
+                catalog = null;
+                report = null;
+            }
+            // ---------------------------------------------------------------------------------------------------------
+
+            // ---------------------------------------------------------------------------------------------------------
+            // Log request durations
             logger.logRequestDurations({
-                publishedCatalogLatency: Date.now() - startTime,
+                url: url.toString(),
+                publishedCatalogLatency: report?.publishedCatalogLatency ?? 0,
                 totalDuration: Date.now() - startTime,
             });
             // ---------------------------------------------------------------------------------------------------------
@@ -97,71 +110,45 @@ async function main() {
             // ---------------------------------------------------------------------------------------------------------
             // Wrap response
             const result = {
-
+                catalog: catalog,
+                mode: cfg.NODE_ENV,
             };
             const script = `<script>window.__data__ = ${JSON.stringify(result)}</script>`;
-            const rendered = await render(result, url.toString(), ssrManifest);
+            const rendered = await render(result, url, ssrManifest);
             const html = template
                 .replace(`<!--app-head-->`, rendered.head ?? "")
                 .replace(`<!--app-html-->`, rendered.html ?? "")
-                .replace(`<!--app-data-script-->`, script ?? "");
+                .replace(`<!--app-data-script-->`, script ?? "")
             // ---------------------------------------------------------------------------------------------------------
 
             // ---------------------------------------------------------------------------------------------------------
-            // Отправка ответа
+            // Send response
             res.status(200).set({"Content-Type": "text/html"}).send(html);
         } catch (e) {
             vite?.ssrFixStacktrace(e);
-            logger.error(e.stack);
-            res.status(500).redirect("/500");
+            logger.error(url.toString(), e.stack);
+            res.status(500).redirect("/error");
         }
     });
     // =================================================================================================================
 
     // =================================================================================================================
     // 404
-    app.get("/404", (req, res) => {
+    app.get("/page-not-found", (req, res) => {
         const lang = req.acceptsLanguages(["ru", "kk", "en", "tr", "az", "zh", "ja", "ar", "uz", "id", "ky", "uk"]);
         let message;
         switch (lang) {
             case "ru":
                 message = "Страница не найдена";
                 break;
-            case "kk":
-                message = "Бет табылмады";
-                break;
             case "en":
                 message = "Page not found";
-                break;
-            case "tr":
-                message = "Sayfa bulunamadı";
-                break;
-            case "az":
-                message = "Səhifə tapılmadı";
                 break;
             case "zh":
                 message = "找不到页面";
                 break;
-            case "ja":
-                message = "ページが見つかりません";
-                break;
-            case "ar":
-                message = "الصفحة غير موجودة";
-                break;
-            case "uz":
-                message = "Sahifa topilmadi";
-                break;
-            case "id":
-                message = "Halaman tidak ditemukan";
-                break;
-            case "ky":
-                message = "Барак табылган жок";
-                break;
-            case "uk":
-                message = "Сторінка не знайдена";
-                break;
             default:
-                message = "Страница не найдена";
+                message = "Page not found";
                 break;
         }
         res.status(404).set({'Content-Type': 'text/html'}).render("templates/404", {
@@ -172,48 +159,21 @@ async function main() {
 
     // =================================================================================================================
     // 500
-    app.get("/500", (req, res) => {
+    app.get("/error", (req, res) => {
         const lang = req.acceptsLanguages(["ru", "kk", "en", "tr", "az", "zh", "ja", "ar", "uz", "id", "ky", "uk"]);
         let message;
         switch (lang) {
             case "ru":
-                message = "Возникла ошибка! Пожалуйста свяжитесь со службой поддержки";
-                break;
-            case "kk":
-                message = "Қате орын алды! Қолдау қызметіне хабарласыңыз";
+                message = "Упс! Что-то пошло не так.";
                 break;
             case "en":
                 message = "Error occurred! Please contact support";
                 break;
-            case "tr":
-                message = "Bir hata oluştu! Lütfen teknik ekibi ile iletişim kurun";
-                break;
-            case "az":
-                message = "Səhv baş verdi! Zəhmət olmasa dəstək xidməti ilə əlaqə saxlayın";
-                break;
             case "zh":
-                message = "發生錯誤! 請聯繫技術支持";
-                break;
-            case "ja":
-                message = "エラーが発生しました！ サポートにお問い合わせください";
-                break;
-            case "ar":
-                message = "Սխալ է տեղի ունեցել! Խնդրում ենք կապվել աջակցության հետ";
-                break;
-            case "uz":
-                message = "Xatolik yuz berdi! Iltimos qo'llab-quvvatlash xizmatiga murojaat qiling";
-                break;
-            case "id":
-                message = "Terjadi kesalahan! Silakan hubungi layanan bantuan";
-                break;
-            case "ky":
-                message = "Ката чыкты! Колдоо кызматына кайрылыңыз";
-                break;
-            case "uk":
-                message = "Виникла помилка! Будь ласка, зв'яжіться зі службою підтримки";
+                message = "发生错误！ 请联系支持";
                 break;
             default:
-                message = "Возникла ошибка! Пожалуйста свяжитесь со службой поддержки";
+                message = "Error occurred! Please contact support";
                 break;
         }
         res.status(500).set({'Content-Type': 'text/html'}).render("templates/500", {

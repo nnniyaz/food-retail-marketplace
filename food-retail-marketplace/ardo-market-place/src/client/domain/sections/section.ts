@@ -10,13 +10,16 @@ export type Section = {
     "version": number
 }
 
-export function ValidateSection(section: Section): boolean {
-    if (!section._id) return false;
-    if (!ValidateMlString(section.name)) return false;
-    if (typeof section.img !== "string") return false;
-    if (typeof section.isDeleted !== "boolean") return false;
-    if (typeof section.createdAt !== "string") return false;
-    if (typeof section.updatedAt !== "string") return false;
-    if (isNaN(section.version)) return false;
-    return true;
+export function ValidateSection(section: Section): Error | null {
+    if (!section._id) {
+        throw new Error("Section's Id is invalid");
+    }
+    let err: Error | null = ValidateMlString(section.name);
+    if (err !== null) {
+        throw err;
+    }
+    if (typeof section.img !== "string") {
+        throw new Error("Section's Img is invalid");
+    }
+    return null;
 }

@@ -1,5 +1,9 @@
 @import "./styles/index";
 
+.swiper-pagination-bullet {
+  background-color: white;
+}
+
 .ant-select-dropdown {
   background-color: var(--secondary-bg-color) !important;
 }

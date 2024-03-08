@@ -1,1 +1,1 @@
-export * from "./Section.tsx";
+export * from "./Section";

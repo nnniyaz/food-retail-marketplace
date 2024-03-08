@@ -11,14 +11,20 @@ export type Category = {
     "version": number
 }
 
-export function ValidateCategory(category: Category): boolean {
-    if (!category._id) return false;
-    if (!ValidateMlString(category.name)) return false;
-    if (!ValidateMlString(category.desc)) return false;
-    if (typeof category.img !== "string") return false;
-    if (typeof category.isDeleted !== "boolean") return false;
-    if (typeof category.createdAt !== "string") return false;
-    if (typeof category.updatedAt !== "string") return false;
-    if (isNaN(category.version)) return false;
-    return true;
+export function ValidateCategory(category: Category): Error | null {
+    if (!category._id) {
+        throw new Error("Category's Id is invalid");
+    }
+    let err: Error | null = ValidateMlString(category.name);
+    if (err !== null) {
+        throw err;
+    }
+    err = ValidateMlString(category.desc);
+    if (err !== null) {
+        throw err;
+    }
+    if (typeof category.img !== "string") {
+        throw new Error("Category's Img is invalid");
+    }
+    return null;
 }

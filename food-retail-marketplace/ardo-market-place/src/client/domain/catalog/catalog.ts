@@ -1,15 +1,20 @@
+import lodash from "lodash";
 import {Product, ValidateProduct} from "@domain/product/product";
 import {Category, ValidateCategory} from "@domain/category/category";
 import {Section, ValidateSection} from "@domain/sections/section";
-import {isEmpty} from "lodash";
+import {Slide, ValidateSlide} from "@domain/slides/slide.ts";
+
+const {isEmpty} = lodash;
 
 export type PublishedCatalog = {
     _id: string;
     catalogId: string;
     structure: PublishedCatalogSections[];
-    sections: {[sectionId: string]: Section};
-    categories: {[categoryId: string]: Category};
-    products: {[productId: string]: Product};
+    promo: PublishedCatalogSections[];
+    sections: { [sectionId: string]: Section };
+    categories: { [categoryId: string]: Category };
+    products: { [productId: string]: Product };
+    slides: Slide[];
     createdAt: string;
     updatedAt: string;
     version: number;
@@ -29,51 +34,112 @@ export type PublishedCatalogProducts = {
     productId: string;
 }
 
-export function ValidatePublishedCatalogSections(sections: PublishedCatalogSections): boolean {
-    if (!sections.sectionId) return false;
-    if (!Array.isArray(sections.categories)) return false;
-    return true;
+export function ValidatePublishedCatalogSections(sections: PublishedCatalogSections): Error | null {
+    if (!sections.sectionId) {
+        throw new Error("Catalog's SectionId is invalid");
+    }
+    if (!Array.isArray(sections.categories)) {
+        throw new Error("Catalog's Categories must be an array");
+    }
+    return null;
 }
 
-export function ValidatePublishedCatalogCategories(categories: PublishedCatalogCategories): boolean {
-    if (!categories.categoryId) return false;
-    if (!Array.isArray(categories.products)) return false;
-    return true;
+export function ValidatePublishedCatalogCategories(categories: PublishedCatalogCategories): Error | null {
+    if (!categories.categoryId) {
+        throw new Error("Catalog's CategoryId is invalid");
+    }
+    if (!Array.isArray(categories.products)) {
+        throw new Error("Catalog's Products must be an array");
+    }
+    return null;
 }
 
-export function ValidatePublishedCatalogProducts(products: PublishedCatalogProducts): boolean {
-    if (!products.productId) return false;
-    return true;
+export function ValidatePublishedCatalogProducts(products: PublishedCatalogProducts): Error | null {
+    if (!products.productId) {
+        throw new Error("Catalog's ProductId is invalid");
+    }
+    return null;
 }
 
-export function ValidatePublishedCatalog(catalog: PublishedCatalog): boolean {
-    if (!catalog._id) return false;
-    if (!catalog.catalogId) return false;
-    if (isEmpty(catalog.structure)) return false;
-    if (!Array.isArray(catalog.structure)) return false;
+export function ValidatePublishedCatalog(catalog: PublishedCatalog): Error | null {
+    if (!catalog.catalogId) {
+        throw new Error("CatalogId is invalid");
+    }
+    if (isEmpty(catalog.structure)) {
+        throw new Error("Structure is invalid");
+    }
+    if (!Array.isArray(catalog.structure)) {
+        throw new Error("Structure must be an array");
+    }
+    let err: Error | null = null;
     catalog.structure.forEach(section => {
-        if (!ValidatePublishedCatalogSections(section)) return false;
+        err = ValidatePublishedCatalogSections(section);
+        if (err !== null) {
+            throw err;
+        }
         section.categories.forEach(category => {
-            if (!ValidatePublishedCatalogCategories(category)) return false;
+            err = ValidatePublishedCatalogCategories(category);
+            if (err !== null) {
+                throw err;
+            }
             category.products.forEach(product => {
-                if (!ValidatePublishedCatalogProducts(product)) return false;
+                err = ValidatePublishedCatalogProducts(product);
+                if (err !== null) {
+                    throw err;
+                }
             });
         });
     });
-    if (isEmpty(catalog.sections)) return false;
+    catalog.promo.forEach(section => {
+        err = ValidatePublishedCatalogSections(section);
+        if (err !== null) {
+            throw err;
+        }
+        section.categories.forEach(category => {
+            err = ValidatePublishedCatalogCategories(category);
+            if (err !== null) {
+                throw err;
+            }
+            category.products.forEach(product => {
+                err = ValidatePublishedCatalogProducts(product);
+                if (err !== null) {
+                    throw err;
+                }
+            });
+        });
+    });
+    if (isEmpty(catalog.sections)) {
+        throw new Error("Sections is invalid");
+    }
     Object.keys(catalog.sections).forEach(sectionId => {
-        if (!ValidateSection(catalog.sections[sectionId])) return false;
+        err = ValidateSection(catalog.sections[sectionId]);
+        if (err !== null) {
+            throw err;
+        }
     })
-    if (isEmpty(catalog.categories)) return false;
+    if (isEmpty(catalog.categories)) {
+        throw new Error("Categories is invalid");
+    }
     Object.keys(catalog.categories).forEach(categoryId => {
-        if (!ValidateCategory(catalog.categories[categoryId])) return false;
+        err = ValidateCategory(catalog.categories[categoryId]);
+        if (err !== null) {
+            throw err;
+        }
     })
-    if (isEmpty(catalog.products)) return false;
+    if (isEmpty(catalog.products)) {
+        throw new Error("Products is invalid");
+    }
     Object.keys(catalog.products).forEach(productId => {
         if (!ValidateProduct(catalog.products[productId])) return false;
     })
-    if (typeof catalog.createdAt !== "string") return false;
-    if (typeof catalog.updatedAt !== "string") return false;
-    if (isNaN(catalog.version)) return false;
-    return true;
+    if (!Array.isArray(catalog.slides)) {
+        throw new Error("Slides is invalid");
+    }
+    catalog.slides?.forEach(slide => {
+        err = ValidateSlide(slide);
+        if (err !== null) {
+            throw err;
+        }
+    });
+    return null;
 }

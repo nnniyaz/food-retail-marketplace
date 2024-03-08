@@ -16,20 +16,32 @@ export type Product = {
 
 export enum ProductStatus {
     ACTIVE = 'ACTIVE',
-    ARCHIVED = 'ARCHIVED'
+    ARCHIVE = 'ARCHIVE'
 }
 
-export function ValidateProduct(product: Product): boolean {
-    if (!product._id) return false;
-    if (!ValidateMlString(product.name)) return false;
-    if (!ValidateMlString(product.desc)) return false;
-    if (isNaN(product.price)) return false;
-    if (isNaN(product.quantity)) return false;
-    if (typeof product.img !== "string") return false;
-    if (product.status !== ProductStatus.ACTIVE && product.status !== ProductStatus.ARCHIVED) return false;
-    if (typeof product.isDeleted !== "boolean") return false;
-    if (typeof product.createdAt !== "string") return false;
-    if (typeof product.updatedAt !== "string") return false;
-    if (isNaN(product.version)) return false;
-    return true;
+export function ValidateProduct(product: Product): Error | null {
+    if (!product._id) {
+        throw new Error("Product's Id is invalid");
+    }
+    let err: Error | null = ValidateMlString(product.name);
+    if (err !== null) {
+        throw err;
+    }
+    err = ValidateMlString(product.desc);
+    if (err !== null) {
+        throw err;
+    }
+    if (isNaN(product.price)) {
+        throw new Error("Product's Price is invalid");
+    }
+    if (isNaN(product.quantity)) {
+        throw new Error("Product's Quantity is invalid");
+    }
+    if (typeof product.img !== "string") {
+        throw new Error("Product's Img is invalid");
+    }
+    if (product.status !== ProductStatus.ACTIVE && product.status !== ProductStatus.ARCHIVE) {
+        throw new Error("Product's Status is invalid");
+    }
+    return null;
 }
