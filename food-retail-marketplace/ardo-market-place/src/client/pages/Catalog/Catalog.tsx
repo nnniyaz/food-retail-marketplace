@@ -5,10 +5,6 @@ import {Sections} from "./components/Sections";
 
 export const Catalog = () => {
     const {catalog} = useTypedSelector(state => state.catalogState);
-
-    if (catalog === null) {
-        return null;
-    }
     return (
         <React.Fragment>
             <Search/>

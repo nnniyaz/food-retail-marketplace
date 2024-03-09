@@ -6,9 +6,6 @@ import {Carousel} from "./components/Carousel/Carousel.tsx";
 
 export const Home = () => {
     const {catalog} = useTypedSelector(state => state.catalogState);
-    if (catalog === null) {
-        return null;
-    }
     return (
         <React.Fragment>
             <Header/>
@@ -17,7 +14,7 @@ export const Home = () => {
                 <ProductsList
                     key={promoSection.sectionId}
                     sectionId={promoSection.sectionId}
-                    withCategoryBar={false}
+                    isPromo={true}
                 />
             ))}
         </React.Fragment>

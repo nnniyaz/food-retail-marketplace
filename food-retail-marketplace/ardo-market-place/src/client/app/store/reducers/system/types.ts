@@ -1,8 +1,9 @@
+import {Cfg} from "@domain/base/cfg/cfg.ts";
 import {Langs} from "@domain/base/mlString/mlString.ts";
 import {Currency} from "@domain/base/currency/currency.ts";
 
 export interface SystemState {
-    mode: "development" | "production";
+    cfg: Cfg;
     currentLang: Langs;
     langs: Langs[];
     currency: Currency;
@@ -14,9 +15,7 @@ export enum SystemActionEnum {
 
 export interface InitSystemStateAction {
     type: SystemActionEnum.INIT_SYSTEM_STATE;
-    payload: {
-        mode: "development" | "production"
-    };
+    payload: Cfg;
 }
 
 export type SystemAction = InitSystemStateAction;

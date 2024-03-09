@@ -6,7 +6,10 @@ import "@app/app.scss";
 
 interface EntryProps {
     catalog: PublishedCatalog;
-    mode: "production" | "development";
+    cfg: {
+        mode: "development" | "production";
+        assetsUri: string;
+    }
 }
 
 export const App = (props: EntryProps) => {
@@ -14,7 +17,7 @@ export const App = (props: EntryProps) => {
 
     function populateStoreWithData() {
         initCatalogState(props.catalog);
-        initSystemState(props.mode);
+        initSystemState(props.cfg);
     }
 
     useEffect(() => {

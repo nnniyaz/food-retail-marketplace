@@ -64,7 +64,7 @@
         transition: .1s linear;
 
         &:hover {
-          background-color: var(--breadcrumb-color);
+          background-color: var(--link-color);
 
           .nav__item__icon {
             color: var(--accent-font-color);

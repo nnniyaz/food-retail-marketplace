@@ -1,4 +1,4 @@
-import React, {useMemo} from "react";
+import React, {useMemo, useState} from "react";
 import {Link} from "react-router-dom";
 import CaretRightSVG from "@assets/icons/caret-right.svg?react";
 import {RouteNames} from "@pages/index.tsx";
@@ -15,8 +15,9 @@ interface SectionProps {
 }
 
 export const Section = ({sectionStructure, expandedSection, setExpandedSection}: SectionProps) => {
+    const {cfg} = useTypedSelector(state => state.systemState);
     const {catalog} = useTypedSelector(state => state.catalogState);
-    const {setCurrentSection, setCurrentCategory} = useActions();
+    const [sectionImgError, setSectionImgError] = useState(false);
     const sectionCategoriesHeight = useMemo(() => {
         if (sectionStructure.categories.length === 0) {
             return 0;
@@ -25,11 +26,6 @@ export const Section = ({sectionStructure, expandedSection, setExpandedSection}:
         const categoryRows = Math.ceil(sectionStructure.categories.length / 3);
         return categoryRowHeight * categoryRows;
     }, [sectionStructure.categories]);
-
-    const handleCategoryClick = (categoryStructure: PublishedCatalogCategories) => {
-        setCurrentSection(sectionStructure);
-        setCurrentCategory(categoryStructure);
-    }
 
     return (
         <li className={classes.section__container} id={`${sectionStructure.sectionId}`}>
@@ -48,7 +44,10 @@ export const Section = ({sectionStructure, expandedSection, setExpandedSection}:
                     src={""}
                     alt="Section"
                     onError={(e) => {
-                        e.currentTarget.src = "food_placeholder.png";
+                        if (!sectionImgError) {
+                            e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                            setSectionImgError(true);
+                        }
                     }}
                 />
                 <div className={classes.section__info}>
@@ -77,34 +76,62 @@ export const Section = ({sectionStructure, expandedSection, setExpandedSection}:
                         return null;
                     }
                     return (
-                        <li
+                        <SectionCategory
                             key={category.categoryId}
-                            className={classes.category__container}
-                            onClick={() => handleCategoryClick(category)}
-                        >
-                            <Link
-                                className={classes.category}
-                                to={RouteNames.LIST
-                                    .replace(":sectionName", catalog.sections[sectionStructure.sectionId].name.EN.replace(" ", "-").toLowerCase())
-                                    .replace(":sectionId", sectionStructure.sectionId)
-                                }
-                            >
-                                <img
-                                    className={classes.category__preview}
-                                    src={""}
-                                    alt="Category"
-                                    onError={(e) => {
-                                        e.currentTarget.src = "food_placeholder.png";
-                                    }}
-                                />
-                                <h4 className={classes.category__title}>
-                                    {translate(catalog.categories[category.categoryId].name)}
-                                </h4>
-                            </Link>
-                        </li>
+                            sectionStructure={sectionStructure}
+                            categoryStructure={category}
+                        />
                     )
                 })}
             </ul>
         </li>
     )
 };
+
+interface SectionCategoryProps {
+    sectionStructure: PublishedCatalogSections
+    categoryStructure: PublishedCatalogCategories
+}
+
+const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryProps) => {
+    const {cfg} = useTypedSelector(state => state.systemState);
+    const {catalog} = useTypedSelector(state => state.catalogState);
+    const {setCurrentSection, setCurrentCategory} = useActions();
+    const [categoryImgError, setCategoryImgError] = useState(false);
+
+    const handleCategoryClick = (categoryStructure: PublishedCatalogCategories) => {
+        setCurrentSection(sectionStructure);
+        setCurrentCategory(categoryStructure);
+    }
+
+    return (
+        <li
+            key={categoryStructure.categoryId}
+            className={classes.category__container}
+            onClick={() => handleCategoryClick(categoryStructure)}
+        >
+            <Link
+                className={classes.category}
+                to={RouteNames.LIST
+                    .replace(":sectionName", catalog.sections[sectionStructure.sectionId].name.EN.replace(" ", "-").toLowerCase())
+                    .replace(":sectionId", sectionStructure.sectionId)
+                }
+            >
+                <img
+                    className={classes.category__preview}
+                    src={""}
+                    alt="Category"
+                    onError={(e) => {
+                        if (!categoryImgError) {
+                            e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                            setCategoryImgError(true);
+                        }
+                    }}
+                />
+                <h4 className={classes.category__title}>
+                    {translate(catalog.categories[categoryStructure.categoryId].name)}
+                </h4>
+            </Link>
+        </li>
+    )
+}

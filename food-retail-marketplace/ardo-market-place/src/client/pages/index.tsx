@@ -7,6 +7,7 @@ import {Favourites} from "@pages/Favourites";
 import {Profile} from "@pages/Profile";
 import {Layout} from "@pages/Layout";
 import {List} from "@pages/List";
+import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 
 interface IRoute {
     path: string;
@@ -39,6 +40,11 @@ interface RoutingProps {
 }
 
 export const Routing = ({}: RoutingProps) => {
+    const {catalog} = useTypedSelector(state => state.catalogState);
+
+    if (!catalog) {
+        return null;
+    }
     return (
         <Routes>
             <Route element={<Layout/>}>

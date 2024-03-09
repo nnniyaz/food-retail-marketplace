@@ -4,7 +4,7 @@
   flex-direction: column;
   gap: 15px;
 
-  .products__section {
+  .products__category {
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -29,7 +29,7 @@
       transition: .1s linear;
 
       &:hover {
-        color: var(--breadcrumb-color);
+        color: var(--link-color);
       }
     }
 
@@ -50,7 +50,7 @@
           .product__info {
 
             .product__title {
-              color: var(--breadcrumb-color);
+              color: var(--link-color);
             }
           }
         }
@@ -103,7 +103,7 @@
             }
 
             .product__price_per_unit__moq {
-              color: var(--breadcrumb-color);
+              color: var(--link-color);
             }
           }
 
@@ -134,7 +134,7 @@
             transition: .1s linear;
 
             &:hover {
-              background-color: var(--breadcrumb-color);
+              background-color: var(--link-color);
 
               .product__add__text {
                 color: var(--accent-font-color);
@@ -172,7 +172,7 @@
 @media only screen and (max-width: 800px) {
   .products {
 
-    .products__section {
+    .products__category {
 
       h2 {
         &:hover {

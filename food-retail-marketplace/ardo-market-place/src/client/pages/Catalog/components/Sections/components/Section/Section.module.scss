@@ -14,15 +14,15 @@
     &:hover {
       .section__info {
         .section__title {
-          color: var(--breadcrumb-color);
+          color: var(--link-color);
         }
 
         .section__arrow {
-          color: var(--breadcrumb-color);
+          color: var(--link-color);
         }
 
         .section__arrow__active {
-          color: var(--breadcrumb-color);
+          color: var(--link-color);
         }
       }
     }

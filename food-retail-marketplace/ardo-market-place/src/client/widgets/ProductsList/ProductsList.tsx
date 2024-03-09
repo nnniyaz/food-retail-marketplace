@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import {useMemo, useState} from "react";
 import PlusSVG from "@assets/icons/plus.svg?react";
 import {Product} from "@domain/product/product.ts";
 import {PublishedCatalogSections} from "@domain/catalog/catalog.ts";
@@ -9,23 +9,26 @@ import classes from "./ProductsList.module.scss";
 
 interface ProductsProps {
     sectionId: string;
-    withCategoryBar: boolean;
+    isPromo?: boolean;
 }
 
-export const ProductsList = ({sectionId, withCategoryBar = true}: ProductsProps) => {
+export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
     const {catalog} = useTypedSelector(state => state.catalogState);
-    const [sectionStructure, setSectionStructure] = useState<PublishedCatalogSections | null>(null);
-
-    useEffect(() => {
+    const sectionStructure = useMemo<PublishedCatalogSections | null>(() => {
         if (!catalog) {
-            return;
+            return null;
         }
-        const sectionStructure = catalog.structure.find((section) => section.sectionId === sectionId);
-        if (!sectionStructure) {
-            return;
+        let foundSectionStructure: PublishedCatalogSections;
+        if (isPromo) {
+            foundSectionStructure = catalog.promo.find((section) => section.sectionId === sectionId);
+        } else {
+            foundSectionStructure = catalog.structure.find((section) => section.sectionId === sectionId);
         }
-        setSectionStructure(prev => ({...prev, ...sectionStructure}));
-    }, []);
+        if (!foundSectionStructure) {
+            return null;
+        }
+        return foundSectionStructure;
+    }, [sectionId, catalog.structure]);
 
     if (!sectionStructure) {
         return null;
@@ -35,7 +38,7 @@ export const ProductsList = ({sectionId, withCategoryBar = true}: ProductsProps)
     }
     return (
         <div className={classes.products_widget}>
-            {withCategoryBar && (
+            {!isPromo && (
                 <nav>Category Navigation</nav>
             )}
             <div className={classes.products}>
@@ -44,7 +47,7 @@ export const ProductsList = ({sectionId, withCategoryBar = true}: ProductsProps)
                         return null;
                     }
                     return (
-                        <section key={catalogsCategory.categoryId} className={classes.products__section}>
+                        <section key={catalogsCategory.categoryId} className={classes.products__category}>
                             <h2>{translate(catalog.categories[catalogsCategory.categoryId].name)}</h2>
                             <ul className={classes.products__list}>
                                 {catalogsCategory.products.map((catalogsProduct) => (
@@ -67,6 +70,8 @@ interface ProductProps {
 }
 
 const ProductItem = ({product}: ProductProps) => {
+    const {cfg} = useTypedSelector(state => state.systemState);
+    const [imgError, setImgError] = useState(false);
     if (!product) {
         return null;
     }
@@ -77,11 +82,16 @@ const ProductItem = ({product}: ProductProps) => {
                 src={product.img}
                 alt={translate(product.name)}
                 onError={(e) => {
-                    e.currentTarget.src = "food_placeholder.png";
+                    if (!imgError) {
+                        e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                        setImgError(true);
+                    }
                 }}
             />
             <div className={classes.product__info}>
-                <p className={classes.product__title}>Bananas</p>
+                <p className={classes.product__title}>
+                    {translate(product.name)}
+                </p>
                 <p className={classes.product__price_per_unit}>
                     <span className={classes.product__price_per_unit__price}>
                         {priceFormat(product.price)}

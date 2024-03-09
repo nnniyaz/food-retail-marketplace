@@ -39,6 +39,7 @@ async function main() {
         NODE_ENV: getEnv("NODE_ENV"),
         MONGO_URI: getEnv("MONGO_URI"),
         MONGO_MAIN_DB: getEnv("MONGO_MAIN_DB"),
+        ASSETS_URI: getEnv("ASSETS_URI"),
     }
     // =================================================================================================================
 
@@ -111,7 +112,10 @@ async function main() {
             // Wrap response
             const result = {
                 catalog: catalog,
-                mode: cfg.NODE_ENV,
+                cfg: {
+                    mode: cfg.NODE_ENV ?? "development",
+                    assetsUri: cfg.ASSETS_URI ?? "",
+                },
             };
             const script = `<script>window.__data__ = ${JSON.stringify(result)}</script>`;
             const rendered = await render(result, url, ssrManifest);

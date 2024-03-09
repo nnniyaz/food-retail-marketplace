@@ -3,7 +3,10 @@ import {Langs} from "@domain/base/mlString/mlString.ts";
 import {Currency} from "@domain/base/currency/currency.ts";
 
 const initialState: SystemState = {
-    mode: "development",
+    cfg: {
+        mode: "development",
+        assetsUri: ""
+    },
     currentLang: Langs.EN,
     langs: [Langs.EN, Langs.RU],
     currency: Currency.HKD
@@ -12,7 +15,7 @@ const initialState: SystemState = {
 export default function systemStateReducer(state = initialState, action: SystemAction): SystemState {
     switch (action.type) {
         case SystemActionEnum.INIT_SYSTEM_STATE:
-            return {...state, mode: action.payload.mode};
+            return {...state, cfg: action.payload};
         default:
             return state;
     }
