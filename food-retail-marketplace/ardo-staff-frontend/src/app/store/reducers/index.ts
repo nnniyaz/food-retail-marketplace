@@ -4,6 +4,9 @@ import user from "./user";
 import users from "@pages/staff/Users/store/user";
 import system from "./system";
 import products from "@pages/staff/Products/store/product";
+import sections from "@pages/staff/Sections/store/sections";
+import categories from "@pages/staff/Categories/store/categories";
+import catalog from "@pages/staff/Catalog/store/catalog";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -12,5 +15,8 @@ export default {
     user,
     users,
     system,
-    products
+    products,
+    sections,
+    categories,
+    catalog
 }

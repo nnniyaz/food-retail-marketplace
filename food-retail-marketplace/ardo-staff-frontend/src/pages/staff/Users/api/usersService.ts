@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import {Lang} from "@entities/base/MlString";
+import {Langs} from "@entities/base/MlString";
 import {Paginate} from "@entities/base/paginate";
 import {User, UsersData, UserType} from "@entities/user/user";
 import $api from "@shared/api";
@@ -12,7 +12,7 @@ export interface AddUserReq {
     email: string;
     password: string
     userType: UserType;
-    preferredLang: Lang;
+    preferredLang: Langs;
 }
 
 export interface EditUserCredentialsReq {
@@ -25,7 +25,7 @@ export interface EditUserEmailReq {
 }
 
 export interface EditUserPreferredLangReq {
-    preferredLang: Lang;
+    preferredLang: Langs;
 }
 
 export interface EditUserPasswordReq {

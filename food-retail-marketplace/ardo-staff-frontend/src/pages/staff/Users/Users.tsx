@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {Lang} from "@entities/base/MlString";
+import {Langs} from "@entities/base/MlString";
 import {TableParams} from "@entities/base/tableParams";
 import {User, UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
@@ -68,7 +68,7 @@ export const Users: FC = () => {
             key: "preferredLang",
             title: txt.preferred_lang[currentLang],
             dataIndex: "preferredLang",
-            render: (preferredLang: Lang) => preferredLang
+            render: (preferredLang: Langs) => preferredLang
         },
         {
             key: "isDeleted",
@@ -87,6 +87,12 @@ export const Users: FC = () => {
             title: txt.updated_at[currentLang],
             dataIndex: "updatedAt",
             render: (updateAt: Timestamp) => dateFormat(updateAt)
+        },
+        {
+            key: "version",
+            title: txt.version[currentLang],
+            dataIndex: "version",
+            align: "center"
         },
     ];
 

@@ -1,5 +1,5 @@
-import React, {FunctionComponent} from "react";
-import {isMlStringValid, MlString} from "@entities/base/MlString";
+import React from "react";
+import {ValidateMlString, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 
@@ -17,7 +17,8 @@ export const Translate= (word: string | MlString): string => {
 
         return (txt as { [key: string]: MlString })[word][currentLang];
     } else {
-        if (!isMlStringValid(word)) {
+        let err = ValidateMlString(word);
+        if (err !== null) {
             return txt.not_valid_mlstring[currentLang];
         }
 

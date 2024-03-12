@@ -1,7 +1,7 @@
- import axios from "axios";
+import axios from "axios";
 
 const validateStatus = (status: number) => {
-    return (status >= 200 && status < 401) || (status > 401 && status !== 403 && status !== 404 && status < 500) ;
+    return (status >= 200 && status < 401) || (status > 401 && status !== 403 && status !== 404 && status < 500);
 }
 
 const $api = axios.create({

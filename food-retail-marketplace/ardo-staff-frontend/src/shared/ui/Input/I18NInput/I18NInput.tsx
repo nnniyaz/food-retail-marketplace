@@ -1,6 +1,6 @@
 import React, {FC, useState} from "react";
 import {Input, Select} from "antd";
-import {Lang, MlString} from "@entities/base/MlString";
+import {Langs, MlString} from "@entities/base/MlString";
 import {langOptions} from "@shared/lib/options/langOptions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./I18NInput.module.scss";
@@ -13,7 +13,7 @@ interface I18NInputProps {
 
 export const I18NInput: FC<I18NInputProps> = (props) => {
     const {currentLang} = useTypedSelector(state => state.lang);
-    const [selectedLang, setSelectedLang] = useState(currentLang || Lang.EN);
+    const [selectedLang, setSelectedLang] = useState(currentLang || Langs.EN);
 
     return (
         <div className={classes.i18n_input_row_wrapper}>

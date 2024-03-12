@@ -2,6 +2,7 @@ import React, {CSSProperties, FC, useEffect, useState} from "react";
 import {Link, Outlet, useLocation} from "react-router-dom";
 import {Breadcrumb} from "antd";
 import {IRoute, RouteNames, staffRoutes, staffRoutesSidebar} from "@pages//";
+import {ErrorBoundary} from "@pages/layouts/StaffLayout/components/ErrorBoundary";
 import {Text} from "@shared/ui/Text";
 import {Loader} from "@shared/ui/Loader";
 import {useActions} from "@shared/lib/hooks/useActions";
@@ -94,7 +95,10 @@ export const StaffLayout: FC = () => {
                                 <Text text={currentRoute?.name[currentLang] || ""} type={"label-large"}/>
                             </div>
                         </div>
-                        <Outlet/>
+
+                        <ErrorBoundary>
+                            <Outlet/>
+                        </ErrorBoundary>
                     </div>
                 </div>
             </div>

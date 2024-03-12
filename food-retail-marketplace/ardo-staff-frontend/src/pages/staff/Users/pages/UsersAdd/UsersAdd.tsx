@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import {Button, Card, Form, Input, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {RouteNames} from "@pages//";
-import {Lang} from "@entities/base/MlString";
+import {Langs} from "@entities/base/MlString";
 import {UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
@@ -20,7 +20,7 @@ const initialFormValues = {
     email: "",
     password: "",
     userType: UserType.CLIENT,
-    preferredLang: Lang.EN,
+    preferredLang: Langs.EN,
 }
 
 export const UsersAdd: FC = () => {

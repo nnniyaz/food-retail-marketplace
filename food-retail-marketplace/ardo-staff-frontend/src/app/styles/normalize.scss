@@ -11,19 +11,14 @@ div, svg, span {
   background-color: transparent;
 }
 
-/* Light mode */
-@media (prefers-color-scheme: light) {
-  #root {
-    background-color: $global-color-light-bg-secondary-white;
-  }
+#root {
+  background-color: $global-color-light-bg-secondary-white;
 }
 
-/* Dark mode */
-//@media (prefers-color-scheme: dark) {
-//  body {
-//    background-color: $global-color-light-bg-secondary-black;
-//  }
-//}
+/* Light mode */
+@media (prefers-color-scheme: light) {
+
+}
 
 @media (max-width: 1340px) {
   body {

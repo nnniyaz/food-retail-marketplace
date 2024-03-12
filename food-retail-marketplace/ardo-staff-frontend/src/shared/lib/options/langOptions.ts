@@ -1,6 +1,6 @@
-import {Lang} from "@entities/base/MlString";
+import {Langs} from "@entities/base/MlString";
 
 export const langOptions = [
-    {value: Lang.RU, label: Lang.RU},
-    {value: Lang.EN, label: Lang.EN},
+    {value: Langs.RU, label: Langs.RU},
+    {value: Langs.EN, label: Langs.EN},
 ]

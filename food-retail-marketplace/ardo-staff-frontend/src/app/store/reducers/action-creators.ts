@@ -4,6 +4,9 @@ import {UserActionCreators} from "./user/action-creators";
 import {UsersActionCreators} from "@pages/staff/Users/store/user/action-creators";
 import {SystemActionCreators} from "./system/action-creators";
 import {ProductsActionCreators} from "@pages/staff/Products/store/product/action-creators";
+import {SectionActionCreators} from "@pages/staff/Sections/store/sections/action-creators";
+import {CategoryActionCreators} from "@pages/staff/Categories/store/categories/action-creators";
+import {CatalogActionCreators} from "@pages/staff/Catalog/store/catalog/action-creators";
 
 export const allActionCreators = {
     ...LangActionCreators,
@@ -11,5 +14,8 @@ export const allActionCreators = {
     ...UserActionCreators,
     ...UsersActionCreators,
     ...SystemActionCreators,
-    ...ProductsActionCreators
+    ...ProductsActionCreators,
+    ...SectionActionCreators,
+    ...CategoryActionCreators,
+    ...CatalogActionCreators,
 }

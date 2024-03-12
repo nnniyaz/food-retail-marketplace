@@ -1,4 +1,4 @@
-import {Lang} from "@entities/base/MlString";
+import {Langs} from "@entities/base/MlString";
 
 type UserFirstName = string;
 type UserLastName = string;
@@ -15,7 +15,7 @@ export type User = {
     lastName: UserLastName;
     email: Email;
     userType: UserType;
-    preferredLang: Lang;
+    preferredLang: Langs;
     isDeleted: boolean;
     createdAt: Timestamp;
     updatedAt: Timestamp;

@@ -2,7 +2,7 @@ import {AppDispatch, RootState} from "@app/store";
 import {LangActionCreators} from "@app/store/reducers/lang/action-creators";
 import UserService from "@pages/public/Login/api/userService";
 import {User} from "@entities/user/user";
-import {Lang} from "@entities/base/MlString";
+import {Langs} from "@entities/base/MlString";
 import {NavigateCallback} from "@entities/base/navigateCallback";
 import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {SetIsAuthAction, SetIsLoadingGetUserAction, SetUserAction, UserActionEnum} from "./types";
@@ -32,7 +32,7 @@ export const UserActionCreators = {
                 //     return;
                 // }
                 dispatch(UserActionCreators.setUser(res.data.data));
-                dispatch(LangActionCreators.setLang(res.data.data.preferredLang || Lang.EN));
+                dispatch(LangActionCreators.setLang(res.data.data.preferredLang || Langs.EN));
                 dispatch(UserActionCreators.setAuth(true));
             } else {
                 dispatch(UserActionCreators.setAuth(false));
@@ -120,7 +120,7 @@ export const UserActionCreators = {
         }
     },
 
-    updatePreferredLang: (lang: Lang) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    updatePreferredLang: (lang: Langs) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             const res = await UserService.updateCurrentUserPreferredLang({

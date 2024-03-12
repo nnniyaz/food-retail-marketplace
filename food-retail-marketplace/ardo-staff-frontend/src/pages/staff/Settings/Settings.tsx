@@ -1,6 +1,6 @@
 import {FC} from "react";
 import {Card, Select} from "antd";
-import {Lang} from "@entities/base/MlString";
+import {Langs} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {langOptions} from "@shared/lib/options/langOptions";
@@ -11,7 +11,7 @@ export const Settings: FC = () => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {changeLang, updatePreferredLang} = useActions();
 
-    const onLangChange = (lang: Lang) => {
+    const onLangChange = (lang: Langs) => {
         changeLang(lang);
         updatePreferredLang(lang);
     }

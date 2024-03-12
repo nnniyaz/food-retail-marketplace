@@ -1,6 +1,6 @@
 import React, {FC, useState} from "react";
 import classes from "./I18NTextarea.module.scss";
-import {Lang, MlString} from "@entities/base/MlString";
+import {Langs, MlString} from "@entities/base/MlString";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {Select} from "antd";
 import {langOptions} from "@shared/lib/options/langOptions";
@@ -14,7 +14,7 @@ interface I18NTextareaProps {
 
 export const I18NTextarea: FC<I18NTextareaProps> = (props) => {
     const {currentLang} = useTypedSelector(state => state.lang);
-    const [selectedLang, setSelectedLang] = useState(currentLang || Lang.EN);
+    const [selectedLang, setSelectedLang] = useState(currentLang || Langs.EN);
 
     return (
         <div className={classes.i18n_textarea_row_wrapper}>
