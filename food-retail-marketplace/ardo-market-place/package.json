@@ -4,8 +4,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "i18n": "node src/pkg/core/script.js",
-    "dev": "node server",
+    "i18n": "node src/server/pkg/core/script.js",
+    "dev": "npm run i18n && node server",
     "build": "npm run build:client && npm run build:server",
     "build:client": "vite build --ssrManifest --outDir dist/client",
     "build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",

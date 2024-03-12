@@ -2,8 +2,8 @@ import {PublishedCatalog, PublishedCatalogCategories, PublishedCatalogSections} 
 
 export interface CatalogState {
     catalog: PublishedCatalog | null;
-    currentSection: string | null;
-    currentCategory: string | null;
+    currentSection: PublishedCatalogSections;
+    currentCategory: PublishedCatalogCategories;
 }
 
 export enum CatalogActionEnum {

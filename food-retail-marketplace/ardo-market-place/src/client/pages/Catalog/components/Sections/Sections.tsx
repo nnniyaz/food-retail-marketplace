@@ -1,4 +1,3 @@
-import {useState} from 'react';
 import {Section} from "./components/Section";
 import {PublishedCatalog} from "@domain/catalog/catalog";
 import classes from "./Sections.module.scss";
@@ -8,8 +7,6 @@ interface SectionsProps {
 }
 
 export const Sections = ({catalog}: SectionsProps) => {
-    const [expandedSection, setExpandedSection] = useState<string>("");
-
     if (!catalog) {
         return null;
     }
@@ -18,14 +15,7 @@ export const Sections = ({catalog}: SectionsProps) => {
     }
     return (
         <ul className={classes.sections}>
-            {catalog.structure.map(section => (
-                <Section
-                    key={section.sectionId}
-                    sectionStructure={section}
-                    expandedSection={expandedSection}
-                    setExpandedSection={setExpandedSection}
-                />
-            ))}
+            {catalog.structure.map(section => <Section key={section.sectionId} sectionStructure={section}/>)}
         </ul>
     );
 };

@@ -2,8 +2,14 @@ import {CatalogAction, CatalogActionEnum, CatalogState} from "@app/store/reducer
 
 const initialState: CatalogState = {
     catalog: null,
-    currentSection: null,
-    currentCategory: null
+    currentSection: {
+        sectionId: "",
+        categories: []
+    },
+    currentCategory: {
+        categoryId: "",
+        products: []
+    }
 }
 
 export default function catalogReducer(state = initialState, action: CatalogAction): CatalogState {

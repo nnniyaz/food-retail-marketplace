@@ -1,1 +1,3 @@
-export const txts = {};
+import {MlString} from 'src/client/domain/base/mlString.ts';
+
+export const txts: {[key: string]: MlString} = {"key":{"key":"key","RU":"RU","EN":"EN"},"RU":{"key":"RU","RU":"русский","EN":"russian"},"EN":{"key":"EN","RU":"английский","EN":"english"},"translation_not_found":{"key":"translation_not_found","RU":"перевод не найден","EN":"translation not found"},"add":{"key":"add","RU":"добавить","EN":"add"},"cart":{"key":"cart","RU":"корзина","EN":"cart"}}

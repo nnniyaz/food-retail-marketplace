@@ -1,10 +1,12 @@
 import {useMemo, useState} from "react";
-import PlusSVG from "@assets/icons/plus.svg?react";
+import PlusSVG from "@assets/icons/plus-circle.svg?react";
+import MinusSVG from "@assets/icons/minus-circle.svg?react";
 import {Product} from "@domain/product/product.ts";
 import {PublishedCatalogSections} from "@domain/catalog/catalog.ts";
 import {translate} from "@pkg/translate/translate.ts";
 import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
+import {useActions} from "@pkg/hooks/useActions.ts";
 import classes from "./ProductsList.module.scss";
 
 interface ProductsProps {
@@ -70,8 +72,26 @@ interface ProductProps {
 }
 
 const ProductItem = ({product}: ProductProps) => {
+    const addText = translate("add");
     const {cfg} = useTypedSelector(state => state.systemState);
+    const {cart} = useTypedSelector(state => state.cartState);
+    const {incrementToCart, decrementFromCart} = useActions();
     const [imgError, setImgError] = useState(false);
+    const cartProduct = useMemo(() => {
+        if (!product) {
+            return null;
+        }
+        return cart.find((cartProduct) => cartProduct.id === product._id) || null;
+    }, [cart]);
+
+    const handleIncrementToCart = () => {
+        incrementToCart({id: product._id, name: product.name, price: product.price});
+    }
+
+    const handleDecrementFromCart = () => {
+        decrementFromCart(product._id);
+    }
+
     if (!product) {
         return null;
     }
@@ -96,12 +116,37 @@ const ProductItem = ({product}: ProductProps) => {
                     <span className={classes.product__price_per_unit__price}>
                         {priceFormat(product.price)}
                     </span>
-                    <span className={classes.product__price_per_unit__moq}>• 1 pc</span>
+                    <span className={classes.product__price_per_unit__moq}>
+                        {!cartProduct && `• 1 pc`}
+                    </span>
                 </p>
-                <p className={classes.product__total_price_of_product}>$30</p>
-                <button className={classes.product__add}>
-                    <span className={classes.product__add__text}>Add</span>
-                    <PlusSVG className={classes.product__add__plus}/>
+                <p className={classes.product__total_price_of_product}>
+                    {
+                        !!cartProduct
+                            ? priceFormat(product.price * cartProduct.quantity)
+                            : priceFormat(product.price)
+                    }
+                </p>
+                <button
+                    className={classes.product__add}
+                    onClick={() => {
+                        if (!cartProduct) {
+                            handleIncrementToCart();
+                        }
+                    }}
+                >
+                    {!!cartProduct && (
+                        <MinusSVG className={classes.product__add__icon} onClick={handleDecrementFromCart}/>
+                    )}
+                    <span
+                        className={classes.product__add__text}
+                        style={{width: cartProduct?.quantity ? "fit-content" : ""}}
+                    >
+                        {cartProduct?.quantity ?? addText}
+                    </span>
+                    {!!cartProduct && (
+                        <PlusSVG className={classes.product__add__icon} onClick={handleIncrementToCart}/>
+                    )}
                 </button>
             </div>
         </li>

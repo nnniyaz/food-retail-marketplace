@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import {useMemo, useState} from "react";
 import {Link} from "react-router-dom";
 import CaretRightSVG from "@assets/icons/caret-right.svg?react";
 import {RouteNames} from "@pages/index.tsx";
@@ -10,13 +10,12 @@ import classes from "./Section.module.scss"
 
 interface SectionProps {
     sectionStructure: PublishedCatalogSections
-    expandedSection: string;
-    setExpandedSection: React.Dispatch<string>;
 }
 
-export const Section = ({sectionStructure, expandedSection, setExpandedSection}: SectionProps) => {
+export const Section = ({sectionStructure}: SectionProps) => {
     const {cfg} = useTypedSelector(state => state.systemState);
-    const {catalog} = useTypedSelector(state => state.catalogState);
+    const {catalog, currentSection} = useTypedSelector(state => state.catalogState);
+    const {setCurrentSection} = useActions();
     const [sectionImgError, setSectionImgError] = useState(false);
     const sectionCategoriesHeight = useMemo(() => {
         if (sectionStructure.categories.length === 0) {
@@ -32,11 +31,11 @@ export const Section = ({sectionStructure, expandedSection, setExpandedSection}:
             <div
                 className={classes.section}
                 onClick={() => {
-                    if (expandedSection === sectionStructure.sectionId) {
-                        setExpandedSection("");
+                    if (currentSection.sectionId === sectionStructure.sectionId) {
+                        setCurrentSection({sectionId: "", categories: []});
                         return;
                     }
-                    setExpandedSection(sectionStructure.sectionId)
+                    setCurrentSection(sectionStructure);
                 }}
             >
                 <img
@@ -56,7 +55,7 @@ export const Section = ({sectionStructure, expandedSection, setExpandedSection}:
                     </h3>
                     <CaretRightSVG
                         className={
-                            expandedSection === sectionStructure.sectionId
+                            currentSection.sectionId === sectionStructure.sectionId
                                 ? classes.section__arrow__active
                                 : classes.section__arrow
                         }
@@ -65,11 +64,11 @@ export const Section = ({sectionStructure, expandedSection, setExpandedSection}:
             </div>
             <ul
                 className={
-                    expandedSection === sectionStructure.sectionId
+                    currentSection.sectionId === sectionStructure.sectionId
                         ? classes.section__categories__active
                         : classes.section__categories
                 }
-                style={{height: expandedSection === sectionStructure.sectionId ? `${sectionCategoriesHeight}px` : "0"}}
+                style={{height: currentSection.sectionId === sectionStructure.sectionId ? `${sectionCategoriesHeight}px` : "0"}}
             >
                 {sectionStructure.categories.map(category => {
                     if (!catalog.categories[category.categoryId]) {

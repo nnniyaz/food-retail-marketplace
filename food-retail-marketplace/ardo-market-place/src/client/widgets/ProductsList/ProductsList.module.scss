@@ -125,7 +125,8 @@
             height: 30px;
             display: flex;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
+            padding: 0 10px;
             gap: 10px;
             margin-top: 5px;
             border-radius: 16px;
@@ -140,7 +141,7 @@
                 color: var(--accent-font-color);
               }
 
-              .product__add__plus {
+              .product__add__icon {
                 color: var(--accent-font-color);
               }
             }
@@ -150,17 +151,31 @@
             }
 
             .product__add__text {
+              width: 100%;
               font-size: 18px;
               font-weight: 700;
               line-height: 22px;
               font-style: normal;
               color: var(--primary-font-color);
+              text-align: center;
+              text-transform: capitalize;
               transition: .1s linear;
             }
 
-            .product__add__plus {
+            .product__add__icon {
+              width: 24px;
+              height: 24px;
               color: var(--primary-font-color);
-              transition: .1s linear;
+              animation: appear .1s ease-in-out;
+
+              @keyframes appear {
+                0% {
+                  opacity: 0;
+                }
+                100% {
+                  opacity: 1;
+                }
+              }
             }
           }
         }
@@ -207,7 +222,7 @@
                   color: var(--primary-font-color);
                 }
 
-                .product__add__plus {
+                .product__add__icon {
                   color: var(--primary-font-color);
                 }
               }

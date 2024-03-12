@@ -5,7 +5,7 @@ import fs from "fs";
 function TxtGen() {
     const csvFilePath = path.resolve(".", './txtmaps.csv');
 
-    const headers = ["key", "RU", "KZ", "EN", "TR", "AZ", "CH", "JP", "AR", "UZ", "ID", "KY", "UK"];
+    const headers = ["key", "RU", "EN"];
 
     const fileContent = fs.readFileSync(csvFilePath, {encoding: 'utf-8'});
 
@@ -24,8 +24,8 @@ function TxtGen() {
             txtMap[v.key] = v
         })
         fs.writeFile(
-            "./src/pkg/core/txts.ts",
-            "import {MlString} from '../../../client/domain/base/mlString.ts';\n\nexport const txts: {[key: string]: MlString} = " + JSON.stringify(txtMap),
+            "./src/server/pkg/core/txts.ts",
+            "import {MlString} from 'src/client/domain/base/mlString.ts';\n\nexport const txts: {[key: string]: MlString} = " + JSON.stringify(txtMap),
             (err) => {
                 if (err != null) {
                     console.log("error write to txt.json", err)
