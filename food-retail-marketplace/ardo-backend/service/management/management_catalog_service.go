@@ -98,7 +98,8 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 	}
 
 	for _, promoSection := range foundCatalog.GetPromo() {
-		if selectedSections[promoSection.GetId().String()] != nil {
+		_, ok := selectedSections[promoSection.GetId().String()]
+		if ok {
 			continue
 		}
 		foundSection, err := m.sectionService.GetOneById(ctx, promoSection.GetId().String())
@@ -111,7 +112,8 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 		selectedSections[promoSection.GetId().String()] = foundSection
 
 		for _, promoCategory := range promoSection.GetCategories() {
-			if selectedCategories[promoCategory.GetId().String()] != nil {
+			_, ok := selectedCategories[promoCategory.GetId().String()]
+			if ok {
 				continue
 			}
 			foundCategory, err := m.categoryService.GetOneById(ctx, promoCategory.GetId().String())
@@ -124,7 +126,8 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 			selectedCategories[promoCategory.GetId().String()] = foundCategory
 
 			for _, promoProduct := range promoCategory.GetProducts() {
-				if selectedProducts[promoProduct.GetId().String()] != nil {
+				_, ok := selectedProducts[promoProduct.GetId().String()]
+				if ok {
 					continue
 				}
 				foundProduct, err := m.productService.GetOneById(ctx, promoProduct.GetId().String())
