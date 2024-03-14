@@ -6,12 +6,13 @@ import {isEmpty} from "lodash";
 import {RouteNames} from "@pages/index";
 import {Langs, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
+import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
+import {RowInfo} from "@shared/ui/RowInfo";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./CategoriesEdit.module.scss";
-import {RowInfo} from "@shared/ui/RowInfo";
 
 export const CategoriesEdit = () => {
     const {id} = useParams();
@@ -33,7 +34,7 @@ export const CategoriesEdit = () => {
     const [submittable, setSubmittable] = useState(false);
 
     const handleCancel = () => {
-        navigate(RouteNames.CATEGORIES);
+        back(RouteNames.CATEGORIES, navigate);
     }
 
     const handleDelete = async () => {

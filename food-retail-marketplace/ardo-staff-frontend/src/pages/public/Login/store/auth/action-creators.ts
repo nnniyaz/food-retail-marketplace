@@ -29,7 +29,7 @@ export const AuthActionCreators = {
                         title: txt.authorization[currentLang],
                         message: txt.welcome_to_the_system[currentLang]
                     });
-                    navigateCallback?.navigate(RouteNames.DASHBOARD);
+                    navigateCallback?.navigate(RouteNames.USERS);
                 }
             } else {
                 FailedResponseHandler({

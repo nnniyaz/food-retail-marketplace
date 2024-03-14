@@ -139,7 +139,7 @@ const SideBarItem: FC<{ item: IRoute, onClick: (...args: any[]) => void }> = ({i
             to={item.path}
             onClick={onClick}
             className={activeLink(item.path) ? classes.sidebar__item__active : classes.sidebar__item}
-            style={{cursor: item.disabled ? "not-allowed" : "pointer", opacity: item.disabled ? .5 : 1}}
+            style={{pointerEvents: item.disabled ? "none" : "auto", opacity: item.disabled ? .5 : 1}}
         >
             <div className={classes.sidebar__item__icon}>{item.icon}</div>
             <Text text={item.name[currentLang]} light={activeLink(item.path)}/>

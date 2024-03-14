@@ -52,7 +52,7 @@ export enum RouteNames {
     LOGIN = "/login",
 
     // STAFF
-    DASHBOARD = "/",
+    // DASHBOARD = "/",
     ORDERS = "/orders",
     ORDERS_ADD = "/orders/add",
     ORDERS_EDIT = "/orders/edit/:id",
@@ -81,7 +81,7 @@ export const publicRoutes: IRoute[] = [
 ];
 
 export const staffRoutesSidebar: IRoute[] = [
-    {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>, disabled: true},
+    // {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>, disabled: true},
     {path: RouteNames.ORDERS, element: Orders, name: txt.orders, icon: <ShoppingCartOutlined />},
     {path: RouteNames.USERS, element: Users, name: txt.users, icon: <UserOutlined/>},
     {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <ShopOutlined/>},
@@ -116,7 +116,7 @@ const AppRouter = () => {
                     {[...staffRoutesSidebar, ...staffRoutes].filter(route => !route.disabled).map(route => (
                         <Route path={route.path} element={<route.element/>} key={route.path}/>
                     ))}
-                    <Route path={"*"} element={<NotFound/>}/>
+                    <Route path={"*"} element={<Navigate to={RouteNames.USERS}/>}/>
                 </Route>
                 :
                 <Route element={<Layout/>}>

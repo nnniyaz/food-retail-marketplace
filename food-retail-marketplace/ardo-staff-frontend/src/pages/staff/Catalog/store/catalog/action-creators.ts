@@ -1,7 +1,7 @@
 import {Catalog} from "@entities/catalog/catalog";
 import {CatalogActionEnum} from "./types";
 import {AppDispatch, RootState} from "@app/store";
-import {CatalogService} from "@pages/staff/Catalog/api/catalogService";
+import {CatalogService, EditCatalogReq} from "@pages/staff/Catalog/api/catalogService";
 import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {Paginate} from "@entities/base/paginate";
 import {NavigateCallback} from "@entities/base/navigateCallback";
@@ -52,11 +52,11 @@ export const CatalogActionCreators = {
         }
     },
 
-    editCatalog: (request: Catalog, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    editCatalog: (request: EditCatalogReq, catalogId: UUID, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(CatalogActionCreators.setIsLoadingEditCatalog(true));
-            const res = await CatalogService.editCatalog(request);
+            const res = await CatalogService.editCatalog(request, catalogId);
             if (res.data.success) {
                 Notify.Success({title: txt.catalog_successfully_edited[currentLang], message: ""});
                 await CatalogActionCreators.fetchCatalogs({offset: 0, limit: 0}, new AbortController(), navigationCallback)(dispatch, getState);
@@ -78,11 +78,11 @@ export const CatalogActionCreators = {
         }
     },
 
-    publishCatalog: (navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    publishCatalog: (catalogId: UUID, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
             dispatch(CatalogActionCreators.setIsLoadingPublishCatalog(true));
-            const res = await CatalogService.publishCatalog();
+            const res = await CatalogService.publishCatalog(catalogId);
             if (res.data.success) {
                 Notify.Success({title: txt.catalog_successfully_published[currentLang], message: ""});
             } else {

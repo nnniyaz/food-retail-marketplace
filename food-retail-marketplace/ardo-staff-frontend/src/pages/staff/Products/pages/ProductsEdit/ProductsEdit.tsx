@@ -3,8 +3,10 @@ import {useNavigate, useParams} from "react-router-dom";
 import {isEmpty} from "lodash";
 import {Button, Card, Form, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
+import {RouteNames} from "@pages/index";
 import {MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
+import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
 import {RowInfo} from "@shared/ui/RowInfo";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
@@ -14,7 +16,6 @@ import {NumberInput} from "@shared/ui/Input/NumberInput";
 import {I18NTextarea} from "@shared/ui/Textarea";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {productStatusOptions} from "@shared/lib/options/productStatusOptions";
-import {RouteNames} from "@pages/index";
 import classes from "./ProductsEdit.module.scss";
 
 export const ProductsEdit: FC = () => {
@@ -42,7 +43,7 @@ export const ProductsEdit: FC = () => {
     const [submittable, setSubmittable] = React.useState(false);
 
     const handleCancel = () => {
-        navigate(RouteNames.PRODUCTS);
+        back(RouteNames.PRODUCTS, navigate);
     }
 
     const handleDelete = async () => {

@@ -8,8 +8,8 @@ import {Langs, MlString} from "@entities/base/MlString";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {txt} from "@shared/core/i18ngen";
+import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
-import {RowInfo} from "@shared/ui/RowInfo";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
 import classes from "./SectionsEdit.module.scss";
 
@@ -33,7 +33,7 @@ export const SectionsEdit = () => {
     const [submittable, setSubmittable] = useState(false);
 
     const handleCancel = () => {
-        navigate(RouteNames.SECTIONS);
+        back(RouteNames.SECTIONS, navigate);
     }
 
     const handleDelete = async () => {

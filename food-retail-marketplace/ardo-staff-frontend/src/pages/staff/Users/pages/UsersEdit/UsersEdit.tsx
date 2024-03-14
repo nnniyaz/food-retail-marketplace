@@ -6,6 +6,7 @@ import {isEmpty} from "lodash";
 import {RouteNames} from "@pages//";
 import {UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
+import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
 import {RowInfo} from "@shared/ui/RowInfo";
 import {useActions} from "@shared/lib/hooks/useActions";
@@ -53,7 +54,7 @@ export const UsersEdit: FC = () => {
     }, [user.userType]);
 
     const handleCancel = () => {
-        navigate(RouteNames.USERS);
+        back(RouteNames.USERS, navigate);
     }
 
     const handleDelete = async () => {

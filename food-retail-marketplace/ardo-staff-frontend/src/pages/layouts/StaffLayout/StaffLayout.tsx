@@ -97,6 +97,17 @@ export const StaffLayout: FC = () => {
                 ...(routes.find(route => route.path === RouteNames.CATEGORIES_EDIT) || {} as IRoute),
                 path: location.pathname
             });
+        } else if (location.pathname === RouteNames.PRODUCTS_ADD) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.PRODUCTS) || {} as IRoute);
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.PRODUCTS_ADD) || {} as IRoute);
+        } else if (location.pathname.includes(RouteNames.PRODUCTS_EDIT.replace("/:id", ""))) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.PRODUCTS) || {} as IRoute);
+            breadcrumbs.push({
+                ...(routes.find(route => route.path === RouteNames.PRODUCTS_EDIT) || {} as IRoute),
+                path: location.pathname
+            });
         }
         setBreadcrumbs(breadcrumbs);
     }, [location.pathname]);

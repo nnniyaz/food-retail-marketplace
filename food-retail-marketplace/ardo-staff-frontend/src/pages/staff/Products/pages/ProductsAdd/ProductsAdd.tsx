@@ -2,6 +2,7 @@ import React, {FC, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Form, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
+import {RouteNames} from "@pages/index";
 import {Langs, MlString} from "@entities/base/MlString";
 import {ProductStatus} from "@entities/product/product";
 import {txt} from "@shared/core/i18ngen";
@@ -12,7 +13,6 @@ import {NumberInput} from "@shared/ui/Input/NumberInput";
 import {I18NTextarea} from "@shared/ui/Textarea";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {productStatusOptions} from "@shared/lib/options/productStatusOptions";
-import {RouteNames} from "@pages/index";
 import classes from "./ProductsAdd.module.scss";
 
 const initialFormValues = {
