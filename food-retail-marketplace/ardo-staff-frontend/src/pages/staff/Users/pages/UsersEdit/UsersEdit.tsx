@@ -7,6 +7,7 @@ import {RouteNames} from "@pages//";
 import {UserType} from "@entities/user/user";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
+import {RowInfo} from "@shared/ui/RowInfo";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {dateFormat} from "@shared/lib/utils/date-format";
 import {langOptions} from "@shared/lib/options/langOptions";
@@ -31,7 +32,6 @@ export const UsersEdit: FC = () => {
         editUserCredentials,
         editUserEmail,
         editUserPreferredLang,
-        editUserPassword,
         deleteUser,
         recoverUser
     } = useActions();
@@ -255,10 +255,3 @@ export const UsersEdit: FC = () => {
         </div>
     );
 };
-
-const RowInfo: FC<{ label: string, value: string }> = ({label, value}) => (
-    <div className={classes.row__info}>
-        <div className={classes.row__info__label}>{label}</div>
-        <div className={classes.row__info__value}>{value}</div>
-    </div>
-);

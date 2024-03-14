@@ -32,9 +32,9 @@ export enum ApiRoutes {
     DELETE_ORDER = "/management/orders/:order_id",
 
     // ------------------------ MANAGEMENT OF CATALOG -----------------------
-    GET_CATALOGS = "/management/catalogs",
-    PUT_CATALOG = "/management/catalogs/:catalog_id",
-    POST_PUBLISH_CATALOG = "/management/catalogs/publish/:catalog_id",
+    GET_CATALOGS = "/management/catalog",
+    PUT_CATALOG = "/management/catalog/:catalog_id",
+    POST_PUBLISH_CATALOG = "/management/catalog/publish/:catalog_id",
 
     // ------------------------ MANAGEMENT OF SECTIONS -----------------------
     GET_SECTIONS = "/management/sections", // with query params: offset, limit, is_deleted

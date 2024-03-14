@@ -64,6 +64,39 @@ export const StaffLayout: FC = () => {
                 ...(routes.find(route => route.path === RouteNames.USERS_EDIT) || {} as IRoute),
                 path: location.pathname
             });
+        } else if (location.pathname === RouteNames.ORDERS_ADD) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.ORDERS) || {} as IRoute);
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.ORDERS_ADD) || {} as IRoute);
+        } else if (location.pathname.includes(RouteNames.ORDERS_EDIT.replace("/:id", ""))) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.ORDERS) || {} as IRoute);
+            breadcrumbs.push({
+                ...(routes.find(route => route.path === RouteNames.ORDERS_EDIT) || {} as IRoute),
+                path: location.pathname
+            });
+        } else if (location.pathname === RouteNames.SECTIONS_ADD) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.SECTIONS) || {} as IRoute);
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.SECTIONS_ADD) || {} as IRoute);
+        }  else if (location.pathname.includes(RouteNames.SECTIONS_EDIT.replace("/:id", ""))) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.SECTIONS) || {} as IRoute);
+            breadcrumbs.push({
+                ...(routes.find(route => route.path === RouteNames.SECTIONS_EDIT) || {} as IRoute),
+                path: location.pathname
+            });
+        } else if (location.pathname === RouteNames.CATEGORIES_ADD) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.CATEGORIES) || {} as IRoute);
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.CATEGORIES_ADD) || {} as IRoute);
+        } else if (location.pathname.includes(RouteNames.CATEGORIES_EDIT.replace("/:id", ""))) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.CATEGORIES) || {} as IRoute);
+            breadcrumbs.push({
+                ...(routes.find(route => route.path === RouteNames.CATEGORIES_EDIT) || {} as IRoute),
+                path: location.pathname
+            });
         }
         setBreadcrumbs(breadcrumbs);
     }, [location.pathname]);

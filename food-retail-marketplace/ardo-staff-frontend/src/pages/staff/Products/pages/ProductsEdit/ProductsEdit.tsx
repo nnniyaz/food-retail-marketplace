@@ -6,6 +6,7 @@ import {useForm, useWatch} from "antd/es/form/Form";
 import {MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
+import {RowInfo} from "@shared/ui/RowInfo";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
 import {dateFormat} from "@shared/lib/utils/date-format";
 import {useActions} from "@shared/lib/hooks/useActions";
@@ -244,9 +245,3 @@ export const ProductsEdit: FC = () => {
     );
 };
 
-const RowInfo: FC<{ label: string, value: string }> = ({label, value}) => (
-    <div className={classes.row__info}>
-        <div className={classes.row__info__label}>{label}</div>
-        <div className={classes.row__info__value}>{value}</div>
-    </div>
-);

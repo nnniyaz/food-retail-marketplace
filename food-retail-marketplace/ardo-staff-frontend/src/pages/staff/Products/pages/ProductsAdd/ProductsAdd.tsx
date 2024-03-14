@@ -2,7 +2,7 @@ import React, {FC, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Button, Card, Form, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
-import {MlString} from "@entities/base/MlString";
+import {Langs, MlString} from "@entities/base/MlString";
 import {ProductStatus} from "@entities/product/product";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
@@ -16,8 +16,14 @@ import {RouteNames} from "@pages/index";
 import classes from "./ProductsAdd.module.scss";
 
 const initialFormValues = {
-    name: {},
-    desc: {},
+    name: {
+        [Langs.EN]: "",
+        [Langs.RU]: ""
+    },
+    desc: {
+        [Langs.EN]: "",
+        [Langs.RU]: ""
+    },
     price: 0,
     quantity: 0,
     image: "",

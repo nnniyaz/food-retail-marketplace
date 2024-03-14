@@ -1,8 +1,9 @@
 import React, {useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {ColumnsType} from "antd/es/table";
 import {Card, Table} from "antd";
+import {ColumnsType} from "antd/es/table";
 import {RouteNames} from "@pages/index";
+import {MlString} from "@entities/base/MlString";
 import {Category} from "@entities/category/category";
 import {TableParams} from "@entities/base/tableParams";
 import {txt} from "@shared/core/i18ngen";
@@ -12,8 +13,6 @@ import {dateFormat} from "@shared/lib/utils/date-format";
 import {TableHeader} from "@shared/ui/TableTools/TableHeader";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./Categories.module.scss";
-import {Translate} from "@features/Translate";
-import {MlString} from "@entities/base/MlString";
 
 export const Categories = () => {
     const navigate = useNavigate();
@@ -35,7 +34,7 @@ export const Categories = () => {
             title: txt.action[currentLang],
             dataIndex: "action",
             render: (_, record) => (
-                <Link to={RouteNames.PRODUCTS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
+                <Link to={RouteNames.CATEGORIES_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
             )
         },
         {
@@ -52,7 +51,7 @@ export const Categories = () => {
             key: "name",
             title: txt.name[currentLang],
             dataIndex: "name",
-            render: (name: MlString) => Translate(name)
+            render: (name: MlString) => name[currentLang]
         },
         {
             key: "createdAt",

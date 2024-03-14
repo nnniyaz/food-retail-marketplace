@@ -1,0 +1,20 @@
+@import "src/app/styles";
+
+.main {
+  width: 100%;
+
+  ol {
+    list-style: none;
+    padding: 0 0 0 30px;
+    margin: 0;
+
+    .catalog__item {
+      width: 100%;
+      display: flex;
+      padding: 10px;
+      border-radius: 10px;
+      background-color: $global-color-light-bg-secondary-white;
+      margin-bottom: 10px;
+    }
+  }
+}

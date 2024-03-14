@@ -105,6 +105,8 @@ export const SectionActionCreators = {
                 currentLang: currentLang,
                 navigateCallback: navigationCallback,
             });
+        } finally {
+            dispatch(SectionActionCreators.setIsLoadingGetSectionById(false));
         }
     },
 
@@ -132,6 +134,8 @@ export const SectionActionCreators = {
                 currentLang: currentLang,
                 navigateCallback: navigationCallback,
             });
+        } finally {
+            dispatch(SectionActionCreators.setIsLoadingAddSection(false));
         }
     },
 
@@ -159,6 +163,8 @@ export const SectionActionCreators = {
                 currentLang: currentLang,
                 navigateCallback: navigationCallback,
             });
+        } finally {
+            dispatch(SectionActionCreators.setIsLoadingEditSection(false));
         }
     },
 
@@ -186,6 +192,8 @@ export const SectionActionCreators = {
                 currentLang: currentLang,
                 navigateCallback: navigationCallback,
             });
+        } finally {
+            dispatch(SectionActionCreators.setIsLoadingRecoverSection(false));
         }
     },
 
@@ -213,6 +221,8 @@ export const SectionActionCreators = {
                 currentLang: currentLang,
                 navigateCallback: navigationCallback,
             });
+        } finally {
+            dispatch(SectionActionCreators.setIsLoadingDeleteSection(false));
         }
     }
 }

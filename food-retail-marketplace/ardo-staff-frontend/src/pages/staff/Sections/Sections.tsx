@@ -35,13 +35,14 @@ export const Sections = () => {
             title: txt.action[currentLang],
             dataIndex: "action",
             render: (_, record) => (
-                <Link to={RouteNames.PRODUCTS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
+                <Link to={RouteNames.SECTIONS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
             )
         },
         {
             key: "img",
             title: txt.image[currentLang],
-            dataIndex: "img"
+            dataIndex: "img",
+            render: (img: string) => <img src={img} alt={txt.image[currentLang]} style={{width: "50px"}}/>
         },
         {
             key: "id",
@@ -52,7 +53,7 @@ export const Sections = () => {
             key: "name",
             title: txt.name[currentLang],
             dataIndex: "name",
-            render: (name: MlString) => Translate(name)
+            render: (name: MlString) => name[currentLang]
         },
         {
             key: "createdAt",

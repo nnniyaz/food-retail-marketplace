@@ -1,7 +1,7 @@
 import React, {FC, useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Button, Card, Form, Input, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
+import {Button, Card, Form, Input, Select} from "antd";
 import {RouteNames} from "@pages//";
 import {Langs} from "@entities/base/MlString";
 import {UserType} from "@entities/user/user";
@@ -11,7 +11,6 @@ import {useActions} from "@shared/lib/hooks/useActions";
 import {langOptions} from "@shared/lib/options/langOptions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {userTypeOptions, userTypeTranslate} from "@shared/lib/options/userTypeOptions";
-import {AddUserReq} from "../../api/usersService";
 import classes from "./UsersAdd.module.scss";
 
 const initialFormValues = {

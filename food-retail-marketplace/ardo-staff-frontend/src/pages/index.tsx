@@ -3,11 +3,15 @@ import {Navigate, Route, Routes} from "react-router-dom";
 import {
     DashboardOutlined,
     SettingOutlined,
-    UnorderedListOutlined,
+    ShoppingCartOutlined,
+    ShopOutlined,
     UserAddOutlined,
     UserOutlined,
     UserSwitchOutlined,
-    AppstoreOutlined, ShoppingOutlined,
+    AppstoreOutlined,
+    AppstoreAddOutlined,
+    UnorderedListOutlined,
+    ShoppingOutlined,
 } from "@ant-design/icons";
 import {MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
@@ -28,6 +32,12 @@ import {ProductsAdd} from "@pages/staff/Products/pages/ProductsAdd";
 import {ProductsEdit} from "@pages/staff/Products/pages/ProductsEdit";
 import {Sections} from "@pages/staff/Sections";
 import {Categories} from "@pages/staff/Categories";
+import {SectionsAdd} from "@pages/staff/Sections/pages/SectionsAdd";
+import {CategoriesAdd} from "@pages/staff/Categories/pages/CategoriesAdd";
+import {OrdersAdd} from "@pages/staff/Orders/pages/OrdersAdd";
+import {OrdersEdit} from "@pages/staff/Orders/pages/OrdersEdit";
+import {CategoriesEdit} from "@pages/staff/Categories/pages/CategoriesEdit";
+import {SectionsEdit} from "@pages/staff/Sections/pages/SectionsEdit";
 
 export interface IRoute {
     path: string;
@@ -44,6 +54,8 @@ export enum RouteNames {
     // STAFF
     DASHBOARD = "/",
     ORDERS = "/orders",
+    ORDERS_ADD = "/orders/add",
+    ORDERS_EDIT = "/orders/edit/:id",
     USERS = "/users",
     USERS_ADD = "/users/add",
     USERS_EDIT = "/users/edit/:id",
@@ -70,10 +82,10 @@ export const publicRoutes: IRoute[] = [
 
 export const staffRoutesSidebar: IRoute[] = [
     {path: RouteNames.DASHBOARD, element: Dashboard, name: txt.dashboard, icon: <DashboardOutlined/>, disabled: true},
-    {path: RouteNames.ORDERS, element: Orders, name: txt.orders, icon: <DashboardOutlined/>},
+    {path: RouteNames.ORDERS, element: Orders, name: txt.orders, icon: <ShoppingCartOutlined />},
     {path: RouteNames.USERS, element: Users, name: txt.users, icon: <UserOutlined/>},
-    {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <UnorderedListOutlined/>},
-    {path: RouteNames.SECTIONS, element: Sections, name: txt.sections, icon: <SettingOutlined/>},
+    {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <ShopOutlined/>},
+    {path: RouteNames.SECTIONS, element: Sections, name: txt.sections, icon: <UnorderedListOutlined/>},
     {path: RouteNames.CATEGORIES, element: Categories, name: txt.categories, icon: <AppstoreOutlined/>},
     {path: RouteNames.PRODUCTS, element: Products, name: txt.products, icon: <ShoppingOutlined />},
     {path: RouteNames.SETTINGS, element: Settings, name: txt.settings, icon: <SettingOutlined/>},
@@ -82,8 +94,14 @@ export const staffRoutesSidebar: IRoute[] = [
 export const staffRoutes: IRoute[] = [
     {path: RouteNames.USERS_ADD, element: UsersAdd, name: txt.new_user, icon: <UserAddOutlined/>},
     {path: RouteNames.USERS_EDIT, element: UsersEdit, name: txt.user_profile, icon: <UserSwitchOutlined/>},
-    {path: RouteNames.PRODUCTS_ADD, element: ProductsAdd, name: txt.new_product, icon: <UserAddOutlined/>},
-    {path: RouteNames.PRODUCTS_EDIT, element: ProductsEdit, name: txt.product_details, icon: <UserSwitchOutlined/>},
+    {path: RouteNames.ORDERS_ADD, element: OrdersAdd, name: txt.new_order, icon: <ShoppingCartOutlined/>},
+    {path: RouteNames.ORDERS_EDIT, element: OrdersEdit, name: txt.order_details, icon: <ShoppingCartOutlined/>},
+    {path: RouteNames.SECTIONS_ADD, element: SectionsAdd, name: txt.new_section, icon: <UnorderedListOutlined/>},
+    {path: RouteNames.SECTIONS_EDIT, element: SectionsEdit, name: txt.section_details, icon: <UnorderedListOutlined/>},
+    {path: RouteNames.CATEGORIES_ADD, element: CategoriesAdd, name: txt.new_category, icon: <AppstoreAddOutlined />},
+    {path: RouteNames.CATEGORIES_EDIT, element: CategoriesEdit, name: txt.category_details, icon: <AppstoreAddOutlined />},
+    {path: RouteNames.PRODUCTS_ADD, element: ProductsAdd, name: txt.new_product, icon: <ShoppingOutlined/>},
+    {path: RouteNames.PRODUCTS_EDIT, element: ProductsEdit, name: txt.product_details, icon: <ShoppingOutlined/>},
     {path: RouteNames.NOT_FOUND, element: NotFound, name: txt.page_not_found, icon: <SettingOutlined/>},
 ];
 
@@ -98,7 +116,7 @@ const AppRouter = () => {
                     {[...staffRoutesSidebar, ...staffRoutes].filter(route => !route.disabled).map(route => (
                         <Route path={route.path} element={<route.element/>} key={route.path}/>
                     ))}
-                    <Route path={"*"} element={<Users/>}/>
+                    <Route path={"*"} element={<NotFound/>}/>
                 </Route>
                 :
                 <Route element={<Layout/>}>
