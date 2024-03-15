@@ -152,6 +152,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Post("/", h.ManagementCatalog.CreateCatalog)
 				r.Put("/{catalog_id}", h.ManagementCatalog.UpdateCatalog)
 				r.Post("/publish/{catalog_id}", h.ManagementCatalog.PublishCatalog)
+				r.Get("/publish-time/{catalog_id}", h.ManagementCatalog.GetTimeOfPublish)
 			})
 
 			r.Route("/sections", func(r chi.Router) {

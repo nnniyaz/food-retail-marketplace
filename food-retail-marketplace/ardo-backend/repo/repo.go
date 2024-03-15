@@ -22,6 +22,7 @@ import (
 	slideMongo "github/nnniyaz/ardo/repo/mongo/slide"
 	userMongo "github/nnniyaz/ardo/repo/mongo/user"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type User interface {
@@ -76,6 +77,7 @@ type Catalog interface {
 	CreateCatalog(ctx context.Context, catalog *catalog.Catalog) error
 	UpdateCatalog(ctx context.Context, catalog *catalog.Catalog) error
 	PublishCatalog(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) error
+	GetTimeOfPublish(ctx context.Context, catalogId uuid.UUID) (time.Time, error)
 }
 
 type Section interface {

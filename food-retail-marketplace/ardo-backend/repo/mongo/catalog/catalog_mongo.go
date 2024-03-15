@@ -2,6 +2,7 @@ package catalog
 
 import (
 	"context"
+	"errors"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/catalog"
 	"github/nnniyaz/ardo/domain/catalog/exceptions"
@@ -13,6 +14,7 @@ import (
 	"github/nnniyaz/ardo/pkg/core"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
 )
 
@@ -187,7 +189,7 @@ func (r *RepoCatalog) FindAll(ctx context.Context) ([]*catalog.Catalog, int64, e
 func (r *RepoCatalog) FindOneById(ctx context.Context, id uuid.UUID) (*catalog.Catalog, error) {
 	var internal mongoCatalog
 	if err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&internal); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, exceptions.ErrCatalogNotFound
 		}
 		return nil, err
@@ -272,8 +274,7 @@ type mongoPublishedCatalog struct {
 		UpdatedAt time.Time     `bson:"updatedAt"`
 		Version   int           `bson:"version"`
 	} `bson:"slides"`
-	CreatedAt time.Time `bson:"createdAt"`
-	UpdatedAt time.Time `bson:"updatedAt"`
+	PublishedAt time.Time `bson:"publishedAt"`
 }
 
 func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) *mongoPublishedCatalog {
@@ -475,13 +476,14 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 	}
 
 	return &mongoPublishedCatalog{
-		CatalogId:  c.GetId(),
-		Structure:  structure,
-		Promo:      promo,
-		Sections:   selectedSectionsMap,
-		Categories: selectedCategoriesMap,
-		Products:   selectedProductsMap,
-		Slides:     slidesSlice,
+		CatalogId:   c.GetId(),
+		Structure:   structure,
+		Promo:       promo,
+		Sections:    selectedSectionsMap,
+		Categories:  selectedCategoriesMap,
+		Products:    selectedProductsMap,
+		Slides:      slidesSlice,
+		PublishedAt: time.Now(),
 	}
 }
 
@@ -493,12 +495,24 @@ func (r *RepoCatalog) PublishCatalog(ctx context.Context, catalog *catalog.Catal
 
 	pc := newFromPublishedCatalog(catalog, selectedSections, selectedCategories, selectedProducts, slides)
 	if count > 0 {
-		pc.UpdatedAt = time.Now()
 		_, err = r.CollPublishedCatalog().UpdateOne(ctx, bson.M{"catalogId": catalog.GetId()}, bson.M{"$set": pc})
 		return err
 	}
-	pc.CreatedAt = time.Now()
-	pc.UpdatedAt = time.Now()
 	_, err = r.CollPublishedCatalog().InsertOne(ctx, pc)
 	return err
+}
+
+func (r *RepoCatalog) GetTimeOfPublish(ctx context.Context, catalogId uuid.UUID) (time.Time, error) {
+	var pc mongoPublishedCatalog
+	if err := r.CollPublishedCatalog().FindOne(ctx, bson.M{
+		"catalogId": catalogId,
+	}, options.FindOne().SetProjection(bson.M{
+		"publishedAt": 1,
+	})).Decode(&pc); err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return time.Time{}, exceptions.ErrCatalogNotFound
+		}
+		return time.Time{}, err
+	}
+	return pc.PublishedAt, nil
 }

@@ -2,6 +2,7 @@ package session
 
 import (
 	"context"
+	"errors"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/session"
 	"go.mongodb.org/mongo-driver/bson"
@@ -46,7 +47,7 @@ func (m *mongoSession) ToAggregate() *session.Session {
 func (r *RepoSession) FindManyByUserId(ctx context.Context, userId uuid.UUID) ([]*session.Session, error) {
 	cur, err := r.Coll().Find(ctx, bson.M{"userId": userId})
 	if err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
@@ -67,7 +68,7 @@ func (r *RepoSession) FindManyByUserId(ctx context.Context, userId uuid.UUID) ([
 func (r *RepoSession) FindOneBySession(ctx context.Context, session uuid.UUID) (*session.Session, error) {
 	var s mongoSession
 	if err := r.Coll().FindOne(ctx, bson.M{"session": session}).Decode(&s); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err

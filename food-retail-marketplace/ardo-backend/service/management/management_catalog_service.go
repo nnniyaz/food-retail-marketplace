@@ -16,6 +16,7 @@ import (
 	sectionService "github/nnniyaz/ardo/service/section"
 	slideService "github/nnniyaz/ardo/service/slide"
 	"go.mongodb.org/mongo-driver/mongo"
+	"time"
 )
 
 type ManagementCatalogService interface {
@@ -24,6 +25,7 @@ type ManagementCatalogService interface {
 	CreateCatalog(ctx context.Context) error
 	UpdateCatalog(ctx context.Context, catalogId string, structure []valueObject.CatalogsSection, promo []valueObject.CatalogsSection) error
 	PublishCatalog(ctx context.Context, catalogId string) error
+	GetTimeOfPublish(ctx context.Context, catalogId string) (time.Time, error)
 }
 
 type managementCatalogService struct {
@@ -147,4 +149,8 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 		return err
 	}
 	return m.catalogService.Publish(ctx, foundCatalog, selectedSections, selectedCategories, selectedProducts, slides)
+}
+
+func (m *managementCatalogService) GetTimeOfPublish(ctx context.Context, catalogId string) (time.Time, error) {
+	return m.catalogService.GetTimeOfPublish(ctx, catalogId)
 }

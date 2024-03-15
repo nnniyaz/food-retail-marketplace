@@ -2,6 +2,7 @@ package category
 
 import (
 	"context"
+	"errors"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/category"
 	"github/nnniyaz/ardo/pkg/core"
@@ -76,7 +77,7 @@ func (r *RepoCategory) FindByFilters(ctx context.Context, offset, limit int64, i
 func (r *RepoCategory) FindOneById(ctx context.Context, id uuid.UUID) (*category.Category, error) {
 	var foundCategory mongoCategory
 	if err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundCategory); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err

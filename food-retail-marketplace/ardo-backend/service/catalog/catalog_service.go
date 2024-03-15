@@ -12,6 +12,7 @@ import (
 	"github/nnniyaz/ardo/domain/slide"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
+	"time"
 )
 
 const maxNumberOfCatalogs = 1
@@ -22,6 +23,7 @@ type CatalogService interface {
 	Create(ctx context.Context, catalog *catalog.Catalog) error
 	Update(ctx context.Context, catalogId string, structure []valueObject.CatalogsSection, promo []valueObject.CatalogsSection) error
 	Publish(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategory map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) error
+	GetTimeOfPublish(ctx context.Context, catalogId string) (time.Time, error)
 }
 
 type catalogService struct {
@@ -70,4 +72,12 @@ func (c *catalogService) Update(ctx context.Context, catalogId string, structure
 
 func (c *catalogService) Publish(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) error {
 	return c.catalogRepo.PublishCatalog(ctx, catalog, selectedSections, selectedCategories, selectedProducts, slides)
+}
+
+func (c *catalogService) GetTimeOfPublish(ctx context.Context, catalogId string) (time.Time, error) {
+	convertedId, err := uuid.UUIDFromString(catalogId)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return c.catalogRepo.GetTimeOfPublish(ctx, convertedId)
 }

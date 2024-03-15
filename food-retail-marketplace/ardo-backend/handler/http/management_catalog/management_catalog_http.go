@@ -11,6 +11,7 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/management"
 	"net/http"
+	"time"
 )
 
 type HttpDelivery struct {
@@ -218,4 +219,22 @@ func (hd *HttpDelivery) PublishCatalog(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type TimeOfPublish struct {
+	PublishedAt string `json:"publishedAt"`
+}
+
+func NewTimeOfPublish(foundTime time.Time) *TimeOfPublish {
+	return &TimeOfPublish{PublishedAt: foundTime.String()}
+}
+
+func (hd *HttpDelivery) GetTimeOfPublish(w http.ResponseWriter, r *http.Request) {
+	catalogId := chi.URLParam(r, "catalog_id")
+	foundTime, err := hd.service.GetTimeOfPublish(r.Context(), catalogId)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, NewTimeOfPublish(foundTime))
 }

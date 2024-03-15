@@ -2,6 +2,7 @@ package order
 
 import (
 	"context"
+	"errors"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/order/valueobject"
@@ -181,7 +182,7 @@ func (r *RepoOrder) FindUserOrdersByFilters(ctx context.Context, offset, limit i
 func (r *RepoOrder) FindOneById(ctx context.Context, id uuid.UUID) (*order.Order, error) {
 	var foundOrder mongoOrder
 	if err := r.Coll().FindOne(ctx, bson.M{"_id": id}).Decode(&foundOrder); err != nil {
-		if err == mongo.ErrNoDocuments {
+		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
 		}
 		return nil, err
