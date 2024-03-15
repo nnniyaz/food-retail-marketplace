@@ -11,7 +11,7 @@ import {
     AppstoreOutlined,
     AppstoreAddOutlined,
     UnorderedListOutlined,
-    ShoppingOutlined,
+    ShoppingOutlined, PictureOutlined,
 } from "@ant-design/icons";
 import {MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
@@ -38,6 +38,9 @@ import {OrdersAdd} from "@pages/staff/Orders/pages/OrdersAdd";
 import {OrdersEdit} from "@pages/staff/Orders/pages/OrdersEdit";
 import {CategoriesEdit} from "@pages/staff/Categories/pages/CategoriesEdit";
 import {SectionsEdit} from "@pages/staff/Sections/pages/SectionsEdit";
+import {Slides} from "@pages/staff/Slides";
+import {SlidesAdd} from "@pages/staff/Slides/pages/SlidesAdd";
+import {SlidesEdit} from "@pages/staff/Slides/pages/SlidesEdit";
 
 export interface IRoute {
     path: string;
@@ -60,6 +63,9 @@ export enum RouteNames {
     USERS_ADD = "/users/add",
     USERS_EDIT = "/users/edit/:id",
     CATALOG = "/catalog",
+    SLIDES = "/slides",
+    SLIDES_ADD = "/slides/add",
+    SLIDES_EDIT = "/slides/edit/:id",
     SECTIONS = "/sections",
     SECTIONS_ADD = "/sections/add",
     SECTIONS_EDIT = "/sections/edit/:id",
@@ -85,6 +91,7 @@ export const staffRoutesSidebar: IRoute[] = [
     {path: RouteNames.ORDERS, element: Orders, name: txt.orders, icon: <ShoppingCartOutlined />},
     {path: RouteNames.USERS, element: Users, name: txt.users, icon: <UserOutlined/>},
     {path: RouteNames.CATALOG, element: Catalog, name: txt.catalog, icon: <ShopOutlined/>},
+    {path: RouteNames.SLIDES, element: Slides, name: txt.slides, icon: <PictureOutlined/>},
     {path: RouteNames.SECTIONS, element: Sections, name: txt.sections, icon: <UnorderedListOutlined/>},
     {path: RouteNames.CATEGORIES, element: Categories, name: txt.categories, icon: <AppstoreOutlined/>},
     {path: RouteNames.PRODUCTS, element: Products, name: txt.products, icon: <ShoppingOutlined />},
@@ -96,6 +103,8 @@ export const staffRoutes: IRoute[] = [
     {path: RouteNames.USERS_EDIT, element: UsersEdit, name: txt.user_profile, icon: <UserSwitchOutlined/>},
     {path: RouteNames.ORDERS_ADD, element: OrdersAdd, name: txt.new_order, icon: <ShoppingCartOutlined/>},
     {path: RouteNames.ORDERS_EDIT, element: OrdersEdit, name: txt.order_details, icon: <ShoppingCartOutlined/>},
+    {path: RouteNames.SLIDES_ADD, element: SlidesAdd, name: txt.new_slide, icon: <PictureOutlined/>},
+    {path: RouteNames.SLIDES_EDIT, element: SlidesEdit, name: txt.slide_details, icon: <PictureOutlined/>},
     {path: RouteNames.SECTIONS_ADD, element: SectionsAdd, name: txt.new_section, icon: <UnorderedListOutlined/>},
     {path: RouteNames.SECTIONS_EDIT, element: SectionsEdit, name: txt.section_details, icon: <UnorderedListOutlined/>},
     {path: RouteNames.CATEGORIES_ADD, element: CategoriesAdd, name: txt.new_category, icon: <AppstoreAddOutlined />},

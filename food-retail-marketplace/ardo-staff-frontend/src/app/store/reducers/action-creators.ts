@@ -7,6 +7,7 @@ import {ProductsActionCreators} from "@pages/staff/Products/store/product/action
 import {SectionActionCreators} from "@pages/staff/Sections/store/sections/action-creators";
 import {CategoryActionCreators} from "@pages/staff/Categories/store/categories/action-creators";
 import {CatalogActionCreators} from "@pages/staff/Catalog/store/catalog/action-creators";
+import {SlideActionCreators} from "@pages/staff/Slides/store/slides/action-creators";
 
 export const allActionCreators = {
     ...LangActionCreators,
@@ -18,4 +19,5 @@ export const allActionCreators = {
     ...SectionActionCreators,
     ...CategoryActionCreators,
     ...CatalogActionCreators,
+    ...SlideActionCreators
 }

@@ -1,9 +1,9 @@
-import React, {useEffect, useState} from "react";
+import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {RouteNames} from "@pages/index";
-import {Section} from "@entities/section/section";
+import {Slide} from "@entities/slide/slide";
 import {MlString} from "@entities/base/MlString";
 import {TableParams} from "@entities/base/tableParams";
 import {txt} from "@shared/core/i18ngen";
@@ -12,29 +12,29 @@ import {useActions} from "@shared/lib/hooks/useActions";
 import {dateFormat} from "@shared/lib/date/date-format";
 import {TableHeader} from "@shared/ui/TableTools/TableHeader";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import classes from "./Sections.module.scss";
+import classes from "./Slides.module.scss";
 
-export const Sections = () => {
+export const Slides: FC = () => {
     const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {sections, sectionsCount, isLoadingGetSections} = useTypedSelector(state => state.sections);
-    const {fetchSections} = useActions();
+    const {slides, slidesCount, isLoadingGetSlides} = useTypedSelector(state => state.slides);
+    const {fetchSlides} = useActions();
     const [pagination, setPagination] = useState<TableParams>({
         pagination: {
             current: 1,
             pageSize: 25,
-            total: sectionsCount
+            total: slidesCount
         }
     });
     const [filters, setFilters] = useState({isDeleted: false});
 
-    const columns: ColumnsType<Section> = [
+    const columns: ColumnsType<Slide> = [
         {
             key: "action",
             title: txt.action[currentLang],
             dataIndex: "action",
             render: (_, record) => (
-                <Link to={RouteNames.SECTIONS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
+                <Link to={RouteNames.SLIDES_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
             )
         },
         {
@@ -49,10 +49,10 @@ export const Sections = () => {
             dataIndex: "id"
         },
         {
-            key: "name",
+            key: "caption",
             title: txt.name[currentLang],
-            dataIndex: "name",
-            render: (name: MlString) => name[currentLang]
+            dataIndex: "caption",
+            render: (caption: MlString) => caption[currentLang]
         },
         {
             key: "createdAt",
@@ -74,7 +74,7 @@ export const Sections = () => {
         },
     ];
 
-    const data: Section[] = sections.map((section) => ({...section, key: section.id})) || [];
+    const data: Slide[] = slides.map((slide) => ({...slide, key: slide.id})) || [];
 
     const filterIsDeletedOptions = [
         {label: txt.yes[currentLang], value: true},
@@ -87,12 +87,12 @@ export const Sections = () => {
 
     const handleOnAddProduct = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
-        navigate(RouteNames.SECTIONS_ADD);
+        navigate(RouteNames.SLIDES_ADD);
     }
 
     useEffect(() => {
         const controller = new AbortController();
-        fetchSections({
+        fetchSlides({
             limit: pagination.pagination?.pageSize || 25,
             offset: pagination.pagination?.current! - 1,
             is_deleted: filters.isDeleted
@@ -104,11 +104,11 @@ export const Sections = () => {
         <div className={classes.main}>
             <Card bodyStyle={{padding: "20px 10px 10px 10px", borderRadius: "8px"}}>
                 <TableHeader
-                    searchPlaceholder={txt.search_section_by_id_or_name[currentLang]}
+                    searchPlaceholder={txt.search_slide_by_id_or_name[currentLang]}
                     onSearch={handleSearch}
                     onSearchText={txt.search[currentLang]}
                     onSubButtonClick={handleOnAddProduct}
-                    onSubButtonText={txt.add_section[currentLang]}
+                    onSubButtonText={txt.add_slide[currentLang]}
                 />
                 <Filters
                     filters={[
@@ -124,7 +124,7 @@ export const Sections = () => {
                 <Table
                     columns={columns}
                     dataSource={data}
-                    loading={isLoadingGetSections}
+                    loading={isLoadingGetSlides}
                     scroll={{x: 500}}
                     pagination={pagination.pagination}
                     onChange={(pagination) => setPagination({pagination})}

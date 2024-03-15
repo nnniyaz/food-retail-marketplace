@@ -1,12 +1,12 @@
 import React, {FC, useMemo, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {RouteNames} from "@pages/index";
+import {Modal} from "antd";
 import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {RouteNames} from "@pages/index";
 import {txt} from "@shared/core/i18ngen";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "../../Catalog.module.scss";
-import {Modal} from "antd";
 
 interface CatalogProductProps {
     productId: string;

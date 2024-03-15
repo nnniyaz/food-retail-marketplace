@@ -7,6 +7,7 @@ import products from "@pages/staff/Products/store/product";
 import sections from "@pages/staff/Sections/store/sections";
 import categories from "@pages/staff/Categories/store/categories";
 import catalog from "@pages/staff/Catalog/store/catalog";
+import slides from "@pages/staff/Slides/store/slides";
 
 // eslint-disable-next-line import/no-anonymous-default-export
 export default {
@@ -18,5 +19,6 @@ export default {
     products,
     sections,
     categories,
-    catalog
+    catalog,
+    slides,
 }

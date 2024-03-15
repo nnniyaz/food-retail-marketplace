@@ -1,11 +1,11 @@
 import React, {FC} from "react";
 import {useNavigate} from "react-router-dom";
-import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import {useActions} from "@shared/lib/hooks/useActions";
 import {useForm} from "antd/es/form/Form";
 import {Form, Modal, Select} from "antd";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 
 interface ModalAddProductProps {
     isOpen: boolean;
