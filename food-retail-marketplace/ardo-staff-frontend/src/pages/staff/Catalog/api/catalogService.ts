@@ -1,6 +1,6 @@
 import {AxiosResponse} from "axios";
 import {Paginate} from "@entities/base/paginate";
-import {CatalogData, CatalogsStructure} from "@entities/catalog/catalog";
+import {CatalogData, CatalogPublishTime, CatalogsStructure} from "@entities/catalog/catalog";
 import $api from "@shared/api";
 import {ApiRoutes} from "@shared/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@shared/api/response/response";
@@ -21,5 +21,9 @@ export class CatalogService {
 
     static async publishCatalog(catalogId: UUID): Promise<AxiosResponse<SuccessResponse<CatalogData> | ErrorResponse>> {
         return $api.post<SuccessResponse<CatalogData> | ErrorResponse>(ApiRoutes.POST_PUBLISH_CATALOG.replace(":catalog_id", catalogId));
+    }
+
+    static async getPublishTime(catalogId: UUID, controller: AbortController): Promise<AxiosResponse<SuccessResponse<CatalogPublishTime> | ErrorResponse>> {
+        return $api.get<SuccessResponse<CatalogPublishTime> | ErrorResponse>(ApiRoutes.GET_PUBLISH_TIME.replace(":catalog_id", catalogId), {signal: controller.signal});
     }
 }

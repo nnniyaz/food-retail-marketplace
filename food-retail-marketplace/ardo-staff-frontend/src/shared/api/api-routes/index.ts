@@ -35,6 +35,7 @@ export enum ApiRoutes {
     GET_CATALOGS = "/management/catalog",
     PUT_CATALOG = "/management/catalog/:catalog_id",
     POST_PUBLISH_CATALOG = "/management/catalog/publish/:catalog_id",
+    GET_PUBLISH_TIME = "/management/catalog/publish-time/:catalog_id",
 
     // ------------------------ MANAGEMENT OF SECTIONS -----------------------
     GET_SECTIONS = "/management/sections", // with query params: offset, limit, is_deleted

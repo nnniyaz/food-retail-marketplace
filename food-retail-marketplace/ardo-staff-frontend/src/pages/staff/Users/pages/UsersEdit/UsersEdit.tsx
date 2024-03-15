@@ -10,7 +10,7 @@ import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
 import {RowInfo} from "@shared/ui/RowInfo";
 import {useActions} from "@shared/lib/hooks/useActions";
-import {dateFormat} from "@shared/lib/utils/date-format";
+import {dateFormat} from "@shared/lib/date/date-format";
 import {langOptions} from "@shared/lib/options/langOptions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {userTypeOptions, userTypeTranslate} from "@shared/lib/options/userTypeOptions";

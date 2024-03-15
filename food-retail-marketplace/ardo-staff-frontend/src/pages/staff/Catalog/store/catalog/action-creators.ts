@@ -1,28 +1,44 @@
 import {Catalog} from "@entities/catalog/catalog";
-import {CatalogActionEnum} from "./types";
 import {AppDispatch, RootState} from "@app/store";
 import {CatalogService, EditCatalogReq} from "@pages/staff/Catalog/api/catalogService";
-import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {Paginate} from "@entities/base/paginate";
 import {NavigateCallback} from "@entities/base/navigateCallback";
-import {Notify} from "@shared/lib/notification/notification";
 import {txt} from "@shared/core/i18ngen";
+import {Notify} from "@shared/lib/notification/notification";
+import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
+import {
+    CatalogActionEnum,
+    SetCatalogAction,
+    SetPublishedAtAction,
+    SetIsLoadingEditCatalogAction,
+    SetIsLoadingGetCatalogAction,
+    SetIsLoadingPublishCatalogAction,
+    SetIsLoadingGetPublishedAtAction
+} from "./types";
 
 export const CatalogActionCreators = {
-    setCatalog: (payload: Catalog) => ({
+    setCatalog: (payload: Catalog): SetCatalogAction => ({
         type: CatalogActionEnum.SET_CATALOG,
         payload
     }),
-    setIsLoadingGetCatalog: (payload: boolean) => ({
+    setPublishedAt: (payload: Timestamp): SetPublishedAtAction => ({
+        type: CatalogActionEnum.SET_PUBLISHED_AT,
+        payload
+    }),
+    setIsLoadingGetCatalog: (payload: boolean): SetIsLoadingGetCatalogAction => ({
         type: CatalogActionEnum.SET_IS_LOADING_GET_CATALOG,
         payload
     }),
-    setIsLoadingEditCatalog: (payload: boolean) => ({
+    setIsLoadingEditCatalog: (payload: boolean): SetIsLoadingEditCatalogAction => ({
         type: CatalogActionEnum.SET_IS_LOADING_EDIT_CATALOG,
         payload
     }),
-    setIsLoadingPublishCatalog: (payload: boolean) => ({
+    setIsLoadingPublishCatalog: (payload: boolean): SetIsLoadingPublishCatalogAction => ({
         type: CatalogActionEnum.SET_IS_LOADING_PUBLISH_CATALOG,
+        payload
+    }),
+    setIsLoadingGetPublishedAt: (payload: boolean): SetIsLoadingGetPublishedAtAction => ({
+        type: CatalogActionEnum.SET_IS_LOADING_GET_PUBLISHED_AT,
         payload
     }),
 
@@ -59,7 +75,10 @@ export const CatalogActionCreators = {
             const res = await CatalogService.editCatalog(request, catalogId);
             if (res.data.success) {
                 Notify.Success({title: txt.catalog_successfully_edited[currentLang], message: ""});
-                await CatalogActionCreators.fetchCatalogs({offset: 0, limit: 0}, new AbortController(), navigationCallback)(dispatch, getState);
+                await CatalogActionCreators.fetchCatalogs({
+                    offset: 0,
+                    limit: 0
+                }, new AbortController(), navigationCallback)(dispatch, getState);
             } else {
                 FailedResponseHandler({
                     messages: res.data?.messages,
@@ -84,6 +103,7 @@ export const CatalogActionCreators = {
             dispatch(CatalogActionCreators.setIsLoadingPublishCatalog(true));
             const res = await CatalogService.publishCatalog(catalogId);
             if (res.data.success) {
+                await CatalogActionCreators.getPublishTime(catalogId, new AbortController(), navigationCallback)(dispatch, getState);
                 Notify.Success({title: txt.catalog_successfully_published[currentLang], message: ""});
             } else {
                 FailedResponseHandler({
@@ -103,4 +123,30 @@ export const CatalogActionCreators = {
             dispatch(CatalogActionCreators.setIsLoadingPublishCatalog(false));
         }
     },
+
+    getPublishTime: (catalogId: UUID, controller: AbortController, navigationCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(CatalogActionCreators.setIsLoadingGetPublishedAt(true));
+            const res = await CatalogService.getPublishTime(catalogId, controller);
+            if (res.data.success) {
+                dispatch(CatalogActionCreators.setPublishedAt(res.data.data?.publishedAt));
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+                navigateCallback: navigationCallback,
+            });
+        } finally {
+            dispatch(CatalogActionCreators.setIsLoadingGetPublishedAt(false));
+        }
+    }
 }

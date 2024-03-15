@@ -21,3 +21,7 @@ export interface CatalogData {
     catalogs: Catalog[],
     count: number,
 }
+
+export interface CatalogPublishTime {
+    publishedAt: Timestamp,
+}

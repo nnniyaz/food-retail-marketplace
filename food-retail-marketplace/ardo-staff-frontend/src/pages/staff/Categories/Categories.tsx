@@ -9,7 +9,7 @@ import {TableParams} from "@entities/base/tableParams";
 import {txt} from "@shared/core/i18ngen";
 import {Filters} from "@shared/ui/Filters";
 import {useActions} from "@shared/lib/hooks/useActions";
-import {dateFormat} from "@shared/lib/utils/date-format";
+import {dateFormat} from "@shared/lib/date/date-format";
 import {TableHeader} from "@shared/ui/TableTools/TableHeader";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./Categories.module.scss";

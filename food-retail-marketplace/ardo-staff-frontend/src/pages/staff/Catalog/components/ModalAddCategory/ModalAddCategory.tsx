@@ -1,11 +1,11 @@
 import React, {FC} from "react";
 import {useNavigate} from "react-router-dom";
-import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import {useActions} from "@shared/lib/hooks/useActions";
-import {useForm} from "antd/es/form/Form";
 import {Form, Modal, Select} from "antd";
+import {useForm} from "antd/es/form/Form";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 
 interface ModalAddCategoryProps {
     isOpen: boolean;
@@ -19,24 +19,28 @@ export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, 
     const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
     const {categories} = useTypedSelector(state => state.categories);
     const {editCatalog} = useActions();
-    const [form] = useForm();
+    const [form] = useForm<{ categoryIds: string[] }>();
 
     const handleSubmit = async () => {
         if (!catalog) return;
-        await editCatalog({
-            structure: [
-                ...(catalog?.structure || []),
-                {
+        const updatedStructure = catalog?.structure?.map(section => {
+            if (section.sectionId === sectionId) {
+                return {
                     sectionId: sectionId,
                     categories: [
-                        ...(catalog?.structure?.find(s => s.sectionId === sectionId)?.categories || []),
-                        {
-                            categoryId: form.getFieldValue("categoryId"),
+                        ...(section.categories || []),
+                        ...form.getFieldValue("categoryIds").map((categoryId: string) => ({
+                            categoryId: categoryId,
                             products: []
-                        }
+                        }))
                     ]
                 }
-            ],
+            }
+            return section;
+        });
+
+        await editCatalog({
+            structure: updatedStructure,
             promo: [...(catalog?.promo || [])]
         }, catalog.id, {navigate: navigate});
         setIsOpen(false);
@@ -54,16 +58,20 @@ export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, 
         >
             <Form form={form} onFinish={handleSubmit} layout={"vertical"}>
                 <Form.Item
-                    name={"categoryId"}
+                    name={"categoryIds"}
                     label={txt.select_category[currentLang]}
                     rules={[rules.required(txt.please_select_category[currentLang])]}
                 >
                     <Select
                         placeholder={txt.select_category[currentLang]}
+                        showSearch={true}
+                        filterOption={(input, option) => option?.label?.toLowerCase()?.includes(input.toLowerCase()) || false}
+                        filterSort={(optionA, optionB) => optionA.label.localeCompare(optionB.label)}
+                        mode={"multiple"}
                         options={
                             categories?.filter(category => {
-                                const structureCategoryIds = catalog?.structure?.map(section => section.categories.map(category => category.categoryId)).flat();
-                                const promoCategoryIds = catalog?.promo?.map(section => section.categories.map(category => category.categoryId)).flat();
+                                const structureCategoryIds = catalog?.structure?.map(section => section?.categories?.map(category => category.categoryId)).flat();
+                                const promoCategoryIds = catalog?.promo?.map(section => section?.categories?.map(category => category.categoryId)).flat();
                                 return !structureCategoryIds?.includes(category.id) && !promoCategoryIds?.includes(category.id);
                             })?.map(category => ({
                                 label: category.name[currentLang],

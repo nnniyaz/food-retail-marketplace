@@ -20,29 +20,35 @@ export const ModalAddProduct: FC<ModalAddProductProps> = ({isOpen, setIsOpen, se
     const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
     const {products} = useTypedSelector(state => state.products);
     const {editCatalog} = useActions();
-    const [form] = useForm();
+    const [form] = useForm<{ productIds: string[] }>();
 
     const handleSubmit = async () => {
         if (!catalog) return;
-        await editCatalog({
-            structure: [
-                ...(catalog?.structure || []),
-                {
+        const updatedStructure = catalog?.structure?.map(section => {
+            if (section.sectionId === sectionId) {
+                return {
                     sectionId: sectionId,
-                    categories: [
-                        ...(catalog?.structure?.find(s => s.sectionId === sectionId)?.categories || []),
-                        {
-                            categoryId: categoryId,
-                            products: [
-                                ...(catalog?.structure?.find(s => s.sectionId === sectionId)?.categories?.find(c => c.categoryId === categoryId)?.products || []),
-                                {
-                                    productId: form.getFieldValue("productId")
-                                }
-                            ]
+                    categories: section.categories.map(category => {
+                        if (category.categoryId === categoryId) {
+                            return {
+                                categoryId: categoryId,
+                                products: [
+                                    ...(category.products || []),
+                                    ...form.getFieldValue("productIds").map((productId: string) => ({
+                                        productId: productId
+                                    }))
+                                ]
+                            }
                         }
-                    ]
+                        return category;
+                    })
                 }
-            ],
+            }
+            return section;
+        });
+
+        await editCatalog({
+            structure: updatedStructure,
             promo: [...(catalog?.promo || [])]
         }, catalog.id, {navigate: navigate});
         setIsOpen(false);
@@ -60,16 +66,20 @@ export const ModalAddProduct: FC<ModalAddProductProps> = ({isOpen, setIsOpen, se
         >
             <Form form={form} onFinish={handleSubmit} layout={"vertical"}>
                 <Form.Item
-                    name={"productId"}
+                    name={"productIds"}
                     label={txt.select_product[currentLang]}
                     rules={[rules.required(txt.please_select_product[currentLang])]}
                 >
                     <Select
                         placeholder={txt.select_product[currentLang]}
+                        showSearch={true}
+                        filterOption={(input, option) => option?.label?.toLowerCase()?.includes(input.toLowerCase()) || false}
+                        filterSort={(optionA, optionB) => optionA.label.localeCompare(optionB.label)}
+                        mode={"multiple"}
                         options={
                             products?.filter(product => {
-                                const structureProductIds = catalog?.structure?.flatMap(section => section.categories).flatMap(category => category.products).map(product => product?.productId);
-                                const promoProductIds = catalog?.promo?.flatMap(section => section.categories).flatMap(category => category.products).map(product => product?.productId);
+                                const structureProductIds = catalog?.structure?.flatMap(section => section?.categories).flatMap(category => category?.products).map(product => product?.productId);
+                                const promoProductIds = catalog?.promo?.flatMap(section => section?.categories).flatMap(category => category?.products).map(product => product?.productId);
                                 return !structureProductIds?.includes(product.id) && !promoProductIds?.includes(product.id);
                             })?.map(product => ({
                                 label: product.name[currentLang],

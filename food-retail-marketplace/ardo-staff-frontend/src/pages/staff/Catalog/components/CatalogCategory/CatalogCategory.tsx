@@ -11,6 +11,7 @@ import {ModalAddProduct} from "../ModalAddProduct";
 import classes from "../../Catalog.module.scss";
 
 interface CatalogCategoryProps {
+    sectionId: string;
     categoryStructure: {
         categoryId: string;
         products: { productId: string }[];
@@ -19,7 +20,9 @@ interface CatalogCategoryProps {
     catalogErrors: string[];
 }
 
-export const CatalogCategory: FC<CatalogCategoryProps> = ({categoryStructure, categoryIndex, catalogErrors}) => {
+export const CatalogCategory: FC<CatalogCategoryProps> = (
+    {sectionId, categoryStructure, categoryIndex, catalogErrors}
+) => {
     const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
     const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
@@ -131,6 +134,7 @@ export const CatalogCategory: FC<CatalogCategoryProps> = ({categoryStructure, ca
             <ModalAddProduct
                 isOpen={isAddProductModalVisible}
                 setIsOpen={setIsAddProductModalVisible}
+                sectionId={sectionId}
                 categoryId={category?.id || ""}
             />
         </li>

@@ -108,6 +108,7 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
                                     {sectionStructure?.categories?.map((category, categoryIndex) => (
                                         <CatalogCategory
                                             key={category.categoryId}
+                                            sectionId={sectionStructure.sectionId}
                                             categoryStructure={category}
                                             categoryIndex={categoryIndex}
                                             catalogErrors={catalogErrors}

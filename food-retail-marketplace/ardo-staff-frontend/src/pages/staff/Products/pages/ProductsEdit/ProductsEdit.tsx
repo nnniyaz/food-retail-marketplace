@@ -10,7 +10,7 @@ import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
 import {RowInfo} from "@shared/ui/RowInfo";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
-import {dateFormat} from "@shared/lib/utils/date-format";
+import {dateFormat} from "@shared/lib/date/date-format";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {NumberInput} from "@shared/ui/Input/NumberInput";
 import {I18NTextarea} from "@shared/ui/Textarea";

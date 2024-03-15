@@ -18,17 +18,17 @@ export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) =
     const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
     const {sections} = useTypedSelector(state => state.sections);
     const {editCatalog} = useActions();
-    const [form] = useForm();
+    const [form] = useForm<{ sectionIds: string[] }>();
 
     const handleSubmit = async () => {
         if (!catalog) return;
         await editCatalog({
             structure: [
                 ...(catalog?.structure || []),
-                {
-                    sectionId: form.getFieldValue("sectionId"),
+                ...form.getFieldValue("sectionIds").map((sectionId: string) => ({
+                    sectionId: sectionId,
                     categories: []
-                }
+                }))
             ],
             promo: [...(catalog?.promo || [])]
         }, catalog.id, {navigate: navigate});
@@ -47,12 +47,16 @@ export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) =
         >
             <Form form={form} onFinish={handleSubmit} layout={"vertical"}>
                 <Form.Item
-                    name={"sectionId"}
+                    name={"sectionIds"}
                     label={txt.select_section[currentLang]}
                     rules={[rules.required(txt.please_select_section[currentLang])]}
                 >
                     <Select
                         placeholder={txt.select_section[currentLang]}
+                        showSearch={true}
+                        filterOption={(input, option) => option?.label?.toLowerCase()?.includes(input.toLowerCase()) || false}
+                        filterSort={(optionA, optionB) => optionA.label.localeCompare(optionB.label)}
+                        mode={"multiple"}
                         options={
                             sections?.filter(section => {
                                 const structureSectionIds = catalog?.structure?.map(section => section.sectionId);

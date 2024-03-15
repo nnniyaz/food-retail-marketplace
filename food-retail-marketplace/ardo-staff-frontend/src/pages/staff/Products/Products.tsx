@@ -11,7 +11,7 @@ import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {RouteNames} from "@pages//";
 import classes from "./Products.module.scss";
 import {useActions} from "@shared/lib/hooks/useActions";
-import {dateFormat} from "@shared/lib/utils/date-format";
+import {dateFormat} from "@shared/lib/date/date-format";
 import {MlString} from "@entities/base/MlString";
 import {productStatusTranslate} from "@shared/lib/options/productStatusOptions";
 
