@@ -45,9 +45,8 @@ func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	}
 
 	http.SetCookie(w, &http.Cookie{
-		Name:     "session",
+		Name:     "ardo-app-session",
 		Value:    token.String(),
-		MaxAge:   60 * 30,
 		Path:     "/",
 		Secure:   true,
 		HttpOnly: true,
@@ -57,7 +56,7 @@ func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
 }
 
 func (hd *HttpDelivery) Logout(w http.ResponseWriter, r *http.Request) {
-	cookie, err := r.Cookie("session")
+	cookie, err := r.Cookie("ardo-app-session")
 	if err != nil {
 		response.NewBad(hd.logger, w, r, err)
 		return

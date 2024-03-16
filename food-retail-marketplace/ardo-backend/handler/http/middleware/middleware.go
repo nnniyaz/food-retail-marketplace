@@ -132,7 +132,7 @@ func (m *Middleware) PaginationParams(next http.Handler) http.Handler {
 
 func (m *Middleware) UserAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := r.Cookie("session")
+		session, err := r.Cookie("ardo-app-session")
 		if err != nil {
 			response.NewUnauthorized(m.logger, w, r)
 			return
@@ -154,7 +154,7 @@ func (m *Middleware) UserAuth(next http.Handler) http.Handler {
 
 func (m *Middleware) ClientAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := r.Cookie("session")
+		session, err := r.Cookie("ardo-app-session")
 		if err != nil {
 			response.NewUnauthorized(m.logger, w, r)
 			return
@@ -187,7 +187,7 @@ func (m *Middleware) ClientAuth(next http.Handler) http.Handler {
 
 func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := r.Cookie("session")
+		session, err := r.Cookie("ardo-app-session")
 		if err != nil {
 			response.NewUnauthorized(m.logger, w, r)
 			return
@@ -220,7 +220,7 @@ func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
 
 func (m *Middleware) NoAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := r.Cookie("session")
+		session, err := r.Cookie("ardo-app-session")
 		if err == nil {
 			next.ServeHTTP(w, r)
 			return

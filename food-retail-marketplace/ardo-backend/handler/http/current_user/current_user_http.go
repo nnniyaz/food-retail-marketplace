@@ -20,6 +20,39 @@ func NewHttpDelivery(l logger.Logger, s currentUserService.CurrentUserService) *
 }
 
 // -----------------------------------------------------------------------------
+// Queries
+// -----------------------------------------------------------------------------
+
+type User struct {
+	Id            string    `json:"id"`
+	Email         string    `json:"email"`
+	FirstName     string    `json:"firstName"`
+	LastName      string    `json:"lastName"`
+	UserType      string    `json:"userType"`
+	PreferredLang string    `json:"preferredLang"`
+	CreatedAt     time.Time `json:"createdAt"`
+	UpdatedAt     time.Time `json:"updatedAt"`
+}
+
+func newUser(u *user.User) User {
+	return User{
+		Id:            u.GetId().String(),
+		Email:         u.GetEmail().String(),
+		FirstName:     u.GetFirstName().String(),
+		LastName:      u.GetLastName().String(),
+		UserType:      u.GetUserType().String(),
+		PreferredLang: u.GetUserPreferredLang().String(),
+		CreatedAt:     u.GetCreatedAt(),
+		UpdatedAt:     u.GetUpdatedAt(),
+	}
+}
+
+func (hd *HttpDelivery) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
+	u := r.Context().Value("user").(user.User)
+	response.NewSuccess(hd.logger, w, r, newUser(&u))
+}
+
+// -----------------------------------------------------------------------------
 // Commands
 // -----------------------------------------------------------------------------
 
@@ -99,37 +132,4 @@ func (hd *HttpDelivery) UpdateCurrentUserPassword(w http.ResponseWriter, r *http
 		return
 	}
 	response.NewSuccess(hd.logger, w, r, nil)
-}
-
-// -----------------------------------------------------------------------------
-// Queries
-// -----------------------------------------------------------------------------
-
-type User struct {
-	Id            string    `json:"id"`
-	Email         string    `json:"email"`
-	FirstName     string    `json:"firstName"`
-	LastName      string    `json:"lastName"`
-	UserType      string    `json:"userType"`
-	PreferredLang string    `json:"preferredLang"`
-	CreatedAt     time.Time `json:"createdAt"`
-	UpdatedAt     time.Time `json:"updatedAt"`
-}
-
-func newUser(u *user.User) User {
-	return User{
-		Id:            u.GetId().String(),
-		Email:         u.GetEmail().String(),
-		FirstName:     u.GetFirstName().String(),
-		LastName:      u.GetLastName().String(),
-		UserType:      u.GetUserType().String(),
-		PreferredLang: u.GetUserPreferredLang().String(),
-		CreatedAt:     u.GetCreatedAt(),
-		UpdatedAt:     u.GetUpdatedAt(),
-	}
-}
-
-func (hd *HttpDelivery) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
-	u := r.Context().Value("user").(user.User)
-	response.NewSuccess(hd.logger, w, r, newUser(&u))
 }
