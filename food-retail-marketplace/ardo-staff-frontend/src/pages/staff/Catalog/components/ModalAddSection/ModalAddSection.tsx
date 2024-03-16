@@ -1,5 +1,4 @@
 import React, {FC} from "react";
-import {useNavigate} from "react-router-dom";
 import {Form, Modal, Select} from "antd";
 import {useForm} from "antd/es/form/Form";
 import {txt} from "@shared/core/i18ngen";
@@ -13,16 +12,16 @@ interface ModalAddSectionProps {
 }
 
 export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) => {
-    const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
+    const {catalog} = useTypedSelector(state => state.catalog);
     const {sections} = useTypedSelector(state => state.sections);
-    const {editCatalog} = useActions();
+    const {setCatalog} = useActions();
     const [form] = useForm<{ sectionIds: string[] }>();
 
     const handleSubmit = async () => {
         if (!catalog) return;
-        await editCatalog({
+        setCatalog({
+            ...catalog,
             structure: [
                 ...(catalog?.structure || []),
                 ...form.getFieldValue("sectionIds").map((sectionId: string) => ({
@@ -30,8 +29,7 @@ export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) =
                     categories: []
                 }))
             ],
-            promo: [...(catalog?.promo || [])]
-        }, catalog.id, {navigate: navigate});
+        });
         setIsOpen(false);
     }
 
@@ -40,7 +38,6 @@ export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) =
             title={txt.add_section_to_catalog[currentLang]}
             open={isOpen}
             onOk={form.submit}
-            confirmLoading={isLoadingEditCatalog}
             onCancel={() => setIsOpen(false)}
             okText={txt.ok[currentLang]}
             cancelText={txt.cancel[currentLang]}

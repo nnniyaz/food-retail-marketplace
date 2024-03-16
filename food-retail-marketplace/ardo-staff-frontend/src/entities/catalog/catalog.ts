@@ -9,12 +9,16 @@ export interface Catalog {
 
 export interface CatalogsStructure {
     sectionId: string,
-    categories: {
-        categoryId: string,
-        products: {
-            productId: string,
-        }[],
-    }[],
+    categories: CatalogsCategory[],
+}
+
+export interface CatalogsCategory {
+    categoryId: string,
+    products: CatalogsProduct[],
+}
+
+export interface CatalogsProduct {
+    productId: string,
 }
 
 export interface CatalogData {

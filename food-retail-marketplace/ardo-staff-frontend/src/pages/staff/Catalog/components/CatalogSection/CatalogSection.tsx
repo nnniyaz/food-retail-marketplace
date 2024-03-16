@@ -1,8 +1,10 @@
 import React, {FC, useEffect, useMemo, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
+import {Reorder, useDragControls} from "framer-motion";
 import {Button, Collapse, Modal} from "antd";
-import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, HolderOutlined} from "@ant-design/icons";
 import {RouteNames} from "@pages/index";
+import {CatalogsCategory} from "@entities/catalog/catalog";
 import {txt} from "@shared/core/i18ngen";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
@@ -23,11 +25,11 @@ interface CatalogSectionProps {
 }
 
 export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, sectionIndex, catalogErrors}) => {
-    const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
+    const {catalog} = useTypedSelector(state => state.catalog);
     const {sections} = useTypedSelector(state => state.sections);
-    const {editCatalog} = useActions();
+    const {setCatalog} = useActions();
+    const controls = useDragControls();
     const [isError, setIsError] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [isAddCategoryModalVisible, setIsAddCategoryModalVisible] = useState(false);
@@ -35,15 +37,33 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
         return sections?.find(s => s.id === sectionStructure.sectionId);
     }, [sectionStructure.sectionId, sections]);
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         if (!catalog) return;
-        await editCatalog({
+        setCatalog({
+            ...catalog,
             structure: [
                 ...(catalog?.structure || []).filter(s => s.sectionId !== sectionStructure.sectionId),
             ],
-            promo: [...(catalog?.promo || [])]
-        }, catalog.id, {navigate: navigate});
+        });
         setIsDeleteModalVisible(false);
+    }
+
+    const handleSetCatalogStructure = (newStructure: CatalogsCategory[]) => {
+        if (!catalog) return;
+        setCatalog({
+            ...catalog,
+            structure: [
+                ...(catalog?.structure || []).map(s => {
+                    if (s.sectionId === sectionStructure.sectionId) {
+                        return {
+                            sectionId: s.sectionId,
+                            categories: newStructure
+                        }
+                    }
+                    return s;
+                }),
+            ],
+        });
     }
 
     useEffect(() => {
@@ -65,26 +85,33 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
     }, [catalogErrors, sectionStructure]);
 
     return (
-        <li key={sectionStructure.sectionId}>
+        <Reorder.Item value={sectionStructure} dragListener={false} dragControls={controls}>
             <Collapse
+                collapsible={"icon"}
                 style={{backgroundColor: !section?.name[currentLang] ? "#ff9494" : ""}}
                 items={[
                     {
                         key: 1,
                         label: (
                             <div className={classes.list__item__title}>
-                                {
-                                    !!section?.name[currentLang]
-                                        ? `${sectionIndex + 1}. ${section?.name[currentLang]}`
-                                        : `${sectionIndex + 1}. ${txt.not_translated[currentLang]}`
-                                }
-                                {isError && <div className={classes.error__notification}></div>}
-                                <Link to={RouteNames.SECTIONS_EDIT.replace(":id", sectionStructure.sectionId)}>
-                                    <EditOutlined/>
-                                </Link>
-                                <DeleteOutlined
-                                    className={classes.delete__icon}
-                                    onClick={() => setIsDeleteModalVisible(true)}
+                                <div className={classes.list__item__title__group}>
+                                    {
+                                        !!section?.name[currentLang]
+                                            ? `${sectionIndex + 1}. ${section?.name[currentLang]}`
+                                            : `${sectionIndex + 1}. ${txt.not_translated[currentLang]}`
+                                    }
+                                    {isError && <div className={classes.error__notification}></div>}
+                                    <Link to={RouteNames.SECTIONS_EDIT.replace(":id", sectionStructure.sectionId)}>
+                                        <EditOutlined/>
+                                    </Link>
+                                    <DeleteOutlined
+                                        className={classes.delete__icon}
+                                        onClick={() => setIsDeleteModalVisible(true)}
+                                    />
+                                </div>
+                                <HolderOutlined
+                                    className={classes.list__item__title__holder}
+                                    onPointerDown={(e) => controls.start(e)}
                                 />
                             </div>
                         ),
@@ -104,7 +131,11 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
                                     {txt.add_category_to_catalog[currentLang]}
                                 </Button>
 
-                                <ol>
+                                <Reorder.Group
+                                    as={"ol"}
+                                    values={sectionStructure?.categories || []}
+                                    onReorder={handleSetCatalogStructure}
+                                >
                                     {sectionStructure?.categories?.map((category, categoryIndex) => (
                                         <CatalogCategory
                                             key={category.categoryId}
@@ -114,7 +145,7 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
                                             catalogErrors={catalogErrors}
                                         />
                                     ))}
-                                </ol>
+                                </Reorder.Group>
                             </div>
                         )
                     },
@@ -126,7 +157,6 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
                 open={isDeleteModalVisible}
                 onOk={handleDelete}
                 onCancel={() => setIsDeleteModalVisible(false)}
-                confirmLoading={isLoadingEditCatalog}
                 okText={txt.ok[currentLang]}
                 cancelText={txt.cancel[currentLang]}
             >
@@ -138,6 +168,6 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
                 setIsOpen={setIsAddCategoryModalVisible}
                 sectionId={section?.id || ""}
             />
-        </li>
+        </Reorder.Item>
     )
 }

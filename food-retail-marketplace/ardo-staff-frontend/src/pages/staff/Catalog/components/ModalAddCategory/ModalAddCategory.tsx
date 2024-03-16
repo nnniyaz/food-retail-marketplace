@@ -1,5 +1,4 @@
 import React, {FC} from "react";
-import {useNavigate} from "react-router-dom";
 import {Form, Modal, Select} from "antd";
 import {useForm} from "antd/es/form/Form";
 import {txt} from "@shared/core/i18ngen";
@@ -14,14 +13,13 @@ interface ModalAddCategoryProps {
 }
 
 export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, sectionId}) => {
-    const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
+    const {catalog} = useTypedSelector(state => state.catalog);
     const {categories} = useTypedSelector(state => state.categories);
-    const {editCatalog} = useActions();
+    const {setCatalog} = useActions();
     const [form] = useForm<{ categoryIds: string[] }>();
 
-    const handleSubmit = async () => {
+    const handleSubmit = () => {
         if (!catalog) return;
         const updatedStructure = catalog?.structure?.map(section => {
             if (section.sectionId === sectionId) {
@@ -38,11 +36,7 @@ export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, 
             }
             return section;
         });
-
-        await editCatalog({
-            structure: updatedStructure,
-            promo: [...(catalog?.promo || [])]
-        }, catalog.id, {navigate: navigate});
+        setCatalog({...catalog, structure: updatedStructure});
         setIsOpen(false);
     }
 
@@ -51,7 +45,6 @@ export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, 
             title={txt.add_category_to_catalog[currentLang]}
             open={isOpen}
             onOk={form.submit}
-            confirmLoading={isLoadingEditCatalog}
             onCancel={() => setIsOpen(false)}
             okText={txt.ok[currentLang]}
             cancelText={txt.cancel[currentLang]}

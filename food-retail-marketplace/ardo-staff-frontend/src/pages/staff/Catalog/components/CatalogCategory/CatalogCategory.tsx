@@ -1,8 +1,10 @@
 import React, {FC, useEffect, useMemo, useState} from "react";
-import {Link, useNavigate} from "react-router-dom";
+import {Link} from "react-router-dom";
+import {Reorder, useDragControls} from "framer-motion";
 import {Button, Collapse, Modal} from "antd";
-import {DeleteOutlined, EditOutlined} from "@ant-design/icons";
+import {DeleteOutlined, EditOutlined, HolderOutlined} from "@ant-design/icons";
 import {RouteNames} from "@pages/index";
+import {CatalogsCategory, CatalogsProduct} from "@entities/catalog/catalog";
 import {txt} from "@shared/core/i18ngen";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
@@ -12,10 +14,7 @@ import classes from "../../Catalog.module.scss";
 
 interface CatalogCategoryProps {
     sectionId: string;
-    categoryStructure: {
-        categoryId: string;
-        products: { productId: string }[];
-    };
+    categoryStructure: CatalogsCategory;
     categoryIndex: number;
     catalogErrors: string[];
 }
@@ -23,11 +22,11 @@ interface CatalogCategoryProps {
 export const CatalogCategory: FC<CatalogCategoryProps> = (
     {sectionId, categoryStructure, categoryIndex, catalogErrors}
 ) => {
-    const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {catalog, isLoadingEditCatalog} = useTypedSelector(state => state.catalog);
+    const {catalog} = useTypedSelector(state => state.catalog);
     const {categories} = useTypedSelector(state => state.categories);
-    const {editCatalog} = useActions();
+    const {setCatalog} = useActions();
+    const controls = useDragControls();
     const [isError, setIsError] = useState(false);
     const [isDeleteModalVisible, setIsDeleteModalVisible] = useState(false);
     const [isAddProductModalVisible, setIsAddProductModalVisible] = useState(false);
@@ -35,20 +34,46 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
         return categories?.find(c => c.id === categoryStructure.categoryId);
     }, [categoryStructure.categoryId, categories]);
 
-    const handleDelete = async () => {
+    const handleDelete = () => {
         if (!catalog) return;
-        await editCatalog({
+        setCatalog({
+            ...catalog,
             structure: [
                 ...(catalog?.structure || []).map(section => {
                     return {
                         sectionId: section.sectionId,
-                        categories: section.categories.filter(category => category.categoryId !== categoryStructure.categoryId)
+                        categories: section.categories?.filter(category => category.categoryId !== categoryStructure.categoryId)
                     }
                 }),
             ],
-            promo: [...(catalog?.promo || [])]
-        }, catalog.id, {navigate: navigate});
+        });
         setIsDeleteModalVisible(false);
+    }
+
+    const handleSetCatalogStructure = (newStructure: CatalogsProduct[]) => {
+        if (!catalog) return;
+        setCatalog({
+            ...catalog,
+            structure: [
+                ...(catalog?.structure || []).map(section => {
+                    if (section.sectionId === sectionId) {
+                        return {
+                            sectionId: section.sectionId,
+                            categories: section.categories.map(category => {
+                                if (category.categoryId === categoryStructure.categoryId) {
+                                    return {
+                                        categoryId: category.categoryId,
+                                        products: newStructure
+                                    }
+                                }
+                                return category;
+                            })
+                        }
+                    }
+                    return section;
+                }),
+            ],
+        });
     }
 
     useEffect(() => {
@@ -64,26 +89,34 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
     }, [catalogErrors, categoryStructure]);
 
     return (
-        <li key={categoryStructure.categoryId}>
+        <Reorder.Item value={categoryStructure} dragListener={false} dragControls={controls}>
             <Collapse
+                collapsible={"icon"}
                 style={{backgroundColor: !category?.name[currentLang] ? "#ff9494" : ""}}
                 items={[
                     {
                         key: 1,
                         label: (
                             <div className={classes.list__item__title}>
-                                {
-                                    !!category?.name[currentLang]
-                                        ? `${categoryIndex + 1}. ${category?.name[currentLang]}`
-                                        : `${categoryIndex + 1}. ${txt.not_translated[currentLang]}`
-                                }
-                                {isError && <div className={classes.error__notification}></div>}
-                                <Link to={RouteNames.CATEGORIES_EDIT.replace(":id", categoryStructure.categoryId)}>
-                                    <EditOutlined/>
-                                </Link>
-                                <DeleteOutlined
-                                    className={classes.delete__icon}
-                                    onClick={() => setIsDeleteModalVisible(true)}
+                                <div className={classes.list__item__title__group}>
+                                    {
+                                        !!category?.name[currentLang]
+                                            ? `${categoryIndex + 1}. ${category?.name[currentLang]}`
+                                            : `${categoryIndex + 1}. ${txt.not_translated[currentLang]}`
+                                    }
+                                    {isError && <div className={classes.error__notification}></div>}
+                                    <Link
+                                        to={RouteNames.CATEGORIES_EDIT.replace(":id", categoryStructure.categoryId)}>
+                                        <EditOutlined/>
+                                    </Link>
+                                    <DeleteOutlined
+                                        className={classes.delete__icon}
+                                        onClick={() => setIsDeleteModalVisible(true)}
+                                    />
+                                </div>
+                                <HolderOutlined
+                                    className={classes.list__item__title__holder}
+                                    onPointerDown={(e) => controls.start(e)}
                                 />
                             </div>
                         ),
@@ -103,16 +136,20 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
                                     {txt.add_product_to_catalog[currentLang]}
                                 </Button>
 
-                                <ol>
+                                <Reorder.Group
+                                    as={"ol"}
+                                    values={categoryStructure?.products || []}
+                                    onReorder={handleSetCatalogStructure}
+                                >
                                     {categoryStructure?.products?.map((product, productIndex) => (
                                         <CatalogProduct
                                             key={product.productId}
-                                            productId={product.productId}
+                                            productStructure={product}
                                             productIndex={productIndex}
                                             catalogErrors={catalogErrors}
                                         />
                                     ))}
-                                </ol>
+                                </Reorder.Group>
                             </div>
                         )
                     },
@@ -124,7 +161,6 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
                 open={isDeleteModalVisible}
                 onOk={handleDelete}
                 onCancel={() => setIsDeleteModalVisible(false)}
-                confirmLoading={isLoadingEditCatalog}
                 okText={txt.ok[currentLang]}
                 cancelText={txt.cancel[currentLang]}
             >
@@ -137,6 +173,6 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
                 sectionId={sectionId}
                 categoryId={category?.id || ""}
             />
-        </li>
+        </Reorder.Item>
     )
 }

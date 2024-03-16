@@ -43,9 +43,27 @@
         }
 
         .list__item__title {
+          width: 100%;
           display: flex;
           align-items: center;
-          gap: 10px;
+          justify-content: space-between;
+          user-select: none;
+
+          .list__item__title__group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            user-select: text;
+          }
+
+          .list__item__title__holder {
+            font-size: 18px;
+            cursor: grab;
+
+            &:active {
+              cursor: grabbing;
+            }
+          }
         }
 
         .error__notification {

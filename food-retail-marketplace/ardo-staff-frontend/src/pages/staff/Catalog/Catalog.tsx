@@ -10,6 +10,8 @@ import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {CatalogSection} from "./components/CatalogSection";
 import {ModalAddSection} from "./components/ModalAddSection";
 import classes from "./Catalog.module.scss";
+import {Reorder} from "framer-motion";
+import {CatalogsStructure} from "@entities/catalog/catalog";
 
 const {Title, Paragraph} = Typography;
 
@@ -21,12 +23,22 @@ export const Catalog: FC = () => {
         publishedAt,
         isLoadingGetCatalog,
         isLoadingPublishCatalog,
-        isLoadingGetPublishedAt
+        isLoadingGetPublishedAt,
+        isLoadingEditCatalog
     } = useTypedSelector(state => state.catalog);
     const {sections, isLoadingGetSections} = useTypedSelector(state => state.sections);
     const {categories, isLoadingGetCategories} = useTypedSelector(state => state.categories);
     const {products, isLoadingGetProducts} = useTypedSelector(state => state.products);
-    const {fetchCatalogs, fetchSections, fetchCategories, fetchProducts, getPublishTime, publishCatalog} = useActions();
+    const {
+        fetchCatalogs,
+        fetchSections,
+        fetchCategories,
+        fetchProducts,
+        getPublishTime,
+        publishCatalog,
+        editCatalog,
+        setCatalog
+    } = useActions();
 
     const [isAddSectionModalVisible, setIsAddSectionModalVisible] = useState(false);
     const [isPublishCatalogModalVisible, setIsPublishCatalogModalVisible] = useState(false);
@@ -56,10 +68,23 @@ export const Catalog: FC = () => {
         return errors.filter((value, index, self) => self.indexOf(value) === index);
     }, [catalog, sections, categories, products, currentLang]);
 
-    const publishCatalogHandler = async () => {
+    const handlePublishCatalog = async () => {
         if (!catalog) return;
         await publishCatalog(catalog.id, {navigate: navigate});
         setIsPublishCatalogModalVisible(false);
+    }
+
+    const handleSetCatalogStructure = (newStructure: CatalogsStructure[]) => {
+        if (!catalog) return;
+        setCatalog({...catalog, structure: newStructure});
+    }
+
+    const handleSaveCatalogOrder = async () => {
+        if (!catalog) return;
+        await editCatalog({
+            structure: catalog.structure,
+            promo: catalog.promo
+        }, catalog.id, {navigate: navigate});
     }
 
     useEffect(() => {
@@ -88,6 +113,7 @@ export const Catalog: FC = () => {
 
     useEffect(() => {
         if (!catalog) return;
+        if (!!publishedAt) return;
         const controller = new AbortController();
         getPublishTime(catalog.id, controller, {navigate: navigate});
         return () => controller.abort();
@@ -161,15 +187,31 @@ export const Catalog: FC = () => {
                                             <div className={classes.catalog__preview__content}>
                                                 <h3>{`${txt.sections[currentLang]}:`}</h3>
 
-                                                <Button
-                                                    type={"primary"}
-                                                    style={{width: "fit-content"}}
-                                                    onClick={() => setIsAddSectionModalVisible(true)}
-                                                >
-                                                    {txt.add_section_to_catalog[currentLang]}
-                                                </Button>
+                                                <Row style={{display: "flex", gap: "10px"}}>
+                                                    <Button
+                                                        type={"primary"}
+                                                        style={{width: "fit-content"}}
+                                                        onClick={() => setIsAddSectionModalVisible(true)}
+                                                    >
+                                                        {txt.add_section_to_catalog[currentLang]}
+                                                    </Button>
+                                                    <Button
+                                                        type={"primary"}
+                                                        style={{width: "fit-content"}}
+                                                        onClick={handleSaveCatalogOrder}
+                                                        loading={isLoadingEditCatalog}
+                                                    >
+                                                        {txt.save_catalog[currentLang]}
+                                                    </Button>
+                                                </Row>
 
-                                                <ol className={classes.catalog} style={{padding: "0"}}>
+                                                <Reorder.Group
+                                                    className={classes.catalog}
+                                                    style={{padding: "0"}}
+                                                    as={"ol"}
+                                                    values={catalog!.structure}
+                                                    onReorder={handleSetCatalogStructure}
+                                                >
                                                     {catalog?.structure?.map((section, sectionIndex) => (
                                                         <CatalogSection
                                                             key={section.sectionId}
@@ -178,7 +220,7 @@ export const Catalog: FC = () => {
                                                             catalogErrors={catalogErrors}
                                                         />
                                                     ))}
-                                                </ol>
+                                                </Reorder.Group>
                                             </div>
                                         </div>
                                     )
@@ -201,7 +243,7 @@ export const Catalog: FC = () => {
             <Modal
                 title={txt.publish_catalog[currentLang]}
                 open={isPublishCatalogModalVisible}
-                onOk={publishCatalogHandler}
+                onOk={handlePublishCatalog}
                 confirmLoading={isLoadingPublishCatalog}
                 onCancel={() => setIsPublishCatalogModalVisible(false)}
             >
