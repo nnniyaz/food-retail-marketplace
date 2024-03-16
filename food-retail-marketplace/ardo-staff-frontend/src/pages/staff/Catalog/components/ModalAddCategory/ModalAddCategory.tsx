@@ -10,9 +10,10 @@ interface ModalAddCategoryProps {
     isOpen: boolean;
     setIsOpen: React.Dispatch<boolean>;
     sectionId: UUID;
+    isPromo?: boolean;
 }
 
-export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, sectionId}) => {
+export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, sectionId, isPromo}) => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {catalog} = useTypedSelector(state => state.catalog);
     const {categories} = useTypedSelector(state => state.categories);
@@ -21,22 +22,41 @@ export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, 
 
     const handleSubmit = () => {
         if (!catalog) return;
-        const updatedStructure = catalog?.structure?.map(section => {
-            if (section.sectionId === sectionId) {
-                return {
-                    sectionId: sectionId,
-                    categories: [
-                        ...(section.categories || []),
-                        ...form.getFieldValue("categoryIds").map((categoryId: string) => ({
-                            categoryId: categoryId,
-                            products: []
-                        }))
-                    ]
+        if (isPromo) {
+            const updatedPromo = catalog?.promo?.map(section => {
+                if (section.sectionId === sectionId) {
+                    return {
+                        sectionId: sectionId,
+                        categories: [
+                            ...(section.categories || []),
+                            ...form.getFieldValue("categoryIds").map((categoryId: string) => ({
+                                categoryId: categoryId,
+                                products: []
+                            }))
+                        ]
+                    }
                 }
-            }
-            return section;
-        });
-        setCatalog({...catalog, structure: updatedStructure});
+                return section;
+            });
+            setCatalog({...catalog, promo: updatedPromo});
+        } else {
+            const updatedStructure = catalog?.structure?.map(section => {
+                if (section.sectionId === sectionId) {
+                    return {
+                        sectionId: sectionId,
+                        categories: [
+                            ...(section.categories || []),
+                            ...form.getFieldValue("categoryIds").map((categoryId: string) => ({
+                                categoryId: categoryId,
+                                products: []
+                            }))
+                        ]
+                    }
+                }
+                return section;
+            });
+            setCatalog({...catalog, structure: updatedStructure});
+        }
         setIsOpen(false);
     }
 
@@ -67,7 +87,7 @@ export const ModalAddCategory: FC<ModalAddCategoryProps> = ({isOpen, setIsOpen, 
                                 const promoCategoryIds = catalog?.promo?.map(section => section?.categories?.map(category => category.categoryId)).flat();
                                 return !structureCategoryIds?.includes(category.id) && !promoCategoryIds?.includes(category.id);
                             })?.map(category => ({
-                                label: category.name[currentLang],
+                                label: category.name[currentLang] || `${txt.not_translated[currentLang]} - ID: ${category.id}`,
                                 value: category.id
                             }))
                         }

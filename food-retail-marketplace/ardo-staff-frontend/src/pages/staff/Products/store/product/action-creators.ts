@@ -4,6 +4,7 @@ import {Product} from "@entities/product/product";
 import {Paginate} from "@entities/base/paginate";
 import {NavigateCallback} from "@entities/base/navigateCallback";
 import {txt} from "@shared/core/i18ngen";
+import {back} from "@shared/lib/back/back";
 import {Notify} from "@shared/lib/notification/notification";
 import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {
@@ -126,7 +127,7 @@ export const ProductsActionCreators = {
             if (res.data.success) {
                 Notify.Success({title: txt.product_successfully_edited[currentLang], message: ""});
                 if (navigationCallback?.navigate && navigationCallback?.to) {
-                    navigationCallback?.navigate(navigationCallback?.to);
+                    back(navigationCallback?.to, navigationCallback?.navigate);
                 }
             } else {
                 FailedResponseHandler({

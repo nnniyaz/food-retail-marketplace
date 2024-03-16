@@ -4,7 +4,7 @@ import {Button, Card, Form} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {isEmpty} from "lodash";
 import {RouteNames} from "@pages/index";
-import {Langs, MlString} from "@entities/base/MlString";
+import {isEqualMlStrings, Langs, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
 import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
@@ -26,7 +26,7 @@ export const CategoriesEdit = () => {
         isLoadingGetCategoryById
     } = useTypedSelector(state => state.categories);
     const {getCategoryById, editCategory, deleteCategory, recoverCategory} = useActions();
-    const [form] = useForm();
+    const [form] = useForm<{ img: string, name: MlString, desc: MlString }>();
     const values = useWatch([], form);
 
     const [editMode, setEditMode] = useState(false);

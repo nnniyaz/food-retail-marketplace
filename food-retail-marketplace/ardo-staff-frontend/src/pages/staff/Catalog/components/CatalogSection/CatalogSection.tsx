@@ -22,9 +22,12 @@ interface CatalogSectionProps {
     };
     sectionIndex: number;
     catalogErrors: string[];
+    isPromo?: boolean;
 }
 
-export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, sectionIndex, catalogErrors}) => {
+export const CatalogSection: FC<CatalogSectionProps> = (
+    {sectionStructure, sectionIndex, catalogErrors, isPromo}
+) => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {catalog} = useTypedSelector(state => state.catalog);
     const {sections} = useTypedSelector(state => state.sections);
@@ -39,31 +42,58 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
 
     const handleDelete = () => {
         if (!catalog) return;
-        setCatalog({
-            ...catalog,
-            structure: [
-                ...(catalog?.structure || []).filter(s => s.sectionId !== sectionStructure.sectionId),
-            ],
-        });
+
+        if (isPromo) {
+            setCatalog({
+                ...catalog,
+                promo: [
+                    ...(catalog?.promo || []).filter(p => p.sectionId !== sectionStructure.sectionId),
+                ],
+            });
+        } else {
+            setCatalog({
+                ...catalog,
+                structure: [
+                    ...(catalog?.structure || []).filter(s => s.sectionId !== sectionStructure.sectionId),
+                ],
+            });
+        }
         setIsDeleteModalVisible(false);
     }
 
     const handleSetCatalogStructure = (newStructure: CatalogsCategory[]) => {
         if (!catalog) return;
-        setCatalog({
-            ...catalog,
-            structure: [
-                ...(catalog?.structure || []).map(s => {
-                    if (s.sectionId === sectionStructure.sectionId) {
-                        return {
-                            sectionId: s.sectionId,
-                            categories: newStructure
+        if (isPromo) {
+            setCatalog({
+                ...catalog,
+                promo: [
+                    ...(catalog?.promo || []).map(s => {
+                        if (s.sectionId === sectionStructure.sectionId) {
+                            return {
+                                sectionId: s.sectionId,
+                                categories: newStructure
+                            }
                         }
-                    }
-                    return s;
-                }),
-            ],
-        });
+                        return s;
+                    }),
+                ],
+            });
+        } else {
+            setCatalog({
+                ...catalog,
+                structure: [
+                    ...(catalog?.structure || []).map(s => {
+                        if (s.sectionId === sectionStructure.sectionId) {
+                            return {
+                                sectionId: s.sectionId,
+                                categories: newStructure
+                            }
+                        }
+                        return s;
+                    }),
+                ],
+            });
+        }
     }
 
     useEffect(() => {
@@ -143,6 +173,7 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
                                             categoryStructure={category}
                                             categoryIndex={categoryIndex}
                                             catalogErrors={catalogErrors}
+                                            isPromo={isPromo}
                                         />
                                     ))}
                                 </Reorder.Group>
@@ -167,6 +198,7 @@ export const CatalogSection: FC<CatalogSectionProps> = ({sectionStructure, secti
                 isOpen={isAddCategoryModalVisible}
                 setIsOpen={setIsAddCategoryModalVisible}
                 sectionId={section?.id || ""}
+                isPromo={isPromo}
             />
         </Reorder.Item>
     )

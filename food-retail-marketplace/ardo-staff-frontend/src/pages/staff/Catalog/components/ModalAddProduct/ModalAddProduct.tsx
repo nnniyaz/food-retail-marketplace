@@ -11,9 +11,12 @@ interface ModalAddProductProps {
     setIsOpen: React.Dispatch<boolean>;
     sectionId: UUID;
     categoryId: UUID;
+    isPromo?: boolean;
 }
 
-export const ModalAddProduct: FC<ModalAddProductProps> = ({isOpen, setIsOpen, sectionId, categoryId}) => {
+export const ModalAddProduct: FC<ModalAddProductProps> = (
+    {isOpen, setIsOpen, sectionId, categoryId, isPromo}
+) => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {catalog} = useTypedSelector(state => state.catalog);
     const {products} = useTypedSelector(state => state.products);
@@ -22,29 +25,55 @@ export const ModalAddProduct: FC<ModalAddProductProps> = ({isOpen, setIsOpen, se
 
     const handleSubmit = () => {
         if (!catalog) return;
-        const updatedStructure = catalog?.structure?.map(section => {
-            if (section.sectionId === sectionId) {
-                return {
-                    sectionId: sectionId,
-                    categories: section.categories.map(category => {
-                        if (category.categoryId === categoryId) {
-                            return {
-                                categoryId: categoryId,
-                                products: [
-                                    ...(category.products || []),
-                                    ...form.getFieldValue("productIds").map((productId: string) => ({
-                                        productId: productId
-                                    }))
-                                ]
+        if (isPromo) {
+            const updatedPromo = catalog?.promo?.map(section => {
+                if (section.sectionId === sectionId) {
+                    return {
+                        sectionId: sectionId,
+                        categories: section.categories.map(category => {
+                            if (category.categoryId === categoryId) {
+                                return {
+                                    categoryId: categoryId,
+                                    products: [
+                                        ...(category.products || []),
+                                        ...form.getFieldValue("productIds").map((productId: string) => ({
+                                            productId: productId
+                                        }))
+                                    ]
+                                }
                             }
-                        }
-                        return category;
-                    })
+                            return category;
+                        })
+                    }
                 }
-            }
-            return section;
-        });
-        setCatalog({...catalog, structure: updatedStructure,});
+                return section;
+            });
+            setCatalog({...catalog, promo: updatedPromo,});
+        } else {
+            const updatedStructure = catalog?.structure?.map(section => {
+                if (section.sectionId === sectionId) {
+                    return {
+                        sectionId: sectionId,
+                        categories: section.categories.map(category => {
+                            if (category.categoryId === categoryId) {
+                                return {
+                                    categoryId: categoryId,
+                                    products: [
+                                        ...(category.products || []),
+                                        ...form.getFieldValue("productIds").map((productId: string) => ({
+                                            productId: productId
+                                        }))
+                                    ]
+                                }
+                            }
+                            return category;
+                        })
+                    }
+                }
+                return section;
+            });
+            setCatalog({...catalog, structure: updatedStructure,});
+        }
         setIsOpen(false);
     }
 
@@ -67,7 +96,7 @@ export const ModalAddProduct: FC<ModalAddProductProps> = ({isOpen, setIsOpen, se
                         placeholder={txt.select_product[currentLang]}
                         showSearch={true}
                         filterOption={(input, option) => option?.label?.toLowerCase()?.includes(input.toLowerCase()) || false}
-                        filterSort={(optionA, optionB) => optionA.label.localeCompare(optionB.label)}
+                        filterSort={(optionA, optionB) => optionA.label?.localeCompare(optionB.label)}
                         mode={"multiple"}
                         options={
                             products?.filter(product => {
@@ -75,7 +104,7 @@ export const ModalAddProduct: FC<ModalAddProductProps> = ({isOpen, setIsOpen, se
                                 const promoProductIds = catalog?.promo?.flatMap(section => section?.categories).flatMap(category => category?.products).map(product => product?.productId);
                                 return !structureProductIds?.includes(product.id) && !promoProductIds?.includes(product.id);
                             })?.map(product => ({
-                                label: product.name[currentLang],
+                                label: product.name[currentLang] || `${txt.not_translated[currentLang]} - ID: ${product.id}`,
                                 value: product.id
                             }))
                         }

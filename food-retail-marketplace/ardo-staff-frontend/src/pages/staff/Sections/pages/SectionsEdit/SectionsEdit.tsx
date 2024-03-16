@@ -25,7 +25,7 @@ export const SectionsEdit = () => {
         isLoadingGetSectionById
     } = useTypedSelector(state => state.sections);
     const {getSectionById, editSection, deleteSection, recoverSection} = useActions();
-    const [form] = useForm();
+    const [form] = useForm<{ img: string, name: MlString }>();
     const values = useWatch([], form);
 
     const [editMode, setEditMode] = useState(false);

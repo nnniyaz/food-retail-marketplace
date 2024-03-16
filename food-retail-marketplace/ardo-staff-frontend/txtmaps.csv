@@ -185,3 +185,8 @@
 "search_slide_by_id_or_name","Поиск слайда по ID или названию","Search slide by ID or name"
 "add_slide","Добавить слайд","Add slide"
 "save_catalog","Сохранить каталог","Save catalog"
+"add_section_to_promo","Добавить секцию в промо","Add section to promo"
+"add_category_to_promo","Добавить категорию в промо","Add category to promo"
+"add_product_to_promo","Добавить продукт в промо","Add product to promo"
+"promo_section","Промо секция","Promo section"
+"save_promo","Сохранить промо","Save promo"

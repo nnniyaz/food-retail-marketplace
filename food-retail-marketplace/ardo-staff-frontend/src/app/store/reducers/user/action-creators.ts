@@ -8,12 +8,19 @@ import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpH
 import {SetIsAuthAction, SetIsLoadingGetUserAction, SetUserAction, UserActionEnum} from "./types";
 
 export const UserActionCreators = {
-    setUser: (payload: User): SetUserAction => ({type: UserActionEnum.SET_USER, payload}),
-    setAuth: (payload: boolean): SetIsAuthAction => ({type: UserActionEnum.SET_IS_AUTH, payload}),
+    setUser: (payload: User): SetUserAction => ({
+        type: UserActionEnum.SET_USER,
+        payload
+    }),
+    setAuth: (payload: boolean): SetIsAuthAction => ({
+        type: UserActionEnum.SET_IS_AUTH,
+        payload
+    }),
     setIsLoadingGetUser: (payload: boolean): SetIsLoadingGetUserAction => ({
         type: UserActionEnum.SET_IS_LOADING_GET_USER,
         payload
     }),
+
     getCurrentUser: (navigateCallback: NavigateCallback, hideNotify?: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         try {
@@ -55,10 +62,12 @@ export const UserActionCreators = {
             dispatch(UserActionCreators.setIsLoadingGetUser(false));
         }
     },
+
     clearUser: () => (dispatch: AppDispatch) => {
         dispatch(UserActionCreators.setUser({} as User));
         dispatch(UserActionCreators.setAuth(false));
     },
+
     updateCredentials: () => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang} = getState().lang;
         const {user} = getState().user;

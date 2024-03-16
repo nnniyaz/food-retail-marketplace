@@ -42,31 +42,56 @@ export const Catalog: FC = () => {
 
     const [isAddSectionModalVisible, setIsAddSectionModalVisible] = useState(false);
     const [isPublishCatalogModalVisible, setIsPublishCatalogModalVisible] = useState(false);
+    const [currentTab, setCurrentTab] = useState("catalog");
 
     const catalogErrors = useMemo<string[]>(() => {
         const errors: string[] = [];
-        if (!isEmpty(catalog?.structure)) {
-            catalog?.structure.forEach(section => {
-                const foundSection = sections?.find(s => s.id === section.sectionId);
-                if (!foundSection || !foundSection.name[currentLang]) {
-                    errors.push(section.sectionId);
-                }
-                section.categories?.forEach(category => {
-                    const foundCategory = categories?.find(c => c.id === category.categoryId);
-                    if (!foundCategory || !foundCategory.name[currentLang]) {
-                        errors.push(category.categoryId);
+
+        if (currentTab === "promo") {
+            if (!isEmpty(catalog?.promo)) {
+                catalog?.promo.forEach(section => {
+                    const foundSection = sections?.find(s => s.id === section.sectionId);
+                    if (!foundSection || !foundSection.name[currentLang]) {
+                        errors.push(section.sectionId);
                     }
-                    category.products?.forEach(product => {
-                        const foundProduct = products?.find(p => p.id === product.productId);
-                        if (!foundProduct || !foundProduct.name[currentLang]) {
-                            errors.push(product.productId);
+                    section.categories?.forEach(category => {
+                        const foundCategory = categories?.find(c => c.id === category.categoryId);
+                        if (!foundCategory || !foundCategory.name[currentLang]) {
+                            errors.push(category.categoryId);
                         }
+                        category.products?.forEach(product => {
+                            const foundProduct = products?.find(p => p.id === product.productId);
+                            if (!foundProduct || !foundProduct.name[currentLang]) {
+                                errors.push(product.productId);
+                            }
+                        });
                     });
                 });
-            });
+            }
+        } else {
+            if (!isEmpty(catalog?.structure)) {
+                catalog?.structure.forEach(section => {
+                    const foundSection = sections?.find(s => s.id === section.sectionId);
+                    if (!foundSection || !foundSection.name[currentLang]) {
+                        errors.push(section.sectionId);
+                    }
+                    section.categories?.forEach(category => {
+                        const foundCategory = categories?.find(c => c.id === category.categoryId);
+                        if (!foundCategory || !foundCategory.name[currentLang]) {
+                            errors.push(category.categoryId);
+                        }
+                        category.products?.forEach(product => {
+                            const foundProduct = products?.find(p => p.id === product.productId);
+                            if (!foundProduct || !foundProduct.name[currentLang]) {
+                                errors.push(product.productId);
+                            }
+                        });
+                    });
+                });
+            }
         }
         return errors.filter((value, index, self) => self.indexOf(value) === index);
-    }, [catalog, sections, categories, products, currentLang]);
+    }, [catalog, sections, categories, products, currentLang, currentTab]);
 
     const handlePublishCatalog = async () => {
         if (!catalog) return;
@@ -77,6 +102,11 @@ export const Catalog: FC = () => {
     const handleSetCatalogStructure = (newStructure: CatalogsStructure[]) => {
         if (!catalog) return;
         setCatalog({...catalog, structure: newStructure});
+    }
+
+    const handleSetCatalogPromo = (newPromo: CatalogsStructure[]) => {
+        if (!catalog) return;
+        setCatalog({...catalog, promo: newPromo});
     }
 
     const handleSaveCatalogOrder = async () => {
@@ -163,22 +193,25 @@ export const Catalog: FC = () => {
                 bodyStyle={{padding: "20px", borderRadius: "8px"}}
                 loading={isLoadingGetCatalog || isLoadingGetSections || isLoadingGetCategories || isLoadingGetProducts}
             >
-                {isEmpty(catalog?.structure) ? (
-                    <Button
-                        type={"primary"}
-                        style={{width: "fit-content"}}
-                        onClick={() => setIsAddSectionModalVisible(true)}
-                    >
-                        {txt.add_section_to_catalog[currentLang]}
-                    </Button>
-                ) : (
-                    <Tabs
-                        items={
-                            [
-                                {
-                                    key: "catalog",
-                                    label: txt.catalog[currentLang],
-                                    children: (
+
+                <Tabs
+                    defaultActiveKey={currentTab}
+                    onChange={setCurrentTab}
+                    items={
+                        [
+                            {
+                                key: "catalog",
+                                label: txt.catalog[currentLang],
+                                children: (
+                                    isEmpty(catalog?.structure) ? (
+                                        <Button
+                                            type={"primary"}
+                                            style={{width: "fit-content"}}
+                                            onClick={() => setIsAddSectionModalVisible(true)}
+                                        >
+                                            {txt.add_section_to_catalog[currentLang]}
+                                        </Button>
+                                    ) : (
                                         <div className={classes.catalog__preview}>
                                             <div>
                                                 {`Catalogs error: ${catalogErrors.length}`}
@@ -224,21 +257,72 @@ export const Catalog: FC = () => {
                                             </div>
                                         </div>
                                     )
-                                },
-                                {
-                                    key: "promo",
-                                    label: txt.promo[currentLang],
-                                    children: (
-                                        <></>
+                                )
+                            },
+                            {
+                                key: "promo",
+                                label: txt.promo[currentLang],
+                                children: (
+                                    isEmpty(catalog?.promo) ? (
+                                        <Button
+                                            type={"primary"}
+                                            style={{width: "fit-content"}}
+                                            onClick={() => setIsAddSectionModalVisible(true)}
+                                        >
+                                            {txt.add_section_to_promo[currentLang]}
+                                        </Button>
+                                    ) : (
+                                        <div className={classes.catalog__preview}>
+                                            <div>
+                                                {`Promo section error: ${catalogErrors.length}`}
+                                            </div>
+
+                                            <div className={classes.catalog__preview__content}>
+                                                <h3>{`${txt.promo_section[currentLang]}:`}</h3>
+
+                                                <Row style={{display: "flex", gap: "10px"}}>
+                                                    <Button
+                                                        type={"primary"}
+                                                        style={{width: "fit-content"}}
+                                                        onClick={handleSaveCatalogOrder}
+                                                        loading={isLoadingEditCatalog}
+                                                    >
+                                                        {txt.save_promo[currentLang]}
+                                                    </Button>
+                                                </Row>
+
+                                                <Reorder.Group
+                                                    className={classes.catalog}
+                                                    style={{padding: "0"}}
+                                                    as={"ol"}
+                                                    values={catalog!.promo}
+                                                    onReorder={handleSetCatalogPromo}
+                                                >
+                                                    {catalog?.promo?.map((section, sectionIndex) => (
+                                                        <CatalogSection
+                                                            key={section.sectionId}
+                                                            sectionStructure={section}
+                                                            sectionIndex={sectionIndex}
+                                                            catalogErrors={catalogErrors}
+                                                            isPromo={true}
+                                                        />
+                                                    ))}
+                                                </Reorder.Group>
+                                            </div>
+                                        </div>
                                     )
-                                }
-                            ]
-                        }
-                    />
-                )}
+                                )
+                            }
+                        ]
+                    }
+                />
             </Card>
 
-            <ModalAddSection isOpen={isAddSectionModalVisible} setIsOpen={setIsAddSectionModalVisible}/>
+            <ModalAddSection
+                isOpen={isAddSectionModalVisible}
+                setIsOpen={setIsAddSectionModalVisible}
+                isPromo={currentTab === "promo"}
+            />
 
             <Modal
                 title={txt.publish_catalog[currentLang]}

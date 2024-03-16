@@ -3,6 +3,9 @@ import {AddCategoryReq, CategoryService, EditCategoryReq} from "@pages/staff/Cat
 import {Paginate} from "@entities/base/paginate";
 import {Category} from "@entities/category/category";
 import {NavigateCallback} from "@entities/base/navigateCallback";
+import {txt} from "@shared/core/i18ngen";
+import {back} from "@shared/lib/back/back";
+import {Notify} from "@shared/lib/notification/notification";
 import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {
     CategoryActionEnum,
@@ -16,8 +19,6 @@ import {
     SetIsLoadingDeleteCategoryAction,
     SetIsLoadingRecoverCategoryAction
 } from "./types";
-import {txt} from "@shared/core/i18ngen";
-import {Notify} from "@shared/lib/notification/notification";
 
 export const CategoryActionCreators = {
     setCategories: (payload: Category[]): SetCategoriesAction => ({
@@ -147,7 +148,7 @@ export const CategoryActionCreators = {
             if (res.data.success) {
                 Notify.Success({title: txt.category_successfully_edited[currentLang], message: ""});
                 if (navigationCallback?.navigate && navigationCallback?.to) {
-                    navigationCallback?.navigate(navigationCallback?.to);
+                    back(navigationCallback?.to, navigationCallback?.navigate);
                 }
             } else {
                 FailedResponseHandler({

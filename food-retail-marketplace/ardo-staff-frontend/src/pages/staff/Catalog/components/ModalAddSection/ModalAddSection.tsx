@@ -9,9 +9,10 @@ import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 interface ModalAddSectionProps {
     isOpen: boolean;
     setIsOpen: React.Dispatch<boolean>;
+    isPromo?: boolean;
 }
 
-export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) => {
+export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen, isPromo}) => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {catalog} = useTypedSelector(state => state.catalog);
     const {sections} = useTypedSelector(state => state.sections);
@@ -20,16 +21,29 @@ export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) =
 
     const handleSubmit = async () => {
         if (!catalog) return;
-        setCatalog({
-            ...catalog,
-            structure: [
-                ...(catalog?.structure || []),
-                ...form.getFieldValue("sectionIds").map((sectionId: string) => ({
-                    sectionId: sectionId,
-                    categories: []
-                }))
-            ],
-        });
+        if (isPromo) {
+            setCatalog({
+                ...catalog,
+                promo: [
+                    ...(catalog?.promo || []),
+                    ...form.getFieldValue("sectionIds").map((sectionId: string) => ({
+                        sectionId: sectionId,
+                        categories: []
+                    }))
+                ],
+            });
+        } else {
+            setCatalog({
+                ...catalog,
+                structure: [
+                    ...(catalog?.structure || []),
+                    ...form.getFieldValue("sectionIds").map((sectionId: string) => ({
+                        sectionId: sectionId,
+                        categories: []
+                    }))
+                ],
+            });
+        }
         setIsOpen(false);
     }
 
@@ -60,7 +74,7 @@ export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen}) =
                                 const promoSectionIds = catalog?.promo?.map(section => section.sectionId);
                                 return !structureSectionIds?.includes(section.id) && !promoSectionIds?.includes(section.id);
                             })?.map(section => ({
-                                label: section.name[currentLang],
+                                label: section.name[currentLang] || `${txt.not_translated[currentLang]} - ID: ${section.id}`,
                                 value: section.id
                             }))
                         }

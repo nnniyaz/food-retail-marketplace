@@ -17,10 +17,11 @@ interface CatalogCategoryProps {
     categoryStructure: CatalogsCategory;
     categoryIndex: number;
     catalogErrors: string[];
+    isPromo?: boolean;
 }
 
 export const CatalogCategory: FC<CatalogCategoryProps> = (
-    {sectionId, categoryStructure, categoryIndex, catalogErrors}
+    {sectionId, categoryStructure, categoryIndex, catalogErrors, isPromo}
 ) => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {catalog} = useTypedSelector(state => state.catalog);
@@ -36,44 +37,83 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
 
     const handleDelete = () => {
         if (!catalog) return;
-        setCatalog({
-            ...catalog,
-            structure: [
-                ...(catalog?.structure || []).map(section => {
-                    return {
-                        sectionId: section.sectionId,
-                        categories: section.categories?.filter(category => category.categoryId !== categoryStructure.categoryId)
-                    }
-                }),
-            ],
-        });
+        if (isPromo) {
+            setCatalog({
+                ...catalog,
+                promo: [
+                    ...(catalog?.promo || []).map(section => {
+                        return {
+                            sectionId: section.sectionId,
+                            categories: section.categories?.filter(category => category.categoryId !== categoryStructure.categoryId)
+                        }
+                    }),
+                ],
+            });
+        } else {
+            setCatalog({
+                ...catalog,
+                structure: [
+                    ...(catalog?.structure || []).map(section => {
+                        return {
+                            sectionId: section.sectionId,
+                            categories: section.categories?.filter(category => category.categoryId !== categoryStructure.categoryId)
+                        }
+                    }),
+                ],
+            });
+        }
         setIsDeleteModalVisible(false);
     }
 
     const handleSetCatalogStructure = (newStructure: CatalogsProduct[]) => {
         if (!catalog) return;
-        setCatalog({
-            ...catalog,
-            structure: [
-                ...(catalog?.structure || []).map(section => {
-                    if (section.sectionId === sectionId) {
-                        return {
-                            sectionId: section.sectionId,
-                            categories: section.categories.map(category => {
-                                if (category.categoryId === categoryStructure.categoryId) {
-                                    return {
-                                        categoryId: category.categoryId,
-                                        products: newStructure
+        if (isPromo) {
+            setCatalog({
+                ...catalog,
+                promo: [
+                    ...(catalog?.promo || []).map(section => {
+                        if (section.sectionId === sectionId) {
+                            return {
+                                sectionId: section.sectionId,
+                                categories: section.categories.map(category => {
+                                    if (category.categoryId === categoryStructure.categoryId) {
+                                        return {
+                                            categoryId: category.categoryId,
+                                            products: newStructure
+                                        }
                                     }
-                                }
-                                return category;
-                            })
+                                    return category;
+                                })
+                            }
                         }
-                    }
-                    return section;
-                }),
-            ],
-        });
+                        return section;
+                    }),
+                ],
+            });
+        } else {
+            setCatalog({
+                ...catalog,
+                structure: [
+                    ...(catalog?.structure || []).map(section => {
+                        if (section.sectionId === sectionId) {
+                            return {
+                                sectionId: section.sectionId,
+                                categories: section.categories.map(category => {
+                                    if (category.categoryId === categoryStructure.categoryId) {
+                                        return {
+                                            categoryId: category.categoryId,
+                                            products: newStructure
+                                        }
+                                    }
+                                    return category;
+                                })
+                            }
+                        }
+                        return section;
+                    }),
+                ],
+            });
+        }
     }
 
     useEffect(() => {
@@ -172,6 +212,7 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
                 setIsOpen={setIsAddProductModalVisible}
                 sectionId={sectionId}
                 categoryId={category?.id || ""}
+                isPromo={isPromo}
             />
         </Reorder.Item>
     )
