@@ -73,7 +73,7 @@ export const Categories = () => {
         },
     ];
 
-    const data: Category[] = categories.map((category) => ({...category, key: category.id})) || [];
+    const data: Category[] = categories?.map((category) => ({...category, key: category.id})) || [];
 
     const filterIsDeletedOptions = [
         {label: txt.yes[currentLang], value: true},
@@ -84,7 +84,7 @@ export const Categories = () => {
         e.preventDefault();
     }
 
-    const handleOnAddProduct = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleOnAddCategory = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         navigate(RouteNames.CATEGORIES_ADD);
     }
@@ -106,7 +106,7 @@ export const Categories = () => {
                     searchPlaceholder={txt.search_category_by_id_or_name[currentLang]}
                     onSearch={handleSearch}
                     onSearchText={txt.search[currentLang]}
-                    onSubButtonClick={handleOnAddProduct}
+                    onSubButtonClick={handleOnAddCategory}
                     onSubButtonText={txt.add_category[currentLang]}
                 />
                 <Filters

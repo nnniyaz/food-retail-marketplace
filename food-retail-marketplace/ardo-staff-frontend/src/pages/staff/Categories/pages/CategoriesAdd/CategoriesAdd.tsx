@@ -43,7 +43,7 @@ export const CategoriesAdd = () => {
             img: values.img,
             name: values.name,
             desc: values.desc
-        }, {navigate, to: RouteNames.SECTIONS});
+        }, {navigate, to: RouteNames.CATEGORIES});
     }
 
     useEffect(() => {

@@ -74,7 +74,7 @@ export const Slides: FC = () => {
         },
     ];
 
-    const data: Slide[] = slides.map((slide) => ({...slide, key: slide.id})) || [];
+    const data: Slide[] = slides?.map((slide) => ({...slide, key: slide.id})) || [];
 
     const filterIsDeletedOptions = [
         {label: txt.yes[currentLang], value: true},
@@ -85,7 +85,7 @@ export const Slides: FC = () => {
         e.preventDefault();
     }
 
-    const handleOnAddProduct = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleOnAddSlides = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         navigate(RouteNames.SLIDES_ADD);
     }
@@ -107,7 +107,7 @@ export const Slides: FC = () => {
                     searchPlaceholder={txt.search_slide_by_id_or_name[currentLang]}
                     onSearch={handleSearch}
                     onSearchText={txt.search[currentLang]}
-                    onSubButtonClick={handleOnAddProduct}
+                    onSubButtonClick={handleOnAddSlides}
                     onSubButtonText={txt.add_slide[currentLang]}
                 />
                 <Filters

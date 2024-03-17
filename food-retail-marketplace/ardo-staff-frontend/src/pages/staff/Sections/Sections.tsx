@@ -74,7 +74,7 @@ export const Sections = () => {
         },
     ];
 
-    const data: Section[] = sections.map((section) => ({...section, key: section.id})) || [];
+    const data: Section[] = sections?.map((section) => ({...section, key: section.id})) || [];
 
     const filterIsDeletedOptions = [
         {label: txt.yes[currentLang], value: true},
@@ -85,7 +85,7 @@ export const Sections = () => {
         e.preventDefault();
     }
 
-    const handleOnAddProduct = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    const handleOnAddSection = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
         navigate(RouteNames.SECTIONS_ADD);
     }
@@ -107,7 +107,7 @@ export const Sections = () => {
                     searchPlaceholder={txt.search_section_by_id_or_name[currentLang]}
                     onSearch={handleSearch}
                     onSearchText={txt.search[currentLang]}
-                    onSubButtonClick={handleOnAddProduct}
+                    onSubButtonClick={handleOnAddSection}
                     onSubButtonText={txt.add_section[currentLang]}
                 />
                 <Filters

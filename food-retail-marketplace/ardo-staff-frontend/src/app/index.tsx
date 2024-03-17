@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
-import {ReactNotifications} from "react-notifications-component"
+import {ReactNotifications} from "react-notifications-component";
 import AppRouter, {RouteNames} from "@pages//";
 import {Loader} from "@shared/ui/Loader";
 import {useActions} from "@shared/lib/hooks/useActions";

@@ -1,8 +1,5 @@
 import {Langs} from "@entities/base/MlString";
 
-type UserFirstName = string;
-type UserLastName = string;
-
 export enum UserType {
     ADMIN = "ADMIN",
     MODERATOR = "MODERATOR",
@@ -11,8 +8,8 @@ export enum UserType {
 
 export type User = {
     id: UUID;
-    firstName: UserFirstName;
-    lastName: UserLastName;
+    firstName: string;
+    lastName: string;
     email: Email;
     userType: UserType;
     preferredLang: Langs;
