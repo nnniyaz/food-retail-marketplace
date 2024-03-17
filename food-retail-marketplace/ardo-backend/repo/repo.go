@@ -56,6 +56,7 @@ type Product interface {
 	FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool) ([]*product.Product, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*product.Product, error)
 	Create(ctx context.Context, product *product.Product) error
+	CreateMany(ctx context.Context, products []*product.Product) error
 	Update(ctx context.Context, product *product.Product) error
 	Delete(ctx context.Context, id uuid.UUID) error
 	Recover(ctx context.Context, id uuid.UUID) error

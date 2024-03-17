@@ -91,7 +91,6 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 	r.Use(h.Middleware.Recover)
 	r.Use(h.Middleware.Trace)
 	r.Use(h.Middleware.RequestInfo)
-	r.Use(h.Middleware.WithTransaction)
 	r.Use(middleware.Logger)
 	r.Use(middleware.RealIP)
 
@@ -100,7 +99,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			r.Use(h.Middleware.NoAuth)
 			r.Post("/login", h.Auth.Login)
 			r.With(h.Middleware.UserAuth).Post("/logout", h.Auth.Logout)
-			r.Post("/register", h.Auth.Register)
+			r.With(h.Middleware.WithTransaction).Post("/register", h.Auth.Register)
 			r.With(h.Middleware.ConfirmationLink).Get("/confirm/{link}", h.Auth.Confirm)
 		})
 
@@ -118,7 +117,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			r.Route("/users", func(r chi.Router) {
 				r.With(h.Middleware.PaginationParams).Get("/", h.ManagementUser.GetUsersByFilters)
 				r.Get("/{user_id}", h.ManagementUser.GetUserById)
-				r.Post("/", h.ManagementUser.AddUser)
+				r.With(h.Middleware.WithTransaction).Post("/", h.ManagementUser.AddUser)
 				r.Put("/credentials/{user_id}", h.ManagementUser.UpdateUserCredentials)
 				r.Put("/email/{user_id}", h.ManagementUser.UpdateUserEmail)
 				r.Put("/preferred-lang/{user_id}", h.ManagementUser.UpdateUserPreferredLang)
@@ -151,7 +150,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Get("/{catalog_id}", h.ManagementCatalog.GetCatalogById)
 				r.Post("/", h.ManagementCatalog.CreateCatalog)
 				r.Put("/{catalog_id}", h.ManagementCatalog.UpdateCatalog)
-				r.Post("/publish/{catalog_id}", h.ManagementCatalog.PublishCatalog)
+				r.With(h.Middleware.WithTransaction).Post("/publish/{catalog_id}", h.ManagementCatalog.PublishCatalog)
 				r.Get("/publish-time/{catalog_id}", h.ManagementCatalog.GetTimeOfPublish)
 			})
 
@@ -185,7 +184,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 
 		r.Route("/make-order", func(r chi.Router) {
 			r.Use(h.Middleware.UserAuth)
-			r.Post("/", h.Client.MakeOrder)
+			r.With(h.Middleware.WithTransaction).Post("/", h.Client.MakeOrder)
 		})
 	})
 	return r

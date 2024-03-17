@@ -14,6 +14,7 @@ type ProductService interface {
 	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
 	GetOneById(ctx context.Context, productId string) (*product.Product, error)
 	Create(ctx context.Context, product *product.Product) error
+	CreateMany(ctx context.Context, products []*product.Product) error
 	Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int64, img, status string) error
 	Recover(ctx context.Context, productId string) error
 	Delete(ctx context.Context, productId string) error
@@ -48,6 +49,10 @@ func (p *productService) GetOneById(ctx context.Context, productId string) (*pro
 
 func (p *productService) Create(ctx context.Context, newProduct *product.Product) error {
 	return p.productRepo.Create(ctx, newProduct)
+}
+
+func (p *productService) CreateMany(ctx context.Context, products []*product.Product) error {
+	return p.productRepo.CreateMany(ctx, products)
 }
 
 func (p *productService) Update(ctx context.Context, product *product.Product, name, desc core.MlString, price float64, quantity int64, img, status string) error {

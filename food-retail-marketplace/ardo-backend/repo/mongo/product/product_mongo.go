@@ -97,6 +97,15 @@ func (r *RepoProduct) Create(ctx context.Context, p *product.Product) error {
 	return err
 }
 
+func (r *RepoProduct) CreateMany(ctx context.Context, products []*product.Product) error {
+	var mongoProducts []interface{}
+	for _, p := range products {
+		mongoProducts = append(mongoProducts, newFromProduct(p))
+	}
+	_, err := r.Coll().InsertMany(ctx, mongoProducts)
+	return err
+}
+
 func (r *RepoProduct) Update(ctx context.Context, p *product.Product) error {
 	_, err := r.Coll().UpdateOne(ctx, bson.M{
 		"_id": p.GetId(),
