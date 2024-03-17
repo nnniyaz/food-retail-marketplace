@@ -123,7 +123,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Put("/email/{user_id}", h.ManagementUser.UpdateUserEmail)
 				r.Put("/preferred-lang/{user_id}", h.ManagementUser.UpdateUserPreferredLang)
 				r.Put("/password/{user_id}", h.ManagementUser.UpdateUserPassword)
-				r.Put("/{user_id}", h.ManagementUser.RecoverUser)
+				r.Put("/recover/{user_id}", h.ManagementUser.RecoverUser)
 				r.Delete("/{user_id}", h.ManagementUser.DeleteUser)
 			})
 
@@ -132,7 +132,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Get("/{product_id}", h.ManagementProduct.GetProductById)
 				r.Post("/", h.ManagementProduct.AddProduct)
 				r.Put("/credentials/{product_id}", h.ManagementProduct.UpdateProduct)
-				r.Put("/{product_id}", h.ManagementProduct.RecoverProduct)
+				r.Put("/recover/{product_id}", h.ManagementProduct.RecoverProduct)
 				r.Delete("/{product_id}", h.ManagementProduct.DeleteProduct)
 			})
 
@@ -142,7 +142,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 				r.Get("/{order_id}", h.ManagementOrder.GetOneById)
 				r.Post("/", h.ManagementOrder.CreateOrder)
 				r.Put("/status/{order_id}", h.ManagementOrder.UpdateOrderStatus)
-				r.Put("/{order_id}", h.ManagementOrder.RecoverOrder)
+				r.Put("/recover/{order_id}", h.ManagementOrder.RecoverOrder)
 				r.Delete("/{order_id}", h.ManagementOrder.DeleteOrder)
 			})
 
