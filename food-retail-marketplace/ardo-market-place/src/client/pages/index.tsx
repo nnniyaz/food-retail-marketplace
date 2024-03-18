@@ -1,5 +1,7 @@
-import {ComponentType} from "react";
+import {ComponentType, useEffect} from "react";
 import {Routes, Route, Navigate} from "react-router-dom";
+import {useActions} from "@pkg/hooks/useActions.ts";
+import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {Home} from "@pages/Home";
 import {Catalog} from "@pages/Catalog";
 import {Cart} from "@pages/Cart";
@@ -7,7 +9,9 @@ import {Favourites} from "@pages/Favourites";
 import {Profile} from "@pages/Profile";
 import {Layout} from "@pages/Layout";
 import {List} from "@pages/List";
-import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
+import {Settings} from "@pages/Profile/pages/Settings";
+import {Orders} from "@pages/Profile/pages/Orders";
+import {Address} from "@pages/Profile/pages/Address";
 
 interface IRoute {
     path: string;
@@ -24,6 +28,9 @@ export enum RouteNames {
     SUCCESS = "/success",
     FAVOURITES = "/favourites",
     PROFILE = "/profile",
+    SETTINGS = "/profile/settings",
+    ORDERS = "/profile/orders",
+    ADDRESS = "/profile/address",
 }
 
 const routes: IRoute[] = [
@@ -33,6 +40,9 @@ const routes: IRoute[] = [
     {path: RouteNames.CART, component: Cart},
     {path: RouteNames.FAVOURITES, component: Favourites},
     {path: RouteNames.PROFILE, component: Profile},
+    {path: RouteNames.SETTINGS, component: Settings},
+    {path: RouteNames.ORDERS, component: Orders},
+    {path: RouteNames.ADDRESS, component: Address},
 ];
 
 interface RoutingProps {
@@ -41,6 +51,13 @@ interface RoutingProps {
 
 export const Routing = ({}: RoutingProps) => {
     const {catalog} = useTypedSelector(state => state.catalogState);
+    const {isAuth} = useTypedSelector(state => state.userState);
+    const {fetchUser} = useActions();
+
+    useEffect(() => {
+        if (isAuth) return;
+        fetchUser(true);
+    }, []);
 
     if (!catalog) {
         return null;

@@ -1,7 +1,11 @@
-import {useEffect} from "react";
+import React, {useEffect} from "react";
+import * as ReactNotificationsImport from "react-notifications-component";
+const {ReactNotifications} = ReactNotificationsImport;
 import {Routing} from "@pages/index.tsx";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import {PublishedCatalog} from "@domain/catalog/catalog.ts";
+import "react-notifications-component/dist/theme.css"
+import "animate.css/animate.min.css"
 import "@app/app.scss";
 
 interface EntryProps {
@@ -13,11 +17,12 @@ interface EntryProps {
 }
 
 export const App = (props: EntryProps) => {
-    const {initCatalogState, initSystemState} = useActions();
+    const {initCatalogState, initSystemState, initCartState} = useActions();
 
     function populateStoreWithData() {
         initCatalogState(props.catalog);
         initSystemState(props.cfg);
+        initCartState({});
     }
 
     useEffect(() => {
@@ -30,6 +35,9 @@ export const App = (props: EntryProps) => {
         return null;
     }
     return (
-        <Routing/>
+        <React.Fragment>
+            <ReactNotifications isMobile={true} className={"notifications"}/>
+            <Routing/>
+        </React.Fragment>
     )
 }

@@ -6,11 +6,10 @@ import {
     ClearCartAction,
     CartActionEnum,
 } from "@app/store/reducers/cart/types.ts";
-import {CartItem} from "@domain/cartItem";
 import {MlString} from "@domain/base/mlString/mlString.ts";
 
 export const cartActionCreator = {
-    initCartState: (payload: { cart: CartItem[] }): InitCartStateAction => ({
+    initCartState: (payload: {}): InitCartStateAction => ({
         type: CartActionEnum.INIT_CART_STATE,
         payload
     }),

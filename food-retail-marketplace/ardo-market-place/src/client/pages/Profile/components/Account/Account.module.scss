@@ -1,0 +1,106 @@
+.account {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .account__info {
+    width: 500px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 20px 0;
+    border-bottom: 1px solid var(--secondary-bg-color);
+
+    .account__preview {
+      width: 70px;
+      height: 70px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: rgba(255, 165, 0, 0.5);
+
+      font-weight: 500;
+      font-size: 24px;
+    }
+
+    .account__info__layers {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+
+      .account__info__name {
+        word-break: break-word;
+        color: var(--primary-font-color);
+        font-weight: 500;
+      }
+
+      .account__info__link {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        color: var(--secondary-font-color);
+        text-transform: capitalize;
+        cursor: pointer;
+        transition: .1s linear;
+
+        @media (hover: hover) {
+          &:hover {
+            color: var(--link-color);
+          }
+        }
+      }
+    }
+  }
+
+  .account__menu__bar {
+    list-style: none;
+
+    li {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--secondary-bg-color);
+
+      .account__menu__bar__item {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        color: var(--primary-font-color);
+        text-transform: capitalize;
+        text-decoration: none;
+        cursor: pointer;
+        transition: .1s linear;
+
+        @media (hover: hover) {
+          &:hover {
+            color: var(--link-color);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .account {
+
+    .account__info {
+      width: 100%;
+    }
+
+    .account__menu__bar {
+
+      li {
+
+        .account__menu__bar__item {
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
+}

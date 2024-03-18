@@ -21,8 +21,8 @@ export const Section = ({sectionStructure}: SectionProps) => {
         if (sectionStructure.categories.length === 0) {
             return 0;
         }
-        const categoryRowHeight = 136;
-        const categoryRows = Math.ceil(sectionStructure.categories.length / 3);
+        const categoryRowHeight = 160;
+        const categoryRows = Math.ceil(sectionStructure.categories.length / (window.innerWidth <= 700 ? 3 : 5));
         return categoryRowHeight * categoryRows;
     }, [sectionStructure.categories]);
 
@@ -105,6 +105,7 @@ const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryP
 
     return (
         <li
+            id={categoryStructure.categoryId}
             key={categoryStructure.categoryId}
             className={classes.category__container}
             onClick={() => handleCategoryClick(categoryStructure)}

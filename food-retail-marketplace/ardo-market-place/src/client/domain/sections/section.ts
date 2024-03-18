@@ -1,4 +1,4 @@
-import {MlString, ValidateMlString} from "@domain/base/mlString/mlString";
+import {MlString} from "@domain/base/mlString/mlString";
 
 export type Section = {
     "_id": string,
@@ -13,13 +13,6 @@ export type Section = {
 export function ValidateSection(section: Section): Error | null {
     if (!section._id) {
         throw new Error("Section's Id is invalid");
-    }
-    let err: Error | null = ValidateMlString(section.name);
-    if (err !== null) {
-        throw err;
-    }
-    if (typeof section.img !== "string") {
-        throw new Error("Section's Img is invalid");
     }
     return null;
 }

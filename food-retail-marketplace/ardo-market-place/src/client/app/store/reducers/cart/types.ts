@@ -16,9 +16,7 @@ export enum CartActionEnum {
 
 export interface InitCartStateAction {
     type: CartActionEnum.INIT_CART_STATE;
-    payload: {
-        cart: CartItem[];
-    };
+    payload: {};
 }
 
 export interface IncrementToCartAction {
