@@ -127,62 +127,12 @@ async function main() {
 
             // ---------------------------------------------------------------------------------------------------------
             // Send response
-            res.status(200).set({"Content-Type": "text/html"}).send(html);
+            res.status(200).set({"Cache-Control": "max-age=0", "Content-Type": "text/html"}).send(html);
         } catch (e) {
             vite?.ssrFixStacktrace(e);
             logger.error(url.toString(), e.stack);
             res.status(500).redirect("/error");
         }
-    });
-    // =================================================================================================================
-
-    // =================================================================================================================
-    // 404
-    app.get("/page-not-found", (req, res) => {
-        const lang = req.acceptsLanguages(["ru", "kk", "en", "tr", "az", "zh", "ja", "ar", "uz", "id", "ky", "uk"]);
-        let message;
-        switch (lang) {
-            case "ru":
-                message = "Страница не найдена";
-                break;
-            case "en":
-                message = "Page not found";
-                break;
-            case "zh":
-                message = "找不到页面";
-                break;
-            default:
-                message = "Page not found";
-                break;
-        }
-        res.status(404).set({'Content-Type': 'text/html'}).render("templates/404", {
-            message: message,
-        });
-    });
-    // =================================================================================================================
-
-    // =================================================================================================================
-    // 500
-    app.get("/error", (req, res) => {
-        const lang = req.acceptsLanguages(["ru", "kk", "en", "tr", "az", "zh", "ja", "ar", "uz", "id", "ky", "uk"]);
-        let message;
-        switch (lang) {
-            case "ru":
-                message = "Упс! Что-то пошло не так.";
-                break;
-            case "en":
-                message = "Error occurred! Please contact support";
-                break;
-            case "zh":
-                message = "发生错误！ 请联系支持";
-                break;
-            default:
-                message = "Error occurred! Please contact support";
-                break;
-        }
-        res.status(500).set({'Content-Type': 'text/html'}).render("templates/500", {
-            message: message,
-        });
     });
     // =================================================================================================================
 

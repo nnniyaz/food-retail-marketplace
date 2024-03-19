@@ -41,7 +41,7 @@ export const Section = ({sectionStructure}: SectionProps) => {
                 <img
                     className={classes.section__preview}
                     src={""}
-                    alt="Section"
+                    alt={translate(catalog.sections[sectionStructure.sectionId].name)}
                     onError={(e) => {
                         if (!sectionImgError) {
                             e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
@@ -120,7 +120,7 @@ const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryP
                 <img
                     className={classes.category__preview}
                     src={""}
-                    alt="Category"
+                    alt={translate(catalog.categories[categoryStructure.categoryId].name)}
                     onError={(e) => {
                         if (!categoryImgError) {
                             e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
