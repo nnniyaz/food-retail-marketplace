@@ -35,4 +35,12 @@ export const txt: {[key: string]: {[key: string]: string}} = {
         "RU": "Войти",
         "EN": "Sign in"
     },
+    "company_mission_title": {
+        "RU": "",
+        "EN": "Fresh F&B Supplies for your Restaurant, Delivered from Restolink"
+    },
+    "company_mission_subtitle": {
+        "RU": "",
+        "EN": "From on-demand orders to weekly deliveries - get the best products and top brands with next day delivery"
+    }
 }
