@@ -22,6 +22,19 @@ import (
 
 const port = 8080
 
+//	@title			Ardo Backend API
+//	@version		1.0.0
+//	@description	Detailed info about all endpoints
+
+//	@contact.name	API Support
+//	@contact.url	https://nassyrov.t.me
+
+//	@host		api.ardogroup.org
+//	@schemes	https
+
+// @securityDefinitions.apikey	ApiKeyAuth
+// @in							header
+// @name						Cookie
 func main() {
 	start := time.Now()
 

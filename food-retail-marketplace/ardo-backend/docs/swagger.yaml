@@ -1,0 +1,1917 @@
+definitions:
+  auth.LoginIn:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+    type: object
+  auth.RegisterIn:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      password:
+        type: string
+      preferredLang:
+        type: string
+    type: object
+  client.MakeOrderIn:
+    properties:
+      currency:
+        type: string
+      customerContacts:
+        $ref: '#/definitions/client.OrderCustomerContacts'
+      deliveryInfo:
+        $ref: '#/definitions/client.OrderDeliveryInfo'
+      orderComment:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/client.OrderProduct'
+        type: array
+      quantity:
+        type: integer
+      totalPrice:
+        type: number
+    type: object
+  client.OrderCustomerContacts:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  client.OrderDeliveryInfo:
+    properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
+      floor:
+        type: string
+    type: object
+  client.OrderProduct:
+    properties:
+      pricePerUnit:
+        type: number
+      productId:
+        type: string
+      productName:
+        $ref: '#/definitions/core.MlString'
+      quantity:
+        type: integer
+      totalPrice:
+        type: number
+    type: object
+  core.MlString:
+    additionalProperties:
+      type: string
+    type: object
+  current_user.UpdateCurrentLanguageIn:
+    properties:
+      lang:
+        type: string
+    type: object
+  current_user.UpdateCurrentUserCredentialsIn:
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+    type: object
+  current_user.UpdateCurrentUserEmailIn:
+    properties:
+      email:
+        type: string
+    type: object
+  current_user.UpdateCurrentUserPasswordIn:
+    properties:
+      newPassword:
+        type: string
+      oldPassword:
+        type: string
+    type: object
+  current_user.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      lastName:
+        type: string
+      preferredLang:
+        type: string
+      updatedAt:
+        type: string
+      userType:
+        type: string
+    type: object
+  management_catalog.Catalog:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      promo:
+        items:
+          $ref: '#/definitions/management_catalog.Section'
+        type: array
+      structure:
+        items:
+          $ref: '#/definitions/management_catalog.Section'
+        type: array
+      updated_at:
+        type: string
+      version:
+        type: integer
+    type: object
+  management_catalog.CatalogsData:
+    properties:
+      catalogs:
+        items:
+          $ref: '#/definitions/management_catalog.Catalog'
+        type: array
+      count:
+        type: integer
+    type: object
+  management_catalog.Category:
+    properties:
+      categoryId:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/management_catalog.Product'
+        type: array
+    type: object
+  management_catalog.Product:
+    properties:
+      productId:
+        type: string
+    type: object
+  management_catalog.Section:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/management_catalog.Category'
+        type: array
+      sectionId:
+        type: string
+    type: object
+  management_catalog.TimeOfPublish:
+    properties:
+      publishedAt:
+        type: string
+    type: object
+  management_catalog.UpdateCatalogIn:
+    properties:
+      promo:
+        items:
+          $ref: '#/definitions/management_catalog.Section'
+        type: array
+      structure:
+        items:
+          $ref: '#/definitions/management_catalog.Section'
+        type: array
+    type: object
+  management_category.CategoriesData:
+    properties:
+      categories:
+        items:
+          $ref: '#/definitions/management_category.Category'
+        type: array
+      count:
+        type: integer
+    type: object
+  management_category.Category:
+    properties:
+      createdAt:
+        type: string
+      desc:
+        $ref: '#/definitions/core.MlString'
+      id:
+        type: string
+      img:
+        type: string
+      isDeleted:
+        type: boolean
+      name:
+        $ref: '#/definitions/core.MlString'
+      updatedAt:
+        type: string
+      version:
+        type: integer
+    type: object
+  management_category.CreateCategoryIn:
+    properties:
+      desc:
+        $ref: '#/definitions/core.MlString'
+      img:
+        type: string
+      name:
+        $ref: '#/definitions/core.MlString'
+    type: object
+  management_order.CreateOrderIn:
+    properties:
+      currency:
+        type: string
+      customerContacts:
+        $ref: '#/definitions/management_order.OrderCustomerContacts'
+      deliveryInfo:
+        $ref: '#/definitions/management_order.OrderDeliveryInfo'
+      orderComment:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/management_order.OrderProduct'
+        type: array
+      quantity:
+        type: integer
+      totalPrice:
+        type: number
+      userId:
+        type: string
+    type: object
+  management_order.Order:
+    properties:
+      createdAt:
+        type: string
+      currency:
+        type: string
+      customerContacts:
+        $ref: '#/definitions/management_order.OrderCustomerContacts'
+      deliveryInfo:
+        $ref: '#/definitions/management_order.OrderDeliveryInfo'
+      id:
+        type: string
+      isDeleted:
+        type: boolean
+      number:
+        type: string
+      orderComment:
+        type: string
+      products:
+        items:
+          $ref: '#/definitions/management_order.OrderProduct'
+        type: array
+      quantity:
+        type: integer
+      status:
+        type: string
+      totalPrice:
+        type: number
+      updatedAt:
+        type: string
+      userId:
+        type: string
+      version:
+        type: integer
+    type: object
+  management_order.OrderCustomerContacts:
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      phone:
+        type: string
+    type: object
+  management_order.OrderDeliveryInfo:
+    properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
+      floor:
+        type: string
+    type: object
+  management_order.OrderProduct:
+    properties:
+      pricePerUnit:
+        type: number
+      productId:
+        type: string
+      productName:
+        $ref: '#/definitions/core.MlString'
+      quantity:
+        type: integer
+      totalPrice:
+        type: number
+    type: object
+  management_order.OrdersData:
+    properties:
+      count:
+        type: integer
+      orders:
+        items:
+          $ref: '#/definitions/management_order.Order'
+        type: array
+    type: object
+  management_order.UpdateOrderStatusIn:
+    properties:
+      status:
+        type: string
+    type: object
+  management_product.AddProductIn:
+    properties:
+      desc:
+        $ref: '#/definitions/core.MlString'
+      img:
+        type: string
+      name:
+        $ref: '#/definitions/core.MlString'
+      price:
+        type: number
+      quantity:
+        type: integer
+      status:
+        type: string
+    type: object
+  management_product.Product:
+    properties:
+      createdAt:
+        type: string
+      desc:
+        $ref: '#/definitions/core.MlString'
+      id:
+        type: string
+      img:
+        type: string
+      isDeleted:
+        type: boolean
+      name:
+        $ref: '#/definitions/core.MlString'
+      price:
+        type: number
+      quantity:
+        type: integer
+      status:
+        type: string
+      updatedAt:
+        type: string
+      version:
+        type: integer
+    type: object
+  management_product.ProductsData:
+    properties:
+      count:
+        type: integer
+      products:
+        items:
+          $ref: '#/definitions/management_product.Product'
+        type: array
+    type: object
+  management_product.UpdateProductIn:
+    properties:
+      desc:
+        $ref: '#/definitions/core.MlString'
+      img:
+        type: string
+      name:
+        $ref: '#/definitions/core.MlString'
+      price:
+        type: number
+      quantity:
+        type: integer
+      status:
+        type: string
+    type: object
+  management_section.CreateSectionIn:
+    properties:
+      img:
+        type: string
+      name:
+        $ref: '#/definitions/core.MlString'
+    type: object
+  management_section.Section:
+    properties:
+      createdAt:
+        type: string
+      id:
+        type: string
+      img:
+        type: string
+      isDeleted:
+        type: boolean
+      name:
+        $ref: '#/definitions/core.MlString'
+      updatedAt:
+        type: string
+      version:
+        type: integer
+    type: object
+  management_section.SectionsData:
+    properties:
+      count:
+        type: integer
+      sections:
+        items:
+          $ref: '#/definitions/management_section.Section'
+        type: array
+    type: object
+  management_section.UpdateSectionIn:
+    properties:
+      img:
+        type: string
+      name:
+        $ref: '#/definitions/core.MlString'
+    type: object
+  management_slide.CreateSlideIn:
+    properties:
+      caption:
+        $ref: '#/definitions/core.MlString'
+      img:
+        type: string
+    type: object
+  management_slide.Slide:
+    properties:
+      caption:
+        $ref: '#/definitions/core.MlString'
+      createdAt:
+        type: string
+      id:
+        type: string
+      img:
+        type: string
+      isDeleted:
+        type: boolean
+      updatedAt:
+        type: string
+      version:
+        type: integer
+    type: object
+  management_slide.SlidesData:
+    properties:
+      count:
+        type: integer
+      slides:
+        items:
+          $ref: '#/definitions/management_slide.Slide'
+        type: array
+    type: object
+  management_slide.UpdateSlideIn:
+    properties:
+      caption:
+        $ref: '#/definitions/core.MlString'
+      img:
+        type: string
+    type: object
+  management_user.AddUserIn:
+    properties:
+      email:
+        type: string
+      firstName:
+        type: string
+      lastName:
+        type: string
+      password:
+        type: string
+      preferredLang:
+        type: string
+      userType:
+        type: string
+    type: object
+  management_user.UpdateUserCredentialsIn:
+    properties:
+      firstName:
+        type: string
+      lastName:
+        type: string
+    type: object
+  management_user.UpdateUserEmailIn:
+    properties:
+      email:
+        type: string
+    type: object
+  management_user.UpdateUserPasswordIn:
+    properties:
+      password:
+        type: string
+    type: object
+  management_user.UpdateUserPreferredLangIn:
+    properties:
+      lang:
+        type: string
+    type: object
+  management_user.User:
+    properties:
+      createdAt:
+        type: string
+      email:
+        type: string
+      firstName:
+        type: string
+      id:
+        type: string
+      isDeleted:
+        type: boolean
+      lastName:
+        type: string
+      preferredLang:
+        type: string
+      updatedAt:
+        type: string
+      userType:
+        type: string
+      version:
+        type: integer
+    type: object
+  management_user.UsersData:
+    properties:
+      count:
+        type: integer
+      users:
+        items:
+          $ref: '#/definitions/management_user.User'
+        type: array
+    type: object
+  response.Error:
+    properties:
+      messages:
+        example:
+        - error message
+        items:
+          type: string
+        type: array
+      success:
+        example: false
+        type: boolean
+      traceId:
+        example: string
+        type: string
+    type: object
+  response.Success:
+    properties:
+      data: {}
+      success:
+        example: true
+        type: boolean
+      traceId:
+        example: string
+        type: string
+    type: object
+host: api.ardogroup.org
+info:
+  contact:
+    name: API Support
+    url: https://nassyrov.t.me
+  description: Detailed info about all endpoints
+  title: Ardo Backend API
+  version: 1.0.0
+paths:
+  /auth/confirm/{link}:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the unauthenticated user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Confirm activation link
+      tags:
+      - Auth
+  /auth/login:
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the unauthenticated user.
+      parameters:
+      - description: User login object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/auth.LoginIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Login
+      tags:
+      - Auth
+  /auth/logout:
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Logout
+      tags:
+      - Auth
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the unauthenticated user.
+      parameters:
+      - description: New user object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/auth.RegisterIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Register
+      tags:
+      - Auth
+  /client/make-order:
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Make order object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/client.MakeOrderIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Make order
+      tags:
+      - Client
+  /management/catalog:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_catalog.CatalogsData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get all catalogs
+      tags:
+      - Management Catalog
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Create catalog
+      tags:
+      - Management Catalog
+  /management/catalog/{catalog_id}:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_catalog.Catalog'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get catalog by id
+      tags:
+      - Management Catalog
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update catalog object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_catalog.UpdateCatalogIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update catalog
+      tags:
+      - Management Catalog
+  /management/categories:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Is deleted
+        in: query
+        name: is_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_category.CategoriesData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get categories by filters
+      tags:
+      - Management Categories
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Create category object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_category.CreateCategoryIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Create category
+      tags:
+      - Management Categories
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update category object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_category.CreateCategoryIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update category
+      tags:
+      - Management Categories
+  /management/categories/{category_id}:
+    delete:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Delete category
+      tags:
+      - Management Categories
+  /management/categories/recover/{category_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Recover deleted category
+      tags:
+      - Management Categories
+  /management/categories{category_id}:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_category.Category'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get category by id
+      tags:
+      - Management Categories
+  /management/orders:
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Create order object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_order.CreateOrderIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Create order
+      tags:
+      - Management Orders
+  /management/orders/{order_id}:
+    delete:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Delete order
+      tags:
+      - Management Orders
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_order.Order'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get order by id
+      tags:
+      - Management Orders
+  /management/orders/recover/{order_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Recover order
+      tags:
+      - Management Orders
+  /management/orders/status/{order_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update order status object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_order.UpdateOrderStatusIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update order status
+      tags:
+      - Management Orders
+  /management/orders/user/{user_id}:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_order.OrdersData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get orders by user id
+      tags:
+      - Management Orders
+  /management/products:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Is deleted
+        in: query
+        name: is_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_product.ProductsData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get products by filters
+      tags:
+      - Management Products
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: New product object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_product.AddProductIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Add product
+      tags:
+      - Management Products
+  /management/products/{product_id}:
+    delete:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Delete product
+      tags:
+      - Management Products
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_product.Product'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get product by id
+      tags:
+      - Management Products
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update product object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_product.UpdateProductIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update product
+      tags:
+      - Management Products
+  /management/products/recover/{product_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Recover product
+      tags:
+      - Management Products
+  /management/publish-time/{catalog_id}:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_catalog.TimeOfPublish'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get time of last publish
+      tags:
+      - Management Catalog
+  /management/publish/{catalog_id}:
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Publish catalog
+      tags:
+      - Management Catalog
+  /management/sections:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Is deleted
+        in: query
+        name: is_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_section.SectionsData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get sections by filters
+      tags:
+      - Management Sections
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Create section object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_section.CreateSectionIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Create section
+      tags:
+      - Management Sections
+  /management/sections/{section_id}:
+    delete:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Delete section
+      tags:
+      - Management Sections
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_section.Section'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get section by id
+      tags:
+      - Management Sections
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update section object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_section.UpdateSectionIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update section
+      tags:
+      - Management Sections
+  /management/sections/recover/{section_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Recover section
+      tags:
+      - Management Sections
+  /management/slides:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Is deleted
+        in: query
+        name: is_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_slide.SlidesData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get slides by filters
+      tags:
+      - Management Slides
+  /management/slides/{slide_id}:
+    delete:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Delete slide
+      tags:
+      - Management Slides
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_slide.Slide'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get slide by id
+      tags:
+      - Management Slides
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Create slide object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_slide.CreateSlideIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Create slide
+      tags:
+      - Management Slides
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update slide object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_slide.UpdateSlideIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update slide
+      tags:
+      - Management Slides
+  /management/slides/recover/{slide_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Recover slide
+      tags:
+      - Management Slides
+  /management/users:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Is deleted
+        in: query
+        name: is_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_user.UsersData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get users by filters
+      tags:
+      - Management Users
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Add user object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.AddUserIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Add user
+      tags:
+      - Management Users
+  /management/users/{user_id}:
+    delete:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Delete user
+      tags:
+      - Management Users
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_user.User'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get user by id
+      tags:
+      - Management Users
+  /management/users/credentials/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user credentials object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserCredentialsIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user credentials
+      tags:
+      - Management Users
+  /management/users/email/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user email object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserEmailIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user email
+      tags:
+      - Management Users
+  /management/users/password/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user password object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserPasswordIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user preferred lang
+      tags:
+      - Management Users
+  /management/users/preferred-lang/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user preferred lang object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserPreferredLangIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user preferred lang
+      tags:
+      - Management Users
+  /management/users/recover/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Recover user
+      tags:
+      - Management Users
+  /me:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/current_user.User'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get current user
+      tags:
+      - Current User
+  /me/credentials:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Make order object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/current_user.UpdateCurrentUserCredentialsIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update current user credentials
+      tags:
+      - Current User
+  /me/email:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update current user email object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/current_user.UpdateCurrentUserEmailIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update current user email
+      tags:
+      - Current User
+  /me/password:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update current user password object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/current_user.UpdateCurrentUserPasswordIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update current user password
+      tags:
+      - Current User
+  /me/preferred-lang:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update current user preferred language object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/current_user.UpdateCurrentLanguageIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update current user preferred language
+      tags:
+      - Current User
+schemes:
+- https
+securityDefinitions:
+  ApiKeyAuth:
+    in: header
+    name: Cookie
+    type: apiKey
+swagger: "2.0"

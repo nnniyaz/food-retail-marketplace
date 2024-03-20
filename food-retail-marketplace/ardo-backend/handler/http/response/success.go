@@ -7,7 +7,7 @@ import (
 )
 
 type Success struct {
-	TraceId string      `json:"traceId" example:"1234567890"`
+	TraceId string      `json:"traceId" example:"string"`
 	Success bool        `json:"success" example:"true"`
 	Data    interface{} `json:"data,omitempty"`
 }

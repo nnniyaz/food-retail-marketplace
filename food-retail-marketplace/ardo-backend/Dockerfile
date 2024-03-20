@@ -15,8 +15,6 @@ FROM alpine
 
 # Essentials
 RUN apk add -U tzdata
-ENV TZ=Asia/Almaty
-RUN cp /usr/share/zoneinfo/Asia/Almaty /etc/localtime
 
 COPY --from=builder ardo-backend .
 

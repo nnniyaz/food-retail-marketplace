@@ -62,6 +62,19 @@ func NewCategories(categories []*category.Category, count int64) *CategoriesData
 	return &CategoriesData{Categories: cs, Count: count}
 }
 
+// GetCategoriesByFilters godoc
+//
+//	@Summary		Get categories by filters
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			is_deleted	query		bool	false	"Is deleted"
+//	@Success		200			{object}	response.Success{data=CategoriesData}
+//	@Failure		default		{object}	response.Error
+//	@Router			/management/categories [get]
 func (hd *HttpDelivery) GetCategoriesByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -74,6 +87,16 @@ func (hd *HttpDelivery) GetCategoriesByFilters(w http.ResponseWriter, r *http.Re
 	response.NewSuccess(hd.logger, w, r, NewCategories(categories, count))
 }
 
+// GetCategoryById godoc
+//
+//	@Summary		Get category by id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Categories
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=Category}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/categories{category_id} [get]
 func (hd *HttpDelivery) GetCategoryById(w http.ResponseWriter, r *http.Request) {
 	categoryId := chi.URLParam(r, "category_id")
 	c, err := hd.service.GetCategoryById(r.Context(), categoryId)
@@ -94,6 +117,17 @@ type CreateCategoryIn struct {
 	Img  string        `json:"img"`
 }
 
+// CreateCategory godoc
+//
+//	@Summary		Create category
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		CreateCategoryIn	true	"Create category object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/categories [post]
 func (hd *HttpDelivery) CreateCategory(w http.ResponseWriter, r *http.Request) {
 	in := CreateCategoryIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -113,6 +147,17 @@ type UpdateCategoryIn struct {
 	Img  string        `json:"img"`
 }
 
+// UpdateCategory godoc
+//
+//	@Summary		Update category
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Categories
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		CreateCategoryIn	true	"Update category object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/categories [put]
 func (hd *HttpDelivery) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	categoryId := chi.URLParam(r, "category_id")
 	in := UpdateCategoryIn{}
@@ -127,6 +172,16 @@ func (hd *HttpDelivery) UpdateCategory(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// RecoverCategory godoc
+//
+//	@Summary		Recover deleted category
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Categories
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/categories/recover/{category_id} [put]
 func (hd *HttpDelivery) RecoverCategory(w http.ResponseWriter, r *http.Request) {
 	categoryId := chi.URLParam(r, "category_id")
 	if err := hd.service.RecoverCategory(r.Context(), categoryId); err != nil {
@@ -136,6 +191,16 @@ func (hd *HttpDelivery) RecoverCategory(w http.ResponseWriter, r *http.Request) 
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// DeleteCategory godoc
+//
+//	@Summary		Delete category
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Categories
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/categories/{category_id} [delete]
 func (hd *HttpDelivery) DeleteCategory(w http.ResponseWriter, r *http.Request) {
 	categoryId := chi.URLParam(r, "category_id")
 	if err := hd.service.DeleteCategory(r.Context(), categoryId); err != nil {

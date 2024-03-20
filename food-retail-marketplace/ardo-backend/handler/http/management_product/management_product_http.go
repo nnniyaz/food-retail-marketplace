@@ -67,6 +67,19 @@ func NewProducts(products []*product.Product, count int64) ProductsData {
 	return ProductsData{Products: ps, Count: count}
 }
 
+// GetProductsByFilters godoc
+//
+//	@Summary		Get products by filters
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Products
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			is_deleted	query		bool	false	"Is deleted"
+//	@Success		200			{object}	response.Success{data=ProductsData}
+//	@Failure		default		{object}	response.Error
+//	@Router			/management/products [get]
 func (hd *HttpDelivery) GetProductsByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -79,6 +92,16 @@ func (hd *HttpDelivery) GetProductsByFilters(w http.ResponseWriter, r *http.Requ
 	response.NewSuccess(hd.logger, w, r, NewProducts(products, count))
 }
 
+// GetProductById godoc
+//
+//	@Summary		Get product by id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Products
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=Product}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/products/{product_id} [get]
 func (hd *HttpDelivery) GetProductById(w http.ResponseWriter, r *http.Request) {
 	productId := chi.URLParam(r, "product_id")
 	p, err := hd.service.GetProductById(r.Context(), productId)
@@ -102,6 +125,17 @@ type AddProductIn struct {
 	Status   string        `json:"status"`
 }
 
+// AddProduct godoc
+//
+//	@Summary		Add product
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Products
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		AddProductIn	true	"New product object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/products [post]
 func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
 	in := AddProductIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -124,6 +158,17 @@ type UpdateProductIn struct {
 	Status   string        `json:"status"`
 }
 
+// UpdateProduct godoc
+//
+//	@Summary		Update product
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Products
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateProductIn	true	"Update product object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/products/{product_id} [put]
 func (hd *HttpDelivery) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	productId := chi.URLParam(r, "product_id")
 	in := UpdateProductIn{}
@@ -138,6 +183,16 @@ func (hd *HttpDelivery) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// RecoverProduct godoc
+//
+//	@Summary		Recover product
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Products
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/products/recover/{product_id} [put]
 func (hd *HttpDelivery) RecoverProduct(w http.ResponseWriter, r *http.Request) {
 	productId := chi.URLParam(r, "product_id")
 	if err := hd.service.RecoverProduct(r.Context(), productId); err != nil {
@@ -147,6 +202,16 @@ func (hd *HttpDelivery) RecoverProduct(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// DeleteProduct godoc
+//
+//	@Summary		Delete product
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Products
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/products/{product_id} [delete]
 func (hd *HttpDelivery) DeleteProduct(w http.ResponseWriter, r *http.Request) {
 	productId := chi.URLParam(r, "product_id")
 	if err := hd.service.DeleteProduct(r.Context(), productId); err != nil {

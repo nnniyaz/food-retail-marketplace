@@ -29,6 +29,17 @@ type LoginIn struct {
 	Password string `json:"password"`
 }
 
+// Login godoc
+//
+//	@Summary		Login
+//	@Description	This can only be done by the unauthenticated user.
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		LoginIn	true	"User login object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/auth/login [post]
 func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	requestInfo := r.Context().Value("requestInfo").(web.RequestInfo)
 
@@ -55,6 +66,16 @@ func (hd *HttpDelivery) Login(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// Logout godoc
+//
+//	@Summary		Logout
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/auth/logout [post]
 func (hd *HttpDelivery) Logout(w http.ResponseWriter, r *http.Request) {
 	cookie, err := r.Cookie("ardo-app-session")
 	if err != nil {
@@ -77,6 +98,17 @@ type RegisterIn struct {
 	PreferredLang string `json:"preferredLang"`
 }
 
+// Register godoc
+//
+//	@Summary		Register
+//	@Description	This can only be done by the unauthenticated user.
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		RegisterIn	true	"New user object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/auth/register [post]
 func (hd *HttpDelivery) Register(w http.ResponseWriter, r *http.Request) {
 	in := RegisterIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -92,6 +124,16 @@ func (hd *HttpDelivery) Register(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// Confirm godoc
+//
+//	@Summary		Confirm activation link
+//	@Description	This can only be done by the unauthenticated user.
+//	@Tags			Auth
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/auth/confirm/{link} [get]
 func (hd *HttpDelivery) Confirm(w http.ResponseWriter, r *http.Request) {
 	link := chi.URLParam(r, "link")
 	err := hd.service.Confirm(r.Context(), link)

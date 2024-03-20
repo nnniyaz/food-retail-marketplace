@@ -65,6 +65,19 @@ func NewUsers(users []*user.User, count int64) UsersData {
 	return UsersData{Users: us, Count: count}
 }
 
+// GetUsersByFilters godoc
+//
+//	@Summary		Get users by filters
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			is_deleted	query		bool	false	"Is deleted"
+//	@Success		200			{object}	response.Success{data=UsersData}
+//	@Failure		default		{object}	response.Error
+//	@Router			/management/users [get]
 func (hd *HttpDelivery) GetUsersByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -77,6 +90,16 @@ func (hd *HttpDelivery) GetUsersByFilters(w http.ResponseWriter, r *http.Request
 	response.NewSuccess(hd.logger, w, r, NewUsers(users, count))
 }
 
+// GetUserById godoc
+//
+//	@Summary		Get user by id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=User}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/{user_id} [get]
 func (hd *HttpDelivery) GetUserById(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	u, err := hd.service.GetUserById(r.Context(), userId)
@@ -100,6 +123,17 @@ type AddUserIn struct {
 	PreferredLang string `json:"preferredLang"`
 }
 
+// AddUser godoc
+//
+//	@Summary		Add user
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		AddUserIn	true	"Add user object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users [post]
 func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 	in := AddUserIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -118,6 +152,17 @@ type UpdateUserCredentialsIn struct {
 	LastName  string `json:"lastName"`
 }
 
+// UpdateUserCredentials godoc
+//
+//	@Summary		Update user credentials
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateUserCredentialsIn	true	"Update user credentials object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/credentials/{user_id} [put]
 func (hd *HttpDelivery) UpdateUserCredentials(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	in := UpdateUserCredentialsIn{}
@@ -136,6 +181,17 @@ type UpdateUserEmailIn struct {
 	Email string `json:"email"`
 }
 
+// UpdateUserEmail godoc
+//
+//	@Summary		Update user email
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateUserEmailIn	true	"Update user email object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/email/{user_id} [put]
 func (hd *HttpDelivery) UpdateUserEmail(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	in := UpdateUserEmailIn{}
@@ -154,6 +210,17 @@ type UpdateUserPreferredLangIn struct {
 	Lang string `json:"lang"`
 }
 
+// UpdateUserPreferredLang godoc
+//
+//	@Summary		Update user preferred lang
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateUserPreferredLangIn	true	"Update user preferred lang object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/preferred-lang/{user_id} [put]
 func (hd *HttpDelivery) UpdateUserPreferredLang(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	in := UpdateUserPreferredLangIn{}
@@ -172,6 +239,17 @@ type UpdateUserPasswordIn struct {
 	Password string `json:"password"`
 }
 
+// UpdateUserPassword godoc
+//
+//	@Summary		Update user preferred lang
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateUserPasswordIn	true	"Update user password object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/password/{user_id} [put]
 func (hd *HttpDelivery) UpdateUserPassword(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	in := UpdateUserPasswordIn{}
@@ -186,6 +264,16 @@ func (hd *HttpDelivery) UpdateUserPassword(w http.ResponseWriter, r *http.Reques
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// RecoverUser godoc
+//
+//	@Summary		Recover user
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/recover/{user_id} [put]
 func (hd *HttpDelivery) RecoverUser(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	if err := hd.service.RecoverUser(r.Context(), userId); err != nil {
@@ -195,6 +283,16 @@ func (hd *HttpDelivery) RecoverUser(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// DeleteUser godoc
+//
+//	@Summary		Delete user
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/{user_id} [delete]
 func (hd *HttpDelivery) DeleteUser(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	if err := hd.service.DeleteUser(r.Context(), userId); err != nil {

@@ -60,6 +60,19 @@ func NewSlides(slides []*slide.Slide, count int64) *SlidesData {
 	return &SlidesData{Slides: ss, Count: count}
 }
 
+// GetSlidesByFilters godoc
+//
+//	@Summary		Get slides by filters
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Slides
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			is_deleted	query		bool	false	"Is deleted"
+//	@Success		200			{object}	response.Success{data=SlidesData}
+//	@Failure		default		{object}	response.Error
+//	@Router			/management/slides [get]
 func (hd *HttpDelivery) GetSlidesByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -72,6 +85,16 @@ func (hd *HttpDelivery) GetSlidesByFilters(w http.ResponseWriter, r *http.Reques
 	response.NewSuccess(hd.logger, w, r, NewSlides(slides, count))
 }
 
+// GetSlideById godoc
+//
+//	@Summary		Get slide by id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Slides
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=Slide}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/slides/{slide_id} [get]
 func (hd *HttpDelivery) GetSlideById(w http.ResponseWriter, r *http.Request) {
 	slideId := chi.URLParam(r, "slide_id")
 	s, err := hd.service.GetSlideById(r.Context(), slideId)
@@ -91,6 +114,17 @@ type CreateSlideIn struct {
 	Img     string        `json:"img"`
 }
 
+// CreateSlide godoc
+//
+//	@Summary		Create slide
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Slides
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		CreateSlideIn	true	"Create slide object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/slides/{slide_id} [post]
 func (hd *HttpDelivery) CreateSlide(w http.ResponseWriter, r *http.Request) {
 	var in CreateSlideIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -109,6 +143,17 @@ type UpdateSlideIn struct {
 	Img     string        `json:"img"`
 }
 
+// UpdateSlide godoc
+//
+//	@Summary		Update slide
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Slides
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateSlideIn	true	"Update slide object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/slides/{slide_id} [put]
 func (hd *HttpDelivery) UpdateSlide(w http.ResponseWriter, r *http.Request) {
 	slideId := chi.URLParam(r, "slide_id")
 	var in UpdateSlideIn
@@ -123,6 +168,16 @@ func (hd *HttpDelivery) UpdateSlide(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// RecoverSlide godoc
+//
+//	@Summary		Recover slide
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Slides
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/slides/recover/{slide_id} [put]
 func (hd *HttpDelivery) RecoverSlide(w http.ResponseWriter, r *http.Request) {
 	slideId := chi.URLParam(r, "slide_id")
 	if err := hd.service.RecoverSlide(r.Context(), slideId); err != nil {
@@ -132,6 +187,16 @@ func (hd *HttpDelivery) RecoverSlide(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// DeleteSlide godoc
+//
+//	@Summary		Delete slide
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Slides
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/slides/{slide_id} [delete]
 func (hd *HttpDelivery) DeleteSlide(w http.ResponseWriter, r *http.Request) {
 	slideId := chi.URLParam(r, "slide_id")
 	if err := hd.service.DeleteSlide(r.Context(), slideId); err != nil {

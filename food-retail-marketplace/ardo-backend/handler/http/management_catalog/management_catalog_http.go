@@ -87,19 +87,29 @@ func NewCatalog(catalog *catalog.Catalog) *Catalog {
 	}
 }
 
-type Catalogs struct {
+type CatalogsData struct {
 	Catalogs []*Catalog `json:"catalogs"`
 	Count    int64      `json:"count"`
 }
 
-func NewCatalogs(catalogs []*catalog.Catalog, count int64) *Catalogs {
+func NewCatalogs(catalogs []*catalog.Catalog, count int64) *CatalogsData {
 	var result []*Catalog
 	for _, c := range catalogs {
 		result = append(result, NewCatalog(c))
 	}
-	return &Catalogs{Catalogs: result, Count: count}
+	return &CatalogsData{Catalogs: result, Count: count}
 }
 
+// GetAllCatalogs godoc
+//
+//	@Summary		Get all catalogs
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Catalog
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=CatalogsData}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/catalog [get]
 func (hd *HttpDelivery) GetAllCatalogs(w http.ResponseWriter, r *http.Request) {
 	foundCatalogs, count, err := hd.service.GetAllCatalogs(r.Context())
 	if err != nil {
@@ -109,6 +119,16 @@ func (hd *HttpDelivery) GetAllCatalogs(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, NewCatalogs(foundCatalogs, count))
 }
 
+// GetCatalogById godoc
+//
+//	@Summary		Get catalog by id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Catalog
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=Catalog}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/catalog/{catalog_id} [get]
 func (hd *HttpDelivery) GetCatalogById(w http.ResponseWriter, r *http.Request) {
 	catalogId := chi.URLParam(r, "catalog_id")
 	foundCatalog, err := hd.service.GetCatalogById(r.Context(), catalogId)
@@ -123,6 +143,16 @@ func (hd *HttpDelivery) GetCatalogById(w http.ResponseWriter, r *http.Request) {
 // Commands
 // -----------------------------------------------------------------------------
 
+// CreateCatalog godoc
+//
+//	@Summary		Create catalog
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Catalog
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/catalog [post]
 func (hd *HttpDelivery) CreateCatalog(w http.ResponseWriter, r *http.Request) {
 	if err := hd.service.CreateCatalog(r.Context()); err != nil {
 		response.NewError(hd.logger, w, r, err)
@@ -188,6 +218,17 @@ func UnmarshalStructure(structure []Section) ([]valueObject.CatalogsSection, err
 	return sections, nil
 }
 
+// UpdateCatalog godoc
+//
+//	@Summary		Update catalog
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Catalog
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateCatalogIn	true	"Update catalog object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/catalog/{catalog_id} [put]
 func (hd *HttpDelivery) UpdateCatalog(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCatalogIn
 	catalogId := chi.URLParam(r, "catalog_id")
@@ -212,6 +253,16 @@ func (hd *HttpDelivery) UpdateCatalog(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// PublishCatalog godoc
+//
+//	@Summary		Publish catalog
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Catalog
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/publish/{catalog_id} [post]
 func (hd *HttpDelivery) PublishCatalog(w http.ResponseWriter, r *http.Request) {
 	catalogId := chi.URLParam(r, "catalog_id")
 	if err := hd.service.PublishCatalog(r.Context(), catalogId); err != nil {
@@ -229,6 +280,16 @@ func NewTimeOfPublish(foundTime time.Time) *TimeOfPublish {
 	return &TimeOfPublish{PublishedAt: foundTime.String()}
 }
 
+// GetTimeOfPublish godoc
+//
+//	@Summary		Get time of last publish
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Catalog
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=TimeOfPublish}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/publish-time/{catalog_id} [get]
 func (hd *HttpDelivery) GetTimeOfPublish(w http.ResponseWriter, r *http.Request) {
 	catalogId := chi.URLParam(r, "catalog_id")
 	foundTime, err := hd.service.GetTimeOfPublish(r.Context(), catalogId)

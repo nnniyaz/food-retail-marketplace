@@ -13,7 +13,7 @@ var (
 )
 
 type Error struct {
-	TraceId  string   `json:"traceId" example:"1234567890"`
+	TraceId  string   `json:"traceId" example:"string"`
 	Success  bool     `json:"success" example:"false"`
 	Messages []string `json:"messages" example:"error message"`
 }

@@ -60,6 +60,19 @@ func NewSections(sections []*section.Section, count int64) *SectionsData {
 	return &SectionsData{Sections: ss, Count: count}
 }
 
+// GetSectionsByFilters godoc
+//
+//	@Summary		Get sections by filters
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Sections
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			is_deleted	query		bool	false	"Is deleted"
+//	@Success		200			{object}	response.Success{data=SectionsData}
+//	@Failure		default		{object}	response.Error
+//	@Router			/management/sections [get]
 func (hd *HttpDelivery) GetSectionsByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -72,6 +85,16 @@ func (hd *HttpDelivery) GetSectionsByFilters(w http.ResponseWriter, r *http.Requ
 	response.NewSuccess(hd.logger, w, r, NewSections(sections, count))
 }
 
+// GetSectionById godoc
+//
+//	@Summary		Get section by id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Sections
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=Section}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/sections/{section_id} [get]
 func (hd *HttpDelivery) GetSectionById(w http.ResponseWriter, r *http.Request) {
 	sectionId := chi.URLParam(r, "section_id")
 	s, err := hd.service.GetSectionById(r.Context(), sectionId)
@@ -91,6 +114,17 @@ type CreateSectionIn struct {
 	Img  string        `json:"img"`
 }
 
+// CreateSection godoc
+//
+//	@Summary		Create section
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Sections
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		CreateSectionIn	true	"Create section object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/sections [post]
 func (hd *HttpDelivery) CreateSection(w http.ResponseWriter, r *http.Request) {
 	var in CreateSectionIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -109,6 +143,17 @@ type UpdateSectionIn struct {
 	Img  string        `json:"img"`
 }
 
+// UpdateSection godoc
+//
+//	@Summary		Update section
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Sections
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateSectionIn	true	"Update section object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/sections/{section_id} [put]
 func (hd *HttpDelivery) UpdateSection(w http.ResponseWriter, r *http.Request) {
 	sectionId := chi.URLParam(r, "section_id")
 	var in UpdateSectionIn
@@ -123,6 +168,16 @@ func (hd *HttpDelivery) UpdateSection(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// RecoverSection godoc
+//
+//	@Summary		Recover section
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Sections
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/sections/recover/{section_id} [put]
 func (hd *HttpDelivery) RecoverSection(w http.ResponseWriter, r *http.Request) {
 	sectionId := chi.URLParam(r, "section_id")
 	if err := hd.service.RecoverSection(r.Context(), sectionId); err != nil {
@@ -132,6 +187,16 @@ func (hd *HttpDelivery) RecoverSection(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// DeleteSection godoc
+//
+//	@Summary		Delete section
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Sections
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/sections/{section_id} [delete]
 func (hd *HttpDelivery) DeleteSection(w http.ResponseWriter, r *http.Request) {
 	sectionId := chi.URLParam(r, "section_id")
 	if err := hd.service.DeleteSection(r.Context(), sectionId); err != nil {

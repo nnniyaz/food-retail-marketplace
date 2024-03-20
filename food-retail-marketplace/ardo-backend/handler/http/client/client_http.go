@@ -71,6 +71,17 @@ type MakeOrderIn struct {
 	OrderComment     string                `json:"orderComment"`
 }
 
+// MakeOrder godoc
+//
+//	@Summary		Make order
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Client
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		MakeOrderIn	true	"Make order object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/client/make-order [post]
 func (hd *HttpDelivery) MakeOrder(w http.ResponseWriter, r *http.Request) {
 	var in MakeOrderIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {

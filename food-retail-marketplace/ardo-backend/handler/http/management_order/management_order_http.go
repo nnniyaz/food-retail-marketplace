@@ -148,6 +148,19 @@ func NewOrders(orders []*order.Order, count int64) OrdersData {
 	return OrdersData{Orders: ord, Count: count}
 }
 
+// GetOrdersByFilters godoc
+//
+//	@Summary		Get orders by filters
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			is_deleted	query		bool	false	"Is deleted"
+//	@Success		200			{object}	response.Success{data=OrdersData}
+//	@Failure		default		{object}	response.Error
+//	@Router			/management/orders/{order_id} [get]
 func (hd *HttpDelivery) GetOrdersByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -160,6 +173,16 @@ func (hd *HttpDelivery) GetOrdersByFilters(w http.ResponseWriter, r *http.Reques
 	response.NewSuccess(hd.logger, w, r, NewOrders(orders, count))
 }
 
+// GetByUserId godoc
+//
+//	@Summary		Get orders by user id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=OrdersData}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/orders/user/{user_id} [get]
 func (hd *HttpDelivery) GetByUserId(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
@@ -173,6 +196,16 @@ func (hd *HttpDelivery) GetByUserId(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, NewOrders(orders, count))
 }
 
+// GetOneById godoc
+//
+//	@Summary		Get order by id
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=Order}
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/orders/{order_id} [get]
 func (hd *HttpDelivery) GetOneById(w http.ResponseWriter, r *http.Request) {
 	orderId := chi.URLParam(r, "order_id")
 	o, err := hd.service.GetOneById(r.Context(), orderId)
@@ -198,6 +231,17 @@ type CreateOrderIn struct {
 	OrderComment     string                `json:"orderComment"`
 }
 
+// CreateOrder godoc
+//
+//	@Summary		Create order
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		CreateOrderIn	true	"Create order object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/orders [post]
 func (hd *HttpDelivery) CreateOrder(w http.ResponseWriter, r *http.Request) {
 	in := CreateOrderIn{}
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -215,6 +259,17 @@ type UpdateOrderStatusIn struct {
 	Status string `json:"status"`
 }
 
+// UpdateOrderStatus godoc
+//
+//	@Summary		Update order status
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateOrderStatusIn	true	"Update order status object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/orders/status/{order_id} [put]
 func (hd *HttpDelivery) UpdateOrderStatus(w http.ResponseWriter, r *http.Request) {
 	orderId := chi.URLParam(r, "order_id")
 	in := UpdateOrderStatusIn{}
@@ -229,6 +284,16 @@ func (hd *HttpDelivery) UpdateOrderStatus(w http.ResponseWriter, r *http.Request
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// RecoverOrder godoc
+//
+//	@Summary		Recover order
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/orders/recover/{order_id} [put]
 func (hd *HttpDelivery) RecoverOrder(w http.ResponseWriter, r *http.Request) {
 	orderId := chi.URLParam(r, "order_id")
 	if err := hd.service.Recover(r.Context(), orderId); err != nil {
@@ -238,6 +303,16 @@ func (hd *HttpDelivery) RecoverOrder(w http.ResponseWriter, r *http.Request) {
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+// DeleteOrder godoc
+//
+//	@Summary		Delete order
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/orders/{order_id} [delete]
 func (hd *HttpDelivery) DeleteOrder(w http.ResponseWriter, r *http.Request) {
 	orderId := chi.URLParam(r, "order_id")
 	if err := hd.service.Delete(r.Context(), orderId); err != nil {

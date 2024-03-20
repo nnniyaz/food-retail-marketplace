@@ -47,6 +47,16 @@ func newUser(u *user.User) User {
 	}
 }
 
+// GetCurrentUser godoc
+//
+//	@Summary		Get current user
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Current User
+//	@Accept			json
+//	@Produce		json
+//	@Success		200		{object}	response.Success{data=User}
+//	@Failure		default	{object}	response.Error
+//	@Router			/me [get]
 func (hd *HttpDelivery) GetCurrentUser(w http.ResponseWriter, r *http.Request) {
 	u := r.Context().Value("user").(user.User)
 	response.NewSuccess(hd.logger, w, r, newUser(&u))
@@ -61,6 +71,17 @@ type UpdateCurrentUserCredentialsIn struct {
 	LastName  string `json:"lastName"`
 }
 
+// UpdateCurrentUserCredentials godoc
+//
+//	@Summary		Update current user credentials
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Current User
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateCurrentUserCredentialsIn	true	"Make order object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/me/credentials [put]
 func (hd *HttpDelivery) UpdateCurrentUserCredentials(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCurrentUserCredentialsIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -80,6 +101,17 @@ type UpdateCurrentUserEmailIn struct {
 	Email string `json:"email"`
 }
 
+// UpdateCurrentUserEmail godoc
+//
+//	@Summary		Update current user email
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Current User
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateCurrentUserEmailIn	true	"Update current user email object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/me/email [put]
 func (hd *HttpDelivery) UpdateCurrentUserEmail(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCurrentUserEmailIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -99,6 +131,17 @@ type UpdateCurrentLanguageIn struct {
 	Lang string `json:"lang"`
 }
 
+// UpdateCurrentUserPreferredLang godoc
+//
+//	@Summary		Update current user preferred language
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Current User
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateCurrentLanguageIn	true	"Update current user preferred language object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/me/preferred-lang [put]
 func (hd *HttpDelivery) UpdateCurrentUserPreferredLang(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCurrentLanguageIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -119,6 +162,17 @@ type UpdateCurrentUserPasswordIn struct {
 	NewPassword string `json:"newPassword"`
 }
 
+// UpdateCurrentUserPassword godoc
+//
+//	@Summary		Update current user password
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Current User
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateCurrentUserPasswordIn	true	"Update current user password object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/me/password [put]
 func (hd *HttpDelivery) UpdateCurrentUserPassword(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCurrentUserPasswordIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
