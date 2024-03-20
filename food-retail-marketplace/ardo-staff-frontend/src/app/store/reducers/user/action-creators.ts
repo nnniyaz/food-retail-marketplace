@@ -79,7 +79,6 @@ export const UserActionCreators = {
             if (res.data.success) {
 
             } else {
-                dispatch(UserActionCreators.setAuth(false));
                 FailedResponseHandler({
                     messages: res.data?.messages,
                     httpStatus: res.status,
@@ -109,7 +108,6 @@ export const UserActionCreators = {
             if (res.data.success) {
 
             } else {
-                dispatch(UserActionCreators.setAuth(false));
                 FailedResponseHandler({
                     messages: res.data?.messages,
                     httpStatus: res.status,
@@ -138,7 +136,6 @@ export const UserActionCreators = {
             if (res.data.success) {
 
             } else {
-                dispatch(UserActionCreators.setAuth(false));
                 FailedResponseHandler({
                     messages: res.data?.messages,
                     httpStatus: res.status,
@@ -167,7 +164,6 @@ export const UserActionCreators = {
             if (res.data.success) {
 
             } else {
-                dispatch(UserActionCreators.setAuth(false));
                 FailedResponseHandler({
                     messages: res.data?.messages,
                     httpStatus: res.status,
