@@ -12,6 +12,7 @@ import {List} from "@pages/List";
 import {Settings} from "@pages/Profile/pages/Settings";
 import {Orders} from "@pages/Profile/pages/Orders";
 import {Address} from "@pages/Profile/pages/Address";
+import {Checkout} from "@pages/Checkout";
 
 interface IRoute {
     path: string;
@@ -33,13 +34,17 @@ export enum RouteNames {
     ADDRESS = "/profile/address",
 }
 
-const routes: IRoute[] = [
+const publicRoutes: IRoute[] = [
     {path: RouteNames.HOME, component: Home},
     {path: RouteNames.CATALOG, component: Catalog},
     {path: RouteNames.LIST, component: List},
     {path: RouteNames.CART, component: Cart},
     {path: RouteNames.FAVOURITES, component: Favourites},
     {path: RouteNames.PROFILE, component: Profile},
+];
+
+const privateRoutes: IRoute[] = [
+    {path: RouteNames.CHECKOUT, component: Checkout},
     {path: RouteNames.SETTINGS, component: Settings},
     {path: RouteNames.ORDERS, component: Orders},
     {path: RouteNames.ADDRESS, component: Address},
@@ -65,8 +70,14 @@ export const Routing = ({}: RoutingProps) => {
     return (
         <Routes>
             <Route element={<Layout/>}>
-                {routes.map(route =>
-                    <Route path={route.path} element={<route.component/>} key={route.path}/>
+                {isAuth ? (
+                    [...publicRoutes, ...privateRoutes].map(route =>
+                        <Route path={route.path} element={<route.component/>} key={route.path}/>
+                    )
+                ) : (
+                    publicRoutes.map(route =>
+                        <Route path={route.path} element={<route.component/>} key={route.path}/>
+                    )
                 )}
                 <Route path={'*'} element={<Navigate to={RouteNames.HOME}/>}/>
             </Route>

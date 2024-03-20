@@ -3,6 +3,7 @@ import {Link} from "react-router-dom";
 import * as AntdIcons from "@ant-design/icons";
 import ArrorSVG from "@assets/icons/caret-right.svg?react";
 import {RouteNames} from "@pages/index.tsx";
+import {translate} from "@pkg/translate/translate.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {txts} from "../../../../../server/pkg/core/txts.ts";
 import classes from "./Account.module.scss";
@@ -13,9 +14,9 @@ export const Account = () => {
     const {currentLang} = useTypedSelector(state => state.systemState);
     const {user} = useTypedSelector(state => state.userState);
     const profileRoutes = [
-        {name: txts.delivery_addresses[currentLang], path: RouteNames.ADDRESS},
-        {name: txts.order_history[currentLang], path: RouteNames.ORDERS},
-        {name: txts.favourite_products[currentLang], path: RouteNames.FAVOURITES},
+        {name: translate("delivery_addresses"), path: RouteNames.ADDRESS},
+        {name: translate("order_history"), path: RouteNames.ORDERS},
+        {name: translate("favourite_products"), path: RouteNames.FAVOURITES},
     ];
 
     if (!user) {
@@ -33,14 +34,14 @@ export const Account = () => {
                             {`${user.firstName} ${user.lastName}`}
                         </h1>
                         <Link className={classes.account__info__link} to={RouteNames.SETTINGS}>
-                            {txts.edit[currentLang]}
+                            {translate("edit")}
                             <EditOutlined />
                         </Link>
                     </div>
                 </section>
                 <ul className={classes.account__menu__bar}>
                     {profileRoutes.map(route => (
-                        <li>
+                        <li key={route.path}>
                             <Link className={classes.account__menu__bar__item} to={route.path}>
                                 {route.name}
                                 <ArrorSVG/>

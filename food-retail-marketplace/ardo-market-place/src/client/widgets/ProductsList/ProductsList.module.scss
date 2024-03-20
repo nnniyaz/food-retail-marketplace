@@ -134,20 +134,22 @@
             cursor: pointer;
             transition: .1s linear;
 
-            &:hover {
-              background-color: var(--link-color);
+            @media (hover: hover) {
+              &:hover {
+                background-color: var(--link-color);
 
-              .product__add__text {
-                color: var(--accent-font-color);
+                .product__add__text {
+                  color: var(--accent-font-color);
+                }
+
+                .product__add__icon {
+                  color: var(--accent-font-color);
+                }
               }
 
-              .product__add__icon {
-                color: var(--accent-font-color);
+              &:active, &:focus {
+                outline: none;
               }
-            }
-
-            &:active, &:focus {
-              outline: none;
             }
 
             .product__add__text {
@@ -167,6 +169,17 @@
               height: 24px;
               color: var(--primary-font-color);
               animation: appear .1s ease-in-out;
+              transition: .1s linear;
+
+              @media (hover: hover) {
+                &:hover {
+                  transform: scale(1.15);
+                }
+
+                &:active, &:focus {
+                  transform: scale(1);
+                }
+              }
 
               @keyframes appear {
                 0% {

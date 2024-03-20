@@ -1,4 +1,4 @@
-import {CSSProperties, FunctionComponent} from "react";
+import {CSSProperties} from "react";
 import * as ReactNotificationsImport from "react-notifications-component";
 const {Store} = ReactNotificationsImport;
 import SuccessIcon from "./success.svg?react";
@@ -21,7 +21,7 @@ const notificationConfig = {
     container: "top-center" as NotificationContainer,
     animationIn: ["animate__animated", "animate__fadeIn"],
     animationOut: ["animate__animated", "animate__fadeOut"],
-    dismiss: {duration: 300000, waitForAnimation: true},
+    dismiss: {duration: 3000, waitForAnimation: true},
 }
 
 export interface Notification {
@@ -82,7 +82,7 @@ const NotificationComponentStyles: { [key: string]: CSSProperties } = {
     }
 }
 
-export const NotificationComponent: FunctionComponent<Notification> = (props) => {
+export const NotificationComponent = (props: Notification) => {
     return (
         <div style={NotificationComponentStyles.notification}>
             {props.icon}

@@ -8,12 +8,12 @@ import {
     SetIsLoadingRegisterAction,
     UserActionEnum,
 } from "@app/store/reducers/user/types.ts";
-import {AppDispatch, RootState} from "@app/store";
+import {AppDispatch} from "@app/store";
 import {User} from "@domain/user/user.ts";
 import {Notify} from "@pkg/notification/notification.tsx";
 import {UserService} from "@services/userServices.ts";
 import AuthService, {RegisterRequest} from "@services/authService.ts";
-import {txts} from "../../../../../server/pkg/core/txts.ts";
+import {translate} from "@pkg/translate/translate.ts";
 
 export const UserActionCreator = {
     setIsAuth: (payload: boolean): SetIsAuthAction => ({
@@ -45,40 +45,38 @@ export const UserActionCreator = {
         payload
     }),
 
-    login: (email: string, password: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+    login: (email: string, password: string) => async (dispatch: AppDispatch) => {
         try {
             dispatch(UserActionCreator.setIsLoadingLogin(true));
             const res = await AuthService.login({email, password});
             if (res.data.success) {
-                await UserActionCreator.fetchUser(false)(dispatch, getState);
+                await UserActionCreator.fetchUser(false)(dispatch);
             } else {
                 if (res.data.messages) {
                     res.data.messages.forEach((message: string) => {
                         if (message === "User with this email does not exist") {
                             dispatch(UserActionCreator.setAuthError({
-                                email: txts.user_with_this_email_does_not_exist[currentLang],
+                                email: translate("user_with_this_email_does_not_exist"),
                                 password: null
                             }));
                         }
                         if (message === "Invalid password") {
                             dispatch(UserActionCreator.setAuthError({
                                 email: null,
-                                password: txts.invalid_password[currentLang]
+                                password: translate("invalid_password")
                             }));
                         }
                     });
                 }
             }
         } catch (e: any) {
-            Notify.Error({message: txts.failed_authorization[currentLang]});
+            Notify.Error({message: translate("failed_authorization")});
         } finally {
             dispatch(UserActionCreator.setIsLoadingLogin(false));
         }
     },
 
-    fetchUser: (disableNotification: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+    fetchUser: (disableNotification: boolean) => async (dispatch: AppDispatch) => {
         try {
             dispatch(UserActionCreator.setIsLoadingGetUser(true));
             const res = await UserService.getCurrentUser();
@@ -86,53 +84,51 @@ export const UserActionCreator = {
                 dispatch(UserActionCreator.setUser(res.data.data));
                 dispatch(UserActionCreator.setIsAuth(true));
                 if (!disableNotification) {
-                    Notify.Success({message: txts.successful_authentication[currentLang]});
+                    Notify.Success({message: translate("successful_authentication")});
                 }
             } else {
                 if (!disableNotification) {
-                    Notify.Error({message: txts.failed_authorization[currentLang]});
+                    Notify.Error({message: translate("failed_authorization")});
                 }
             }
         } catch (e: any) {
             if (!disableNotification) {
-                Notify.Error({message: txts.failed_authorization[currentLang]});
+                Notify.Error({message: translate("failed_authorization")});
             }
         } finally {
             dispatch(UserActionCreator.setIsLoadingGetUser(false));
         }
     },
 
-    Logout: () => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+    Logout: () => async (dispatch: AppDispatch) => {
         try {
             dispatch(UserActionCreator.setIsLoadingLogout(true));
             const res = await AuthService.logout();
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(null));
                 dispatch(UserActionCreator.setIsAuth(false));
-                Notify.Success({message: txts.successful_logout[currentLang]});
+                Notify.Success({message: translate("successful_logout")});
             } else {
-                Notify.Error({message: txts.failed_to_logout[currentLang]});
+                Notify.Error({message: translate("failed_to_logout")});
             }
         } catch (e: any) {
-            Notify.Error({message: txts.failed_to_logout[currentLang]});
+            Notify.Error({message: translate("failed_to_logout")});
         } finally {
             dispatch(UserActionCreator.setIsLoadingLogout(false));
         }
     },
 
-    register: (request: RegisterRequest) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+    register: (request: RegisterRequest) => async (dispatch: AppDispatch) => {
         try {
             dispatch(UserActionCreator.setIsLoadingRegister(true));
             const res = await AuthService.register(request);
             if (res.data.success) {
-                Notify.Success({message: txts.confirmation_mail_was_sent_to_your_email[currentLang]});
+                Notify.Success({message: translate("confirmation_mail_was_sent_to_your_email")});
             } else {
-                Notify.Error({message: txts.failed_to_register[currentLang]});
+                Notify.Error({message: translate("failed_to_register")});
             }
         } catch (e: any) {
-            Notify.Error({message: txts.failed_to_register[currentLang]});
+            Notify.Error({message: translate("failed_to_register")});
         } finally {
             dispatch(UserActionCreator.setIsLoadingRegister(false));
         }

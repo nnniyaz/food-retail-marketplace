@@ -1,30 +1,31 @@
 import React, {useState} from "react";
 import * as AntdIcons from "@ant-design/icons";
+import {translate} from "@pkg/translate/translate.ts";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
-import {txts} from "../../../../../server/pkg/core/txts.ts";
 import classes from "@pages/Profile/Profile.module.scss";
 
 const {LoadingOutlined, EyeOutlined, EyeInvisibleOutlined} = AntdIcons;
 
 export const LoginForm = () => {
-    const {currentLang} = useTypedSelector(state => state.systemState);
     const {authError, isLoadingLogin} = useTypedSelector(state => state.userState);
-    const {login} = useActions();
-    const [userCreds, setUserCreds] = useState({email: "", password: ""});
+    const {login, setAuthError} = useActions();
+    const [userCredentials, setUserCredentials] = useState({email: "", password: ""});
     const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
     const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUserCreds({...userCreds, email: e.target.value});
+        setUserCredentials({...userCredentials, email: e.target.value});
+        setAuthError({...authError, email: ""});
     }
 
     const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setUserCreds({...userCreds, password: e.target.value});
+        setUserCredentials({...userCredentials, password: e.target.value});
+        setAuthError({...authError, password: ""});
     }
 
     const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        login(userCreds.email, userCreds.password);
+        login(userCredentials.email, userCredentials.password);
     }
 
     return (
@@ -33,9 +34,9 @@ export const LoginForm = () => {
                 <div>
                     <label>
                         <input
-                            value={userCreds.email}
+                            value={userCredentials.email}
                             onChange={handleEmailChange}
-                            placeholder={txts.email[currentLang]}
+                            placeholder={translate("email")}
                             type={"email"}
                             autoComplete={"email"}
                             required
@@ -50,9 +51,9 @@ export const LoginForm = () => {
                 <div>
                     <label>
                         <input
-                            value={userCreds.password}
+                            value={userCredentials.password}
                             onChange={handlePasswordChange}
-                            placeholder={txts.password[currentLang]}
+                            placeholder={translate("password")}
                             type={isPasswordVisible ? "text" : "password"}
                             autoComplete={"current-password"}
                             required
@@ -70,7 +71,7 @@ export const LoginForm = () => {
                     )}
                 </div>
                 <button type={"submit"}>
-                    {txts.login[currentLang]}
+                    {translate("login")}
                     {(isLoadingLogin) && (
                         <LoadingOutlined className={classes.btn__loading}/>
                     )}
