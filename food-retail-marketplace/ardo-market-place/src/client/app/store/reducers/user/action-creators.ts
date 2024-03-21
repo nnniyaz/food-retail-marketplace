@@ -1,4 +1,5 @@
 import {
+    UserActionEnum,
     SetIsAuthAction,
     SetUserAction,
     SetAuthErrorAction,
@@ -6,14 +7,14 @@ import {
     SetIsLoadingGetUserAction,
     SetIsLoadingLogoutAction,
     SetIsLoadingRegisterAction,
-    UserActionEnum,
 } from "@app/store/reducers/user/types.ts";
-import {AppDispatch} from "@app/store";
+import {AppDispatch, RootState} from "@app/store";
 import {User} from "@domain/user/user.ts";
 import {Notify} from "@pkg/notification/notification.tsx";
 import {UserService} from "@services/userServices.ts";
 import AuthService, {RegisterRequest} from "@services/authService.ts";
-import {translate} from "@pkg/translate/translate.ts";
+import {CartActionCreator} from "@app/store/reducers/cart/action-creators.ts";
+import {txts} from "../../../../../server/pkg/core/txts.ts";
 
 export const UserActionCreator = {
     setIsAuth: (payload: boolean): SetIsAuthAction => ({
@@ -45,90 +46,105 @@ export const UserActionCreator = {
         payload
     }),
 
-    login: (email: string, password: string) => async (dispatch: AppDispatch) => {
+    login: (email: string, password: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingLogin(true));
             const res = await AuthService.login({email, password});
             if (res.data.success) {
-                await UserActionCreator.fetchUser(false)(dispatch);
+                await UserActionCreator.fetchUser(false)(dispatch, getState);
             } else {
                 if (res.data.messages) {
                     res.data.messages.forEach((message: string) => {
                         if (message === "User with this email does not exist") {
                             dispatch(UserActionCreator.setAuthError({
-                                email: translate("user_with_this_email_does_not_exist"),
+                                email: txts["user_with_this_email_does_not_exist"][currentLang],
                                 password: null
                             }));
                         }
                         if (message === "Invalid password") {
                             dispatch(UserActionCreator.setAuthError({
                                 email: null,
-                                password: translate("invalid_password")
+                                password: txts["invalid_password"][currentLang]
                             }));
                         }
                     });
                 }
             }
         } catch (e: any) {
-            Notify.Error({message: translate("failed_authorization")});
+            Notify.Error({message: txts["failed_authorization"][currentLang]});
         } finally {
             dispatch(UserActionCreator.setIsLoadingLogin(false));
         }
     },
 
-    fetchUser: (disableNotification: boolean) => async (dispatch: AppDispatch) => {
+    fetchUser: (disableNotification: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingGetUser(true));
             const res = await UserService.getCurrentUser();
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(res.data.data));
                 dispatch(UserActionCreator.setIsAuth(true));
+                dispatch(CartActionCreator.setCustomerContacts({
+                    name: res.data.data.firstName + " " + res.data.data.lastName,
+                    phone: "",
+                    email: res.data.data.email,
+                }))
+                dispatch(CartActionCreator.setDeliveryInfo({
+                    address: "",
+                    floor: "",
+                    apartment: "",
+                    deliveryComment: "",
+                }))
                 if (!disableNotification) {
-                    Notify.Success({message: translate("successful_authentication")});
+                    Notify.Success({message: txts["successful_authentication"][currentLang]});
                 }
             } else {
                 if (!disableNotification) {
-                    Notify.Error({message: translate("failed_authorization")});
+                    Notify.Error({message: txts["failed_authorization"][currentLang]});
                 }
             }
         } catch (e: any) {
             if (!disableNotification) {
-                Notify.Error({message: translate("failed_authorization")});
+                Notify.Error({message: txts["failed_authorization"][currentLang]});
             }
         } finally {
             dispatch(UserActionCreator.setIsLoadingGetUser(false));
         }
     },
 
-    Logout: () => async (dispatch: AppDispatch) => {
+    Logout: () => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingLogout(true));
             const res = await AuthService.logout();
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(null));
                 dispatch(UserActionCreator.setIsAuth(false));
-                Notify.Success({message: translate("successful_logout")});
+                Notify.Success({message: txts["successful_logout"][currentLang]});
             } else {
-                Notify.Error({message: translate("failed_to_logout")});
+                Notify.Error({message: txts["failed_to_logout"][currentLang]});
             }
         } catch (e: any) {
-            Notify.Error({message: translate("failed_to_logout")});
+            Notify.Error({message: txts["failed_to_logout"][currentLang]});
         } finally {
             dispatch(UserActionCreator.setIsLoadingLogout(false));
         }
     },
 
-    register: (request: RegisterRequest) => async (dispatch: AppDispatch) => {
+    register: (request: RegisterRequest) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingRegister(true));
             const res = await AuthService.register(request);
             if (res.data.success) {
-                Notify.Success({message: translate("confirmation_mail_was_sent_to_your_email")});
+                Notify.Success({message: txts["confirmation_mail_was_sent_to_your_email"][currentLang]});
             } else {
-                Notify.Error({message: translate("failed_to_register")});
+                Notify.Error({message: txts["failed_to_register"][currentLang]});
             }
         } catch (e: any) {
-            Notify.Error({message: translate("failed_to_register")});
+            Notify.Error({message: txts["failed_to_register"][currentLang]});
         } finally {
             dispatch(UserActionCreator.setIsLoadingRegister(false));
         }

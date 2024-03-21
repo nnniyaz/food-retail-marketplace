@@ -5,13 +5,11 @@ import ArrorSVG from "@assets/icons/caret-right.svg?react";
 import {RouteNames} from "@pages/index.tsx";
 import {translate} from "@pkg/translate/translate.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
-import {txts} from "../../../../../server/pkg/core/txts.ts";
 import classes from "./Account.module.scss";
 
 const {EditOutlined} = AntdIcons;
 
 export const Account = () => {
-    const {currentLang} = useTypedSelector(state => state.systemState);
     const {user} = useTypedSelector(state => state.userState);
     const profileRoutes = [
         {name: translate("delivery_addresses"), path: RouteNames.ADDRESS},

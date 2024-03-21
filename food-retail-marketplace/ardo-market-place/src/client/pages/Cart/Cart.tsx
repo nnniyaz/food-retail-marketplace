@@ -14,6 +14,7 @@ import classes from "./Cart.module.scss";
 
 export const Cart = () => {
     const {cart} = useTypedSelector(state => state.cartState);
+    const {isAuth} = useTypedSelector(state => state.userState);
     const [orderPriceReportHeight, setOrderPriceReportHeight] = useState(0);
 
     useEffect(() => {
@@ -59,11 +60,13 @@ export const Cart = () => {
                         </tr>
                         </tfoot>
                     </table>
-                    <Link to={RouteNames.CHECKOUT}>
-                        <button className={classes.confirm__btn}>
-                            {translate("make_order")[0].toUpperCase() + translate("make_order").slice(1)}
-                        </button>
-                    </Link>
+                    {cart.length > 0 && (
+                        <Link to={isAuth ? RouteNames.CHECKOUT : RouteNames.PROFILE}>
+                            <button className={classes.confirm__btn}>
+                                {translate("make_order")[0].toUpperCase() + translate("make_order").slice(1)}
+                            </button>
+                        </Link>
+                    )}
                 </section>
             </div>
         </div>

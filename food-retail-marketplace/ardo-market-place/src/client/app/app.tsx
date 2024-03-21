@@ -1,12 +1,13 @@
 import React, {useEffect} from "react";
 import * as ReactNotificationsImport from "react-notifications-component";
-const {ReactNotifications} = ReactNotificationsImport;
 import {Routing} from "@pages/index.tsx";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import {PublishedCatalog} from "@domain/catalog/catalog.ts";
 import "react-notifications-component/dist/theme.css"
 import "animate.css/animate.min.css"
 import "@app/app.scss";
+
+const {ReactNotifications} = ReactNotificationsImport;
 
 interface EntryProps {
     catalog: PublishedCatalog;

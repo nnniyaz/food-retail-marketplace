@@ -1,11 +1,11 @@
-import {catalogActionCreator} from "@app/store/reducers/catalog/action-creators.ts";
-import {systemActionCreator} from "@app/store/reducers/system/action-creators.ts";
-import {cartActionCreator} from "@app/store/reducers/cart/action-creators.ts";
+import {CatalogActionCreator} from "@app/store/reducers/catalog/action-creators.ts";
+import {SystemActionCreator} from "@app/store/reducers/system/action-creators.ts";
+import {CartActionCreator} from "@app/store/reducers/cart/action-creators.ts";
 import {UserActionCreator} from "@app/store/reducers/user/action-creators.ts";
 
 export const allActionCreators = {
-    ...catalogActionCreator,
-    ...systemActionCreator,
-    ...cartActionCreator,
+    ...CatalogActionCreator,
+    ...SystemActionCreator,
+    ...CartActionCreator,
     ...UserActionCreator,
 }

@@ -3,6 +3,20 @@ import {CartItem} from "@domain/cartItem";
 
 const initialState: CartState = {
     cart: [] as CartItem[],
+    customerContacts: {
+        name: "",
+        phone: "",
+        email: "",
+    },
+    deliveryInfo: {
+        address: "",
+        floor: "",
+        apartment: "",
+        deliveryComment: "",
+    },
+    orderComment: "",
+    orderNumber: "",
+    isLoadingMakeOrder: false
 };
 
 export default function cartReducer(state = initialState, action: CartAction): CartState {
@@ -43,6 +57,19 @@ export default function cartReducer(state = initialState, action: CartAction): C
         case CartActionEnum.CLEAR_CART:
             localStorage.setItem('ardo-market-place-cart', JSON.stringify([]));
             return {...state, cart: []};
+        case CartActionEnum.SET_CUSTOMER_CONTACTS:
+            return {...state, customerContacts: action.payload};
+        case CartActionEnum.SET_DELIVERY_INFO:
+            return {...state, deliveryInfo: action.payload};
+        case CartActionEnum.SET_ORDER_COMMENT:
+            return {...state, orderComment: action.payload};
+        case CartActionEnum.MAKE_ORDER:
+            localStorage.setItem('ardo-market-place-success-cart', JSON.stringify(state.cart));
+            return {...state};
+        case CartActionEnum.SET_ORDER_NUMBER:
+            return {...state, orderNumber: action.payload};
+        case CartActionEnum.SET_IS_LOADING_MAKE_ORDER:
+            return {...state, isLoadingMakeOrder: action.payload};
         default:
             return state;
     }

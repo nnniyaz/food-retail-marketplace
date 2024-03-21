@@ -9,6 +9,7 @@ const $api = axios.create({
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',
+        'Time-Zone': Intl.DateTimeFormat().resolvedOptions().timeZone
     },
     timeout: 20000,
     timeoutErrorMessage: 'Timeout error',
