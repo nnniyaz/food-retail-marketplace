@@ -3,6 +3,7 @@ package user
 import (
 	"context"
 	"errors"
+	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/exceptions"
@@ -43,38 +44,72 @@ func (m *mongoPassword) ToAggregate() valueobject.Password {
 	return valueobject.UnmarshalPasswordFromDatabase(m.Hash, m.Salt)
 }
 
+type mongoDeliveryInfo struct {
+	Address         string `bson:"address"`
+	Floor           string `bson:"floor"`
+	Apartment       string `bson:"apartment"`
+	DeliveryComment string `bson:"deliveryComment"`
+}
+
+func newFromDeliveryInfo(d deliveryInfo.DeliveryInfo) mongoDeliveryInfo {
+	return mongoDeliveryInfo{
+		Address:         d.GetAddress(),
+		Floor:           d.GetFloor(),
+		Apartment:       d.GetApartment(),
+		DeliveryComment: d.GetDeliveryComment(),
+	}
+}
+
+func (m *mongoDeliveryInfo) ToAggregate() deliveryInfo.DeliveryInfo {
+	return deliveryInfo.UnmarshalDeliveryInfoFromDatabase(m.Address, m.Floor, m.Apartment, m.DeliveryComment)
+}
+
 type mongoUser struct {
-	Id            uuid.UUID     `bson:"_id"`
-	FirstName     string        `bson:"firstName"`
-	LastName      string        `bson:"lastName"`
-	Email         string        `bson:"email"`
-	Password      mongoPassword `bson:"password"`
-	UserType      string        `bson:"userType"`
-	PreferredLang string        `bson:"preferredLang"`
-	IsDeleted     bool          `bson:"isDeleted"`
-	CreatedAt     time.Time     `bson:"createdAt"`
-	UpdatedAt     time.Time     `bson:"updatedAt"`
-	Version       int           `bson:"version"`
+	Id                uuid.UUID           `bson:"_id"`
+	FirstName         string              `bson:"firstName"`
+	LastName          string              `bson:"lastName"`
+	Email             string              `bson:"email"`
+	Phone             string              `bson:"phone"`
+	DeliveryPoints    []mongoDeliveryInfo `bson:"deliveryPoints"`
+	LastDeliveryPoint mongoDeliveryInfo   `bson:"lastDeliveryPoint"`
+	Password          mongoPassword       `bson:"password"`
+	UserType          string              `bson:"userType"`
+	PreferredLang     string              `bson:"preferredLang"`
+	IsDeleted         bool                `bson:"isDeleted"`
+	CreatedAt         time.Time           `bson:"createdAt"`
+	UpdatedAt         time.Time           `bson:"updatedAt"`
+	Version           int                 `bson:"version"`
 }
 
 func newFromUser(u *user.User) *mongoUser {
+	mongoDeliveryPoints := make([]mongoDeliveryInfo, 0, len(u.GetDeliveryPoints()))
+	for _, d := range u.GetDeliveryPoints() {
+		mongoDeliveryPoints = append(mongoDeliveryPoints, newFromDeliveryInfo(d))
+	}
 	return &mongoUser{
-		Id:            u.GetId(),
-		FirstName:     u.GetFirstName().String(),
-		LastName:      u.GetLastName().String(),
-		Email:         u.GetEmail().String(),
-		Password:      newFromPassword(u.GetPassword()),
-		UserType:      u.GetUserType().String(),
-		PreferredLang: u.GetUserPreferredLang().String(),
-		IsDeleted:     u.GetIsDeleted(),
-		CreatedAt:     u.GetCreatedAt(),
-		UpdatedAt:     u.GetUpdatedAt(),
-		Version:       u.GetVersion(),
+		Id:                u.GetId(),
+		FirstName:         u.GetFirstName().String(),
+		LastName:          u.GetLastName().String(),
+		Email:             u.GetEmail().String(),
+		Phone:             u.GetPhone().String(),
+		DeliveryPoints:    mongoDeliveryPoints,
+		LastDeliveryPoint: newFromDeliveryInfo(u.GetLastDeliveryPoint()),
+		Password:          newFromPassword(u.GetPassword()),
+		UserType:          u.GetUserType().String(),
+		PreferredLang:     u.GetUserPreferredLang().String(),
+		IsDeleted:         u.GetIsDeleted(),
+		CreatedAt:         u.GetCreatedAt(),
+		UpdatedAt:         u.GetUpdatedAt(),
+		Version:           u.GetVersion(),
 	}
 }
 
 func (m *mongoUser) ToAggregate() *user.User {
-	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.UserType, m.PreferredLang, m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+	deliveryPoints := make([]deliveryInfo.DeliveryInfo, 0, len(m.DeliveryPoints))
+	for _, d := range m.DeliveryPoints {
+		deliveryPoints = append(deliveryPoints, d.ToAggregate())
+	}
+	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.Phone, m.UserType, m.PreferredLang, deliveryPoints, deliveryInfo.UnmarshalDeliveryInfoFromDatabase(m.LastDeliveryPoint.Address, m.LastDeliveryPoint.Floor, m.LastDeliveryPoint.Apartment, m.LastDeliveryPoint.DeliveryComment), m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {

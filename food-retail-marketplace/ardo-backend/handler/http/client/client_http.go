@@ -2,6 +2,7 @@ package client
 
 import (
 	"encoding/json"
+	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/order/valueobject"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/handler/http/response"
@@ -9,6 +10,7 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/client"
 	"net/http"
+	"time"
 )
 
 type HttpDelivery struct {
@@ -57,8 +59,8 @@ type OrderDeliveryInfo struct {
 	DeliveryComment string `json:"deliveryComment"`
 }
 
-func UnmarshalOrderDeliveryInfoFromRequest(o OrderDeliveryInfo) valueobject.DeliveryInfo {
-	return valueobject.NewDeliveryInfo(o.Address, o.Floor, o.Apartment, o.DeliveryComment)
+func UnmarshalOrderDeliveryInfoFromRequest(o OrderDeliveryInfo) deliveryInfo.DeliveryInfo {
+	return deliveryInfo.NewDeliveryInfo(o.Address, o.Floor, o.Apartment, o.DeliveryComment)
 }
 
 type MakeOrderIn struct {
@@ -68,7 +70,7 @@ type MakeOrderIn struct {
 	Currency         string                `json:"currency"`
 	CustomerContacts OrderCustomerContacts `json:"customerContacts"`
 	DeliveryInfo     OrderDeliveryInfo     `json:"deliveryInfo"`
-	OrderComment     string                `json:"orderComment"`
+	DeliveryDate     time.Time             `json:"deliveryDate"`
 }
 
 // MakeOrder godoc
@@ -89,7 +91,7 @@ func (hd *HttpDelivery) MakeOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	u := r.Context().Value("user").(user.User)
-	orderCreds, err := hd.service.MakeOrder(r.Context(), &u, u.GetId().String(), UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.OrderComment)
+	orderCreds, err := hd.service.MakeOrder(r.Context(), u.GetId().String(), UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.DeliveryDate)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

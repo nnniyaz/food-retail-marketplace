@@ -1,4 +1,4 @@
-package valueobject
+package deliveryInfo
 
 import "github/nnniyaz/ardo/pkg/core"
 

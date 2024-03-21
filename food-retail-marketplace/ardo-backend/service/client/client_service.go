@@ -2,17 +2,18 @@ package client
 
 import (
 	"context"
+	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/order/valueobject"
-	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/pkg/email"
 	"github/nnniyaz/ardo/pkg/format"
 	"github/nnniyaz/ardo/pkg/logger"
 	orderService "github/nnniyaz/ardo/service/order"
+	"time"
 )
 
 type ClientService interface {
-	MakeOrder(ctx context.Context, user *user.User, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment string) (OrderCreds, error)
+	MakeOrder(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time) (OrderCreds, error)
 }
 
 type clientService struct {
@@ -30,8 +31,8 @@ type OrderCreds struct {
 	CreatedAt string `json:"createdAt"`
 }
 
-func (c *clientService) MakeOrder(ctx context.Context, user *user.User, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo valueobject.DeliveryInfo, orderComment string) (OrderCreds, error) {
-	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, currency, customerContacts, deliveryInfo, orderComment)
+func (c *clientService) MakeOrder(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time) (OrderCreds, error) {
+	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, currency, customerContacts, deliveryInfo, deliveryDate)
 	if err != nil {
 		return OrderCreds{}, err
 	}

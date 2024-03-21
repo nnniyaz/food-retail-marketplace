@@ -2168,11 +2168,11 @@ const docTemplate = `{
                 "customerContacts": {
                     "$ref": "#/definitions/client.OrderCustomerContacts"
                 },
+                "deliveryDate": {
+                    "type": "string"
+                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/client.OrderDeliveryInfo"
-                },
-                "orderComment": {
-                    "type": "string"
                 },
                 "products": {
                     "type": "array",
@@ -2482,11 +2482,11 @@ const docTemplate = `{
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
                 },
+                "deliveryDate": {
+                    "type": "string"
+                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"
-                },
-                "orderComment": {
-                    "type": "string"
                 },
                 "products": {
                     "type": "array",
@@ -2517,6 +2517,9 @@ const docTemplate = `{
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
                 },
+                "deliveryDate": {
+                    "type": "string"
+                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"
                 },
@@ -2527,9 +2530,6 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "number": {
-                    "type": "string"
-                },
-                "orderComment": {
                     "type": "string"
                 },
                 "products": {

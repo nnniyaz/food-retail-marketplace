@@ -83,6 +83,7 @@ const (
 	TXT_CATALOG_SECTION_NOT_FOUND   TxtKey = 78
 	TXT_CATALOG_CATEGORY_NOT_FOUND  TxtKey = 79
 	TXT_CATALOG_PRODUCT_NOT_FOUND   TxtKey = 80
+	TXT_INVALID_ORDER_DELIVERY_DATE TxtKey = 81
 )
 
 var Txts = TxtResource{
@@ -406,6 +407,10 @@ var Txts = TxtResource{
 		RU: `Продукт каталога не найден`,
 		EN: `Catalog product not found`,
 	},
+	TXT_INVALID_ORDER_DELIVERY_DATE: MlString{
+		RU: `Неверная дата доставки`,
+		EN: `Invalid delivery date`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -570,6 +575,8 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "catalog_category_not_found"
 	case TXT_CATALOG_PRODUCT_NOT_FOUND:
 		return "catalog_product_not_found"
+	case TXT_INVALID_ORDER_DELIVERY_DATE:
+		return "invalid_order_delivery_date"
 
 	default:
 		return ""

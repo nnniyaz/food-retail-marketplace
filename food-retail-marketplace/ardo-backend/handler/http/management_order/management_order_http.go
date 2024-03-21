@@ -3,6 +3,7 @@ package management_order
 import (
 	"encoding/json"
 	"github.com/go-chi/chi/v5"
+	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/order/valueobject"
 	"github/nnniyaz/ardo/handler/http/response"
@@ -10,6 +11,7 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/management"
 	"net/http"
+	"time"
 )
 
 type HttpDelivery struct {
@@ -84,7 +86,7 @@ type OrderDeliveryInfo struct {
 	DeliveryComment string `json:"deliveryComment"`
 }
 
-func NewOrderDeliveryInfo(o valueobject.DeliveryInfo) OrderDeliveryInfo {
+func NewOrderDeliveryInfo(o deliveryInfo.DeliveryInfo) OrderDeliveryInfo {
 	return OrderDeliveryInfo{
 		Address:         o.GetAddress(),
 		Floor:           o.GetFloor(),
@@ -93,8 +95,8 @@ func NewOrderDeliveryInfo(o valueobject.DeliveryInfo) OrderDeliveryInfo {
 	}
 }
 
-func UnmarshalOrderDeliveryInfoFromRequest(o OrderDeliveryInfo) valueobject.DeliveryInfo {
-	return valueobject.NewDeliveryInfo(o.Address, o.Floor, o.Apartment, o.DeliveryComment)
+func UnmarshalOrderDeliveryInfoFromRequest(o OrderDeliveryInfo) deliveryInfo.DeliveryInfo {
+	return deliveryInfo.NewDeliveryInfo(o.Address, o.Floor, o.Apartment, o.DeliveryComment)
 }
 
 type Order struct {
@@ -107,7 +109,7 @@ type Order struct {
 	Currency         string                `json:"currency"`
 	CustomerContacts OrderCustomerContacts `json:"customerContacts"`
 	DeliveryInfo     OrderDeliveryInfo     `json:"deliveryInfo"`
-	OrderComment     string                `json:"orderComment"`
+	DeliveryDate     time.Time             `json:"deliveryDate"`
 	Status           string                `json:"status"`
 	IsDeleted        bool                  `json:"isDeleted"`
 	CreatedAt        string                `json:"createdAt"`
@@ -126,7 +128,7 @@ func NewOrder(o *order.Order) Order {
 		Currency:         o.GetCurrency().String(),
 		CustomerContacts: NewOrderCustomerContacts(o.GetCustomerContacts()),
 		DeliveryInfo:     NewOrderDeliveryInfo(o.GetDeliveryInfo()),
-		OrderComment:     o.GetOrderComment(),
+		DeliveryDate:     o.GetDeliveryDate(),
 		Status:           o.GetStatus().String(),
 		IsDeleted:        o.GetIsDeleted(),
 		CreatedAt:        o.GetCreatedAt().String(),
@@ -228,7 +230,7 @@ type CreateOrderIn struct {
 	Currency         string                `json:"currency"`
 	CustomerContacts OrderCustomerContacts `json:"customerContacts"`
 	DeliveryInfo     OrderDeliveryInfo     `json:"deliveryInfo"`
-	OrderComment     string                `json:"orderComment"`
+	DeliveryDate     time.Time             `json:"deliveryDate"`
 }
 
 // CreateOrder godoc
@@ -248,7 +250,7 @@ func (hd *HttpDelivery) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.Create(r.Context(), in.UserId, UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.OrderComment); err != nil {
+	if err := hd.service.Create(r.Context(), in.UserId, UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.DeliveryDate); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

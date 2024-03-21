@@ -3,6 +3,7 @@ package order
 import (
 	"context"
 	"errors"
+	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/order/valueobject"
@@ -76,7 +77,7 @@ type mongoDeliveryInfo struct {
 	DeliveryComment string `bson:"deliveryComment"`
 }
 
-func newFromDeliveryInfo(d valueobject.DeliveryInfo) mongoDeliveryInfo {
+func newFromDeliveryInfo(d deliveryInfo.DeliveryInfo) mongoDeliveryInfo {
 	return mongoDeliveryInfo{
 		Address:         d.GetAddress(),
 		Floor:           d.GetFloor(),
@@ -85,8 +86,8 @@ func newFromDeliveryInfo(d valueobject.DeliveryInfo) mongoDeliveryInfo {
 	}
 }
 
-func (m *mongoDeliveryInfo) ToAggregate() valueobject.DeliveryInfo {
-	return valueobject.UnmarshalDeliveryInfoFromDatabase(m.Address, m.Floor, m.Apartment, m.DeliveryComment)
+func (m *mongoDeliveryInfo) ToAggregate() deliveryInfo.DeliveryInfo {
+	return deliveryInfo.UnmarshalDeliveryInfoFromDatabase(m.Address, m.Floor, m.Apartment, m.DeliveryComment)
 }
 
 type mongoOrder struct {
@@ -99,7 +100,7 @@ type mongoOrder struct {
 	Currency         string                `bson:"currency"`
 	CustomerContacts mongoCustomerContacts `bson:"customerContacts"`
 	DeliveryInfo     mongoDeliveryInfo     `bson:"deliveryInfo"`
-	OrderComment     string                `bson:"orderComment"`
+	DeliveryDate     time.Time             `bson:"deliveryDate"`
 	Status           string                `bson:"status"`
 	IsDeleted        bool                  `bson:"isDeleted"`
 	CreatedAt        time.Time             `bson:"createdAt"`
@@ -118,7 +119,7 @@ func newFromOrder(o *order.Order) *mongoOrder {
 		Currency:         o.GetCurrency().String(),
 		CustomerContacts: newFromCustomerContacts(o.GetCustomerContacts()),
 		DeliveryInfo:     newFromDeliveryInfo(o.GetDeliveryInfo()),
-		OrderComment:     o.GetOrderComment(),
+		DeliveryDate:     o.GetDeliveryDate(),
 		Status:           o.GetStatus().String(),
 		IsDeleted:        o.GetIsDeleted(),
 		CreatedAt:        o.GetCreatedAt(),
@@ -132,7 +133,7 @@ func (m *mongoOrder) ToAggregate() *order.Order {
 	for _, product := range m.Products {
 		products = append(products, product.ToAggregate())
 	}
-	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, m.Number, products, m.Quantity, m.TotalPrice, m.Currency, m.CustomerContacts.ToAggregate(), m.DeliveryInfo.ToAggregate(), m.OrderComment, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, m.Number, products, m.Quantity, m.TotalPrice, m.Currency, m.CustomerContacts.ToAggregate(), m.DeliveryInfo.ToAggregate(), m.DeliveryDate, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoOrder) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error) {

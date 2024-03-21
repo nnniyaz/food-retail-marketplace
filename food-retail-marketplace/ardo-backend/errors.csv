@@ -79,3 +79,4 @@ catalog_not_found,Каталог не найден,Catalog not found
 catalog_section_not_found,Раздел каталога не найден,Catalog section not found
 catalog_category_not_found,Категория каталога не найдена,Catalog category not found
 catalog_product_not_found,Продукт каталога не найден,Catalog product not found
+invalid_order_delivery_date,Неверная дата доставки,Invalid delivery date

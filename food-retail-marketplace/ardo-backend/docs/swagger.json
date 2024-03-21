@@ -2164,11 +2164,11 @@
                 "customerContacts": {
                     "$ref": "#/definitions/client.OrderCustomerContacts"
                 },
+                "deliveryDate": {
+                    "type": "string"
+                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/client.OrderDeliveryInfo"
-                },
-                "orderComment": {
-                    "type": "string"
                 },
                 "products": {
                     "type": "array",
@@ -2478,11 +2478,11 @@
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
                 },
+                "deliveryDate": {
+                    "type": "string"
+                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"
-                },
-                "orderComment": {
-                    "type": "string"
                 },
                 "products": {
                     "type": "array",
@@ -2513,6 +2513,9 @@
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
                 },
+                "deliveryDate": {
+                    "type": "string"
+                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"
                 },
@@ -2523,9 +2526,6 @@
                     "type": "boolean"
                 },
                 "number": {
-                    "type": "string"
-                },
-                "orderComment": {
                     "type": "string"
                 },
                 "products": {
