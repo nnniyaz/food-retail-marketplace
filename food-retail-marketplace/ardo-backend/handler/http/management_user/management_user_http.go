@@ -115,12 +115,17 @@ func (hd *HttpDelivery) GetUserById(w http.ResponseWriter, r *http.Request) {
 // -----------------------------------------------------------------------------
 
 type AddUserIn struct {
-	FirstName     string `json:"firstName"`
-	LastName      string `json:"lastName"`
-	Email         string `json:"email"`
-	Password      string `json:"password"`
-	UserType      string `json:"userType"`
-	PreferredLang string `json:"preferredLang"`
+	FirstName       string `json:"firstName"`
+	LastName        string `json:"lastName"`
+	Email           string `json:"email"`
+	Phone           string `json:"phone"`
+	Password        string `json:"password"`
+	UserType        string `json:"userType"`
+	PreferredLang   string `json:"preferredLang"`
+	Address         string `json:"address"`
+	Floor           string `json:"floor"`
+	Apartment       string `json:"apartment"`
+	DeliveryComment string `json:"deliveryComment"`
 }
 
 // AddUser godoc
@@ -140,7 +145,7 @@ func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Password, in.UserType, in.PreferredLang); err != nil {
+	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Phone, in.Password, in.UserType, in.PreferredLang, in.Address, in.Floor, in.Apartment, in.DeliveryComment); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

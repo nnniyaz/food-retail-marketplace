@@ -2142,16 +2142,31 @@ const docTemplate = `{
         "auth.RegisterIn": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
                 "firstName": {
                     "type": "string"
                 },
+                "floor": {
+                    "type": "string"
+                },
                 "lastName": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "preferredLang": {
@@ -2856,16 +2871,31 @@ const docTemplate = `{
         "management_user.AddUserIn": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
                 "email": {
                     "type": "string"
                 },
                 "firstName": {
                     "type": "string"
                 },
+                "floor": {
+                    "type": "string"
+                },
                 "lastName": {
                     "type": "string"
                 },
                 "password": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "preferredLang": {

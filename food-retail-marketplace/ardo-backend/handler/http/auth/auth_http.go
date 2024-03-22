@@ -91,11 +91,16 @@ func (hd *HttpDelivery) Logout(w http.ResponseWriter, r *http.Request) {
 }
 
 type RegisterIn struct {
-	FirstName     string `json:"firstName"`
-	LastName      string `json:"lastName"`
-	Email         string `json:"email"`
-	Password      string `json:"password"`
-	PreferredLang string `json:"preferredLang"`
+	FirstName       string `json:"firstName"`
+	LastName        string `json:"lastName"`
+	Email           string `json:"email"`
+	Phone           string `json:"phone"`
+	Password        string `json:"password"`
+	PreferredLang   string `json:"preferredLang"`
+	Address         string `json:"address"`
+	Floor           string `json:"floor"`
+	Apartment       string `json:"apartment"`
+	DeliveryComment string `json:"deliveryComment"`
 }
 
 // Register godoc
@@ -115,8 +120,7 @@ func (hd *HttpDelivery) Register(w http.ResponseWriter, r *http.Request) {
 		response.NewBad(hd.logger, w, r, err)
 		return
 	}
-
-	err := hd.service.Register(r.Context(), in.FirstName, in.LastName, in.Email, in.Password, in.PreferredLang)
+	err := hd.service.Register(r.Context(), in.FirstName, in.LastName, in.Email, in.Phone, in.Password, in.PreferredLang, in.Address, in.Floor, in.Apartment, in.DeliveryComment)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

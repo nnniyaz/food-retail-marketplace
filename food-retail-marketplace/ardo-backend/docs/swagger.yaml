@@ -8,13 +8,23 @@ definitions:
     type: object
   auth.RegisterIn:
     properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
       email:
         type: string
       firstName:
         type: string
+      floor:
+        type: string
       lastName:
         type: string
       password:
+        type: string
+      phone:
         type: string
       preferredLang:
         type: string
@@ -471,13 +481,23 @@ definitions:
     type: object
   management_user.AddUserIn:
     properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
       email:
         type: string
       firstName:
         type: string
+      floor:
+        type: string
       lastName:
         type: string
       password:
+        type: string
+      phone:
         type: string
       preferredLang:
         type: string

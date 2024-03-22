@@ -76,6 +76,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 		r.Use(cors.Handler(cors.Options{
 			AllowedOrigins: []string{
 				"https://admin.ardogroup.org",
+				"https://app.ardogroup.org",
 			},
 			AllowedMethods: []string{
 				http.MethodHead,
