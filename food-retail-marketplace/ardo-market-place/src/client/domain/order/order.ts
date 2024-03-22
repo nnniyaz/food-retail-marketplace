@@ -1,5 +1,6 @@
-import {MlString, ValidateMlString} from "@domain/base/mlString/mlString.ts";
+import {Langs, MlString, ValidateMlString} from "@domain/base/mlString/mlString.ts";
 import {Currency} from "@domain/base/currency/currency.ts";
+import {txts} from "../../../server/pkg/core/txts.ts";
 
 export type Order = {
     id: string;
@@ -37,29 +38,29 @@ export type OrderProduct = {
 
 export function ValidateOrderProduct(product: OrderProduct): Error | null {
     if (product.productId === "") {
-        return new Error("Cart item ID is empty");
+        return new Error(txts["cart_item_product_id_required"][Langs.EN]);
     }
     let err = ValidateMlString(product.productName);
     if (err !== null) {
         return err;
     }
     if (isNaN(product.quantity)) {
-        return new Error("Cart item quantity is not a number");
+        return new Error(txts["cart_item_quantity_is_not_a_number"][Langs.EN]);
     }
     if (product.quantity <= 0) {
-        return new Error("Cart item quantity is less than or equal to zero");
+        return new Error(txts["cart_item_quantity_less_than_or_equal_to_zero"][Langs.EN]);
     }
     if (isNaN(product.pricePerUnit)) {
-        return new Error("Cart item price per unit is not a number");
+        return new Error(txts["cart_item_price_per_unit_is_not_a_number"][Langs.EN]);
     }
     if (product.pricePerUnit <= 0) {
-        return new Error("Cart item price per unit is less than or equal to zero");
+        return new Error(txts["cart_item_price_per_unit_less_than_or_equal_to_zero"][Langs.EN]);
     }
     if (isNaN(product.totalPrice)) {
-        return new Error("Cart item total price is not a number");
+        return new Error(txts["cart_item_total_price_is_not_a_number"][Langs.EN]);
     }
     if (product.totalPrice <= 0) {
-        return new Error("Cart item total price is less than or equal to zero");
+        return new Error(txts["cart_item_total_price_less_than_or_equal_to_zero"][Langs.EN]);
     }
     return null;
 }
@@ -70,15 +71,15 @@ export type OrderCustomerContacts = {
     email: string;
 }
 
-export function ValidateOrderCustomerContacts(contacts: OrderCustomerContacts): Error | null {
+export function ValidateOrderCustomerContacts(contacts: OrderCustomerContacts, currentLang: Langs): Error | null {
     if (contacts.name === "") {
-        return new Error("Customer name is empty");
+        return new Error(txts["customer_name_required"][currentLang]);
     }
     if (contacts.phone === "") {
-        return new Error("Customer phone is empty");
+        return new Error(txts["customer_phone_required"][currentLang]);
     }
     if (contacts.email === "") {
-        return new Error("Customer email is empty");
+        return new Error(txts["customer_email_required"][currentLang]);
     }
     return null;
 }
@@ -90,9 +91,9 @@ export type OrderDeliveryInfo = {
     deliveryComment: string;
 }
 
-export function ValidateOrderDeliveryInfo(info: OrderDeliveryInfo): Error | null {
+export function ValidateOrderDeliveryInfo(info: OrderDeliveryInfo, currentLang: Langs): Error | null {
     if (info.address === "") {
-        return new Error("Delivery address is empty");
+        return new Error(txts["delivery_address_required"][currentLang]);
     }
     return null;
 }

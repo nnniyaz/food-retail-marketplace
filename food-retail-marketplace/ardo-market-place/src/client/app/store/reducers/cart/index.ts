@@ -16,7 +16,17 @@ const initialState: CartState = {
     },
     orderComment: "",
     orderNumber: "",
-    isLoadingMakeOrder: false
+    isLoadingMakeOrder: false,
+    validationErrors: {
+        customerContacts: {
+            phone: "",
+            email: "",
+            name: "",
+        },
+        deliveryInfo: {
+            address: "",
+        }
+    },
 };
 
 export default function cartReducer(state = initialState, action: CartAction): CartState {
@@ -70,6 +80,8 @@ export default function cartReducer(state = initialState, action: CartAction): C
             return {...state, orderNumber: action.payload};
         case CartActionEnum.SET_IS_LOADING_MAKE_ORDER:
             return {...state, isLoadingMakeOrder: action.payload};
+        case CartActionEnum.SET_VALIDATION_ERRORS:
+            return {...state, validationErrors: action.payload};
         default:
             return state;
     }

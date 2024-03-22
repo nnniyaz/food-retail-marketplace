@@ -12,8 +12,8 @@ import {
     ValidateOrderProduct
 } from "@domain/order/order.ts";
 import {Notify} from "@pkg/notification/notification.tsx";
-import {translate} from "@pkg/translate/translate.ts";
 import {CartServices} from "@services/cartServices.ts";
+import {txts} from "../../../../../server/pkg/core/txts.ts";
 import {
     CartActionEnum,
     ClearCartAction,
@@ -27,6 +27,7 @@ import {
     SetCustomerContactsAction,
     SetDeliveryInfoAction,
     SetOrderCommentAction,
+    SetValidationErrorsAction,
 } from "./types.ts";
 
 export const CartActionCreator = {
@@ -71,8 +72,22 @@ export const CartActionCreator = {
         type: CartActionEnum.SET_IS_LOADING_MAKE_ORDER,
         payload
     }),
+    setValidationErrors: (payload: {
+        customerContacts: {
+            phone: string;
+            email: string;
+            name: string;
+        }
+        deliveryInfo: {
+            address: string;
+        }
+    }): SetValidationErrorsAction => ({
+        type: CartActionEnum.SET_VALIDATION_ERRORS,
+        payload
+    }),
 
     makeOrder: (navigateCalback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().systemState;
         try {
             dispatch(CartActionCreator.setIsLoadingMakeOrder(true));
             const order: OrderRequest = {
@@ -112,15 +127,17 @@ export const CartActionCreator = {
                 order.totalPrice += item.totalPrice;
             });
 
-            err = ValidateOrderCustomerContacts(getState().cartState.customerContacts);
+            err = ValidateOrderCustomerContacts(getState().cartState.customerContacts, currentLang);
             if (err !== null) {
-                throw err;
+                Notify.Error({message: err.message});
+                return;
             }
             order.customerContacts = getState().cartState.customerContacts;
 
-            err = ValidateOrderDeliveryInfo(getState().cartState.deliveryInfo);
+            err = ValidateOrderDeliveryInfo(getState().cartState.deliveryInfo, currentLang);
             if (err !== null) {
-                throw err;
+                Notify.Error({message: err.message});
+                return;
             }
             order.deliveryInfo = getState().cartState.deliveryInfo;
 
@@ -131,16 +148,16 @@ export const CartActionCreator = {
                 dispatch(CartActionCreator.setOrderNumber(res.data.data.orderNumber));
                 dispatch(CartActionCreator.makeOrderAction());
                 dispatch(CartActionCreator.clearCart());
-                Notify.Success({message: translate("order_success")});
+                Notify.Success({message: txts["order_success"][currentLang]});
                 navigateCalback?.navigate(navigateCalback?.path);
             } else {
                 res.data.messages.forEach((message: string) => {
-                    Notify.Error({message: translate(message)});
+                    Notify.Error({message: txts[message][currentLang]});
                 });
             }
         } catch (e) {
             console.log(e);
-            Notify.Error({message: translate("failed_make_order")});
+            Notify.Error({message: txts["failed_make_order"][currentLang]});
         } finally {
             dispatch(CartActionCreator.setIsLoadingMakeOrder(false));
         }

@@ -16,13 +16,13 @@ export const Cart = () => {
     const {cart} = useTypedSelector(state => state.cartState);
     const {isAuth} = useTypedSelector(state => state.userState);
     const [orderPriceReportHeight, setOrderPriceReportHeight] = useState(0);
+    const checkoutText = translate("make_order")[0].toUpperCase() + translate("make_order").slice(1);
 
     useEffect(() => {
         if (window.innerWidth > 800) {
             return;
         }
-        console.log(document.getElementById("order-price-report")?.clientHeight)
-        setOrderPriceReportHeight(document.getElementById("order-price-report")?.clientHeight || 0);
+        setOrderPriceReportHeight(document.getElementById("cart-order-price-report")?.clientHeight || 0);
     }, []);
 
     return (
@@ -41,7 +41,7 @@ export const Cart = () => {
                         ))}
                     </ul>
                 </section>
-                <section id={"order-price-report"} className={classes.cart__group}>
+                <section id={"cart-order-price-report"} className={classes.cart__group}>
                     <table className={classes.cart__total}>
                         <tbody>
                         <tr>
@@ -63,7 +63,7 @@ export const Cart = () => {
                     {cart.length > 0 && (
                         <Link to={isAuth ? RouteNames.CHECKOUT : RouteNames.PROFILE}>
                             <button className={classes.confirm__btn}>
-                                {translate("make_order")[0].toUpperCase() + translate("make_order").slice(1)}
+                                {checkoutText}
                             </button>
                         </Link>
                     )}

@@ -8,6 +8,16 @@ export interface CartState {
     deliveryInfo: OrderDeliveryInfo;
     orderComment: string;
     orderNumber: string;
+    validationErrors: {
+        customerContacts: {
+            phone: string;
+            email: string;
+            name: string;
+        }
+        deliveryInfo: {
+            address: string;
+        }
+    }
     isLoadingMakeOrder: boolean;
 }
 
@@ -26,6 +36,7 @@ export enum CartActionEnum {
     MAKE_ORDER = "MAKE_ORDER",
     SET_ORDER_NUMBER = "SET_ORDER_NUMBER",
     SET_IS_LOADING_MAKE_ORDER = "SET_IS_LOADING_MAKE_ORDER",
+    SET_VALIDATION_ERRORS = "SET_VALIDATION_ERRORS",
 }
 
 export interface InitCartStateAction {
@@ -85,6 +96,20 @@ export interface SetIsLoadingMakeOrderAction {
     payload: boolean;
 }
 
+export interface SetValidationErrorsAction {
+    type: CartActionEnum.SET_VALIDATION_ERRORS;
+    payload: {
+        customerContacts: {
+            phone: string;
+            email: string;
+            name: string;
+        }
+        deliveryInfo: {
+            address: string;
+        }
+    }
+}
+
 export type CartAction =
     InitCartStateAction |
     IncrementToCartAction |
@@ -96,4 +121,5 @@ export type CartAction =
     SetOrderCommentAction |
     SetOrderNumberAction |
     MakeOrderAction |
-    SetIsLoadingMakeOrderAction;
+    SetIsLoadingMakeOrderAction |
+    SetValidationErrorsAction;

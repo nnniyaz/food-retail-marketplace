@@ -1,4 +1,5 @@
 import React from "react";
+import {useNavigate} from "react-router-dom";
 import * as AntdIcons from "@ant-design/icons";
 import {RouteNames} from "@pages/index.tsx";
 import {ReturnButton} from "@widgets/ReturnButton";
@@ -8,7 +9,6 @@ import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {cartPrice, cartTotalPrice} from "@pkg/cartPrice/cartPrice.tsx";
 import classes from "./Checkout.module.scss";
-import {useNavigate} from "react-router-dom";
 
 const {LoadingOutlined} = AntdIcons;
 
