@@ -47,10 +47,10 @@ export const UserActionCreator = {
     }),
 
     login: (email: string, password: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+        const {currentLang, cfg} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingLogin(true));
-            const res = await AuthService.login({email, password});
+            const res = await AuthService.login(cfg.apiUri, {email, password});
             if (res.data.success) {
                 await UserActionCreator.fetchUser(false)(dispatch, getState);
             } else {
@@ -79,10 +79,10 @@ export const UserActionCreator = {
     },
 
     fetchUser: (disableNotification: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+        const {currentLang, cfg} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingGetUser(true));
-            const res = await UserService.getCurrentUser();
+            const res = await UserService.getCurrentUser(cfg.apiUri);
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(res.data.data));
                 dispatch(UserActionCreator.setIsAuth(true));
@@ -115,10 +115,10 @@ export const UserActionCreator = {
     },
 
     Logout: () => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+        const {currentLang, cfg} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingLogout(true));
-            const res = await AuthService.logout();
+            const res = await AuthService.logout(cfg.apiUri);
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(null));
                 dispatch(UserActionCreator.setIsAuth(false));
@@ -134,10 +134,10 @@ export const UserActionCreator = {
     },
 
     register: (request: RegisterRequest) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+        const {currentLang, cfg} = getState().systemState;
         try {
             dispatch(UserActionCreator.setIsLoadingRegister(true));
-            const res = await AuthService.register(request);
+            const res = await AuthService.register(cfg.apiUri, request);
             if (res.data.success) {
                 Notify.Success({message: txts["confirmation_mail_was_sent_to_your_email"][currentLang]});
             } else {

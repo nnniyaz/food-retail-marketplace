@@ -86,8 +86,8 @@ export const CartActionCreator = {
         payload
     }),
 
-    makeOrder: (navigateCalback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
-        const {currentLang} = getState().systemState;
+    makeOrder: (navigateCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang, cfg} = getState().systemState;
         try {
             dispatch(CartActionCreator.setIsLoadingMakeOrder(true));
             const order: OrderRequest = {
@@ -143,13 +143,13 @@ export const CartActionCreator = {
 
             order.orderComment = getState().cartState.orderComment || "";
 
-            const res = await CartServices.makeOrder(order);
+            const res = await CartServices.makeOrder(cfg.apiUri, order);
             if (res.data.success) {
                 dispatch(CartActionCreator.setOrderNumber(res.data.data.orderNumber));
                 dispatch(CartActionCreator.makeOrderAction());
                 dispatch(CartActionCreator.clearCart());
                 Notify.Success({message: txts["order_success"][currentLang]});
-                navigateCalback?.navigate(navigateCalback?.path);
+                navigateCallback?.navigate(navigateCallback?.path);
             } else {
                 res.data.messages.forEach((message: string) => {
                     Notify.Error({message: txts[message][currentLang]});

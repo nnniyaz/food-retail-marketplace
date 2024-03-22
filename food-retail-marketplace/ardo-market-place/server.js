@@ -39,6 +39,7 @@ async function main() {
         NODE_ENV: getEnv("NODE_ENV"),
         MONGO_URI: getEnv("MONGO_URI"),
         MONGO_MAIN_DB: getEnv("MONGO_MAIN_DB"),
+        API_URI: getEnv("API_URI"),
         ASSETS_URI: getEnv("ASSETS_URI"),
     }
     // =================================================================================================================
@@ -114,6 +115,7 @@ async function main() {
                 catalog: catalog,
                 cfg: {
                     mode: cfg.NODE_ENV ?? "development",
+                    apiUri: cfg.API_URI ?? "",
                     assetsUri: cfg.ASSETS_URI ?? "",
                 },
             };

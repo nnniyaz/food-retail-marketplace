@@ -6,7 +6,7 @@ import {OrderRequest} from "@domain/order/orderRequest.ts";
 import {OrderResponse} from "@domain/order/orderResponse.ts";
 
 export class CartServices {
-    static async makeOrder(request: OrderRequest): Promise<AxiosResponse<SuccessResponse<OrderResponse> | ErrorResponse>> {
-        return $api.post<SuccessResponse<OrderResponse> | ErrorResponse>(ApiRoutes.POST_MAKE_ORDER, request);
+    static async makeOrder(apiUri: string, request: OrderRequest): Promise<AxiosResponse<SuccessResponse<OrderResponse> | ErrorResponse>> {
+        return $api(apiUri).post<SuccessResponse<OrderResponse> | ErrorResponse>(ApiRoutes.POST_MAKE_ORDER, request);
     }
 }

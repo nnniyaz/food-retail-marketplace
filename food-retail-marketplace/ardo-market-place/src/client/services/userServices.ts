@@ -5,7 +5,7 @@ import {ApiRoutes} from "@pkg/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@pkg/api/response/response.ts";
 
 export class UserService {
-    static getCurrentUser(): Promise<AxiosResponse<SuccessResponse<User> | ErrorResponse>> {
-        return $api.get<SuccessResponse<User> | ErrorResponse>(ApiRoutes.GET_ME);
+    static getCurrentUser(apiUri: string): Promise<AxiosResponse<SuccessResponse<User> | ErrorResponse>> {
+        return $api(apiUri).get<SuccessResponse<User> | ErrorResponse>(ApiRoutes.GET_ME);
     }
 }

@@ -18,15 +18,15 @@ export interface RegisterRequest {
 }
 
 export default class AuthService {
-    static async login (request: LoginRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGIN, request)
+    static async login (apiUri: string, request: LoginRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api(apiUri).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGIN, request)
     }
 
-    static async logout (): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGOUT)
+    static async logout (apiUri: string, ): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api(apiUri).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGOUT)
     }
 
-    static async register (request: RegisterRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_REGISTER, request)
+    static async register (apiUri: string, request: RegisterRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api(apiUri).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_REGISTER, request)
     }
 }
