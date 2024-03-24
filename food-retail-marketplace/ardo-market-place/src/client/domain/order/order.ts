@@ -1,6 +1,7 @@
 import {Langs, MlString, ValidateMlString} from "@domain/base/mlString/mlString.ts";
 import {Currency} from "@domain/base/currency/currency.ts";
 import {txts} from "../../../server/pkg/core/txts.ts";
+import {DeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
 
 export type Order = {
     id: string;
@@ -11,8 +12,8 @@ export type Order = {
     totalPrice: number;
     currency: Currency.HKD;
     customerContacts: OrderCustomerContacts;
-    deliveryInfo: OrderDeliveryInfo;
-    orderComment: string;
+    deliveryInfo: DeliveryInfo;
+    deliveryDate: string;
     status: OrderStatus;
     isDeleted: boolean;
     createdAt: string;
@@ -84,16 +85,3 @@ export function ValidateOrderCustomerContacts(contacts: OrderCustomerContacts, c
     return null;
 }
 
-export type OrderDeliveryInfo = {
-    address: string;
-    floor: string;
-    apartment: string;
-    deliveryComment: string;
-}
-
-export function ValidateOrderDeliveryInfo(info: OrderDeliveryInfo, currentLang: Langs): Error | null {
-    if (info.address === "") {
-        return new Error(txts["delivery_address_required"][currentLang]);
-    }
-    return null;
-}

@@ -14,7 +14,6 @@ const initialState: CartState = {
         apartment: "",
         deliveryComment: "",
     },
-    orderComment: "",
     orderNumber: "",
     isLoadingMakeOrder: false,
     validationErrors: {
@@ -71,8 +70,6 @@ export default function cartReducer(state = initialState, action: CartAction): C
             return {...state, customerContacts: action.payload};
         case CartActionEnum.SET_DELIVERY_INFO:
             return {...state, deliveryInfo: action.payload};
-        case CartActionEnum.SET_ORDER_COMMENT:
-            return {...state, orderComment: action.payload};
         case CartActionEnum.MAKE_ORDER:
             localStorage.setItem('ardo-market-place-success-cart', JSON.stringify(state.cart));
             return {...state};

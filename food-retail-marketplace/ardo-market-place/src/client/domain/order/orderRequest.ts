@@ -1,5 +1,6 @@
 import {Currency} from "@domain/base/currency/currency.ts";
-import {OrderCustomerContacts, OrderDeliveryInfo, OrderProduct} from "@domain/order/order.ts";
+import {OrderCustomerContacts, OrderProduct} from "@domain/order/order.ts";
+import {DeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
 
 export type OrderRequest = {
     products: OrderProduct[];
@@ -7,6 +8,6 @@ export type OrderRequest = {
     totalPrice: number;
     currency: Currency;
     customerContacts: OrderCustomerContacts;
-    deliveryInfo: OrderDeliveryInfo;
+    deliveryInfo: DeliveryInfo;
     orderComment: string;
 }

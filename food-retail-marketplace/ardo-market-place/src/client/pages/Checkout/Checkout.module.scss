@@ -19,6 +19,7 @@
 
       &:last-child {
         width: calc(100% / 3);
+        background-color: var(--primary-bg-color);
       }
 
       .checkout__row {

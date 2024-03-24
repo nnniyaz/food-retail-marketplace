@@ -21,26 +21,10 @@ export const Checkout = () => {
         orderComment,
         isLoadingMakeOrder
     } = useTypedSelector(state => state.cartState);
-    const {setCustomerContacts, setDeliveryInfo, setOrderComment, makeOrder} = useActions();
-
-    const handleFullNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCustomerContacts({...customerContacts, name: e.target.value});
-    }
-
-    const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCustomerContacts({...customerContacts, email: e.target.value});
-    }
-
-    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setCustomerContacts({...customerContacts, phone: e.target.value});
-    }
+    const {setDeliveryInfo, makeOrder} = useActions();
 
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDeliveryInfo({...deliveryInfo, address: e.target.value});
-    }
-
-    const handleOrderCommentChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setOrderComment(e.target.value);
     }
 
     const handleMakeOrder = (e: React.FormEvent<HTMLFormElement>) => {
@@ -57,38 +41,6 @@ export const Checkout = () => {
 
             <form className={classes.checkout__content} onSubmit={handleMakeOrder}>
                 <section className={classes.checkout__group}>
-                    <CheckoutInput
-                        label={translate("full_name")}
-                        placeholder={translate("enter_full_name")}
-                        value={customerContacts.name}
-                        onChange={handleFullNameChange}
-                        required={true}
-                        type={"text"}
-                    />
-                    <div className={classes.checkout__row}>
-                        <CheckoutInput
-                            label={translate("email")}
-                            placeholder={translate("enter_email")}
-                            value={customerContacts.email}
-                            onChange={handleEmailChange}
-                            required={true}
-                            type={"email"}
-                        />
-                        <CheckoutInput
-                            label={translate("phone")}
-                            placeholder={translate("enter_phone")}
-                            value={customerContacts.phone}
-                            onChange={handlePhoneChange}
-                            required={true}
-                            type={"tel"}
-                        />
-                    </div>
-                    <CheckoutInput
-                        label={translate("order_comment")}
-                        placeholder={translate("enter_order_comment")}
-                        value={orderComment}
-                        onChange={handleOrderCommentChange}
-                    />
                     <CheckoutInput
                         label={translate("address")}
                         placeholder={translate("enter_address")}

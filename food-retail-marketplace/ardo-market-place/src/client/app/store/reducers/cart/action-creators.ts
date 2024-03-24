@@ -5,10 +5,8 @@ import {OrderRequest} from "@domain/order/orderRequest.ts";
 import {NavigateCallback} from "@domain/base/navigateCallback/navigateCallback.ts";
 import {
     OrderCustomerContacts,
-    OrderDeliveryInfo,
     OrderProduct,
     ValidateOrderCustomerContacts,
-    ValidateOrderDeliveryInfo,
     ValidateOrderProduct
 } from "@domain/order/order.ts";
 import {Notify} from "@pkg/notification/notification.tsx";
@@ -26,9 +24,9 @@ import {
     SetOrderNumberAction,
     SetCustomerContactsAction,
     SetDeliveryInfoAction,
-    SetOrderCommentAction,
     SetValidationErrorsAction,
 } from "./types.ts";
+import {DeliveryInfo, ValidateDeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
 
 export const CartActionCreator = {
     initCartState: (payload: {}): InitCartStateAction => ({
@@ -53,12 +51,8 @@ export const CartActionCreator = {
         type: CartActionEnum.SET_CUSTOMER_CONTACTS,
         payload
     }),
-    setDeliveryInfo: (payload: OrderDeliveryInfo): SetDeliveryInfoAction => ({
+    setDeliveryInfo: (payload: DeliveryInfo): SetDeliveryInfoAction => ({
         type: CartActionEnum.SET_DELIVERY_INFO,
-        payload
-    }),
-    setOrderComment: (payload: string): SetOrderCommentAction => ({
-        type: CartActionEnum.SET_ORDER_COMMENT,
         payload
     }),
     makeOrderAction: (): MakeOrderAction => ({
@@ -134,14 +128,12 @@ export const CartActionCreator = {
             }
             order.customerContacts = getState().cartState.customerContacts;
 
-            err = ValidateOrderDeliveryInfo(getState().cartState.deliveryInfo, currentLang);
+            err = ValidateDeliveryInfo(getState().cartState.deliveryInfo, currentLang);
             if (err !== null) {
                 Notify.Error({message: err.message});
                 return;
             }
             order.deliveryInfo = getState().cartState.deliveryInfo;
-
-            order.orderComment = getState().cartState.orderComment || "";
 
             const res = await CartServices.makeOrder(cfg.apiUri, order);
             if (res.data.success) {

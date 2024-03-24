@@ -1,12 +1,12 @@
 import {CartItem} from "@domain/cartItem";
 import {MlString} from "@domain/base/mlString/mlString.ts";
-import {OrderCustomerContacts, OrderDeliveryInfo} from "@domain/order/order.ts";
+import {OrderCustomerContacts} from "@domain/order/order.ts";
+import {DeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
 
 export interface CartState {
     cart: CartItem[];
     customerContacts: OrderCustomerContacts;
-    deliveryInfo: OrderDeliveryInfo;
-    orderComment: string;
+    deliveryInfo: DeliveryInfo;
     orderNumber: string;
     validationErrors: {
         customerContacts: {
@@ -31,7 +31,6 @@ export enum CartActionEnum {
 
     SET_CUSTOMER_CONTACTS = "SET_CUSTOMER_CONTACTS",
     SET_DELIVERY_INFO = "SET_DELIVERY_INFO",
-    SET_ORDER_COMMENT = "SET_ORDER_COMMENT",
 
     MAKE_ORDER = "MAKE_ORDER",
     SET_ORDER_NUMBER = "SET_ORDER_NUMBER",
@@ -74,12 +73,7 @@ export interface SetCustomerContactsAction {
 
 export interface SetDeliveryInfoAction {
     type: CartActionEnum.SET_DELIVERY_INFO;
-    payload: OrderDeliveryInfo;
-}
-
-export interface SetOrderCommentAction {
-    type: CartActionEnum.SET_ORDER_COMMENT;
-    payload: string;
+    payload: DeliveryInfo;
 }
 
 export interface MakeOrderAction {
@@ -118,7 +112,6 @@ export type CartAction =
     ClearCartAction |
     SetCustomerContactsAction |
     SetDeliveryInfoAction |
-    SetOrderCommentAction |
     SetOrderNumberAction |
     MakeOrderAction |
     SetIsLoadingMakeOrderAction |
