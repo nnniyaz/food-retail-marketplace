@@ -16,9 +16,7 @@ export const Checkout = () => {
     const navigate = useNavigate();
     const {
         cart,
-        customerContacts,
         deliveryInfo,
-        orderComment,
         isLoadingMakeOrder
     } = useTypedSelector(state => state.cartState);
     const {setDeliveryInfo, makeOrder} = useActions();
@@ -46,6 +44,7 @@ export const Checkout = () => {
                         placeholder={translate("enter_address")}
                         value={deliveryInfo.address}
                         onChange={handleAddressChange}
+                        required={true}
                     />
                 </section>
                 <section className={classes.checkout__group}>

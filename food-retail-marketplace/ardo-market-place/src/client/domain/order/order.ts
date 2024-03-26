@@ -71,17 +71,3 @@ export type OrderCustomerContacts = {
     phone: string;
     email: string;
 }
-
-export function ValidateOrderCustomerContacts(contacts: OrderCustomerContacts, currentLang: Langs): Error | null {
-    if (contacts.name === "") {
-        return new Error(txts["customer_name_required"][currentLang]);
-    }
-    if (contacts.phone === "") {
-        return new Error(txts["customer_phone_required"][currentLang]);
-    }
-    if (contacts.email === "") {
-        return new Error(txts["customer_email_required"][currentLang]);
-    }
-    return null;
-}
-

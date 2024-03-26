@@ -1,17 +1,12 @@
 import {AppDispatch, RootState} from "@app/store";
 import {MlString} from "@domain/base/mlString/mlString.ts";
 import {Currency} from "@domain/base/currency/currency.ts";
-import {OrderRequest} from "@domain/order/orderRequest.ts";
+import {DeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
 import {NavigateCallback} from "@domain/base/navigateCallback/navigateCallback.ts";
-import {
-    OrderCustomerContacts,
-    OrderProduct,
-    ValidateOrderCustomerContacts,
-    ValidateOrderProduct
-} from "@domain/order/order.ts";
+import {OrderRequest, ValidateOrderRequest} from "@domain/order/orderRequest.ts";
+import {OrderCustomerContacts, OrderProduct, ValidateOrderProduct} from "@domain/order/order.ts";
 import {Notify} from "@pkg/notification/notification.tsx";
 import {CartServices} from "@services/cartServices.ts";
-import {txts} from "../../../../../server/pkg/core/txts.ts";
 import {
     CartActionEnum,
     ClearCartAction,
@@ -26,7 +21,7 @@ import {
     SetDeliveryInfoAction,
     SetValidationErrorsAction,
 } from "./types.ts";
-import {DeliveryInfo, ValidateDeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
+import {txts} from "../../../../../server/pkg/core/txts.ts";
 
 export const CartActionCreator = {
     initCartState: (payload: {}): InitCartStateAction => ({
@@ -100,7 +95,6 @@ export const CartActionCreator = {
                     apartment: "",
                     deliveryComment: "",
                 },
-                orderComment: "",
             };
 
             let err: Error | null = null;
@@ -120,20 +114,14 @@ export const CartActionCreator = {
                 order.quantity += item.quantity;
                 order.totalPrice += item.totalPrice;
             });
-
-            err = ValidateOrderCustomerContacts(getState().cartState.customerContacts, currentLang);
-            if (err !== null) {
-                Notify.Error({message: err.message});
-                return;
-            }
             order.customerContacts = getState().cartState.customerContacts;
+            order.deliveryInfo = getState().cartState.deliveryInfo;
 
-            err = ValidateDeliveryInfo(getState().cartState.deliveryInfo, currentLang);
+            err = ValidateOrderRequest(order);
             if (err !== null) {
                 Notify.Error({message: err.message});
                 return;
             }
-            order.deliveryInfo = getState().cartState.deliveryInfo;
 
             const res = await CartServices.makeOrder(cfg.apiUri, order);
             if (res.data.success) {
