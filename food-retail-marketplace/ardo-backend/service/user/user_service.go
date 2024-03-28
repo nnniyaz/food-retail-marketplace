@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/exceptions"
@@ -20,6 +21,9 @@ type UserService interface {
 	UpdatePassword(ctx context.Context, user *user.User, password string) error
 	Recover(ctx context.Context, userId string) error
 	Delete(ctx context.Context, userId string) error
+	AddDeliveryPoint(ctx context.Context, user *user.User, deliveryInfo deliveryInfo.DeliveryInfo) error
+	UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error
+	ChangeLastDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error
 }
 
 type userService struct {
@@ -128,4 +132,33 @@ func (u *userService) Delete(ctx context.Context, userId string) error {
 		return exceptions.ErrUserNotFound
 	}
 	return u.userRepo.Delete(ctx, foundUser.GetId())
+}
+
+func (u *userService) AddDeliveryPoint(ctx context.Context, user *user.User, deliveryInfo deliveryInfo.DeliveryInfo) error {
+	err := user.AddDeliveryPoint(deliveryInfo.GetAddress(), deliveryInfo.GetFloor(), deliveryInfo.GetApartment(), deliveryInfo.GetDeliveryComment())
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
+}
+
+func (u *userService) UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error {
+	convertedDeliveryPointId, err := uuid.UUIDFromString(deliveryPointId)
+	err = user.UpdateDeliveryPoint(convertedDeliveryPointId, address, floor, apartment, deliveryComment)
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
+}
+
+func (u *userService) ChangeLastDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error {
+	convertedDeliveryPointId, err := uuid.UUIDFromString(deliveryPointId)
+	if err != nil {
+		return err
+	}
+	err = user.ChangeLastDeliveryPoint(convertedDeliveryPointId)
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
 }

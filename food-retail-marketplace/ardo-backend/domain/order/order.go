@@ -19,7 +19,6 @@ type Order struct {
 	currency         currency.Currency
 	customerContacts valueobject.CustomerContacts
 	deliveryInfo     deliveryInfo.DeliveryInfo
-	deliveryDate     time.Time
 	status           valueobject.OrderStatus
 	isDeleted        bool
 	createdAt        time.Time
@@ -27,15 +26,11 @@ type Order struct {
 	version          int
 }
 
-func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, orderCurrency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time) (*Order, error) {
+func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, orderCurrency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo) (*Order, error) {
 	ts := time.Now()
 
 	convertedUserId, err := uuid.UUIDFromString(userId)
 	if err != nil {
-		return nil, err
-	}
-
-	if err = valueobject.OrderProductsValidate(products); err != nil {
 		return nil, err
 	}
 
@@ -52,18 +47,6 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64
 		return nil, err
 	}
 
-	if err = customerContacts.Validate(); err != nil {
-		return nil, err
-	}
-
-	if err = deliveryInfo.Validate(); err != nil {
-		return nil, err
-	}
-
-	if deliveryDate.Before(ts) || deliveryDate.After(ts.AddDate(0, 0, 7)) {
-		return nil, exceptions.ErrInvalidOrderDeliveryDate
-	}
-
 	return &Order{
 		id:               uuid.NewUUID(),
 		userId:           convertedUserId,
@@ -74,7 +57,6 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64
 		currency:         convertedCurrency,
 		customerContacts: customerContacts,
 		deliveryInfo:     deliveryInfo,
-		deliveryDate:     deliveryDate,
 		status:           valueobject.NEW,
 		isDeleted:        false,
 		createdAt:        ts,
@@ -119,10 +101,6 @@ func (o *Order) GetDeliveryInfo() deliveryInfo.DeliveryInfo {
 	return o.deliveryInfo
 }
 
-func (o *Order) GetDeliveryDate() time.Time {
-	return o.deliveryDate
-}
-
 func (o *Order) GetStatus() valueobject.OrderStatus {
 	return o.status
 }
@@ -154,7 +132,7 @@ func (o *Order) UpdateStatus(status string) error {
 	return nil
 }
 
-func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, number string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, orderCurrency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Order {
+func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, number string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, orderCurrency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Order {
 	return &Order{
 		id:               id,
 		userId:           userId,
@@ -165,7 +143,6 @@ func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, number string, p
 		currency:         currency.Currency(orderCurrency),
 		customerContacts: customerContacts,
 		deliveryInfo:     deliveryInfo,
-		deliveryDate:     deliveryDate,
 		status:           valueobject.OrderStatus(status),
 		isDeleted:        isDeleted,
 		createdAt:        createdAt,

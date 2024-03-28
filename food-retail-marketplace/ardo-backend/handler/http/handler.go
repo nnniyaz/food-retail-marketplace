@@ -59,7 +59,10 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 	if isDevMode {
 		r.Use(cors.Handler(cors.Options{
 			AllowedOrigins: []string{
-				"http://localhost:3000", "https://localhost:3000",
+				"http://localhost:3000",
+				"https://localhost:3000",
+				"http://localhost:3001",
+				"https://localhost:3001",
 			},
 			AllowedMethods: []string{
 				http.MethodHead,

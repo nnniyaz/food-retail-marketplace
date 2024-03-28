@@ -2,33 +2,44 @@ package valueobject
 
 import (
 	"github/nnniyaz/ardo/domain/base/email"
+	"github/nnniyaz/ardo/domain/base/phone"
 	"github/nnniyaz/ardo/pkg/core"
 )
 
 var (
-	ErrEmptyCustomerName  = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_CUSTOMER_NAME)
-	ErrEmptyCustomerPhone = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_CUSTOMER_PHONE)
+	ErrEmptyCustomerName = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_CUSTOMER_NAME)
 )
 
 type CustomerContacts struct {
 	name  string
-	phone string
+	phone phone.Phone
 	email email.Email
 }
 
-func NewCustomerContacts(name, phone string, mail string) CustomerContacts {
+func NewCustomerContacts(name, phoneNumber, countryCode, mail string) (CustomerContacts, error) {
+	if name == "" {
+		return CustomerContacts{}, ErrEmptyCustomerName
+	}
+	customerPhone, err := phone.NewPhone(phoneNumber, countryCode)
+	if err != nil {
+		return CustomerContacts{}, err
+	}
+	customerEmail, err := email.NewEmail(mail)
+	if err != nil {
+		return CustomerContacts{}, err
+	}
 	return CustomerContacts{
 		name:  name,
-		phone: phone,
-		email: email.Email(mail),
-	}
+		phone: customerPhone,
+		email: customerEmail,
+	}, nil
 }
 
 func (c *CustomerContacts) GetName() string {
 	return c.name
 }
 
-func (c *CustomerContacts) GetPhone() string {
+func (c *CustomerContacts) GetPhone() phone.Phone {
 	return c.phone
 }
 
@@ -36,22 +47,7 @@ func (c *CustomerContacts) GetEmail() email.Email {
 	return c.email
 }
 
-func (c *CustomerContacts) Validate() error {
-	if c.name == "" {
-		return ErrEmptyCustomerName
-	}
-
-	if c.phone == "" {
-		return ErrEmptyCustomerPhone
-	}
-
-	if err := c.email.Validate(); err != nil {
-		return err
-	}
-	return nil
-}
-
-func UnmarshalCustomerContactsFromDatabase(name, phone string, mail string) CustomerContacts {
+func UnmarshalCustomerContactsFromDatabase(name string, phone phone.Phone, mail string) CustomerContacts {
 	return CustomerContacts{
 		name:  name,
 		phone: phone,

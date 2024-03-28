@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"github/nnniyaz/ardo/domain/base/deliveryInfo"
+	"github/nnniyaz/ardo/domain/base/phone"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/order/valueobject"
@@ -26,114 +27,122 @@ func (r *RepoOrder) Coll() *mongo.Collection {
 	return r.client.Database("main").Collection("orders")
 }
 
-type mongoOrderProduct struct {
-	ProductId    uuid.UUID     `bson:"productId"`
-	ProductName  core.MlString `bson:"productName"`
-	Quantity     int64         `bson:"quantity"`
-	PricePerUnit float64       `bson:"pricePerUnit"`
-	TotalPrice   float64       `bson:"totalPrice"`
-}
-
-func newFromOrderProducts(o []valueobject.OrderProduct) []mongoOrderProduct {
-	m := make([]mongoOrderProduct, len(o))
-	for i, orderProduct := range o {
-		m[i] = mongoOrderProduct{
-			ProductId:    orderProduct.GetProductId(),
-			ProductName:  orderProduct.GetProductName(),
-			Quantity:     orderProduct.GetQuantity(),
-			PricePerUnit: orderProduct.GetPricePerUnit(),
-			TotalPrice:   orderProduct.GetTotalPrice(),
-		}
-	}
-	return m
-}
-
-func (m *mongoOrderProduct) ToAggregate() valueobject.OrderProduct {
-	return valueobject.UnmarshalOrderProductFromDatabase(m.ProductId, m.ProductName, m.Quantity, m.TotalPrice)
-}
-
-type mongoCustomerContacts struct {
-	Name  string `bson:"name"`
-	Phone string `bson:"phone"`
-	Email string `bson:"email"`
-}
-
-func newFromCustomerContacts(c valueobject.CustomerContacts) mongoCustomerContacts {
-	return mongoCustomerContacts{
-		Name:  c.GetName(),
-		Phone: c.GetPhone(),
-		Email: c.GetEmail().String(),
-	}
-}
-
-func (m *mongoCustomerContacts) ToAggregate() valueobject.CustomerContacts {
-	return valueobject.UnmarshalCustomerContactsFromDatabase(m.Name, m.Phone, m.Email)
-}
-
-type mongoDeliveryInfo struct {
-	Address         string `bson:"address"`
-	Floor           string `bson:"floor"`
-	Apartment       string `bson:"apartment"`
-	DeliveryComment string `bson:"deliveryComment"`
-}
-
-func newFromDeliveryInfo(d deliveryInfo.DeliveryInfo) mongoDeliveryInfo {
-	return mongoDeliveryInfo{
-		Address:         d.GetAddress(),
-		Floor:           d.GetFloor(),
-		Apartment:       d.GetApartment(),
-		DeliveryComment: d.GetDeliveryComment(),
-	}
-}
-
-func (m *mongoDeliveryInfo) ToAggregate() deliveryInfo.DeliveryInfo {
-	return deliveryInfo.UnmarshalDeliveryInfoFromDatabase(m.Address, m.Floor, m.Apartment, m.DeliveryComment)
-}
-
 type mongoOrder struct {
-	Id               uuid.UUID             `bson:"_id"`
-	UserId           uuid.UUID             `bson:"userId"`
-	Number           string                `bson:"number"`
-	Products         []mongoOrderProduct   `bson:"products"`
-	Quantity         int64                 `bson:"quantity"`
-	TotalPrice       float64               `bson:"totalPrice"`
-	Currency         string                `bson:"currency"`
-	CustomerContacts mongoCustomerContacts `bson:"customerContacts"`
-	DeliveryInfo     mongoDeliveryInfo     `bson:"deliveryInfo"`
-	DeliveryDate     time.Time             `bson:"deliveryDate"`
-	Status           string                `bson:"status"`
-	IsDeleted        bool                  `bson:"isDeleted"`
-	CreatedAt        time.Time             `bson:"createdAt"`
-	UpdatedAt        time.Time             `bson:"updatedAt"`
-	Version          int                   `bson:"version"`
+	Id       uuid.UUID `bson:"_id"`
+	UserId   uuid.UUID `bson:"userId"`
+	Number   string    `bson:"number"`
+	Products []struct {
+		ProductId    uuid.UUID     `bson:"productId"`
+		ProductName  core.MlString `bson:"productName"`
+		Quantity     int64         `bson:"quantity"`
+		PricePerUnit float64       `bson:"pricePerUnit"`
+		TotalPrice   float64       `bson:"totalPrice"`
+	} `bson:"products"`
+	Quantity         int64   `bson:"quantity"`
+	TotalPrice       float64 `bson:"totalPrice"`
+	Currency         string  `bson:"currency"`
+	CustomerContacts struct {
+		Name  string `bson:"name"`
+		Phone struct {
+			Number      string `bson:"number"`
+			CountryCode string `bson:"countryCode"`
+		} `bson:"phone"`
+		Email string `bson:"email"`
+	} `bson:"customerContacts"`
+	DeliveryInfo struct {
+		Address         string `bson:"address"`
+		Floor           string `bson:"floor"`
+		Apartment       string `bson:"apartment"`
+		DeliveryComment string `bson:"deliveryComment"`
+	} `bson:"deliveryInfo"`
+	Status    string    `bson:"status"`
+	IsDeleted bool      `bson:"isDeleted"`
+	CreatedAt time.Time `bson:"createdAt"`
+	UpdatedAt time.Time `bson:"updatedAt"`
+	Version   int       `bson:"version"`
 }
 
 func newFromOrder(o *order.Order) *mongoOrder {
+	orderProducts := make([]struct {
+		ProductId    uuid.UUID     `bson:"productId"`
+		ProductName  core.MlString `bson:"productName"`
+		Quantity     int64         `bson:"quantity"`
+		PricePerUnit float64       `bson:"pricePerUnit"`
+		TotalPrice   float64       `bson:"totalPrice"`
+	}, len(o.GetProducts()))
+	for i, p := range o.GetProducts() {
+		orderProducts[i] = struct {
+			ProductId    uuid.UUID     `bson:"productId"`
+			ProductName  core.MlString `bson:"productName"`
+			Quantity     int64         `bson:"quantity"`
+			PricePerUnit float64       `bson:"pricePerUnit"`
+			TotalPrice   float64       `bson:"totalPrice"`
+		}{
+			ProductId:    p.GetProductId(),
+			ProductName:  p.GetProductName(),
+			Quantity:     p.GetQuantity(),
+			PricePerUnit: p.GetPricePerUnit(),
+			TotalPrice:   p.GetTotalPrice(),
+		}
+	}
+	orderCustomerContacts := o.GetCustomerContacts()
+	orderCustomerContactsPhone := orderCustomerContacts.GetPhone()
+	orderCustomerContactsEmail := orderCustomerContacts.GetEmail()
+	orderDeliveryInfo := o.GetDeliveryInfo()
+
 	return &mongoOrder{
-		Id:               o.GetId(),
-		UserId:           o.GetUserId(),
-		Number:           o.GetNumber().String(),
-		Products:         newFromOrderProducts(o.GetProducts()),
-		Quantity:         o.GetQuantity(),
-		TotalPrice:       o.GetTotalPrice(),
-		Currency:         o.GetCurrency().String(),
-		CustomerContacts: newFromCustomerContacts(o.GetCustomerContacts()),
-		DeliveryInfo:     newFromDeliveryInfo(o.GetDeliveryInfo()),
-		DeliveryDate:     o.GetDeliveryDate(),
-		Status:           o.GetStatus().String(),
-		IsDeleted:        o.GetIsDeleted(),
-		CreatedAt:        o.GetCreatedAt(),
-		UpdatedAt:        o.GetUpdatedAt(),
-		Version:          o.GetVersion(),
+		Id:         o.GetId(),
+		UserId:     o.GetUserId(),
+		Number:     o.GetNumber().String(),
+		Products:   orderProducts,
+		Quantity:   o.GetQuantity(),
+		TotalPrice: o.GetTotalPrice(),
+		Currency:   o.GetCurrency().String(),
+		CustomerContacts: struct {
+			Name  string `bson:"name"`
+			Phone struct {
+				Number      string `bson:"number"`
+				CountryCode string `bson:"countryCode"`
+			} `bson:"phone"`
+			Email string `bson:"email"`
+		}{
+			Name: orderCustomerContacts.GetName(),
+			Phone: struct {
+				Number      string `bson:"number"`
+				CountryCode string `bson:"countryCode"`
+			}{
+				Number:      orderCustomerContactsPhone.GetNumber(),
+				CountryCode: orderCustomerContactsPhone.GetCountryCode(),
+			},
+			Email: orderCustomerContactsEmail.String(),
+		},
+		DeliveryInfo: struct {
+			Address         string `bson:"address"`
+			Floor           string `bson:"floor"`
+			Apartment       string `bson:"apartment"`
+			DeliveryComment string `bson:"deliveryComment"`
+		}{
+			Address:         orderDeliveryInfo.GetAddress(),
+			Floor:           orderDeliveryInfo.GetFloor(),
+			Apartment:       orderDeliveryInfo.GetApartment(),
+			DeliveryComment: orderDeliveryInfo.GetDeliveryComment(),
+		},
+		Status:    o.GetStatus().String(),
+		IsDeleted: o.GetIsDeleted(),
+		CreatedAt: o.GetCreatedAt(),
+		UpdatedAt: o.GetUpdatedAt(),
+		Version:   o.GetVersion(),
 	}
 }
 
 func (m *mongoOrder) ToAggregate() *order.Order {
 	var products []valueobject.OrderProduct
 	for _, product := range m.Products {
-		products = append(products, product.ToAggregate())
+		products = append(products, valueobject.UnmarshalOrderProductFromDatabase(product.ProductId, product.ProductName, product.Quantity, product.PricePerUnit, product.TotalPrice))
 	}
-	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, m.Number, products, m.Quantity, m.TotalPrice, m.Currency, m.CustomerContacts.ToAggregate(), m.DeliveryInfo.ToAggregate(), m.DeliveryDate, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+	customerContacts := valueobject.UnmarshalCustomerContactsFromDatabase(m.CustomerContacts.Name, phone.UnmarshalPhoneFromDatabase(m.CustomerContacts.Phone.Number, m.CustomerContacts.Phone.CountryCode), m.CustomerContacts.Email)
+	orderDeliveryInfo := deliveryInfo.UnmarshalDeliveryInfoFromDatabase(m.DeliveryInfo.Address, m.DeliveryInfo.Floor, m.DeliveryInfo.Apartment, m.DeliveryInfo.DeliveryComment)
+	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, m.Number, products, m.Quantity, m.TotalPrice, m.Currency, customerContacts, orderDeliveryInfo, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoOrder) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error) {

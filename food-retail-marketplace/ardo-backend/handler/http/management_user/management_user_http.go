@@ -115,10 +115,13 @@ func (hd *HttpDelivery) GetUserById(w http.ResponseWriter, r *http.Request) {
 // -----------------------------------------------------------------------------
 
 type AddUserIn struct {
-	FirstName       string `json:"firstName"`
-	LastName        string `json:"lastName"`
-	Email           string `json:"email"`
-	Phone           string `json:"phone"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Phone     struct {
+		Number      string `json:"number"`
+		CountryCode string `json:"countryCode"`
+	} `json:"phone"`
 	Password        string `json:"password"`
 	UserType        string `json:"userType"`
 	PreferredLang   string `json:"preferredLang"`
@@ -145,7 +148,7 @@ func (hd *HttpDelivery) AddUser(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Phone, in.Password, in.UserType, in.PreferredLang, in.Address, in.Floor, in.Apartment, in.DeliveryComment); err != nil {
+	if err := hd.service.AddUser(r.Context(), in.FirstName, in.LastName, in.Email, in.Phone.Number, in.Phone.CountryCode, in.Password, in.UserType, in.PreferredLang, in.Address, in.Floor, in.Apartment, in.DeliveryComment); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

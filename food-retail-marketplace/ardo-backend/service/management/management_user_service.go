@@ -10,7 +10,7 @@ import (
 type ManagementUserService interface {
 	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
 	GetUserById(ctx context.Context, userId string) (*user.User, error)
-	AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error
+	AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error
 	RecoverUser(ctx context.Context, userId string) error
 	DeleteUser(ctx context.Context, userId string) error
 	UpdateUserCredentials(ctx context.Context, userId, firstName, lastName string) error
@@ -40,8 +40,8 @@ func (m *managementUserService) GetUserById(ctx context.Context, userId string) 
 	return m.userService.GetById(ctx, userId)
 }
 
-func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error {
-	newUser, err := user.NewUser(firstName, lastName, email, phoneNumber, password, userType, preferredLang, address, floor, apartment, deliveryComment)
+func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error {
+	newUser, err := user.NewUser(firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment)
 	if err != nil {
 		return err
 	}

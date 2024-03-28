@@ -6,7 +6,7 @@ import (
 	"github/nnniyaz/ardo/pkg/core"
 )
 
-func FormatOrderConfirmation(order *order.Order) string {
+func FormatOrderConfirmation(order *order.Order, lang core.Lang) string {
 	htmlBody := "<table style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; width: 100%; box-sizing: border-box; padding: 25px 0; text-align: center; border-spacing: 0'>"
 	htmlBody += "<tbody>"
 	htmlBody += "<tr>"
@@ -28,7 +28,7 @@ func FormatOrderConfirmation(order *order.Order) string {
 	// =================================================================================================================
 
 	// Order Number
-	htmlBody += fmt.Sprintf("<h1 style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; font-size: 19px; font-weight: 600; margin: 0; padding: 25px 0; text-align: left'>Order number №%s</h1>", order.GetNumber().String())
+	htmlBody += fmt.Sprintf("<h1 style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; font-size: 19px; font-weight: 600; margin: 0; padding: 25px 0; text-align: left'>%s #%s</h1>", core.Txts[core.TXT_ORDER_NUMBER].GetByLangOrEmpty(lang), order.GetNumber().String())
 
 	// Product
 	htmlBody += "<table cellpadding='0' cellspacing='0' style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; width: 100%; margin: 0; padding: 25px 0 0'>"
@@ -36,17 +36,17 @@ func FormatOrderConfirmation(order *order.Order) string {
 	htmlBody += "<tr>"
 	htmlBody += "<th style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; padding-bottom: 8px; border-bottom: 1px solid #e9eaec'>"
 	htmlBody += "<p style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; line-height: 1.5em; text-align: left; margin: 0; color: #a7adb2; font-size: 12px'>"
-	htmlBody += "Name"
+	htmlBody += core.Txts[core.TXT_NAME].GetByLangOrEmpty(lang)
 	htmlBody += "</p>"
 	htmlBody += "</th>"
 	htmlBody += "<th style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; padding-bottom: 8px; border-bottom: 1px solid #e9eaec'>"
 	htmlBody += "<p style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; line-height: 1.5em; text-align: right; margin: 0; color: #a7adb2; font-size: 12px'>"
-	htmlBody += "Price"
+	htmlBody += core.Txts[core.TXT_PRICE].GetByLangOrEmpty(lang)
 	htmlBody += "</p>"
 	htmlBody += "</th>"
 	htmlBody += "<th style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; padding-bottom: 8px; border-bottom: 1px solid #e9eaec'>"
 	htmlBody += "<p style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; line-height: 1.5em; text-align: right; margin: 0; color: #a7adb2; font-size: 12px'>"
-	htmlBody += "Total"
+	htmlBody += core.Txts[core.TXT_TOTAL].GetByLangOrEmpty(lang)
 	htmlBody += "</p>"
 	htmlBody += "</th>"
 	htmlBody += "</tr>"
@@ -54,7 +54,7 @@ func FormatOrderConfirmation(order *order.Order) string {
 	for i := 0; i < len(order.GetProducts()); i++ {
 		htmlBody += "<tr>"
 		htmlBody += "<td style='width: 50%; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; padding: 10px 0; color: #747f88; font-size: 15px; line-height: 18px; text-align: left'>"
-		htmlBody += fmt.Sprintf("<span>%s</span>", order.GetProducts()[i].GetProductName().GetByLangOrEmpty(core.EN))
+		htmlBody += fmt.Sprintf("<span>%s</span>", order.GetProducts()[i].GetProductName().GetByLangOrEmpty(lang))
 		htmlBody += "</td>"
 		htmlBody += "<td style='width: 30%; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; padding: 10px 0; color: #747f88; font-size: 15px; line-height: 18px; text-align: right'>"
 		htmlBody += fmt.Sprintf("<span>%.2f x %d</span>", order.GetProducts()[i].GetPricePerUnit(), order.GetProducts()[i].GetQuantity())
@@ -68,7 +68,7 @@ func FormatOrderConfirmation(order *order.Order) string {
 	htmlBody += "<tr>"
 	htmlBody += "<td colspan='2' style='width: 85%; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; padding-top: 15px; border-top: 1px solid #e9eaec'>"
 	htmlBody += "<p style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; line-height: 1.5em; text-align: right; margin: 0; color: #232837; font-size: 16px; font-weight: bold'>"
-	htmlBody += "Total"
+	htmlBody += core.Txts[core.TXT_TOTAL].GetByLangOrEmpty(lang)
 	htmlBody += "</p>"
 	htmlBody += "</td>"
 	htmlBody += "<td style='width: 15%; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; padding-top: 15px; border-top: 1px solid #e9eaec'>"
@@ -81,7 +81,7 @@ func FormatOrderConfirmation(order *order.Order) string {
 	htmlBody += "<tr>"
 	htmlBody += "<td colspan='2' style='width: 85%; vertical-align: middle; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box'>"
 	htmlBody += "<p style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; line-height: 1.5em; text-align: right; margin-top: 0; color: #74787e; font-size: 16px'>"
-	htmlBody += "Total"
+	htmlBody += core.Txts[core.TXT_TOTAL].GetByLangOrEmpty(lang)
 	htmlBody += "</p>"
 	htmlBody += "</td>"
 	htmlBody += "<td style='width: 15%; vertical-align: middle; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box'>"
@@ -111,7 +111,7 @@ func FormatOrderConfirmation(order *order.Order) string {
 	htmlBody += "<tr>"
 	htmlBody += "<td>"
 	htmlBody += "<a href='' style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; color: #ffffff; border-right :18px solid #005FF9; border-bottom: 10px solid #005FF9; border-left: 18px solid #005FF9; display: inline-block; text-decoration: none; border-radius: 3px; background-color: #005FF9; border-top: 10px solid #005FF9' target='_blank' data-saferedirecturl=''>"
-	htmlBody += "Receipt"
+	htmlBody += core.Txts[core.TXT_RECEIPT].GetByLangOrEmpty(lang)
 	htmlBody += "</a>"
 	htmlBody += "</td>"
 	htmlBody += "</tr>"

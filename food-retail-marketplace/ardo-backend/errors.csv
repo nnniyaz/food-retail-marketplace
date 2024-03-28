@@ -80,3 +80,10 @@ catalog_section_not_found,Раздел каталога не найден,Catalo
 catalog_category_not_found,Категория каталога не найдена,Catalog category not found
 catalog_product_not_found,Продукт каталога не найден,Catalog product not found
 invalid_order_delivery_date,Неверная дата доставки,Invalid delivery date
+name,Наименование,Name
+price,Цена,Price
+total,Итого,Total
+receipt,Чек,Receipt
+order_number,Номер заказа,Order number
+empty_country_code,Код страны не может быть пустым,Country code can not be empty
+empty_customer_phone_country_code,Код страны телефона клиента не может быть пустым,Customer phone country code can not be empty

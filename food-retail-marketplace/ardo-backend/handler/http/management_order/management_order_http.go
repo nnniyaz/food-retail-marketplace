@@ -11,7 +11,6 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/management"
 	"net/http"
-	"time"
 )
 
 type HttpDelivery struct {
@@ -27,113 +26,111 @@ func NewHttpDelivery(l logger.Logger, service management.ManagementOrderService)
 // Queries
 // -----------------------------------------------------------------------------
 
-type OrderProduct struct {
-	ProductId    string        `json:"productId"`
-	ProductName  core.MlString `json:"productName"`
-	Quantity     int64         `json:"quantity"`
-	PricePerUnit float64       `json:"pricePerUnit"`
-	TotalPrice   float64       `json:"totalPrice"`
-}
-
-func NewOrderProduct(o valueobject.OrderProduct) OrderProduct {
-	return OrderProduct{
-		ProductId:    o.GetProductId().String(),
-		ProductName:  o.GetProductName(),
-		Quantity:     o.GetQuantity(),
-		PricePerUnit: o.GetPricePerUnit(),
-		TotalPrice:   o.GetTotalPrice(),
-	}
-}
-
-func NewOrderProducts(o []valueobject.OrderProduct) []OrderProduct {
-	var ord []OrderProduct
-	for _, p := range o {
-		ord = append(ord, NewOrderProduct(p))
-	}
-	return ord
-}
-
-func UnmarshalOrderProductsFromRequest(orderProducts []OrderProduct) []valueobject.OrderProduct {
-	var ops []valueobject.OrderProduct
-	for _, p := range orderProducts {
-		ops = append(ops, valueobject.NewOrderProduct(p.ProductId, p.ProductName, p.Quantity, p.PricePerUnit, p.TotalPrice))
-	}
-	return ops
-}
-
-type OrderCustomerContacts struct {
-	Name  string `json:"name"`
-	Phone string `json:"phone"`
-	Email string `json:"email"`
-}
-
-func NewOrderCustomerContacts(o valueobject.CustomerContacts) OrderCustomerContacts {
-	return OrderCustomerContacts{
-		Name:  o.GetName(),
-		Phone: o.GetPhone(),
-		Email: o.GetEmail().String(),
-	}
-}
-
-func UnmarshalOrderCustomerContactsFromRequest(o OrderCustomerContacts) valueobject.CustomerContacts {
-	return valueobject.NewCustomerContacts(o.Name, o.Phone, o.Email)
-}
-
-type OrderDeliveryInfo struct {
-	Address         string `json:"address"`
-	Floor           string `json:"floor"`
-	Apartment       string `json:"apartment"`
-	DeliveryComment string `json:"deliveryComment"`
-}
-
-func NewOrderDeliveryInfo(o deliveryInfo.DeliveryInfo) OrderDeliveryInfo {
-	return OrderDeliveryInfo{
-		Address:         o.GetAddress(),
-		Floor:           o.GetFloor(),
-		Apartment:       o.GetApartment(),
-		DeliveryComment: o.GetDeliveryComment(),
-	}
-}
-
-func UnmarshalOrderDeliveryInfoFromRequest(o OrderDeliveryInfo) deliveryInfo.DeliveryInfo {
-	return deliveryInfo.NewDeliveryInfo(o.Address, o.Floor, o.Apartment, o.DeliveryComment)
-}
-
 type Order struct {
-	Id               string                `json:"id"`
-	UserId           string                `json:"userId"`
-	Number           string                `json:"number"`
-	Products         []OrderProduct        `json:"products"`
-	Quantity         int64                 `json:"quantity"`
-	TotalPrice       float64               `json:"totalPrice"`
-	Currency         string                `json:"currency"`
-	CustomerContacts OrderCustomerContacts `json:"customerContacts"`
-	DeliveryInfo     OrderDeliveryInfo     `json:"deliveryInfo"`
-	DeliveryDate     time.Time             `json:"deliveryDate"`
-	Status           string                `json:"status"`
-	IsDeleted        bool                  `json:"isDeleted"`
-	CreatedAt        string                `json:"createdAt"`
-	UpdatedAt        string                `json:"updatedAt"`
-	Version          int                   `json:"version"`
+	Id       string `json:"id"`
+	UserId   string `json:"userId"`
+	Number   string `json:"number"`
+	Products []struct {
+		ProductId    string        `json:"productId"`
+		ProductName  core.MlString `json:"productName"`
+		Quantity     int64         `json:"quantity"`
+		PricePerUnit float64       `json:"pricePerUnit"`
+		TotalPrice   float64       `json:"totalPrice"`
+	} `json:"products"`
+	Quantity         int64   `json:"quantity"`
+	TotalPrice       float64 `json:"totalPrice"`
+	Currency         string  `json:"currency"`
+	CustomerContacts struct {
+		Name  string `json:"name"`
+		Phone struct {
+			Number      string `json:"number"`
+			CountryCode string `json:"countryCode"`
+		} `json:"phone"`
+		Email string `json:"email"`
+	} `json:"customerContacts"`
+	DeliveryInfo struct {
+		Address         string `json:"address"`
+		Floor           string `json:"floor"`
+		Apartment       string `json:"apartment"`
+		DeliveryComment string `json:"deliveryComment"`
+	} `json:"deliveryInfo"`
+	Status    string `json:"status"`
+	IsDeleted bool   `json:"isDeleted"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Version   int    `json:"version"`
 }
 
 func NewOrder(o *order.Order) Order {
+	orderProducts := make([]struct {
+		ProductId    string        `json:"productId"`
+		ProductName  core.MlString `json:"productName"`
+		Quantity     int64         `json:"quantity"`
+		PricePerUnit float64       `json:"pricePerUnit"`
+		TotalPrice   float64       `json:"totalPrice"`
+	}, len(o.GetProducts()))
+	for i, p := range o.GetProducts() {
+		orderProducts[i] = struct {
+			ProductId    string        `json:"productId"`
+			ProductName  core.MlString `json:"productName"`
+			Quantity     int64         `json:"quantity"`
+			PricePerUnit float64       `json:"pricePerUnit"`
+			TotalPrice   float64       `json:"totalPrice"`
+		}{
+			ProductId:    p.GetProductId().String(),
+			ProductName:  p.GetProductName(),
+			Quantity:     p.GetQuantity(),
+			PricePerUnit: p.GetPricePerUnit(),
+			TotalPrice:   p.GetTotalPrice(),
+		}
+	}
+	orderCustomerContacts := o.GetCustomerContacts()
+	orderCustomerContactsPhone := orderCustomerContacts.GetPhone()
+	orderCustomerContactsEmail := orderCustomerContacts.GetEmail()
+	orderDeliveryInfo := o.GetDeliveryInfo()
+
 	return Order{
-		Id:               o.GetId().String(),
-		UserId:           o.GetUserId().String(),
-		Number:           o.GetNumber().String(),
-		Products:         NewOrderProducts(o.GetProducts()),
-		Quantity:         o.GetQuantity(),
-		TotalPrice:       o.GetTotalPrice(),
-		Currency:         o.GetCurrency().String(),
-		CustomerContacts: NewOrderCustomerContacts(o.GetCustomerContacts()),
-		DeliveryInfo:     NewOrderDeliveryInfo(o.GetDeliveryInfo()),
-		DeliveryDate:     o.GetDeliveryDate(),
-		Status:           o.GetStatus().String(),
-		IsDeleted:        o.GetIsDeleted(),
-		CreatedAt:        o.GetCreatedAt().String(),
-		UpdatedAt:        o.GetUpdatedAt().String(),
-		Version:          o.GetVersion(),
+		Id:         o.GetId().String(),
+		UserId:     o.GetUserId().String(),
+		Number:     o.GetNumber().String(),
+		Products:   orderProducts,
+		Quantity:   o.GetQuantity(),
+		TotalPrice: o.GetTotalPrice(),
+		Currency:   o.GetCurrency().String(),
+		CustomerContacts: struct {
+			Name  string `json:"name"`
+			Phone struct {
+				Number      string `json:"number"`
+				CountryCode string `json:"countryCode"`
+			} `json:"phone"`
+			Email string `json:"email"`
+		}{
+			Name: orderCustomerContacts.GetName(),
+			Phone: struct {
+				Number      string `json:"number"`
+				CountryCode string `json:"countryCode"`
+			}{
+				Number:      orderCustomerContactsPhone.GetNumber(),
+				CountryCode: orderCustomerContactsPhone.GetCountryCode(),
+			},
+			Email: orderCustomerContactsEmail.String(),
+		},
+		DeliveryInfo: struct {
+			Address         string `json:"address"`
+			Floor           string `json:"floor"`
+			Apartment       string `json:"apartment"`
+			DeliveryComment string `json:"deliveryComment"`
+		}{
+			Address:         orderDeliveryInfo.GetAddress(),
+			Floor:           orderDeliveryInfo.GetFloor(),
+			Apartment:       orderDeliveryInfo.GetApartment(),
+			DeliveryComment: orderDeliveryInfo.GetDeliveryComment(),
+		},
+		Status:    o.GetStatus().String(),
+		IsDeleted: o.GetIsDeleted(),
+		CreatedAt: o.GetCreatedAt().String(),
+		UpdatedAt: o.GetUpdatedAt().String(),
+		Version:   o.GetVersion(),
 	}
 }
 
@@ -223,14 +220,31 @@ func (hd *HttpDelivery) GetOneById(w http.ResponseWriter, r *http.Request) {
 // -----------------------------------------------------------------------------
 
 type CreateOrderIn struct {
-	UserId           string                `json:"userId"`
-	Products         []OrderProduct        `json:"products"`
-	Quantity         int64                 `json:"quantity"`
-	TotalPrice       float64               `json:"totalPrice"`
-	Currency         string                `json:"currency"`
-	CustomerContacts OrderCustomerContacts `json:"customerContacts"`
-	DeliveryInfo     OrderDeliveryInfo     `json:"deliveryInfo"`
-	DeliveryDate     time.Time             `json:"deliveryDate"`
+	UserId   string `json:"userId"`
+	Products []struct {
+		ProductId    string        `json:"productId"`
+		ProductName  core.MlString `json:"productName"`
+		Quantity     int64         `json:"quantity"`
+		PricePerUnit float64       `json:"pricePerUnit"`
+		TotalPrice   float64       `json:"totalPrice"`
+	} `json:"products"`
+	Quantity         int64   `json:"quantity"`
+	TotalPrice       float64 `json:"totalPrice"`
+	Currency         string  `json:"currency"`
+	CustomerContacts struct {
+		Name  string `json:"name"`
+		Phone struct {
+			Number      string `json:"number"`
+			CountryCode string `json:"countryCode"`
+		} `json:"phone"`
+		Email string `json:"email"`
+	} `json:"customerContacts"`
+	DeliveryInfo struct {
+		Address         string `json:"address"`
+		Floor           string `json:"floor"`
+		Apartment       string `json:"apartment"`
+		DeliveryComment string `json:"deliveryComment"`
+	} `json:"deliveryInfo"`
 }
 
 // CreateOrder godoc
@@ -250,7 +264,30 @@ func (hd *HttpDelivery) CreateOrder(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.Create(r.Context(), in.UserId, UnmarshalOrderProductsFromRequest(in.Products), in.Quantity, in.TotalPrice, in.Currency, UnmarshalOrderCustomerContactsFromRequest(in.CustomerContacts), UnmarshalOrderDeliveryInfoFromRequest(in.DeliveryInfo), in.DeliveryDate); err != nil {
+
+	orderProducts := make([]valueobject.OrderProduct, 0, len(in.Products))
+	for _, p := range in.Products {
+		orderProduct, err := valueobject.NewOrderProduct(p.ProductId, p.ProductName, p.Quantity, p.PricePerUnit, p.TotalPrice)
+		if err != nil {
+			response.NewError(hd.logger, w, r, err)
+			return
+		}
+		orderProducts = append(orderProducts, orderProduct)
+	}
+
+	customerContacts, err := valueobject.NewCustomerContacts(in.CustomerContacts.Name, in.CustomerContacts.Phone.Number, in.CustomerContacts.Phone.CountryCode, in.CustomerContacts.Email)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+
+	orderDeliveryInfo, err := deliveryInfo.NewDeliveryInfo(in.DeliveryInfo.Address, in.DeliveryInfo.Floor, in.DeliveryInfo.Apartment, in.DeliveryInfo.DeliveryComment)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+
+	if err := hd.service.Create(r.Context(), in.UserId, orderProducts, in.Quantity, in.TotalPrice, in.Currency, customerContacts, orderDeliveryInfo); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

@@ -35,7 +35,7 @@ var (
 
 type AuthService interface {
 	Login(ctx context.Context, email, password, userAgent string) (uuid.UUID, error)
-	Register(ctx context.Context, firstName, lastName, email, phoneNumber, password, preferredLang, address, floor, apartment, deliveryComment string) error
+	Register(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, preferredLang, address, floor, apartment, deliveryComment string) error
 	Logout(ctx context.Context, session string) error
 	Confirm(ctx context.Context, link string) error
 	UserCheck(ctx context.Context, session string, userAgent string) (*user.User, error)
@@ -105,9 +105,9 @@ func (a *authService) Logout(ctx context.Context, token string) error {
 	return a.sessionService.DeleteOneByToken(ctx, token)
 }
 
-func (a *authService) Register(ctx context.Context, firstName, lastName, email, phoneNumber, password, preferredLang, address, floor, apartment, deliveryComment string) error {
+func (a *authService) Register(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, preferredLang, address, floor, apartment, deliveryComment string) error {
 	if u, err := a.userService.GetByEmail(ctx, email); err != nil && err != exceptionsUser.ErrUserNotFound || u != nil {
-		if err != nil && err != exceptionsUser.ErrUserNotFound {
+		if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
 			return err
 		}
 
@@ -137,7 +137,7 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 		}
 	}
 
-	newUser, err := user.NewUser(firstName, lastName, email, phoneNumber, password, defaultUserType.String(), preferredLang, address, floor, apartment, deliveryComment)
+	newUser, err := user.NewUser(firstName, lastName, email, phoneNumber, countryCode, password, defaultUserType.String(), preferredLang, address, floor, apartment, deliveryComment)
 	if err = a.userService.Create(ctx, newUser); err != nil {
 		return err
 	}

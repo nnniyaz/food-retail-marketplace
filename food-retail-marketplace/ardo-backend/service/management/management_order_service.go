@@ -7,14 +7,13 @@ import (
 	"github/nnniyaz/ardo/domain/order/valueobject"
 	"github/nnniyaz/ardo/pkg/logger"
 	orderService "github/nnniyaz/ardo/service/order"
-	"time"
 )
 
 type ManagementOrderService interface {
 	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error)
 	GetByUserId(ctx context.Context, offset, limit int64, isDeleted bool, userId string) ([]*order.Order, int64, error)
 	GetOneById(ctx context.Context, userId string) (*order.Order, error)
-	Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time) error
+	Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo) error
 	UpdateStatus(ctx context.Context, userId string, status string) error
 	Recover(ctx context.Context, userId string) error
 	Delete(ctx context.Context, userId string) error
@@ -41,8 +40,8 @@ func (m *managementOrderService) GetOneById(ctx context.Context, orderId string)
 	return m.orderService.GetOneById(ctx, orderId)
 }
 
-func (m *managementOrderService) Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time) error {
-	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, currency, customerContacts, deliveryInfo, deliveryDate)
+func (m *managementOrderService) Create(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo) error {
+	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, currency, customerContacts, deliveryInfo)
 	if err != nil {
 		return err
 	}

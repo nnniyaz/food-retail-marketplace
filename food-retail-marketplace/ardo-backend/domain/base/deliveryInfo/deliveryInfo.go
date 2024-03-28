@@ -11,13 +11,16 @@ type DeliveryInfo struct {
 	deliveryComment string
 }
 
-func NewDeliveryInfo(address, floor, apartment, deliveryComment string) DeliveryInfo {
+func NewDeliveryInfo(address, floor, apartment, deliveryComment string) (DeliveryInfo, error) {
+	if deliveryComment == "" {
+		return DeliveryInfo{}, ErrEmptyDeliveryAddress
+	}
 	return DeliveryInfo{
 		address:         address,
 		floor:           floor,
 		apartment:       apartment,
 		deliveryComment: deliveryComment,
-	}
+	}, nil
 }
 
 func (d *DeliveryInfo) GetAddress() string {
@@ -34,13 +37,6 @@ func (d *DeliveryInfo) GetApartment() string {
 
 func (d *DeliveryInfo) GetDeliveryComment() string {
 	return d.deliveryComment
-}
-
-func (d *DeliveryInfo) Validate() error {
-	if d.address == "" {
-		return ErrEmptyDeliveryAddress
-	}
-	return nil
 }
 
 func UnmarshalDeliveryInfoFromDatabase(address, floor, apartment, deliveryComment string) DeliveryInfo {

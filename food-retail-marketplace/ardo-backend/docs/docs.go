@@ -2183,9 +2183,6 @@ const docTemplate = `{
                 "customerContacts": {
                     "$ref": "#/definitions/client.OrderCustomerContacts"
                 },
-                "deliveryDate": {
-                    "type": "string"
-                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/client.OrderDeliveryInfo"
                 },
@@ -2260,6 +2257,23 @@ const docTemplate = `{
                 "type": "string"
             }
         },
+        "current_user.OrderDeliveryInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
+                "floor": {
+                    "type": "string"
+                }
+            }
+        },
         "current_user.UpdateCurrentLanguageIn": {
             "type": "object",
             "properties": {
@@ -2304,6 +2318,12 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "deliveryPoints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/current_user.OrderDeliveryInfo"
+                    }
+                },
                 "email": {
                     "type": "string"
                 },
@@ -2313,7 +2333,13 @@ const docTemplate = `{
                 "id": {
                     "type": "string"
                 },
+                "lastDeliveryPoint": {
+                    "$ref": "#/definitions/current_user.OrderDeliveryInfo"
+                },
                 "lastName": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "preferredLang": {
@@ -2324,6 +2350,9 @@ const docTemplate = `{
                 },
                 "userType": {
                     "type": "string"
+                },
+                "version": {
+                    "type": "integer"
                 }
             }
         },
@@ -2497,9 +2526,6 @@ const docTemplate = `{
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
                 },
-                "deliveryDate": {
-                    "type": "string"
-                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"
                 },
@@ -2531,9 +2557,6 @@ const docTemplate = `{
                 },
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
-                },
-                "deliveryDate": {
-                    "type": "string"
                 },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"

@@ -54,6 +54,6 @@ func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, 
 		ManagementSection:  management.NewManagementSectionService(l, sectionService),
 		ManagementCategory: management.NewManagementCategoryService(l, categoryService),
 		ManagementSlide:    management.NewManagementSlideService(l, slideService),
-		Client:             client.NewClientService(l, orderService, emailService),
+		Client:             client.NewClientService(l, orderService, emailService, userService),
 	}
 }

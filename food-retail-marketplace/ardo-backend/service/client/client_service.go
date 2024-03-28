@@ -5,50 +5,50 @@ import (
 	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/order/valueobject"
+	"github/nnniyaz/ardo/domain/user"
+	"github/nnniyaz/ardo/handler/http/client"
+	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/email"
 	"github/nnniyaz/ardo/pkg/format"
 	"github/nnniyaz/ardo/pkg/logger"
 	orderService "github/nnniyaz/ardo/service/order"
-	"time"
+	userService "github/nnniyaz/ardo/service/user"
 )
 
 type ClientService interface {
-	MakeOrder(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time) (OrderCreds, error)
+	MakeOrder(ctx context.Context, user *user.User, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo) (client.MakeOrderOut, error)
 }
 
 type clientService struct {
 	logger       logger.Logger
 	orderService orderService.OrderService
 	emailService email.Email
+	userService  userService.UserService
 }
 
-func NewClientService(l logger.Logger, orderService orderService.OrderService, emailService email.Email) ClientService {
-	return &clientService{logger: l, orderService: orderService, emailService: emailService}
+func NewClientService(l logger.Logger, orderService orderService.OrderService, emailService email.Email, userService userService.UserService) ClientService {
+	return &clientService{logger: l, orderService: orderService, emailService: emailService, userService: userService}
 }
 
-type OrderCreds struct {
-	Number    string `json:"number"`
-	CreatedAt string `json:"createdAt"`
-}
-
-func (c *clientService) MakeOrder(ctx context.Context, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryDate time.Time) (OrderCreds, error) {
-	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, currency, customerContacts, deliveryInfo, deliveryDate)
+func (c *clientService) MakeOrder(ctx context.Context, user *user.User, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo) (client.MakeOrderOut, error) {
+	newOrder, err := order.NewOrder(userId, products, quantity, totalPrice, currency, customerContacts, deliveryInfo)
 	if err != nil {
-		return OrderCreds{}, err
+		return client.MakeOrderOut{}, err
 	}
 
 	err = c.orderService.Create(ctx, newOrder)
 	if err != nil {
-		return OrderCreds{}, err
+		return client.MakeOrderOut{}, err
 	}
 
+	//err = c.userService.ChangeLastDeliveryPoint(ctx, user, newOrder.GetDeliveryInfo())
+
 	contacts := newOrder.GetCustomerContacts()
-	subject := "Order number №" + newOrder.GetNumber().String()
-	htmlBody := format.FormatOrderConfirmation(newOrder)
+	subject := core.Txts[core.TXT_ORDER_NUMBER].GetByLangOrEmpty(ctx.Value("userLang").(core.Lang)) + " #" + newOrder.GetNumber().String()
+	htmlBody := format.FormatOrderConfirmation(newOrder, ctx.Value("userLang").(core.Lang))
 	err = c.emailService.SendMail([]string{contacts.GetEmail().String()}, subject, htmlBody)
 
-	return OrderCreds{
-		Number:    newOrder.GetNumber().String(),
-		CreatedAt: newOrder.GetCreatedAt().String(),
+	return client.MakeOrderOut{
+		OrderNumber: newOrder.GetNumber().String(),
 	}, nil
 }

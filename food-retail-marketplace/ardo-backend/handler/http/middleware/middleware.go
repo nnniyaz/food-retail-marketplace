@@ -148,6 +148,23 @@ func (m *Middleware) UserAuth(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), "sessionKey", session.Value)
 		ctx = context.WithValue(ctx, "user", *u)
+
+		userLang, err := r.Cookie("Accept-Language")
+		if err != nil {
+			userLang = &http.Cookie{
+				Name:  "Accept-Language",
+				Value: "en",
+			}
+		}
+		if userLang.Value == "en" {
+			ctx = context.WithValue(ctx, "userLang", core.EN)
+		}
+		if userLang.Value == "ru" {
+			ctx = context.WithValue(ctx, "userLang", core.RU)
+		} else {
+			ctx = context.WithValue(ctx, "userLang", core.EN)
+		}
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -181,6 +198,23 @@ func (m *Middleware) ClientAuth(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), "sessionKey", session.Value)
 		ctx = context.WithValue(ctx, "user", *u)
+
+		userLang, err := r.Cookie("Accept-Language")
+		if err != nil {
+			userLang = &http.Cookie{
+				Name:  "Accept-Language",
+				Value: "en",
+			}
+		}
+		if userLang.Value == "en" {
+			ctx = context.WithValue(ctx, "userLang", core.EN)
+		}
+		if userLang.Value == "ru" {
+			ctx = context.WithValue(ctx, "userLang", core.RU)
+		} else {
+			ctx = context.WithValue(ctx, "userLang", core.EN)
+		}
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }
@@ -214,6 +248,23 @@ func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
 
 		ctx := context.WithValue(r.Context(), "sessionKey", session.Value)
 		ctx = context.WithValue(ctx, "user", *u)
+
+		userLang, err := r.Cookie("Accept-Language")
+		if err != nil {
+			userLang = &http.Cookie{
+				Name:  "Accept-Language",
+				Value: "en",
+			}
+		}
+		if userLang.Value == "en" {
+			ctx = context.WithValue(ctx, "userLang", core.EN)
+		}
+		if userLang.Value == "ru" {
+			ctx = context.WithValue(ctx, "userLang", core.RU)
+		} else {
+			ctx = context.WithValue(ctx, "userLang", core.EN)
+		}
+
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

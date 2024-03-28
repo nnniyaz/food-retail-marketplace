@@ -3,87 +3,94 @@
 package core
 
 const (
-	TXT_UNKNOWN_ERROR               TxtKey = 1
-	TXT_EMPTY_FIRSTNAME             TxtKey = 2
-	TXT_FIRSTNAME_TOO_SHORT         TxtKey = 3
-	TXT_FIRSTNAME_TOO_LONG          TxtKey = 4
-	TXT_EMPTY_LASTNAME              TxtKey = 5
-	TXT_LASTNAME_TOO_SHORT          TxtKey = 6
-	TXT_LASTNAME_TOO_LONG           TxtKey = 7
-	TXT_EMPTY_PASSWORD              TxtKey = 8
-	TXT_PASSWORD_TOO_SHORT          TxtKey = 9
-	TXT_PASSWORD_TOO_LONG           TxtKey = 10
-	TXT_INVALID_PASSWORD            TxtKey = 11
-	TXT_SAME_PASSWORD               TxtKey = 12
-	TXT_EMPTY_EMAIL                 TxtKey = 13
-	TXT_INVALID_EMAIL               TxtKey = 14
-	TXT_EMAIL_DOESNT_EXIST          TxtKey = 15
-	TXT_EMAIL_ALREADY_EXISTS        TxtKey = 16
-	TXT_INVALID_USER_TYPE           TxtKey = 17
-	TXT_USER_NOT_FOUND              TxtKey = 18
-	TXT_ACCOUNT_NOT_ACTIVE          TxtKey = 19
-	TXT_EMPTY_MERCHANT_ROLE         TxtKey = 20
-	TXT_INVALID_MERCHANT_ROLE       TxtKey = 21
-	TXT_EMPTY_CURRENCY              TxtKey = 22
-	TXT_INVALID_CURRENCY            TxtKey = 23
-	TXT_EMPTY_PHONE_NUMBER          TxtKey = 24
-	TXT_EMPTY_ADDRESS               TxtKey = 25
-	TXT_INVALID_PRODUCT_STATUS      TxtKey = 26
-	TXT_INVALID_PRODUCT_PRICE       TxtKey = 27
-	TXT_INVALID_PRODUCT_QUANTITY    TxtKey = 28
-	TXT_INVALID_PRODUCT_IMG_URL     TxtKey = 29
-	TXT_INVALID_REVIEW_RATING       TxtKey = 30
-	TXT_INVALID_REVIEW_COMMENT      TxtKey = 31
-	TXT_WRONG_MLSTRING_FORMAT       TxtKey = 32
-	TXT_USER_AGENT_EMPTY            TxtKey = 33
-	TXT_USER_SESSION_ALREADY_EXISTS TxtKey = 34
-	TXT_USER_SESSION_NOT_FOUND      TxtKey = 35
-	TXT_USER_ALREADY_EXISTS         TxtKey = 36
-	TXT_UNAUTHORIZED                TxtKey = 37
-	TXT_EMPTY_ORG_NAME              TxtKey = 38
-	TXT_ORG_NAME_TOO_SHORT          TxtKey = 39
-	TXT_ORG_NAME_TOO_LONG           TxtKey = 40
-	TXT_DO_NOT_HAVE_AN_ACCESS       TxtKey = 41
-	TXT_OLD_PASSWORD_DOES_NOT_MATCH TxtKey = 42
-	TXT_EMPTY_ORG_LOGO              TxtKey = 43
-	TXT_ORG_NOT_FOUND               TxtKey = 44
-	TXT_USER_ALREADY_IN_ORG         TxtKey = 45
-	TXT_FILE_IS_NIL                 TxtKey = 46
-	TXT_UPLOADED_IMG_INVALID        TxtKey = 47
-	TXT_FILE_NOT_FOUND              TxtKey = 48
-	TXT_EMPTY_LANG                  TxtKey = 49
-	TXT_INVALID_LANG                TxtKey = 50
-	TXT_PRODUCT_ALREADY_EXISTS      TxtKey = 51
-	TXT_PRODUCT_NOT_FOUND           TxtKey = 52
-	TXT_EMPTY_PRODUCT_NAME          TxtKey = 53
-	TXT_EMPTY_DELIVERY_ADDRESS      TxtKey = 54
-	TXT_INVALID_ORDER_QUANTITY      TxtKey = 55
-	TXT_INVALID_ORDER_PRICE         TxtKey = 56
-	TXT_INVALID_ORDER_STATUS        TxtKey = 57
-	TXT_EMPTY_CUSTOMER_NAME         TxtKey = 58
-	TXT_EMPTY_CUSTOMER_PHONE        TxtKey = 59
-	TXT_ORDER_ALREADY_EXISTS        TxtKey = 60
-	TXT_ORDER_NOT_FOUND             TxtKey = 61
-	TXT_WRONG_PRODUCTS_TOTAL_PRICE  TxtKey = 62
-	TXT_EMPTY_SECTION_NAME          TxtKey = 63
-	TXT_EMPTY_CATEGORY_NAME         TxtKey = 64
-	TXT_CATEGORY_ALREADY_EXISTS     TxtKey = 65
-	TXT_CATEGORY_NOT_FOUND          TxtKey = 66
-	TXT_SECTION_ALREADY_EXISTS      TxtKey = 67
-	TXT_SECTION_NOT_FOUND           TxtKey = 68
-	TXT_UUID_INVALID_LENGTH         TxtKey = 69
-	TXT_MAXIMUM_NUMBER_OF_CATALOGS  TxtKey = 70
-	TXT_DUPLICATE_SECTION           TxtKey = 71
-	TXT_DUPLICATE_CATEGORY          TxtKey = 72
-	TXT_DUPLICATE_PRODUCT           TxtKey = 73
-	TXT_EMPTY_SLIDE_IMG             TxtKey = 74
-	TXT_SLIDE_ALREADY_EXISTS        TxtKey = 75
-	TXT_SLIDE_NOT_FOUND             TxtKey = 76
-	TXT_CATALOG_NOT_FOUND           TxtKey = 77
-	TXT_CATALOG_SECTION_NOT_FOUND   TxtKey = 78
-	TXT_CATALOG_CATEGORY_NOT_FOUND  TxtKey = 79
-	TXT_CATALOG_PRODUCT_NOT_FOUND   TxtKey = 80
-	TXT_INVALID_ORDER_DELIVERY_DATE TxtKey = 81
+	TXT_UNKNOWN_ERROR                     TxtKey = 1
+	TXT_EMPTY_FIRSTNAME                   TxtKey = 2
+	TXT_FIRSTNAME_TOO_SHORT               TxtKey = 3
+	TXT_FIRSTNAME_TOO_LONG                TxtKey = 4
+	TXT_EMPTY_LASTNAME                    TxtKey = 5
+	TXT_LASTNAME_TOO_SHORT                TxtKey = 6
+	TXT_LASTNAME_TOO_LONG                 TxtKey = 7
+	TXT_EMPTY_PASSWORD                    TxtKey = 8
+	TXT_PASSWORD_TOO_SHORT                TxtKey = 9
+	TXT_PASSWORD_TOO_LONG                 TxtKey = 10
+	TXT_INVALID_PASSWORD                  TxtKey = 11
+	TXT_SAME_PASSWORD                     TxtKey = 12
+	TXT_EMPTY_EMAIL                       TxtKey = 13
+	TXT_INVALID_EMAIL                     TxtKey = 14
+	TXT_EMAIL_DOESNT_EXIST                TxtKey = 15
+	TXT_EMAIL_ALREADY_EXISTS              TxtKey = 16
+	TXT_INVALID_USER_TYPE                 TxtKey = 17
+	TXT_USER_NOT_FOUND                    TxtKey = 18
+	TXT_ACCOUNT_NOT_ACTIVE                TxtKey = 19
+	TXT_EMPTY_MERCHANT_ROLE               TxtKey = 20
+	TXT_INVALID_MERCHANT_ROLE             TxtKey = 21
+	TXT_EMPTY_CURRENCY                    TxtKey = 22
+	TXT_INVALID_CURRENCY                  TxtKey = 23
+	TXT_EMPTY_PHONE_NUMBER                TxtKey = 24
+	TXT_EMPTY_ADDRESS                     TxtKey = 25
+	TXT_INVALID_PRODUCT_STATUS            TxtKey = 26
+	TXT_INVALID_PRODUCT_PRICE             TxtKey = 27
+	TXT_INVALID_PRODUCT_QUANTITY          TxtKey = 28
+	TXT_INVALID_PRODUCT_IMG_URL           TxtKey = 29
+	TXT_INVALID_REVIEW_RATING             TxtKey = 30
+	TXT_INVALID_REVIEW_COMMENT            TxtKey = 31
+	TXT_WRONG_MLSTRING_FORMAT             TxtKey = 32
+	TXT_USER_AGENT_EMPTY                  TxtKey = 33
+	TXT_USER_SESSION_ALREADY_EXISTS       TxtKey = 34
+	TXT_USER_SESSION_NOT_FOUND            TxtKey = 35
+	TXT_USER_ALREADY_EXISTS               TxtKey = 36
+	TXT_UNAUTHORIZED                      TxtKey = 37
+	TXT_EMPTY_ORG_NAME                    TxtKey = 38
+	TXT_ORG_NAME_TOO_SHORT                TxtKey = 39
+	TXT_ORG_NAME_TOO_LONG                 TxtKey = 40
+	TXT_DO_NOT_HAVE_AN_ACCESS             TxtKey = 41
+	TXT_OLD_PASSWORD_DOES_NOT_MATCH       TxtKey = 42
+	TXT_EMPTY_ORG_LOGO                    TxtKey = 43
+	TXT_ORG_NOT_FOUND                     TxtKey = 44
+	TXT_USER_ALREADY_IN_ORG               TxtKey = 45
+	TXT_FILE_IS_NIL                       TxtKey = 46
+	TXT_UPLOADED_IMG_INVALID              TxtKey = 47
+	TXT_FILE_NOT_FOUND                    TxtKey = 48
+	TXT_EMPTY_LANG                        TxtKey = 49
+	TXT_INVALID_LANG                      TxtKey = 50
+	TXT_PRODUCT_ALREADY_EXISTS            TxtKey = 51
+	TXT_PRODUCT_NOT_FOUND                 TxtKey = 52
+	TXT_EMPTY_PRODUCT_NAME                TxtKey = 53
+	TXT_EMPTY_DELIVERY_ADDRESS            TxtKey = 54
+	TXT_INVALID_ORDER_QUANTITY            TxtKey = 55
+	TXT_INVALID_ORDER_PRICE               TxtKey = 56
+	TXT_INVALID_ORDER_STATUS              TxtKey = 57
+	TXT_EMPTY_CUSTOMER_NAME               TxtKey = 58
+	TXT_EMPTY_CUSTOMER_PHONE              TxtKey = 59
+	TXT_ORDER_ALREADY_EXISTS              TxtKey = 60
+	TXT_ORDER_NOT_FOUND                   TxtKey = 61
+	TXT_WRONG_PRODUCTS_TOTAL_PRICE        TxtKey = 62
+	TXT_EMPTY_SECTION_NAME                TxtKey = 63
+	TXT_EMPTY_CATEGORY_NAME               TxtKey = 64
+	TXT_CATEGORY_ALREADY_EXISTS           TxtKey = 65
+	TXT_CATEGORY_NOT_FOUND                TxtKey = 66
+	TXT_SECTION_ALREADY_EXISTS            TxtKey = 67
+	TXT_SECTION_NOT_FOUND                 TxtKey = 68
+	TXT_UUID_INVALID_LENGTH               TxtKey = 69
+	TXT_MAXIMUM_NUMBER_OF_CATALOGS        TxtKey = 70
+	TXT_DUPLICATE_SECTION                 TxtKey = 71
+	TXT_DUPLICATE_CATEGORY                TxtKey = 72
+	TXT_DUPLICATE_PRODUCT                 TxtKey = 73
+	TXT_EMPTY_SLIDE_IMG                   TxtKey = 74
+	TXT_SLIDE_ALREADY_EXISTS              TxtKey = 75
+	TXT_SLIDE_NOT_FOUND                   TxtKey = 76
+	TXT_CATALOG_NOT_FOUND                 TxtKey = 77
+	TXT_CATALOG_SECTION_NOT_FOUND         TxtKey = 78
+	TXT_CATALOG_CATEGORY_NOT_FOUND        TxtKey = 79
+	TXT_CATALOG_PRODUCT_NOT_FOUND         TxtKey = 80
+	TXT_INVALID_ORDER_DELIVERY_DATE       TxtKey = 81
+	TXT_NAME                              TxtKey = 82
+	TXT_PRICE                             TxtKey = 83
+	TXT_TOTAL                             TxtKey = 84
+	TXT_RECEIPT                           TxtKey = 85
+	TXT_ORDER_NUMBER                      TxtKey = 86
+	TXT_EMPTY_COUNTRY_CODE                TxtKey = 87
+	TXT_EMPTY_CUSTOMER_PHONE_COUNTRY_CODE TxtKey = 88
 )
 
 var Txts = TxtResource{
@@ -411,6 +418,34 @@ var Txts = TxtResource{
 		RU: `Неверная дата доставки`,
 		EN: `Invalid delivery date`,
 	},
+	TXT_NAME: MlString{
+		RU: `Наименование`,
+		EN: `Name`,
+	},
+	TXT_PRICE: MlString{
+		RU: `Цена`,
+		EN: `Price`,
+	},
+	TXT_TOTAL: MlString{
+		RU: `Итого`,
+		EN: `Total`,
+	},
+	TXT_RECEIPT: MlString{
+		RU: `Чек`,
+		EN: `Receipt`,
+	},
+	TXT_ORDER_NUMBER: MlString{
+		RU: `Номер заказа`,
+		EN: `Order number`,
+	},
+	TXT_EMPTY_COUNTRY_CODE: MlString{
+		RU: `Код страны не может быть пустым`,
+		EN: `Country code can not be empty`,
+	},
+	TXT_EMPTY_CUSTOMER_PHONE_COUNTRY_CODE: MlString{
+		RU: `Код страны телефона клиента не может быть пустым`,
+		EN: `Customer phone country code can not be empty`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -577,6 +612,20 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "catalog_product_not_found"
 	case TXT_INVALID_ORDER_DELIVERY_DATE:
 		return "invalid_order_delivery_date"
+	case TXT_NAME:
+		return "name"
+	case TXT_PRICE:
+		return "price"
+	case TXT_TOTAL:
+		return "total"
+	case TXT_RECEIPT:
+		return "receipt"
+	case TXT_ORDER_NUMBER:
+		return "order_number"
+	case TXT_EMPTY_COUNTRY_CODE:
+		return "empty_country_code"
+	case TXT_EMPTY_CUSTOMER_PHONE_COUNTRY_CODE:
+		return "empty_customer_phone_country_code"
 
 	default:
 		return ""

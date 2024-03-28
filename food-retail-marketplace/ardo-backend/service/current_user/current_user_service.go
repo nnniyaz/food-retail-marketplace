@@ -2,6 +2,7 @@ package current_user
 
 import (
 	"context"
+	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
@@ -18,6 +19,9 @@ type CurrentUserService interface {
 	UpdateEmail(ctx context.Context, user *user.User, email string) error
 	UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error
 	ChangePassword(ctx context.Context, user *user.User, oldPassword, newPassword string) error
+	AddDeliveryPoint(ctx context.Context, user *user.User, deliveryPoint deliveryInfo.DeliveryInfo) error
+	UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error
+	ChangeLastDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error
 }
 
 type currentUserService struct {
@@ -51,4 +55,16 @@ func (s *currentUserService) ChangePassword(ctx context.Context, user *user.User
 		return err
 	}
 	return s.sessionService.DeleteAllSessionsByUserId(ctx, user.GetId().String())
+}
+
+func (s *currentUserService) AddDeliveryPoint(ctx context.Context, user *user.User, deliveryPoint deliveryInfo.DeliveryInfo) error {
+	return s.userService.AddDeliveryPoint(ctx, user, deliveryPoint)
+}
+
+func (s *currentUserService) UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error {
+	return s.userService.UpdateDeliveryPoint(ctx, user, deliveryPointId, address, floor, apartment, deliveryComment)
+}
+
+func (s *currentUserService) ChangeLastDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error {
+	return s.userService.ChangeLastDeliveryPoint(ctx, user, deliveryPointId)
 }

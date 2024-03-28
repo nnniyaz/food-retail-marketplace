@@ -2179,9 +2179,6 @@
                 "customerContacts": {
                     "$ref": "#/definitions/client.OrderCustomerContacts"
                 },
-                "deliveryDate": {
-                    "type": "string"
-                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/client.OrderDeliveryInfo"
                 },
@@ -2256,6 +2253,23 @@
                 "type": "string"
             }
         },
+        "current_user.OrderDeliveryInfo": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
+                "floor": {
+                    "type": "string"
+                }
+            }
+        },
         "current_user.UpdateCurrentLanguageIn": {
             "type": "object",
             "properties": {
@@ -2300,6 +2314,12 @@
                 "createdAt": {
                     "type": "string"
                 },
+                "deliveryPoints": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/current_user.OrderDeliveryInfo"
+                    }
+                },
                 "email": {
                     "type": "string"
                 },
@@ -2309,7 +2329,13 @@
                 "id": {
                     "type": "string"
                 },
+                "lastDeliveryPoint": {
+                    "$ref": "#/definitions/current_user.OrderDeliveryInfo"
+                },
                 "lastName": {
+                    "type": "string"
+                },
+                "phone": {
                     "type": "string"
                 },
                 "preferredLang": {
@@ -2320,6 +2346,9 @@
                 },
                 "userType": {
                     "type": "string"
+                },
+                "version": {
+                    "type": "integer"
                 }
             }
         },
@@ -2493,9 +2522,6 @@
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
                 },
-                "deliveryDate": {
-                    "type": "string"
-                },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"
                 },
@@ -2527,9 +2553,6 @@
                 },
                 "customerContacts": {
                     "$ref": "#/definitions/management_order.OrderCustomerContacts"
-                },
-                "deliveryDate": {
-                    "type": "string"
                 },
                 "deliveryInfo": {
                     "$ref": "#/definitions/management_order.OrderDeliveryInfo"

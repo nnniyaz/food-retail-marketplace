@@ -1,7 +1,6 @@
 package user
 
 import (
-	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/base/email"
 	"github/nnniyaz/ardo/domain/base/lang"
 	"github/nnniyaz/ardo/domain/base/phone"
@@ -17,8 +16,8 @@ type User struct {
 	lastName          valueobject.LastName
 	email             email.Email
 	phone             phone.Phone
-	deliveryPoints    []deliveryInfo.DeliveryInfo
-	lastDeliveryPoint deliveryInfo.DeliveryInfo
+	deliveryPoints    []valueobject.DeliveryPoint
+	lastDeliveryPoint valueobject.DeliveryPoint
 	password          valueobject.Password
 	userType          valueobject.UserType
 	preferredLang     lang.Lang
@@ -28,7 +27,7 @@ type User struct {
 	version           int
 }
 
-func NewUser(firstName, lastName, mail, phoneNumber, password, userType, preferredLang, address, floor, apartment, deliveryComment string) (*User, error) {
+func NewUser(firstName, lastName, mail, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment string) (*User, error) {
 	userId := uuid.NewUUID()
 
 	userFirstName, err := valueobject.NewFirstName(firstName)
@@ -46,7 +45,7 @@ func NewUser(firstName, lastName, mail, phoneNumber, password, userType, preferr
 		return nil, err
 	}
 
-	userPhone, err := phone.NewPhone(phoneNumber)
+	userPhone, err := phone.NewPhone(phoneNumber, countryCode)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +65,10 @@ func NewUser(firstName, lastName, mail, phoneNumber, password, userType, preferr
 		return nil, err
 	}
 
-	deliveryPoint := deliveryInfo.NewDeliveryInfo(address, floor, apartment, deliveryComment)
+	deliveryPoint, err := valueobject.NewDeliveryPoint(address, floor, apartment, deliveryComment)
+	if err != nil {
+		return nil, err
+	}
 
 	return &User{
 		id:                userId,
@@ -74,7 +76,7 @@ func NewUser(firstName, lastName, mail, phoneNumber, password, userType, preferr
 		lastName:          userLastName,
 		email:             userEmail,
 		phone:             userPhone,
-		deliveryPoints:    []deliveryInfo.DeliveryInfo{deliveryPoint},
+		deliveryPoints:    []valueobject.DeliveryPoint{deliveryPoint},
 		lastDeliveryPoint: deliveryPoint,
 		password:          userPassword,
 		userType:          userUserType,
@@ -106,11 +108,11 @@ func (u *User) GetPhone() phone.Phone {
 	return u.phone
 }
 
-func (u *User) GetDeliveryPoints() []deliveryInfo.DeliveryInfo {
+func (u *User) GetDeliveryPoints() []valueobject.DeliveryPoint {
 	return u.deliveryPoints
 }
 
-func (u *User) GetLastDeliveryPoint() deliveryInfo.DeliveryInfo {
+func (u *User) GetLastDeliveryPoint() valueobject.DeliveryPoint {
 	return u.lastDeliveryPoint
 }
 
@@ -198,13 +200,72 @@ func (u *User) ChangePassword(password string) error {
 	return nil
 }
 
-func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, phoneNumber, userType, preferredLang string, deliveryPoints []deliveryInfo.DeliveryInfo, lastDeliveryPoint deliveryInfo.DeliveryInfo, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time, version int) *User {
+func (u *User) AddDeliveryPoint(address, floor, apartment, deliveryComment string) error {
+	deliveryPoint, err := valueobject.NewDeliveryPoint(address, floor, apartment, deliveryComment)
+	if err != nil {
+		return err
+	}
+	u.deliveryPoints = append(u.deliveryPoints, deliveryPoint)
+	u.lastDeliveryPoint = deliveryPoint
+	u.updatedAt = time.Now()
+	u.version++
+	return nil
+}
+
+func (u *User) UpdateDeliveryPoint(deliveryPointId uuid.UUID, address, floor, apartment, deliveryComment string) error {
+	for _, dp := range u.deliveryPoints {
+		if dp.GetId() == deliveryPointId {
+			err := dp.Update(address, floor, apartment, deliveryComment)
+			if err != nil {
+				return err
+			}
+
+			if u.lastDeliveryPoint.GetId() == deliveryPointId {
+				u.lastDeliveryPoint = dp
+			}
+			break
+		}
+	}
+	u.updatedAt = time.Now()
+	u.version++
+	return nil
+}
+
+func (u *User) DeleteDeliveryPoint(deliveryPointId uuid.UUID) error {
+	for i, dp := range u.deliveryPoints {
+		if dp.GetId() == deliveryPointId {
+			u.deliveryPoints = append(u.deliveryPoints[:i], u.deliveryPoints[i+1:]...)
+			if u.lastDeliveryPoint.GetId() == deliveryPointId {
+				u.lastDeliveryPoint = u.deliveryPoints[len(u.deliveryPoints)-1]
+			}
+			break
+		}
+	}
+	u.updatedAt = time.Now()
+	u.version++
+	return nil
+}
+
+func (u *User) ChangeLastDeliveryPoint(deliveryPointId uuid.UUID) error {
+	for _, dp := range u.deliveryPoints {
+		if dp.GetId() == deliveryPointId {
+			u.lastDeliveryPoint = dp
+			break
+		}
+	}
+	u.updatedAt = time.Now()
+	u.version++
+	return nil
+}
+
+func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, phoneNumber, countryCode, userType, preferredLang string, deliveryPoints []valueobject.DeliveryPoint, lastDeliveryPoint valueobject.DeliveryPoint, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time, version int) *User {
+	phoneNum, _ := phone.NewPhone(phoneNumber, countryCode)
 	return &User{
 		id:                id,
 		firstName:         valueobject.FirstName(firstName),
 		lastName:          valueobject.LastName(lastName),
 		email:             email.Email(mail),
-		phone:             phone.Phone(phoneNumber),
+		phone:             phoneNum,
 		deliveryPoints:    deliveryPoints,
 		lastDeliveryPoint: lastDeliveryPoint,
 		password:          password,

@@ -3,18 +3,43 @@ package phone
 import "github/nnniyaz/ardo/pkg/core"
 
 var (
-	ErrEmptyPhone = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_PHONE_NUMBER)
+	ErrEmptyPhone       = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_PHONE_NUMBER)
+	ErrEmptyCountryCode = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_COUNTRY_CODE)
 )
 
-type Phone string
-
-func NewPhone(phone string) (Phone, error) {
-	if phone == "" {
-		return "", ErrEmptyPhone
-	}
-	return Phone(phone), nil
+type Phone struct {
+	number      string
+	countryCode string
 }
 
-func (p Phone) String() string {
-	return string(p)
+func NewPhone(number string, countryCode string) (Phone, error) {
+	if number == "" {
+		return Phone{}, ErrEmptyPhone
+	}
+	if countryCode == "" {
+		return Phone{}, ErrEmptyCountryCode
+	}
+	return Phone{
+		number:      number,
+		countryCode: countryCode,
+	}, nil
+}
+
+func (p *Phone) GetNumber() string {
+	return p.number
+}
+
+func (p *Phone) GetCountryCode() string {
+	return p.countryCode
+}
+
+func (p *Phone) String() string {
+	return p.countryCode + p.number
+}
+
+func UnmarshalPhoneFromDatabase(number string, countryCode string) Phone {
+	return Phone{
+		number:      number,
+		countryCode: countryCode,
+	}
 }

@@ -35,8 +35,6 @@ definitions:
         type: string
       customerContacts:
         $ref: '#/definitions/client.OrderCustomerContacts'
-      deliveryDate:
-        type: string
       deliveryInfo:
         $ref: '#/definitions/client.OrderDeliveryInfo'
       products:
@@ -85,6 +83,17 @@ definitions:
     additionalProperties:
       type: string
     type: object
+  current_user.OrderDeliveryInfo:
+    properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
+      floor:
+        type: string
+    type: object
   current_user.UpdateCurrentLanguageIn:
     properties:
       lang:
@@ -113,13 +122,21 @@ definitions:
     properties:
       createdAt:
         type: string
+      deliveryPoints:
+        items:
+          $ref: '#/definitions/current_user.OrderDeliveryInfo'
+        type: array
       email:
         type: string
       firstName:
         type: string
       id:
         type: string
+      lastDeliveryPoint:
+        $ref: '#/definitions/current_user.OrderDeliveryInfo'
       lastName:
+        type: string
+      phone:
         type: string
       preferredLang:
         type: string
@@ -127,6 +144,8 @@ definitions:
         type: string
       userType:
         type: string
+      version:
+        type: integer
     type: object
   management_catalog.Catalog:
     properties:
@@ -238,8 +257,6 @@ definitions:
         type: string
       customerContacts:
         $ref: '#/definitions/management_order.OrderCustomerContacts'
-      deliveryDate:
-        type: string
       deliveryInfo:
         $ref: '#/definitions/management_order.OrderDeliveryInfo'
       products:
@@ -261,8 +278,6 @@ definitions:
         type: string
       customerContacts:
         $ref: '#/definitions/management_order.OrderCustomerContacts'
-      deliveryDate:
-        type: string
       deliveryInfo:
         $ref: '#/definitions/management_order.OrderDeliveryInfo'
       id:
