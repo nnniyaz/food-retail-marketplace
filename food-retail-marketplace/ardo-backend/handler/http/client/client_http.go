@@ -45,6 +45,7 @@ type MakeOrderIn struct {
 		Email string `json:"email"`
 	} `json:"customerContacts"`
 	DeliveryInfo struct {
+		DeliveryPointId string `json:"deliveryPointId"`
 		Address         string `json:"address"`
 		Floor           string `json:"floor"`
 		Apartment       string `json:"apartment"`
@@ -97,7 +98,7 @@ func (hd *HttpDelivery) MakeOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderCreds, err := hd.service.MakeOrder(r.Context(), &u, u.GetId().String(), orderProducts, in.Quantity, in.TotalPrice, in.Currency, customerContacts, orderDeliveryInfo)
+	orderCreds, err := hd.service.MakeOrder(r.Context(), &u, u.GetId().String(), orderProducts, in.Quantity, in.TotalPrice, in.Currency, customerContacts, orderDeliveryInfo, in.DeliveryInfo.DeliveryPointId)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

@@ -2167,7 +2167,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                        "countryCode": {
+                            "type": "string"
+                        },
+                        "number": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "preferredLang": {
                     "type": "string"
@@ -2181,67 +2189,69 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "customerContacts": {
-                    "$ref": "#/definitions/client.OrderCustomerContacts"
+                    "type": "object",
+                    "properties": {
+                        "email": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "phone": {
+                            "type": "object",
+                            "properties": {
+                                "countryCode": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
                 },
                 "deliveryInfo": {
-                    "$ref": "#/definitions/client.OrderDeliveryInfo"
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        },
+                        "apartment": {
+                            "type": "string"
+                        },
+                        "deliveryComment": {
+                            "type": "string"
+                        },
+                        "deliveryPointId": {
+                            "type": "string"
+                        },
+                        "floor": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/client.OrderProduct"
+                        "type": "object",
+                        "properties": {
+                            "pricePerUnit": {
+                                "type": "number"
+                            },
+                            "productId": {
+                                "type": "string"
+                            },
+                            "productName": {
+                                "$ref": "#/definitions/core.MlString"
+                            },
+                            "quantity": {
+                                "type": "integer"
+                            },
+                            "totalPrice": {
+                                "type": "number"
+                            }
+                        }
                     }
-                },
-                "quantity": {
-                    "type": "integer"
-                },
-                "totalPrice": {
-                    "type": "number"
-                }
-            }
-        },
-        "client.OrderCustomerContacts": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "client.OrderDeliveryInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "apartment": {
-                    "type": "string"
-                },
-                "deliveryComment": {
-                    "type": "string"
-                },
-                "floor": {
-                    "type": "string"
-                }
-            }
-        },
-        "client.OrderProduct": {
-            "type": "object",
-            "properties": {
-                "pricePerUnit": {
-                    "type": "number"
-                },
-                "productId": {
-                    "type": "string"
-                },
-                "productName": {
-                    "$ref": "#/definitions/core.MlString"
                 },
                 "quantity": {
                     "type": "integer"
@@ -2255,23 +2265,6 @@ const docTemplate = `{
             "type": "object",
             "additionalProperties": {
                 "type": "string"
-            }
-        },
-        "current_user.OrderDeliveryInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "apartment": {
-                    "type": "string"
-                },
-                "deliveryComment": {
-                    "type": "string"
-                },
-                "floor": {
-                    "type": "string"
-                }
             }
         },
         "current_user.UpdateCurrentLanguageIn": {
@@ -2321,7 +2314,24 @@ const docTemplate = `{
                 "deliveryPoints": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/current_user.OrderDeliveryInfo"
+                        "type": "object",
+                        "properties": {
+                            "address": {
+                                "type": "string"
+                            },
+                            "apartment": {
+                                "type": "string"
+                            },
+                            "deliveryComment": {
+                                "type": "string"
+                            },
+                            "floor": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            }
+                        }
                     }
                 },
                 "email": {
@@ -2334,13 +2344,38 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastDeliveryPoint": {
-                    "$ref": "#/definitions/current_user.OrderDeliveryInfo"
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        },
+                        "apartment": {
+                            "type": "string"
+                        },
+                        "deliveryComment": {
+                            "type": "string"
+                        },
+                        "floor": {
+                            "type": "string"
+                        },
+                        "id": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "lastName": {
                     "type": "string"
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                        "countryCode": {
+                            "type": "string"
+                        },
+                        "number": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "preferredLang": {
                     "type": "string"
@@ -2524,15 +2559,65 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "customerContacts": {
-                    "$ref": "#/definitions/management_order.OrderCustomerContacts"
+                    "type": "object",
+                    "properties": {
+                        "email": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "phone": {
+                            "type": "object",
+                            "properties": {
+                                "countryCode": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
                 },
                 "deliveryInfo": {
-                    "$ref": "#/definitions/management_order.OrderDeliveryInfo"
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        },
+                        "apartment": {
+                            "type": "string"
+                        },
+                        "deliveryComment": {
+                            "type": "string"
+                        },
+                        "floor": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/management_order.OrderProduct"
+                        "type": "object",
+                        "properties": {
+                            "pricePerUnit": {
+                                "type": "number"
+                            },
+                            "productId": {
+                                "type": "string"
+                            },
+                            "productName": {
+                                "$ref": "#/definitions/core.MlString"
+                            },
+                            "quantity": {
+                                "type": "integer"
+                            },
+                            "totalPrice": {
+                                "type": "number"
+                            }
+                        }
                     }
                 },
                 "quantity": {
@@ -2556,10 +2641,43 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "customerContacts": {
-                    "$ref": "#/definitions/management_order.OrderCustomerContacts"
+                    "type": "object",
+                    "properties": {
+                        "email": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "phone": {
+                            "type": "object",
+                            "properties": {
+                                "countryCode": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
                 },
                 "deliveryInfo": {
-                    "$ref": "#/definitions/management_order.OrderDeliveryInfo"
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        },
+                        "apartment": {
+                            "type": "string"
+                        },
+                        "deliveryComment": {
+                            "type": "string"
+                        },
+                        "floor": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "id": {
                     "type": "string"
@@ -2573,7 +2691,24 @@ const docTemplate = `{
                 "products": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/management_order.OrderProduct"
+                        "type": "object",
+                        "properties": {
+                            "pricePerUnit": {
+                                "type": "number"
+                            },
+                            "productId": {
+                                "type": "string"
+                            },
+                            "productName": {
+                                "$ref": "#/definitions/core.MlString"
+                            },
+                            "quantity": {
+                                "type": "integer"
+                            },
+                            "totalPrice": {
+                                "type": "number"
+                            }
+                        }
                     }
                 },
                 "quantity": {
@@ -2593,57 +2728,6 @@ const docTemplate = `{
                 },
                 "version": {
                     "type": "integer"
-                }
-            }
-        },
-        "management_order.OrderCustomerContacts": {
-            "type": "object",
-            "properties": {
-                "email": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "phone": {
-                    "type": "string"
-                }
-            }
-        },
-        "management_order.OrderDeliveryInfo": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "apartment": {
-                    "type": "string"
-                },
-                "deliveryComment": {
-                    "type": "string"
-                },
-                "floor": {
-                    "type": "string"
-                }
-            }
-        },
-        "management_order.OrderProduct": {
-            "type": "object",
-            "properties": {
-                "pricePerUnit": {
-                    "type": "number"
-                },
-                "productId": {
-                    "type": "string"
-                },
-                "productName": {
-                    "$ref": "#/definitions/core.MlString"
-                },
-                "quantity": {
-                    "type": "integer"
-                },
-                "totalPrice": {
-                    "type": "number"
                 }
             }
         },
@@ -2919,7 +3003,15 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "phone": {
-                    "type": "string"
+                    "type": "object",
+                    "properties": {
+                        "countryCode": {
+                            "type": "string"
+                        },
+                        "number": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "preferredLang": {
                     "type": "string"

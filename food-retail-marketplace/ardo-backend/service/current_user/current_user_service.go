@@ -21,6 +21,7 @@ type CurrentUserService interface {
 	ChangePassword(ctx context.Context, user *user.User, oldPassword, newPassword string) error
 	AddDeliveryPoint(ctx context.Context, user *user.User, deliveryPoint deliveryInfo.DeliveryInfo) error
 	UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error
+	DeleteDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error
 	ChangeLastDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error
 }
 
@@ -63,6 +64,10 @@ func (s *currentUserService) AddDeliveryPoint(ctx context.Context, user *user.Us
 
 func (s *currentUserService) UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error {
 	return s.userService.UpdateDeliveryPoint(ctx, user, deliveryPointId, address, floor, apartment, deliveryComment)
+}
+
+func (s *currentUserService) DeleteDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error {
+	return s.userService.DeleteDeliveryPoint(ctx, user, deliveryPointId)
 }
 
 func (s *currentUserService) ChangeLastDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error {

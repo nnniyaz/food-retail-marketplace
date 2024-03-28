@@ -12,7 +12,7 @@ type DeliveryInfo struct {
 }
 
 func NewDeliveryInfo(address, floor, apartment, deliveryComment string) (DeliveryInfo, error) {
-	if deliveryComment == "" {
+	if address == "" {
 		return DeliveryInfo{}, ErrEmptyDeliveryAddress
 	}
 	return DeliveryInfo{

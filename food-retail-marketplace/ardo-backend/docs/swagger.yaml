@@ -25,7 +25,12 @@ definitions:
       password:
         type: string
       phone:
-        type: string
+        properties:
+          countryCode:
+            type: string
+          number:
+            type: string
+        type: object
       preferredLang:
         type: string
     type: object
@@ -34,46 +39,47 @@ definitions:
       currency:
         type: string
       customerContacts:
-        $ref: '#/definitions/client.OrderCustomerContacts'
+        properties:
+          email:
+            type: string
+          name:
+            type: string
+          phone:
+            properties:
+              countryCode:
+                type: string
+              number:
+                type: string
+            type: object
+        type: object
       deliveryInfo:
-        $ref: '#/definitions/client.OrderDeliveryInfo'
+        properties:
+          address:
+            type: string
+          apartment:
+            type: string
+          deliveryComment:
+            type: string
+          deliveryPointId:
+            type: string
+          floor:
+            type: string
+        type: object
       products:
         items:
-          $ref: '#/definitions/client.OrderProduct'
+          properties:
+            pricePerUnit:
+              type: number
+            productId:
+              type: string
+            productName:
+              $ref: '#/definitions/core.MlString'
+            quantity:
+              type: integer
+            totalPrice:
+              type: number
+          type: object
         type: array
-      quantity:
-        type: integer
-      totalPrice:
-        type: number
-    type: object
-  client.OrderCustomerContacts:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-    type: object
-  client.OrderDeliveryInfo:
-    properties:
-      address:
-        type: string
-      apartment:
-        type: string
-      deliveryComment:
-        type: string
-      floor:
-        type: string
-    type: object
-  client.OrderProduct:
-    properties:
-      pricePerUnit:
-        type: number
-      productId:
-        type: string
-      productName:
-        $ref: '#/definitions/core.MlString'
       quantity:
         type: integer
       totalPrice:
@@ -82,17 +88,6 @@ definitions:
   core.MlString:
     additionalProperties:
       type: string
-    type: object
-  current_user.OrderDeliveryInfo:
-    properties:
-      address:
-        type: string
-      apartment:
-        type: string
-      deliveryComment:
-        type: string
-      floor:
-        type: string
     type: object
   current_user.UpdateCurrentLanguageIn:
     properties:
@@ -124,7 +119,18 @@ definitions:
         type: string
       deliveryPoints:
         items:
-          $ref: '#/definitions/current_user.OrderDeliveryInfo'
+          properties:
+            address:
+              type: string
+            apartment:
+              type: string
+            deliveryComment:
+              type: string
+            floor:
+              type: string
+            id:
+              type: string
+          type: object
         type: array
       email:
         type: string
@@ -133,11 +139,27 @@ definitions:
       id:
         type: string
       lastDeliveryPoint:
-        $ref: '#/definitions/current_user.OrderDeliveryInfo'
+        properties:
+          address:
+            type: string
+          apartment:
+            type: string
+          deliveryComment:
+            type: string
+          floor:
+            type: string
+          id:
+            type: string
+        type: object
       lastName:
         type: string
       phone:
-        type: string
+        properties:
+          countryCode:
+            type: string
+          number:
+            type: string
+        type: object
       preferredLang:
         type: string
       updatedAt:
@@ -256,12 +278,44 @@ definitions:
       currency:
         type: string
       customerContacts:
-        $ref: '#/definitions/management_order.OrderCustomerContacts'
+        properties:
+          email:
+            type: string
+          name:
+            type: string
+          phone:
+            properties:
+              countryCode:
+                type: string
+              number:
+                type: string
+            type: object
+        type: object
       deliveryInfo:
-        $ref: '#/definitions/management_order.OrderDeliveryInfo'
+        properties:
+          address:
+            type: string
+          apartment:
+            type: string
+          deliveryComment:
+            type: string
+          floor:
+            type: string
+        type: object
       products:
         items:
-          $ref: '#/definitions/management_order.OrderProduct'
+          properties:
+            pricePerUnit:
+              type: number
+            productId:
+              type: string
+            productName:
+              $ref: '#/definitions/core.MlString'
+            quantity:
+              type: integer
+            totalPrice:
+              type: number
+          type: object
         type: array
       quantity:
         type: integer
@@ -277,9 +331,30 @@ definitions:
       currency:
         type: string
       customerContacts:
-        $ref: '#/definitions/management_order.OrderCustomerContacts'
+        properties:
+          email:
+            type: string
+          name:
+            type: string
+          phone:
+            properties:
+              countryCode:
+                type: string
+              number:
+                type: string
+            type: object
+        type: object
       deliveryInfo:
-        $ref: '#/definitions/management_order.OrderDeliveryInfo'
+        properties:
+          address:
+            type: string
+          apartment:
+            type: string
+          deliveryComment:
+            type: string
+          floor:
+            type: string
+        type: object
       id:
         type: string
       isDeleted:
@@ -288,7 +363,18 @@ definitions:
         type: string
       products:
         items:
-          $ref: '#/definitions/management_order.OrderProduct'
+          properties:
+            pricePerUnit:
+              type: number
+            productId:
+              type: string
+            productName:
+              $ref: '#/definitions/core.MlString'
+            quantity:
+              type: integer
+            totalPrice:
+              type: number
+          type: object
         type: array
       quantity:
         type: integer
@@ -302,39 +388,6 @@ definitions:
         type: string
       version:
         type: integer
-    type: object
-  management_order.OrderCustomerContacts:
-    properties:
-      email:
-        type: string
-      name:
-        type: string
-      phone:
-        type: string
-    type: object
-  management_order.OrderDeliveryInfo:
-    properties:
-      address:
-        type: string
-      apartment:
-        type: string
-      deliveryComment:
-        type: string
-      floor:
-        type: string
-    type: object
-  management_order.OrderProduct:
-    properties:
-      pricePerUnit:
-        type: number
-      productId:
-        type: string
-      productName:
-        $ref: '#/definitions/core.MlString'
-      quantity:
-        type: integer
-      totalPrice:
-        type: number
     type: object
   management_order.OrdersData:
     properties:
@@ -513,7 +566,12 @@ definitions:
       password:
         type: string
       phone:
-        type: string
+        properties:
+          countryCode:
+            type: string
+          number:
+            type: string
+        type: object
       preferredLang:
         type: string
       userType:

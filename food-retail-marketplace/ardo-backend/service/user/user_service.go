@@ -23,6 +23,7 @@ type UserService interface {
 	Delete(ctx context.Context, userId string) error
 	AddDeliveryPoint(ctx context.Context, user *user.User, deliveryInfo deliveryInfo.DeliveryInfo) error
 	UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error
+	DeleteDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error
 	ChangeLastDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error
 }
 
@@ -145,6 +146,18 @@ func (u *userService) AddDeliveryPoint(ctx context.Context, user *user.User, del
 func (u *userService) UpdateDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId, address, floor, apartment, deliveryComment string) error {
 	convertedDeliveryPointId, err := uuid.UUIDFromString(deliveryPointId)
 	err = user.UpdateDeliveryPoint(convertedDeliveryPointId, address, floor, apartment, deliveryComment)
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
+}
+
+func (u *userService) DeleteDeliveryPoint(ctx context.Context, user *user.User, deliveryPointId string) error {
+	convertedDeliveryPointId, err := uuid.UUIDFromString(deliveryPointId)
+	if err != nil {
+		return err
+	}
+	err = user.DeleteDeliveryPoint(convertedDeliveryPointId)
 	if err != nil {
 		return err
 	}
