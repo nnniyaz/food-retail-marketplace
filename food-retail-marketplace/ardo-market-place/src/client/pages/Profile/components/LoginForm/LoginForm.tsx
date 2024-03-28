@@ -44,7 +44,7 @@ export const LoginForm = () => {
                     </label>
                     {!!authError.email && (
                         <div className={classes.error__message}>
-                            {authError.email[0].toUpperCase() + authError.email.slice(1)}
+                            {authError.email}
                         </div>
                     )}
                 </div>
@@ -66,15 +66,13 @@ export const LoginForm = () => {
                     </label>
                     {!!authError.password && (
                         <div className={classes.error__message}>
-                            {authError.password[0].toUpperCase() + authError.password.slice(1)}
+                            {authError.password}
                         </div>
                     )}
                 </div>
-                <button type={"submit"}>
-                    {translate("login")}
-                    {(isLoadingLogin) && (
-                        <LoadingOutlined className={classes.btn__loading}/>
-                    )}
+                <button type={"submit"} disabled={isLoadingLogin}>
+                    <span>{translate("login")}</span>
+                    {isLoadingLogin && <LoadingOutlined className={classes.btn__loading}/>}
                 </button>
             </form>
         </div>

@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import $api from "@pkg/api";
+import $api, {ApiCfg} from "@pkg/api";
 import {ApiRoutes} from "@pkg/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@pkg/api/response/response.ts";
 import {Langs} from "@domain/base/mlString/mlString.ts";
@@ -18,15 +18,15 @@ export interface RegisterRequest {
 }
 
 export default class AuthService {
-    static async login (apiUri: string, request: LoginRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api(apiUri).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGIN, request)
+    static async login (cfg: ApiCfg, request: LoginRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api(cfg).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGIN, request)
     }
 
-    static async logout (apiUri: string, ): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api(apiUri).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGOUT)
+    static async logout (cfg: ApiCfg,): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api(cfg).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGOUT)
     }
 
-    static async register (apiUri: string, request: RegisterRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api(apiUri).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_REGISTER, request)
+    static async register (cfg: ApiCfg, request: RegisterRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api(cfg).post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_REGISTER, request)
     }
 }

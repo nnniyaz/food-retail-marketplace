@@ -10,8 +10,13 @@ const acceptLanguages = {
     [Langs.RU]: 'ru',
 };
 
-const $api = (apiUri: string, lang: Langs) => axios.create({
-    baseURL: apiUri,
+export interface ApiCfg {
+    baseURL: string;
+    lang: Langs;
+}
+
+const $api = ({baseURL, lang}: ApiCfg) => axios.create({
+    baseURL: baseURL,
     withCredentials: true,
     headers: {
         'Content-Type': 'application/json',

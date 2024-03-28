@@ -41,6 +41,7 @@ async function main() {
         MONGO_MAIN_DB: getEnv("MONGO_MAIN_DB"),
         API_URI: getEnv("API_URI"),
         ASSETS_URI: getEnv("ASSETS_URI"),
+        DEFAULT_COUNTRY_CODE: getEnv("DEFAULT_COUNTRY_CODE"),
     }
     // =================================================================================================================
 
@@ -117,6 +118,7 @@ async function main() {
                     mode: cfg.NODE_ENV ?? "development",
                     apiUri: cfg.API_URI ?? "",
                     assetsUri: cfg.ASSETS_URI ?? "",
+                    defaultCountryCode: cfg.DEFAULT_COUNTRY_CODE ?? "",
                 },
             };
             const script = `<script>window.__data__ = ${JSON.stringify(result)}</script>`;

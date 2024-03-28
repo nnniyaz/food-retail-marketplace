@@ -1,11 +1,15 @@
 import {CartAction, CartActionEnum, CartState} from "@app/store/reducers/cart/types.ts";
 import {CartItem} from "@domain/cartItem";
+import {CountryCode} from "@pkg/formats/phone/countryCodes.ts";
 
 const initialState: CartState = {
     cart: [] as CartItem[],
     customerContacts: {
         name: "",
-        phone: "",
+        phone: {
+            number: "",
+            countryCode: CountryCode.HK,
+        },
         email: "",
     },
     deliveryInfo: {

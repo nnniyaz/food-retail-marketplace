@@ -8,12 +8,13 @@ import {
     SetIsLoadingLogoutAction,
     SetIsLoadingRegisterAction,
 } from "@app/store/reducers/user/types.ts";
+import {CartActionCreator} from "@app/store/reducers/cart/action-creators.ts";
 import {AppDispatch, RootState} from "@app/store";
 import {User} from "@domain/user/user.ts";
-import {Notify} from "@pkg/notification/notification.tsx";
 import {UserService} from "@services/userServices.ts";
 import AuthService, {RegisterRequest} from "@services/authService.ts";
-import {CartActionCreator} from "@app/store/reducers/cart/action-creators.ts";
+import {Notify} from "@pkg/notification/notification.tsx";
+import {CountryCode} from "@pkg/formats/phone/countryCodes.ts";
 import {txts} from "../../../../../server/pkg/core/txts.ts";
 
 export const UserActionCreator = {
@@ -48,9 +49,10 @@ export const UserActionCreator = {
 
     login: (email: string, password: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
             dispatch(UserActionCreator.setIsLoadingLogin(true));
-            const res = await AuthService.login(cfg.apiUri, {email, password});
+            const res = await AuthService.login(apiCfg, {email, password});
             if (res.data.success) {
                 await UserActionCreator.fetchUser(false)(dispatch, getState);
             } else {
@@ -80,22 +82,26 @@ export const UserActionCreator = {
 
     fetchUser: (disableNotification: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
             dispatch(UserActionCreator.setIsLoadingGetUser(true));
-            const res = await UserService.getCurrentUser(cfg.apiUri);
+            const res = await UserService.getCurrentUser(apiCfg);
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(res.data.data));
                 dispatch(UserActionCreator.setIsAuth(true));
                 dispatch(CartActionCreator.setCustomerContacts({
                     name: res.data.data.firstName + " " + res.data.data.lastName,
-                    phone: "",
+                    phone: {
+                        number: res.data.data.phone.number,
+                        countryCode: res.data.data.phone.countryCode in CountryCode ? res.data.data.phone.countryCode : cfg.defaultCountryCode
+                    },
                     email: res.data.data.email,
                 }))
                 dispatch(CartActionCreator.setDeliveryInfo({
-                    address: "",
-                    floor: "",
-                    apartment: "",
-                    deliveryComment: "",
+                    address: res.data.data.lastDeliveryPoint.address || "",
+                    floor: res.data.data.lastDeliveryPoint.floor || "",
+                    apartment: res.data.data.lastDeliveryPoint.apartment || "",
+                    deliveryComment: res.data.data.lastDeliveryPoint.deliveryComment || "",
                 }))
                 if (!disableNotification) {
                     Notify.Success({message: txts["successful_authentication"][currentLang]});
@@ -116,9 +122,10 @@ export const UserActionCreator = {
 
     Logout: () => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
             dispatch(UserActionCreator.setIsLoadingLogout(true));
-            const res = await AuthService.logout(cfg.apiUri);
+            const res = await AuthService.logout(apiCfg);
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(null));
                 dispatch(UserActionCreator.setIsAuth(false));
@@ -135,9 +142,10 @@ export const UserActionCreator = {
 
     register: (request: RegisterRequest) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
             dispatch(UserActionCreator.setIsLoadingRegister(true));
-            const res = await AuthService.register(cfg.apiUri, request);
+            const res = await AuthService.register(apiCfg, request);
             if (res.data.success) {
                 Notify.Success({message: txts["confirmation_mail_was_sent_to_your_email"][currentLang]});
             } else {

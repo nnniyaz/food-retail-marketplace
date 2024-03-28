@@ -8,18 +8,18 @@ export function translate(word: MlString | string): string {
     if (typeof word === "string") {
         if (txts?.[word]) {
             if (txts[word]?.[currentLang]) {
-                return txts[word][currentLang];
+                return txts[word][currentLang][0].toUpperCase() + txts[word][currentLang].slice(1);
             } else {
-                return findFromOtherLangs(txts[word], langs);
+                return findFromOtherLangs(txts[word], langs)[0].toUpperCase() + findFromOtherLangs(txts[word], langs).slice(1);
             }
         } else {
-            return txts["translation_not_found"]?.[currentLang] || "translation_not_found"
+            return (txts["translation_not_found"]?.[currentLang][0].toUpperCase() + txts["translation_not_found"]?.[currentLang].slice(1) )|| "translation_not_found";
         }
     } else {
         if (word?.[currentLang]) {
-            return word[currentLang];
+            return word[currentLang][0].toUpperCase() + word[currentLang].slice(1);
         } else {
-            return findFromOtherLangs(word, langs);
+            return findFromOtherLangs(word, langs)[0].toUpperCase() + findFromOtherLangs(word, langs).slice(1);
         }
     }
 }

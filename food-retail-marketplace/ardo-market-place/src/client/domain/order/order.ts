@@ -2,6 +2,7 @@ import {Langs, MlString, ValidateMlString} from "@domain/base/mlString/mlString.
 import {Currency} from "@domain/base/currency/currency.ts";
 import {txts} from "../../../server/pkg/core/txts.ts";
 import {DeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
+import {Phone} from "@domain/base/phone/phone.ts";
 
 export type Order = {
     id: string;
@@ -68,6 +69,6 @@ export function ValidateOrderProduct(product: OrderProduct): Error | null {
 
 export type OrderCustomerContacts = {
     name: string;
-    phone: string;
+    phone: Phone;
     email: string;
 }

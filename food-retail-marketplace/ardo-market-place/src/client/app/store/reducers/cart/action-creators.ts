@@ -6,6 +6,7 @@ import {NavigateCallback} from "@domain/base/navigateCallback/navigateCallback.t
 import {OrderRequest, ValidateOrderRequest} from "@domain/order/orderRequest.ts";
 import {OrderCustomerContacts, OrderProduct, ValidateOrderProduct} from "@domain/order/order.ts";
 import {Notify} from "@pkg/notification/notification.tsx";
+import {CountryCode} from "@pkg/formats/phone/countryCodes.ts";
 import {CartServices} from "@services/cartServices.ts";
 import {
     CartActionEnum,
@@ -15,10 +16,10 @@ import {
     InitCartStateAction,
     MakeOrderAction,
     RemoveFromCartAction,
-    SetIsLoadingMakeOrderAction,
-    SetOrderNumberAction,
     SetCustomerContactsAction,
     SetDeliveryInfoAction,
+    SetIsLoadingMakeOrderAction,
+    SetOrderNumberAction,
     SetValidationErrorsAction,
 } from "./types.ts";
 import {txts} from "../../../../../server/pkg/core/txts.ts";
@@ -77,6 +78,7 @@ export const CartActionCreator = {
 
     makeOrder: (navigateCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
             dispatch(CartActionCreator.setIsLoadingMakeOrder(true));
             const order: OrderRequest = {
@@ -86,7 +88,10 @@ export const CartActionCreator = {
                 currency: Currency.HKD,
                 customerContacts: {
                     name: "",
-                    phone: "",
+                    phone: {
+                        number: "",
+                        countryCode: CountryCode.HK,
+                    },
                     email: "",
                 },
                 deliveryInfo: {
@@ -123,7 +128,7 @@ export const CartActionCreator = {
                 return;
             }
 
-            const res = await CartServices.makeOrder(cfg.apiUri, order);
+            const res = await CartServices.makeOrder(apiCfg, order);
             if (res.data.success) {
                 dispatch(CartActionCreator.setOrderNumber(res.data.data.orderNumber));
                 dispatch(CartActionCreator.makeOrderAction());

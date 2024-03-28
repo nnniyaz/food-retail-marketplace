@@ -3,6 +3,7 @@ import lodash from 'lodash';
 const {isEmpty} = lodash;
 
 export enum Langs {
+    key = 'key',
     RU = 'RU',
     EN = 'EN'
 }

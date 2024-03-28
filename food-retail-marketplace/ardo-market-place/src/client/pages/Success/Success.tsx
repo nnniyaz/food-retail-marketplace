@@ -13,7 +13,7 @@ export const Success = () => {
         <React.Fragment>
             <ReturnButton
                 to={RouteNames.HOME}
-                title={translate("thank_you_for_your_order")[0].toUpperCase() + translate("thank_you_for_your_order").slice(1)}
+                title={translate("thank_you_for_your_order")}
             />
 
             <div className={classes.cheque}>
@@ -21,10 +21,10 @@ export const Success = () => {
                     <thead>
                     <tr>
                         <th>
-                            {translate("name")[0].toUpperCase() + translate("name").slice(1)}
+                            {translate("name")}
                         </th>
                         <th>
-                            {translate("price")[0].toUpperCase() + translate("total").slice(1)}
+                            {translate("total")}
                         </th>
                     </tr>
                     </thead>

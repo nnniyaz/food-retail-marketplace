@@ -1,4 +1,4 @@
-import React, {useEffect} from "react";
+import React, {useEffect, useState} from "react";
 import * as ReactNotificationsImport from "react-notifications-component";
 import {Routing} from "@pages/index.tsx";
 import {useActions} from "@pkg/hooks/useActions.ts";
@@ -17,11 +17,13 @@ interface EntryProps {
 
 export const App = (props: EntryProps) => {
     const {initCatalogState, initSystemState, initCartState} = useActions();
+    const [isPopulated, setIsPopulated] = useState<boolean>(false);
 
     function populateStoreWithData() {
         initCatalogState(props.catalog);
         initSystemState(props.cfg);
         initCartState({});
+        setIsPopulated(true);
     }
 
     useEffect(() => {
@@ -30,7 +32,7 @@ export const App = (props: EntryProps) => {
         }
     }, []);
 
-    if (props.catalog === null) {
+    if (props.catalog === null || !isPopulated) {
         return null;
     }
     return (

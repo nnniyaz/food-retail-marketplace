@@ -25,7 +25,7 @@ function TxtGen() {
         })
         fs.writeFile(
             "./src/server/pkg/core/txts.ts",
-            "import {MlString} from 'src/client/domain/base/mlString.ts';\n\nexport const txts: {[key: string]: MlString} = " + JSON.stringify(txtMap),
+            "import {MlString} from 'src/client/domain/base/mlString/mlString';\n\nexport const txts: {[key: string]: MlString} = " + JSON.stringify(txtMap),
             (err) => {
                 if (err != null) {
                     console.log("error write to txt.json", err)

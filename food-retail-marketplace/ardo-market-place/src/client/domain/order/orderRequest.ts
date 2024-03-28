@@ -43,7 +43,7 @@ export function ValidateOrderRequest(orderRequest: OrderRequest): Error | null {
     }
     let totalPrice: number = 0;
     orderRequest.products.forEach(product => {
-        if (product.pricePerUnit * product.quantity === product.totalPrice) {
+        if (product.pricePerUnit * product.quantity !== product.totalPrice) {
             return new Error(txts["order_invalid_product_total_price"][Langs.EN]);
         }
         totalPrice += product.totalPrice;

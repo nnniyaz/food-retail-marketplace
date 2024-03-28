@@ -1,4 +1,4 @@
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Link} from "react-router-dom";
 import {RouteNames} from "@pages/index.tsx";
 import PlusSVG from "@assets/icons/plus-circle.svg?react";
@@ -16,7 +16,7 @@ export const Cart = () => {
     const {cart} = useTypedSelector(state => state.cartState);
     const {isAuth} = useTypedSelector(state => state.userState);
     const [orderPriceReportHeight, setOrderPriceReportHeight] = useState(0);
-    const checkoutText = translate("make_order")[0].toUpperCase() + translate("make_order").slice(1);
+    const checkoutText = translate("make_order");
 
     useEffect(() => {
         if (window.innerWidth > 800) {
@@ -32,42 +32,59 @@ export const Cart = () => {
                 paddingBottom: orderPriceReportHeight ? `${orderPriceReportHeight + 10}px` : ""
             }}
         >
-            <h1>{translate("cart")[0].toUpperCase() + translate("cart").slice(1)}</h1>
+            <h1>{translate("cart")}</h1>
             <div className={classes.cart__content}>
-                <section className={classes.cart__group}>
-                    <ul className={classes.cart__list}>
-                        {cart.map((cartItem) => (
-                            <CartItemComponent cartProduct={cartItem} key={cartItem.id}/>
-                        ))}
-                    </ul>
-                </section>
-                <section id={"cart-order-price-report"} className={classes.cart__group}>
-                    <table className={classes.cart__total}>
-                        <tbody>
-                        <tr>
-                            <td className={classes.cart__price__label}>
-                                {translate("products")[0].toUpperCase() + translate("products").slice(1)}
-                            </td>
-                            <td className={classes.cart__price}>{priceFormat(cartPrice(cart))}</td>
-                        </tr>
-                        </tbody>
-                        <tfoot>
-                        <tr>
-                            <td className={classes.cart__total__price__label}>
-                                {translate("total").toUpperCase()}
-                            </td>
-                            <td className={classes.cart__total__price}>{priceFormat(cartTotalPrice(cart))}</td>
-                        </tr>
-                        </tfoot>
-                    </table>
-                    {cart.length > 0 && (
-                        <Link to={isAuth ? RouteNames.CHECKOUT : RouteNames.PROFILE}>
-                            <button className={classes.confirm__btn}>
-                                {checkoutText}
-                            </button>
-                        </Link>
-                    )}
-                </section>
+                {
+                    cart.length === 0 ? (
+                        <section className={classes.cart__empty}>
+                            <p>
+                                {translate("cart_is_empty")}
+                            </p>
+                            <Link to={RouteNames.CATALOG}>
+                                <button className={classes.cart__empty__btn}>
+                                    {translate("go_to_catalog")}
+                                </button>
+                            </Link>
+                        </section>
+                    ) : (
+                        <React.Fragment>
+                            <section className={classes.cart__group}>
+                                <ul className={classes.cart__list}>
+                                    {cart.map((cartItem) => (
+                                        <CartItemComponent cartProduct={cartItem} key={cartItem.id}/>
+                                    ))}
+                                </ul>
+                            </section>
+                            <section id={"cart-order-price-report"} className={classes.cart__group}>
+                                <table className={classes.cart__total}>
+                                    <tbody>
+                                    <tr>
+                                        <td className={classes.cart__price__label}>
+                                            {translate("products")}
+                                        </td>
+                                        <td className={classes.cart__price}>{priceFormat(cartPrice(cart))}</td>
+                                    </tr>
+                                    </tbody>
+                                    <tfoot>
+                                    <tr>
+                                        <td className={classes.cart__total__price__label}>
+                                            {translate("total").toUpperCase()}
+                                        </td>
+                                        <td className={classes.cart__total__price}>{priceFormat(cartTotalPrice(cart))}</td>
+                                    </tr>
+                                    </tfoot>
+                                </table>
+                                {cart.length > 0 && (
+                                    <Link to={isAuth ? RouteNames.CHECKOUT : RouteNames.PROFILE}>
+                                        <button className={classes.confirm__btn}>
+                                            {checkoutText}
+                                        </button>
+                                    </Link>
+                                )}
+                            </section>
+                        </React.Fragment>
+                    )
+                }
             </div>
         </div>
     );

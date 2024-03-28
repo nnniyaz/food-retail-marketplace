@@ -44,16 +44,19 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 10px;
+      gap: 20px;
 
       padding: 6px 10px;
       border: 1px solid var(--secondary-font-color);
       border-radius: 20px;
       background-color: var(--primary-font-color);
-      color: var(--primary-bg-color);
-      text-transform: capitalize;
       cursor: pointer;
       transition: .1s linear;
+
+      span {
+        color: var(--primary-bg-color);
+        text-transform: capitalize;
+      }
 
       @media (hover: hover) {
         &:hover {
@@ -69,16 +72,6 @@
 
       .btn__loading {
         color: var(--primary-bg-color);
-        animation: appear .3s linear;
-
-        @keyframes appear {
-          from {
-            opacity: 0;
-          }
-          to {
-            opacity: 1;
-          }
-        }
       }
     }
 
@@ -96,20 +89,6 @@
           opacity: 1;
         }
       }
-    }
-  }
-}
-
-.btn__loading {
-  color: var(--primary-font-color);
-  animation: appear .3s linear;
-
-  @keyframes appear {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
     }
   }
 }
