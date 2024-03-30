@@ -1,9 +1,10 @@
 import React, {Dispatch, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {Select} from "antd";
 import * as AntdIcons from "@ant-design/icons";
 import {RouteNames} from "@pages/index.tsx";
 import {ReturnButton} from "@widgets/ReturnButton";
-import {translate} from "@pkg/translate/translate.ts";
+import {translate} from "@pkg/translate/translate";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
 import {CountryCode, countryCodesInfo} from "@pkg/formats/phone/countryCodes.ts";
@@ -12,12 +13,12 @@ import {validatePhone} from "@pkg/formats/phone/validatePhone.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {cartPrice, cartTotalPrice} from "@pkg/cartPrice/cartPrice.tsx";
 import classes from "./Checkout.module.scss";
-import {Select} from "antd";
 
 const {LoadingOutlined} = AntdIcons;
 
 export const Checkout = () => {
     const navigate = useNavigate();
+    const {currentLang, langs} = useTypedSelector(state => state.systemState);
     const {
         cart,
         deliveryInfo,
@@ -97,64 +98,81 @@ export const Checkout = () => {
         <div className={classes.checkout}>
             <ReturnButton
                 to={RouteNames.CART}
-                title={translate("checkout")}
+                title={translate("checkout", currentLang, langs)}
             />
 
             <form className={classes.checkout__content} onSubmit={handleMakeOrder}>
                 <section className={classes.checkout__group}>
-                    <div className={classes.checkout__info__bar}>
-                        <div className={classes.checkout__info__row} style={{fontSize: "21px", fontWeight: "700"}}>
-                            {`${user.firstName} ${user.lastName}`}
+                    <div className={classes.checkout__info__group}>
+                        <div className={classes.checkout__info__row}>
+                            <p className={classes.checkout__info__row__label}>
+                                {translate("receiver", currentLang, langs)}
+                            </p>
+                            <p className={classes.checkout__info__row__value}>
+                                {`${user.firstName} ${user.lastName}`}
+                            </p>
                         </div>
-                        {!!user.email && (
-                            <div className={classes.checkout__info__row}>
-                                {user.email}
-                            </div>
-                        )}
+                        <div className={classes.checkout__info__row}>
+                            <p className={classes.checkout__info__row__label}>
+                                {translate("email", currentLang, langs)}
+                            </p>
+                            <p className={classes.checkout__info__row__value}>
+                                {user.email || "-"}
+                            </p>
+                        </div>
                         {(!!user.phone?.countryCode && !!user.phone?.number) && (
                             <div className={classes.checkout__info__row}>
-                                {`${user.phone.countryCode} ${user.phone.number}`}
+                                <p className={classes.checkout__info__row__label}>
+                                    {translate("phone", currentLang, langs)}
+                                </p>
+                                <p className={classes.checkout__info__row__value}>
+                                    {phoneFormat(user.phone.number, user.phone.countryCode) || "-"}
+                                </p>
                             </div>
                         )}
                     </div>
-                    {(!user.lastDeliveryPoint.address || !user.lastDeliveryPoint.floor) && (
-                        <React.Fragment>
-                            <CheckoutInput
-                                label={translate("address")}
-                                placeholder={translate("enter_address")}
-                                value={deliveryInfo.address}
-                                onChange={handleAddressChange}
-                                required={true}
-                                valid={isValid.address}
-                            />
-                            <CheckoutInput
-                                label={translate("floor")}
-                                placeholder={translate("enter_floor")}
-                                value={deliveryInfo.floor}
-                                onChange={handleFloorChange}
-                                required={true}
-                                valid={isValid.floor}
-                            />
-                            <CheckoutInput
-                                label={translate("apartment")}
-                                placeholder={translate("enter_apartment")}
-                                value={deliveryInfo.apartment}
-                                onChange={handleApartmentChange}
-                                required={false}
-                            />
-                            <CheckoutInput
-                                label={translate("delivery_comment")}
-                                placeholder={translate("enter_delivery_comment")}
-                                value={deliveryInfo.deliveryComment}
-                                onChange={handleDeliveryCommentChange}
-                                required={false}
-                            />
-                        </React.Fragment>
-                    )}
+
+                    <div className={classes.checkout__info__group}>
+                        <div className={classes.checkout__info__row}>
+                            <p className={classes.checkout__info__row__label}>
+                                {translate("address", currentLang, langs)}
+                            </p>
+                            <p className={classes.checkout__info__row__value}>
+                                {user.lastDeliveryPoint.address || "-"}
+                            </p>
+                        </div>
+                        <div className={classes.checkout__info__row}>
+                            <p className={classes.checkout__info__row__label}>
+                                {translate("floor", currentLang, langs)}
+                            </p>
+                            <p className={classes.checkout__info__row__value}>
+                                {user.lastDeliveryPoint.floor || "-"}
+                            </p>
+                        </div>
+                        <div className={classes.checkout__info__row}>
+                            <p className={classes.checkout__info__row__label}>
+                                {translate("apartment", currentLang, langs)}
+                            </p>
+                            <p className={classes.checkout__info__row__value}>
+                                {user.lastDeliveryPoint.apartment || "-"}
+                            </p>
+                        </div>
+                        {(!!user.lastDeliveryPoint.deliveryComment) && (
+                            <div className={classes.checkout__info__row}>
+                                <p className={classes.checkout__info__row__label}>
+                                    {translate("delivery_instruction", currentLang, langs)}
+                                </p>
+                                <p className={classes.checkout__info__row__value}>
+                                    {user.lastDeliveryPoint.deliveryComment || "-"}
+                                </p>
+                            </div>
+                        )}
+                    </div>
+
                     {(!user.phone?.countryCode && !user.phone?.number) && (
                         <CheckoutPhoneInput
-                            label={translate("phone")}
-                            placeholder={translate("enter_phone")}
+                            label={translate("phone", currentLang, langs)}
+                            placeholder={translate("enter_phone", currentLang, langs)}
                             selectedCountryCode={customerContacts.phone.countryCode}
                             setSelectCountryCode={handlePhoneCountryCodeChange}
                             value={phoneFormat(customerContacts.phone.number, customerContacts.phone.countryCode)}
@@ -163,13 +181,48 @@ export const Checkout = () => {
                             valid={isValid.phone}
                         />
                     )}
+
+                    {(!user.lastDeliveryPoint.address || !user.lastDeliveryPoint.floor) && (
+                        <React.Fragment>
+                            <CheckoutInput
+                                label={translate("address", currentLang, langs)}
+                                placeholder={translate("enter_address", currentLang, langs)}
+                                value={deliveryInfo.address}
+                                onChange={handleAddressChange}
+                                required={true}
+                                valid={isValid.address}
+                            />
+                            <CheckoutInput
+                                label={translate("floor", currentLang, langs)}
+                                placeholder={translate("enter_floor", currentLang, langs)}
+                                value={deliveryInfo.floor}
+                                onChange={handleFloorChange}
+                                required={true}
+                                valid={isValid.floor}
+                            />
+                            <CheckoutInput
+                                label={translate("apartment", currentLang, langs)}
+                                placeholder={translate("enter_apartment", currentLang, langs)}
+                                value={deliveryInfo.apartment}
+                                onChange={handleApartmentChange}
+                                required={false}
+                            />
+                            <CheckoutInput
+                                label={translate("delivery_instruction_for_courier", currentLang, langs)}
+                                placeholder={translate("enter_delivery_instruction", currentLang, langs)}
+                                value={deliveryInfo.deliveryComment}
+                                onChange={handleDeliveryCommentChange}
+                                required={false}
+                            />
+                        </React.Fragment>
+                    )}
                 </section>
                 <section className={classes.checkout__group}>
                     <table className={classes.checkout__total}>
                         <tbody>
                         <tr>
                             <td className={classes.checkout__price__label}>
-                                {translate("products")}
+                                {translate("products", currentLang, langs)}
                             </td>
                             <td className={classes.checkout__price}>{priceFormat(cartPrice(cart))}</td>
                         </tr>
@@ -177,14 +230,14 @@ export const Checkout = () => {
                         <tfoot>
                         <tr>
                             <td className={classes.checkout__total__price__label}>
-                                {translate("total").toUpperCase()}
+                                {translate("total", currentLang, langs).toUpperCase()}
                             </td>
                             <td className={classes.checkout__total__price}>{priceFormat(cartTotalPrice(cart))}</td>
                         </tr>
                         </tfoot>
                     </table>
                     <button className={classes.confirm__btn}>
-                        {translate("buy")}
+                        {translate("buy", currentLang, langs)}
                         {isLoadingMakeOrder && <LoadingOutlined className={classes.btn__loading}/>}
                     </button>
                 </section>

@@ -3,7 +3,7 @@ import PlusSVG from "@assets/icons/plus-circle.svg?react";
 import MinusSVG from "@assets/icons/minus-circle.svg?react";
 import {Product} from "@domain/product/product.ts";
 import {PublishedCatalogSections} from "@domain/catalog/catalog.ts";
-import {translate} from "@pkg/translate/translate.ts";
+import {translate} from "@pkg/translate/translate";
 import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {useActions} from "@pkg/hooks/useActions.ts";
@@ -15,6 +15,7 @@ interface ProductsProps {
 }
 
 export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
+    const {currentLang, langs} = useTypedSelector(state => state.systemState);
     const {catalog} = useTypedSelector(state => state.catalogState);
     const sectionStructure = useMemo<PublishedCatalogSections | null>(() => {
         if (!catalog) {
@@ -50,7 +51,7 @@ export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
                     }
                     return (
                         <section key={catalogsCategory.categoryId} className={classes.products__category}>
-                            <h2>{translate(catalog.categories[catalogsCategory.categoryId].name)}</h2>
+                            <h2>{translate(catalog.categories[catalogsCategory.categoryId].name, currentLang, langs)}</h2>
                             <ul className={classes.products__list}>
                                 {catalogsCategory.products.map((catalogsProduct) => (
                                     <ProductItem
@@ -72,8 +73,7 @@ interface ProductProps {
 }
 
 const ProductItem = ({product}: ProductProps) => {
-    const addText = translate("add");
-    const {cfg} = useTypedSelector(state => state.systemState);
+    const {cfg, currentLang, langs} = useTypedSelector(state => state.systemState);
     const {cart} = useTypedSelector(state => state.cartState);
     const {incrementToCart, decrementFromCart} = useActions();
     const [imgError, setImgError] = useState(false);
@@ -100,7 +100,8 @@ const ProductItem = ({product}: ProductProps) => {
             <img
                 className={classes.product__img}
                 src={product.img}
-                alt={translate(product.name)}
+                title={translate(product.name, currentLang, langs)}
+                alt={translate(product.name, currentLang, langs)}
                 onError={(e) => {
                     if (!imgError) {
                         e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
@@ -110,7 +111,7 @@ const ProductItem = ({product}: ProductProps) => {
             />
             <div className={classes.product__info}>
                 <p className={classes.product__title}>
-                    {translate(product.name)}
+                    {translate(product.name, currentLang, langs)}
                 </p>
                 <p className={classes.product__price_per_unit}>
                     <span className={classes.product__price_per_unit__price}>
@@ -142,7 +143,7 @@ const ProductItem = ({product}: ProductProps) => {
                         className={classes.product__add__text}
                         style={{width: cartProduct?.quantity ? "fit-content" : ""}}
                     >
-                        {cartProduct?.quantity ?? addText}
+                        {cartProduct?.quantity ?? translate("add", currentLang, langs)}
                     </span>
                     {!!cartProduct && (
                         <PlusSVG className={classes.product__add__icon} onClick={handleIncrementToCart}/>

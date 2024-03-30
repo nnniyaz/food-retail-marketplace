@@ -8,35 +8,36 @@
     width: 500px;
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 50px;
     padding: 20px 0;
     border-bottom: 1px solid var(--secondary-bg-color);
 
-    .account__preview {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: rgba(255, 165, 0, 0.5);
-
-      font-weight: 500;
-      font-size: 24px;
-    }
-
-    .account__info__layers {
+    .account__info__group {
+      height: 110px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
 
-      .account__info__name {
-        word-break: break-word;
-        color: var(--primary-font-color);
+      .account__preview {
+        width: 75px;
+        height: 75px;
+        border-radius: 50%;
+        border: 5px solid var(--secondary-bg-color);
+        box-shadow: 0 2px 4px 0 rgba(0, 0, 0, .5);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: rgba(255, 165, 0, 0.5);
+
         font-weight: 500;
+        font-size: 24px;
+        color: var(--secondary-font-color);
       }
 
       .account__info__link {
+        width: fit-content;
         display: flex;
         align-items: center;
         gap: 8px;
@@ -49,6 +50,42 @@
         @media (hover: hover) {
           &:hover {
             color: var(--link-color);
+          }
+        }
+      }
+
+      .account__info__name {
+        width: 100%;
+        word-break: break-word;
+        color: var(--primary-font-color);
+        font-weight: 700;
+        font-size: 27px;
+        line-height: 30px;
+      }
+
+      .account__info__credentials {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        gap: 50px;
+
+        .account__info__credentials__item {
+          display: flex;
+          flex-direction: column;
+          gap: 10px;
+
+          .account__info__credentials__item__label {
+            font-size: 16px;
+            font-weight: 700;
+            line-height: 19px;
+            color: var(--primary-font-color);
+          }
+
+          .account__info__credentials__item__value {
+            font-size: 16px;
+            line-height: 19px;
+            color: var(--secondary-font-color);
+            word-break: break-word;
           }
         }
       }
@@ -90,6 +127,42 @@
 
     .account__info {
       width: 100%;
+      gap: 20px;
+      align-items: flex-start;
+
+      .account__info__group {
+        height: auto;
+
+        .account__preview {
+
+        }
+
+        .account__info__link {
+
+        }
+
+        .account__info__name {
+
+        }
+
+        .account__info__credentials {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 10px;
+
+          .account__info__credentials__item {
+            gap: 5px;
+
+            .account__info__credentials__item__label {
+
+            }
+
+            .account__info__credentials__item__value {
+
+            }
+          }
+        }
+      }
     }
 
     .account__menu__bar {

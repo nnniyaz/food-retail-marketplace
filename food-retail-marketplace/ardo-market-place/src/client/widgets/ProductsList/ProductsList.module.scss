@@ -38,6 +38,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 15px;
+      row-gap: 30px;
 
       .product {
         width: calc((100% - 60px) / 5);
@@ -147,8 +148,9 @@
                 }
               }
 
-              &:active, &:focus {
+              &:active {
                 outline: none;
+                opacity: .5;
               }
             }
 
@@ -176,7 +178,7 @@
                   transform: scale(1.15);
                 }
 
-                &:active, &:focus {
+                &:active {
                   transform: scale(1);
                 }
               }

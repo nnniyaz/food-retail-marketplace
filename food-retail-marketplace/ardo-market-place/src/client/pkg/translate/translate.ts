@@ -1,10 +1,7 @@
 import {Langs, MlString} from "@domain/base/mlString/mlString.ts";
-import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {txts} from "../../../server/pkg/core/txts.ts";
 
-export function translate(word: MlString | string): string {
-    const {currentLang, langs} = useTypedSelector(state => state.systemState);
-
+export function translate(word: MlString | string, currentLang, langs): string {
     if (typeof word === "string") {
         if (txts?.[word]) {
             if (txts[word]?.[currentLang]) {

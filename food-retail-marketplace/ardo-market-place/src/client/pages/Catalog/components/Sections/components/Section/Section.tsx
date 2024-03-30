@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import CaretRightSVG from "@assets/icons/caret-right.svg?react";
 import {RouteNames} from "@pages/index.tsx";
 import {PublishedCatalogCategories, PublishedCatalogSections} from "@domain/catalog/catalog";
-import {translate} from "@pkg/translate/translate.ts";
+import {translate} from "@pkg/translate/translate";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import classes from "./Section.module.scss"
@@ -13,7 +13,7 @@ interface SectionProps {
 }
 
 export const Section = ({sectionStructure}: SectionProps) => {
-    const {cfg} = useTypedSelector(state => state.systemState);
+    const {cfg, currentLang, langs} = useTypedSelector(state => state.systemState);
     const {catalog, currentSection} = useTypedSelector(state => state.catalogState);
     const {setCurrentSection} = useActions();
     const [sectionImgError, setSectionImgError] = useState(false);
@@ -41,7 +41,8 @@ export const Section = ({sectionStructure}: SectionProps) => {
                 <img
                     className={classes.section__preview}
                     src={""}
-                    alt={translate(catalog.sections[sectionStructure.sectionId].name)}
+                    title={translate(catalog.sections[sectionStructure.sectionId].name, currentLang, langs)}
+                    alt={translate(catalog.sections[sectionStructure.sectionId].name, currentLang, langs)}
                     onError={(e) => {
                         if (!sectionImgError) {
                             e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
@@ -51,7 +52,7 @@ export const Section = ({sectionStructure}: SectionProps) => {
                 />
                 <div className={classes.section__info}>
                     <h3 className={classes.section__title}>
-                        {translate(catalog.sections[sectionStructure.sectionId].name)}
+                        {translate(catalog.sections[sectionStructure.sectionId].name, currentLang, langs)}
                     </h3>
                     <CaretRightSVG
                         className={
@@ -93,7 +94,7 @@ interface SectionCategoryProps {
 }
 
 const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryProps) => {
-    const {cfg} = useTypedSelector(state => state.systemState);
+    const {cfg, currentLang, langs} = useTypedSelector(state => state.systemState);
     const {catalog} = useTypedSelector(state => state.catalogState);
     const {setCurrentSection, setCurrentCategory} = useActions();
     const [categoryImgError, setCategoryImgError] = useState(false);
@@ -120,7 +121,8 @@ const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryP
                 <img
                     className={classes.category__preview}
                     src={""}
-                    alt={translate(catalog.categories[categoryStructure.categoryId].name)}
+                    title={translate(catalog.categories[categoryStructure.categoryId].name, currentLang, langs)}
+                    alt={translate(catalog.categories[categoryStructure.categoryId].name, currentLang, langs)}
                     onError={(e) => {
                         if (!categoryImgError) {
                             e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
@@ -129,7 +131,7 @@ const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryP
                     }}
                 />
                 <h4 className={classes.category__title}>
-                    {translate(catalog.categories[categoryStructure.categoryId].name)}
+                    {translate(catalog.categories[categoryStructure.categoryId].name, currentLang, langs)}
                 </h4>
             </Link>
         </li>

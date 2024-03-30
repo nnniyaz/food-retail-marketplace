@@ -1,7 +1,7 @@
 import {useEffect, useState} from "react";
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Autoplay, Pagination, Navigation} from 'swiper';
-import {translate} from "@pkg/translate/translate.ts";
+import {translate} from "@pkg/translate/translate";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import 'swiper/css';
 import 'swiper/css/pagination';
@@ -59,6 +59,7 @@ export const Carousel = () => {
 }
 
 const CarouselItem = ({img, caption}) => {
+    const {currentLang, langs} = useTypedSelector(state => state.systemState);
     const [imgError, setImgError] = useState(false);
     return (
         <div
@@ -69,7 +70,7 @@ const CarouselItem = ({img, caption}) => {
             onError={() => setImgError(true)}
         >
             <div className={classes.carousel__item__inner__container}>
-                {translate(caption) ?? null}
+                {translate(caption, currentLang, langs) ?? null}
             </div>
         </div>
     )

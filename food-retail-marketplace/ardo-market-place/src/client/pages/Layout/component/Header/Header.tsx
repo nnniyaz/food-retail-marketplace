@@ -1,12 +1,11 @@
-import {Select} from "antd";
 import {Link} from "react-router-dom";
 import {RouteNames} from "@pages/index.tsx";
-import CaretDownSVG from "@assets/icons/caret-down.svg?react";
 import HomeSVG from "@assets/icons/home.svg?react";
 import ListSVG from "@assets/icons/list.svg?react";
 import CartSVG from "@assets/icons/cart.svg?react";
 import HeartSVG from "@assets/icons/heart.svg?react";
 import UserSVG from "@assets/icons/user.svg?react";
+import LogoSVG from "@assets/icons/logo.svg?react";
 // import BellSVG from "@assets/icons/bell.svg?react";
 import classes from "./Header.module.scss";
 
@@ -14,19 +13,10 @@ export const Header = () => {
     return (
         <header className={classes.header}>
             <div className={classes.header__row}>
-                <label className={classes.address}>
-                    Address
-                    <Select
-                        className={classes.select}
-                        value={"Kowloon Tong, Renfrew Rd, 34"}
-                        options={[
-                            {value: "Kowloon Tong, Renfrew Rd, 34", label: "Kowloon Tong, Renfrew Rd, 34"},
-                            {value: "Kowloon Tong, Renfrew Rd, 35", label: "Kowloon Tong, Renfrew Rd, 35"},
-                            {value: "Kowloon Tong, Renfrew Rd, 36", label: "Kowloon Tong, Renfrew Rd, 36"},
-                        ]}
-                        suffixIcon={<CaretDownSVG className={classes.select__icon}/>}
-                    />
-                </label>
+                <a className={classes.logo} href={"https://ardogroup.org"} target={"_blank"} rel={"re"}>
+                    <LogoSVG style={{width: "40px", height: "40px"}}/>
+                    <span>ARDO</span>
+                </a>
 
                 <nav className={classes.navbar}>
                     <Link className={classes.nav__item} to={RouteNames.HOME}>
