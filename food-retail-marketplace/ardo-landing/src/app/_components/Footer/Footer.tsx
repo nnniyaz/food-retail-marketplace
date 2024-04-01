@@ -1,5 +1,5 @@
-import LogoSVG from "@/app/assets/logo.svg";
-import LogoSmallSVG from "@/app/assets/logo-small.svg";
+import LogoSVG from "@/app/_assets/logo.svg";
+import LogoSmallSVG from "@/app/_assets/logo-small.svg";
 import classes from "./Footer.module.scss";
 
 export default function Footer() {
