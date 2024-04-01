@@ -1,7 +1,7 @@
 'use client';
 import React, {useState} from "react";
-import {txt} from '@/app/txt/txt';
-import {smoothScroll} from "@/app/utils/scroll/scroll";
+import {txt} from '@/app/_txt/txt';
+import {smoothScroll} from "@/app/_utils/scroll/scroll";
 import classes from './Header.module.scss';
 
 export default function Header() {
@@ -49,11 +49,6 @@ export default function Header() {
                     <button className={classes.sign__in__btn}>
                         <a href="#" className={classes.sign__in__link}>
                             {txt["sign_in"].EN}
-                        </a>
-                    </button>
-                    <button className={classes.sign__up__btn}>
-                        <a href="#" className={classes.sign__up__link}>
-                            {txt["sign_up"].EN}
                         </a>
                     </button>
                 </div>

@@ -3,6 +3,7 @@
   margin: 0;
   padding: 0;
   scroll-behavior: smooth;
+  -webkit-tap-highlight-color: transparent;
 }
 
 body {
@@ -13,10 +14,6 @@ body {
 
 div, h1, h2, h3, h4, h5, h6 {
   color: var(--primary-font-color);
-}
-
-span, p {
-  color: var(--secondary-font-color);
 }
 
 @media (max-width: 1200px) {
