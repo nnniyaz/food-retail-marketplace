@@ -1,58 +1,50 @@
-'use client';
-import React, {useState} from "react";
-import {txt} from '@/app/_txt/txt';
-import {smoothScroll} from "@/app/_utils/scroll/scroll";
-import classes from './Header.module.scss';
+import React from "react";
+import Link from "next/link";
+import LogoSVG from "@assets/logo.svg";
+import PhoneSVG from "@assets/phone.svg";
+import MailSVG from "@assets/mail.svg";
+import Navbar from "@components/Header/_components/Navbar/Navbar";
+import classes from "./Header.module.scss";
 
 export default function Header() {
-    const [activeTab, setActiveTab] = useState("home");
-    const tabs = ["home", "about", "services", "partners", "contacts"];
-
-    const handleTabClick = (tab: string) => {
-        setActiveTab(tab);
-        smoothScroll(tab);
-    }
-
+    const links = [
+        {
+            href: "/restaurants/en",
+            key: "restaurants",
+            role: "link",
+            ariaLabel: "Restaurants",
+            rel: "canonical",
+            label: "Restaurants"
+        },
+        {
+            href: "/suppliers/en",
+            key: "suppliers",
+            role: "link",
+            ariaLabel: "Suppliers",
+            rel: "canonical",
+            label: "Suppliers"
+        },
+    ];
     return (
         <header className={classes.header}>
-            <div className={classes.credentials}>
-                <h1 className={classes.logo}>ARDO</h1>
-                <div className={classes.contacts}>
-                    <div className={classes.contact__item}></div>
-                    <div className={classes.contact__item}></div>
+            <div className={classes.header_group}>
+                <Link
+                    className={classes.header_group__logo__link}
+                    href={"/restaurants/en"}
+                    rel={"canonical"}
+                >
+                    <LogoSVG/>
+                </Link>
+                <div className={classes.header_group__container}>
+                    <a className={classes.header_group__container__item} href={"tel:+852 6795 4658"}>
+                        <PhoneSVG/>
+                    </a>
+                    <a className={classes.header_group__container__item} href={"mailto:info@ardogroup.org"}>
+                        <MailSVG/>
+                    </a>
                 </div>
             </div>
-
-            <nav className={classes.navbar}>
-                <ul className={classes.navbar__list}>
-                    {tabs.map(tab => (
-                        <li
-                            key={tab}
-                            className={activeTab === tab ? classes.navbar__item__active : classes.navbar__item}
-                            onClick={() => handleTabClick(tab)}
-                        >
-                            <div className={classes.navbar__circle}></div>
-                            <div className={classes.navbar__link}>{txt[tab].EN}</div>
-                        </li>
-                    ))}
-                </ul>
-            </nav>
-
-            <div className={classes.login__block}>
-                <h3 className={classes.login__title}>
-                    {txt["account"].EN}
-                </h3>
-                <p className={classes.login__desc}>
-                    {txt["you_can_sign_up_or_if_already_have_an_account_sign_in"].EN}
-                </p>
-                <div className={classes.btn__bar}>
-                    <button className={classes.sign__in__btn}>
-                        <a href="#" className={classes.sign__in__link}>
-                            {txt["sign_in"].EN}
-                        </a>
-                    </button>
-                </div>
-            </div>
+            <Navbar links={links}/>
         </header>
-    )
+    );
 }

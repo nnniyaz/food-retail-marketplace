@@ -1,23 +1,12 @@
+@import "vars";
+
 * {
-  box-sizing: border-box;
   margin: 0;
   padding: 0;
-  scroll-behavior: smooth;
-  -webkit-tap-highlight-color: transparent;
+  box-sizing: border-box;
+  font-family: 'Roboto', sans-serif;
 }
 
 body {
-  font-family: Inter, sans-serif;
-  font-style: normal;
   background-color: var(--secondary-bg-color);
-}
-
-div, h1, h2, h3, h4, h5, h6 {
-  color: var(--primary-font-color);
-}
-
-@media (max-width: 1200px) {
-  body {
-    background-color: #141414;
-  }
 }

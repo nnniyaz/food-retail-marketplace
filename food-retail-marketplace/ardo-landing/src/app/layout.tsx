@@ -1,10 +1,11 @@
 import type {Metadata} from "next";
-import {Inter} from "next/font/google";
-import "./globals.scss";
+import {Inter, Roboto} from "next/font/google";
+import "./layout.scss";
 
-const inter = Inter({subsets: ["latin"]});
+const roboto = Roboto({subsets: ["latin"], weight: ["100", "300", "400", "500", "700", "900"]});
 
 export const metadata: Metadata = {
+    metadataBase: new URL("https://app.ardogroup.org/"),
     title: "Ardo Group Ltd.",
     description: "ARDO is an AI-driven platform that helps F&B suppliers sell surplus at best prices",
     publisher: "Ardo Group Ltd.",
@@ -35,7 +36,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
             <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
             <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
         </head>
-        <body className={inter.className}>{children}</body>
+        <body className={roboto.className}>{children}</body>
         </html>
     );
 }
