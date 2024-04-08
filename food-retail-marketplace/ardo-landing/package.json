@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "i18n": "node src/pkg/core/txtGen.js",
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
@@ -10,17 +11,20 @@
   },
   "dependencies": {
     "@svgr/webpack": "^8.1.0",
+    "csv-parse": "^5.5.5",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",
-    "sass": "^1.71.0"
+    "react-transition-group": "^4.4.5"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
+    "@types/react-transition-group": "^4.4.10",
     "eslint": "^8",
     "eslint-config-next": "14.1.0",
+    "sass": "^1.71.0",
     "typescript": "^5"
   }
 }

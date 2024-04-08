@@ -1,30 +1,50 @@
-import React from "react";
 import Link from "next/link";
 import LogoSVG from "@assets/logo.svg";
 import PhoneSVG from "@assets/phone.svg";
 import MailSVG from "@assets/mail.svg";
+import TruckSVG from "@assets/truck.svg";
+import BuildingSVG from "@assets/office-building.svg";
+import LoginSVG from "@assets/login.svg";
+import {Langs} from "@/domain/mlString/mlString";
 import Navbar from "@components/Header/_components/Navbar/Navbar";
+import MobileHeader from "@components/Header/_components/MobileHeader/MobileHeader";
 import classes from "./Header.module.scss";
+import {translate} from "@/pkg/translate/translate";
+import {headers} from "next/headers";
 
 export default function Header() {
+    const headersList = headers();
     const links = [
-        {
-            href: "/restaurants/en",
-            key: "restaurants",
-            role: "link",
-            ariaLabel: "Restaurants",
-            rel: "canonical",
-            label: "Restaurants"
-        },
         {
             href: "/suppliers/en",
             key: "suppliers",
             role: "link",
             ariaLabel: "Suppliers",
             rel: "canonical",
-            label: "Suppliers"
+            label: translate("suppliers", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs),
+            icon: <TruckSVG/>
+        },
+        {
+            href: "/restaurants/en",
+            key: "restaurants",
+            role: "link",
+            ariaLabel: "Restaurants",
+            rel: "canonical",
+            label: translate("restaurants", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs),
+            icon: <BuildingSVG/>
+        },
+        {
+            href: "https://app.ardogroup.org/profile",
+            key: "sign_in",
+            role: "link",
+            ariaLabel: "Restaurants",
+            rel: "external",
+            label: translate("sign_in", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs),
+            icon: <LoginSVG/>,
+            target: "_blank"
         },
     ];
+
     return (
         <header className={classes.header}>
             <div className={classes.header_group}>
@@ -45,6 +65,7 @@ export default function Header() {
                 </div>
             </div>
             <Navbar links={links}/>
+            <MobileHeader links={links}/>
         </header>
     );
 }

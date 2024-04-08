@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import Link from "next/link";
 import {usePathname} from "next/navigation";
 import classes from "./Navbar.module.scss";
@@ -11,7 +12,9 @@ interface NavbarProps {
         role: string,
         ariaLabel: string,
         rel: string,
-        label: string
+        label: string,
+        icon?: React.ReactNode,
+        target?: string
     }[];
 }
 
@@ -28,10 +31,12 @@ export default function Navbar(props: NavbarProps) {
                         role={link.role}
                         aria-label={link.ariaLabel}
                         rel={link.rel}
+                        target={link.target}
                     >
                         <p className={classes.navbar__item__text}>
                             {link.label}
                         </p>
+                        {link.key === "sign_in" && link.icon}
                     </Link>
                 ))
             }

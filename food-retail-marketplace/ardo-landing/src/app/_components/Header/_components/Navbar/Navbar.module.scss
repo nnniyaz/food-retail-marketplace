@@ -11,6 +11,7 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
     text-decoration: none;
     cursor: pointer;
     transition: .2s linear;
@@ -20,6 +21,12 @@
       font-size: 14px;
       line-height: 17px;
       color: var(--link-color);
+      letter-spacing: 0.5px;
+      transition: .2s linear;
+    }
+
+    svg {
+      color: var(--link-color);
       transition: .2s linear;
     }
 
@@ -28,6 +35,10 @@
         background-color: var(--link-color);
 
         .navbar__item__text {
+          color: var(--accent-font-color);
+        }
+
+        svg {
           color: var(--accent-font-color);
         }
       }
@@ -61,12 +72,6 @@
 
 @media (max-width: 1200px) {
   .navbar {
-
-    .navbar_item {
-
-      .navbar__item__text {
-
-      }
-    }
+    display: none;
   }
 }

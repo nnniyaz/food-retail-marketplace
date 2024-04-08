@@ -1,6 +1,9 @@
 import type {Metadata} from "next";
-import {Inter, Roboto} from "next/font/google";
+import {Roboto} from "next/font/google";
+import Header from "@components/Header/Header";
+import {Langs} from "@/domain/mlString/mlString";
 import "./layout.scss";
+import Footer from "@components/Footer/Footer";
 
 const roboto = Roboto({subsets: ["latin"], weight: ["100", "300", "400", "500", "700", "900"]});
 
@@ -36,7 +39,15 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
             <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png"/>
             <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
         </head>
-        <body className={roboto.className}>{children}</body>
+        <body className={roboto.className} suppressHydrationWarning={true}>
+        <main className={"main"}>
+            <div className={"container"}>
+                <Header/>
+                {children}
+                <Footer/>
+            </div>
+        </main>
+        </body>
         </html>
     );
 }

@@ -1,45 +1,109 @@
 "use client";
 
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
+import {Transition} from "react-transition-group";
 import Link from "next/link";
+import {usePathname} from "next/navigation";
 import LogoSVG from "@assets/logo.svg";
 import PhoneSVG from "@assets/phone.svg";
 import MailSVG from "@assets/mail.svg";
-import BurgerMenuUpSVG from "@assets/sort-ascending.svg";
-import BurgerMenuDownSVG from "@assets/sort-descending.svg";
+import BurgerMenuSVG from "@assets/menu.svg";
 import classes from "./MobileHeader.module.scss";
 
-export default function MobileHeader() {
+interface NavbarProps {
+    links: {
+        href: string,
+        key: string,
+        role: string,
+        ariaLabel: string,
+        rel: string,
+        label: string,
+        icon?: React.ReactNode,
+        target?: string
+    }[];
+}
+
+export default function MobileHeader(props: NavbarProps) {
+    const pathname = usePathname();
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 
+    const transitionClasses = {
+        entering: classes.sidebar__container__enter__active,
+        entered: classes.sidebar__container__enter__done,
+        exiting: classes.sidebar__container__exit__active,
+        exited: classes.sidebar__container__exit__done,
+        unmounted: classes.sidebar__container__exit__done,
+    }
+
+    useEffect(() => {
+        setIsMenuOpen(false);
+    }, [pathname]);
+
     return (
-        <header className={classes.mobile_header}>
-            {
-                isMenuOpen ? (
-                    <BurgerMenuUpSVG
-                        className={classes.mobile_header__item}
-                        onClick={() => setIsMenuOpen(false)}
-                    />
-                ) : (
-                    <BurgerMenuDownSVG
-                        className={classes.mobile_header__item}
+        <React.Fragment>
+            <ul className={classes.mobile_header}>
+                <li className={classes.mobile_header__item}>
+                    <BurgerMenuSVG
+                        className={classes.mobile_header__item__icon}
                         onClick={() => setIsMenuOpen(true)}
                     />
-                )
-            }
-            <Link className={classes.mobile_header__item} href={"/restaurants/en"} rel={"canonical"}>
-                <LogoSVG/>
-            </Link>
-            <div className={classes.mobile_header__item}>
-                <div className={classes.mobile_header__item__container}>
-                    <a className={classes.mobile__header_group__container__item} href={"tel:+852 6795 4658"}>
-                        <PhoneSVG/>
-                    </a>
-                    <a className={classes.mobile__header_group__container__item} href={"mailto:info@ardogroup.org"}>
-                        <MailSVG/>
-                    </a>
-                </div>
-            </div>
-        </header>
+                </li>
+                <li className={classes.mobile_header__item}>
+                    <Link href={"/restaurants/en"} rel={"canonical"}>
+                        <LogoSVG/>
+                    </Link>
+                </li>
+                <li className={classes.mobile_header__item}>
+                    <div className={classes.mobile_header__item__container}>
+                        <a className={classes.mobile_header_group__container__item} href={"tel:+852 6795 4658"}>
+                            <PhoneSVG/>
+                        </a>
+                        <a className={classes.mobile_header_group__container__item} href={"mailto:info@ardogroup.org"}>
+                            <MailSVG/>
+                        </a>
+                    </div>
+                </li>
+            </ul>
+            <Transition in={isMenuOpen} timeout={300} mountOnEnter unmountOnExit>
+                {state => (
+                    <div className={`${classes.sidebar__container} ${transitionClasses[state]}`}>
+                        <section className={classes.sidebar}>
+                            <header className={classes.sidebar__header}>
+                                <BurgerMenuSVG
+                                    className={classes.sidebar__header__item}
+                                    onClick={() => setIsMenuOpen(false)}
+                                />
+                                <Link href={"/restaurants/en"} rel={"canonical"}
+                                      className={classes.sidebar__header__item}>
+                                    <LogoSVG/>
+                                </Link>
+                            </header>
+                            <ul>
+                                {
+                                    props.links.map(link => (
+                                        <li key={link.key}>
+                                            <Link
+                                                className={pathname === link.href ? classes.sidebar__item__active : classes.sidebar__item}
+                                                href={link.href}
+                                                key={link.key}
+                                                role={link.role}
+                                                aria-label={link.ariaLabel}
+                                                rel={link.rel}
+                                                target={link.target}
+                                            >
+                                                {link.icon}
+                                                <p className={classes.sidebar__item__text}>
+                                                    {link.label}
+                                                </p>
+                                            </Link>
+                                        </li>
+                                    ))
+                                }
+                            </ul>
+                        </section>
+                    </div>
+                )}
+            </Transition>
+        </React.Fragment>
     )
 }
