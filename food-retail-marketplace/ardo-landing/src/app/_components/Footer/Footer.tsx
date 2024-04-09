@@ -30,7 +30,7 @@ export default function Footer() {
                     </a>
                     <a
                         className={classes.footer__sub__group__item}
-                        href={"https://app.ardogroup.org"}
+                        href={process.env.NEXT_PUBLIC_APP_URI}
                         rel={"external"}
                         target={"_blank"}
                     >

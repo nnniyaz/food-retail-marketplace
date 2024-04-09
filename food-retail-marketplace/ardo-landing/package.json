@@ -11,7 +11,9 @@
   },
   "dependencies": {
     "@svgr/webpack": "^8.1.0",
+    "antd": "^5.16.1",
     "csv-parse": "^5.5.5",
+    "mongodb": "^6.5.0",
     "next": "14.1.0",
     "react": "^18",
     "react-dom": "^18",

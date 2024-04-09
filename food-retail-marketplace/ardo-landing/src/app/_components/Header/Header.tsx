@@ -34,7 +34,7 @@ export default function Header() {
             icon: <BuildingSVG/>
         },
         {
-            href: "https://app.ardogroup.org/profile",
+            href: process.env.NEXT_PUBLIC_APP_URI + "/profile",
             key: "sign_in",
             role: "link",
             ariaLabel: "Restaurants",
