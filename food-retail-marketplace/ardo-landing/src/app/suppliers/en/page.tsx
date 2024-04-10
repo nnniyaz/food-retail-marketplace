@@ -93,7 +93,6 @@ export default function Suppliers() {
                 tagLabel={translate("fill_the_form", Langs.EN)}
                 instructions={instructions}
             />
-            <FormModal lang={Langs.EN}/>
         </React.Fragment>
     );
 }
