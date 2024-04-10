@@ -1,9 +1,8 @@
 import type {Metadata} from "next";
 import {Roboto} from "next/font/google";
 import Header from "@components/Header/Header";
-import {Langs} from "@/domain/mlString/mlString";
-import "./layout.scss";
 import Footer from "@components/Footer/Footer";
+import "./layout.scss";
 
 const roboto = Roboto({subsets: ["latin"], weight: ["100", "300", "400", "500", "700", "900"]});
 

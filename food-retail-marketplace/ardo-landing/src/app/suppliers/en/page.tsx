@@ -1,13 +1,14 @@
 import React from "react";
 import {Langs} from "@/domain/mlString/mlString";
+import FormSVG from "@assets/clipboard-list.svg";
+import MailSVG from "@assets/mail.svg";
+import UploadSVG from "@assets/inbox-in.svg";
 import PercentageSVG from "@assets/receipt-tax.svg";
 import ReduceTimeSVG from "@assets/switch-horizontal.svg";
 import FastForwardSVG from "@assets/fast-forward.svg";
-import FormSVG from "@assets/clipboard-list.svg";
-import UploadSVG from "@assets/inbox-in.svg";
-import MailSVG from "@assets/mail.svg";
 import {translate} from "@/pkg/translate/translate";
 import MainBlock from "@components/MainBlock/MainBlock";
+import FormModal from "@components/FormModal/FormModal";
 import NumbersBlock from "@components/NumbersBlock/NumbersBlock";
 import AdvantagesBlock from "@components/AdvantagesBlock/AdvantagesBlock";
 import StepByStepGuide from "@components/StepByStepGuide/StepByStepGuide";
@@ -92,6 +93,7 @@ export default function Suppliers() {
                 tagLabel={translate("fill_the_form", Langs.EN)}
                 instructions={instructions}
             />
+            <FormModal lang={Langs.EN}/>
         </React.Fragment>
     );
 }

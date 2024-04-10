@@ -13,12 +13,34 @@ interface FormProps {
 
 export default function FormModal(props: FormProps) {
     const [form] = Form.useForm();
+
+    const onSubmit = async (values: any) => {
+        try {
+            await fetch("/api/applications", {
+                method: "POST",
+                body: JSON.stringify(values),
+                headers: {
+                    "Content-Type": "application/json",
+                    "Accept-Language": props.lang
+                }
+            });
+            form.resetFields();
+            props.setIsOpen(false);
+        } catch (error) {
+            console.error(error);
+        }
+    }
+
     return (
         <Modal
+            title={translate("fill_form", props.lang)}
             open={props.isOpen}
+            onOk={() => form.submit()}
             onCancel={() => props.setIsOpen(false)}
+            okText={translate("submit", props.lang)}
+            cancelText={translate("cancel", props.lang)}
         >
-            <Form form={form} action={"/api/applications"} method={"POST"}>
+            <Form form={form} action={"/api/applications"} method={"POST"} onFinish={onSubmit}>
                 <Form.Item
                     name={"firstName"}
                     required
@@ -59,9 +81,6 @@ export default function FormModal(props: FormProps) {
                     rules={[rules.required(translate("please_enter_your_business_name", props.lang))]}
                 >
                     <Input placeholder={translate("enter_your_business_name", props.lang)}/>
-                </Form.Item>
-                <Form.Item>
-                    <Button htmlType={"submit"}>Submit</Button>
                 </Form.Item>
             </Form>
         </Modal>

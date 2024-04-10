@@ -9,5 +9,5 @@ interface IRules {
 export const rules: IRules = {
     required: (message: string) => ({required: true, message: message}),
     email: (message: string) => ({type: 'email', message: message}),
-    phone: (message: string) => ({pattern: /^(\+852)?[569]\d{7}$/, message: message}),
+    phone: (message: string) => ({pattern: /^\+852\d{8}$/, message: message}),
 }

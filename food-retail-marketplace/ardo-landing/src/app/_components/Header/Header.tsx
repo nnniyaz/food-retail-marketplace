@@ -1,16 +1,16 @@
 import Link from "next/link";
+import {headers} from "next/headers";
 import LogoSVG from "@assets/logo.svg";
 import PhoneSVG from "@assets/phone.svg";
 import MailSVG from "@assets/mail.svg";
 import TruckSVG from "@assets/truck.svg";
 import BuildingSVG from "@assets/office-building.svg";
 import LoginSVG from "@assets/login.svg";
+import {translate} from "@/pkg/translate/translate";
 import {Langs} from "@/domain/mlString/mlString";
 import Navbar from "@components/Header/_components/Navbar/Navbar";
 import MobileHeader from "@components/Header/_components/MobileHeader/MobileHeader";
 import classes from "./Header.module.scss";
-import {translate} from "@/pkg/translate/translate";
-import {headers} from "next/headers";
 
 export default function Header() {
     const headersList = headers();
