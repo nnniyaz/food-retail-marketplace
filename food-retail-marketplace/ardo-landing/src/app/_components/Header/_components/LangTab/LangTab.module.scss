@@ -1,0 +1,27 @@
+.lang_tab {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background-color: var(--secondary-bg-color);
+  cursor: pointer;
+  transition: .2s linear;
+
+  svg {
+    width: 20px;
+    height: 20px;
+    color: var(--link-color);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &:active {
+    transform: scale(1);
+  }
+}

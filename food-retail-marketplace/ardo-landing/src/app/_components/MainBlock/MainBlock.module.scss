@@ -7,12 +7,13 @@
 
   .main_block__group {
     width: 50%;
-    height: 551px;
+    min-height: 551px;
     display: flex;
     flex-direction: column;
 
     &:first-child {
       justify-content: space-between;
+      gap: 20px;
 
       h1 {
         max-width: 560px;
@@ -64,6 +65,7 @@
         border-radius: 25px;
         background-color: var(--primary-bg-color);
         box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        object-fit: contain;
       }
     }
   }
@@ -77,10 +79,12 @@
 
     .main_block__group {
       width: 100%;
-      height: 403px;
+      height: auto;
+      min-height: auto;
       gap: 20px;
 
       &:first-child {
+
         h1 {
           max-width: 100%;
           width: calc(100% - 20px);
@@ -112,6 +116,18 @@
           width: 100%;
           height: 100%;
         }
+      }
+    }
+  }
+}
+
+@media (max-width: 500px) {
+  .main_block {
+
+    .main_block__group {
+
+      &:last-child {
+        height: 403px;
       }
     }
   }

@@ -9,28 +9,36 @@ import LoginSVG from "@assets/login.svg";
 import {translate} from "@/pkg/translate/translate";
 import {Langs} from "@/domain/mlString/mlString";
 import Navbar from "@components/Header/_components/Navbar/Navbar";
+import LangTab from "@components/Header/_components/LangTab/LangTab";
 import MobileHeader from "@components/Header/_components/MobileHeader/MobileHeader";
 import classes from "./Header.module.scss";
 
 export default function Header() {
     const headersList = headers();
+    const lang = () => {
+        let langFromThePath = headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs;
+        if (!(langFromThePath in Langs)) {
+            langFromThePath = Langs.EN;
+        }
+        return langFromThePath;
+    }
     const links = [
         {
-            href: "/suppliers/en",
+            href: "/suppliers/" + lang().toLowerCase(),
             key: "suppliers",
             role: "link",
             ariaLabel: "Suppliers",
             rel: "canonical",
-            label: translate("suppliers", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs),
+            label: translate("suppliers", lang()),
             icon: <TruckSVG/>
         },
         {
-            href: "/restaurants/en",
+            href: "/restaurants/" + lang().toLowerCase(),
             key: "restaurants",
             role: "link",
             ariaLabel: "Restaurants",
             rel: "canonical",
-            label: translate("restaurants", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs),
+            label: translate("restaurants", lang()),
             icon: <BuildingSVG/>
         },
         {
@@ -39,7 +47,7 @@ export default function Header() {
             role: "link",
             ariaLabel: "Restaurants",
             rel: "external",
-            label: translate("sign_in", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs),
+            label: translate("sign_in", lang()),
             icon: <LoginSVG/>,
             target: "_blank"
         },
@@ -50,7 +58,7 @@ export default function Header() {
             <div className={classes.header_group}>
                 <Link
                     className={classes.header_group__logo__link}
-                    href={"/restaurants/en"}
+                    href={"/restaurants/" + lang().toLowerCase()}
                     rel={"canonical"}
                 >
                     <LogoSVG/>
@@ -62,6 +70,7 @@ export default function Header() {
                     <a className={classes.header_group__container__item} href={"mailto:info@ardogroup.org"}>
                         <MailSVG/>
                     </a>
+                    <LangTab/>
                 </div>
             </div>
             <Navbar links={links}/>

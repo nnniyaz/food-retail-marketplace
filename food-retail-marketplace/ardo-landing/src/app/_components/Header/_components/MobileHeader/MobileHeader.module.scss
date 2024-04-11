@@ -13,12 +13,14 @@
     display: flex;
 
     .mobile_header__item {
-      width: calc(100% / 3);
+      width: calc(100% / 2);
       display: flex;
       align-items: center;
 
       &:first-child {
         justify-content: flex-start;
+        align-items: center;
+        gap: 15px;
 
         .mobile_header__item__icon {
           cursor: pointer;

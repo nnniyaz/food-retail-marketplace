@@ -4,5 +4,5 @@ import Suppliers from "@components/Pages/Suppliers/Suppliers";
 
 
 export default function SuppliersLangWrapper() {
-    return <Suppliers lang={Langs.EN}/>;
+    return <Suppliers lang={Langs.RU}/>;
 }

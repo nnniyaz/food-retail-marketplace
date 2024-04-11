@@ -5,7 +5,7 @@ const fs = require("fs");
 function TxtGen() {
     const csvFilePath = path.resolve(".", './txtmaps.csv');
 
-    const headers = ["key", "RU", "EN"];
+    const headers = ["key", "RU", "EN", "ZH"];
 
     const fileContent = fs.readFileSync(csvFilePath, {encoding: 'utf-8'});
 

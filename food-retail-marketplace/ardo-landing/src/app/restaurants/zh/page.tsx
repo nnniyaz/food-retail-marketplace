@@ -4,5 +4,5 @@ import {Langs} from "@/domain/mlString/mlString";
 
 
 export default function RestaurantsLangWrapper() {
-    return <Restaurants lang={Langs.EN}/>;
+    return <Restaurants lang={Langs.ZH}/>;
 }

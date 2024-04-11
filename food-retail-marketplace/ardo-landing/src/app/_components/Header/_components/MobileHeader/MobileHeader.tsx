@@ -8,6 +8,7 @@ import LogoSVG from "@assets/logo.svg";
 import PhoneSVG from "@assets/phone.svg";
 import MailSVG from "@assets/mail.svg";
 import BurgerMenuSVG from "@assets/menu.svg";
+import LangTab from "@components/Header/_components/LangTab/LangTab";
 import classes from "./MobileHeader.module.scss";
 
 interface NavbarProps {
@@ -63,11 +64,7 @@ export default function MobileHeader(props: NavbarProps) {
                         className={classes.mobile_header__item__icon}
                         onClick={() => setIsMenuOpen(true)}
                     />
-                </li>
-                <li className={classes.mobile_header__item}>
-                    <Link href={"/restaurants/en"} rel={"canonical"}>
-                        <LogoSVG/>
-                    </Link>
+                    <LogoSVG/>
                 </li>
                 <li className={classes.mobile_header__item}>
                     <div className={classes.mobile_header__item__container}>
@@ -77,6 +74,7 @@ export default function MobileHeader(props: NavbarProps) {
                         <a className={classes.mobile_header_group__container__item} href={"mailto:info@ardogroup.org"}>
                             <MailSVG/>
                         </a>
+                        <LangTab/>
                     </div>
                 </li>
             </ul>
@@ -89,10 +87,7 @@ export default function MobileHeader(props: NavbarProps) {
                                     className={classes.sidebar__header__item}
                                     onClick={() => setIsMenuOpen(false)}
                                 />
-                                <Link href={"/restaurants/en"} rel={"canonical"}
-                                      className={classes.sidebar__header__item}>
-                                    <LogoSVG/>
-                                </Link>
+                                <LogoSVG/>
                             </header>
                             <ul>
                                 {
