@@ -34,6 +34,13 @@
             align-items: center;
             justify-content: center;
             object-fit: contain;
+
+            .advantage_card__preview_img {
+              width: 100%;
+              height: 100%;
+              border-radius: 25px;
+              object-fit: contain;
+            }
           }
 
           h3 {
@@ -70,8 +77,15 @@
             padding: 10px;
 
             .advantage_card__preview {
-              height: auto;
+              height: 212px;
               border-radius: 16px;
+
+              .advantage_card__preview_img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 16px;
+              }
             }
 
             h3 {

@@ -8,7 +8,6 @@ import ReduceTimeSVG from "@assets/switch-horizontal.svg";
 import FastForwardSVG from "@assets/fast-forward.svg";
 import {translate} from "@/pkg/translate/translate";
 import MainBlock from "@components/MainBlock/MainBlock";
-import FormModal from "@components/FormModal/FormModal";
 import NumbersBlock from "@components/NumbersBlock/NumbersBlock";
 import AdvantagesBlock from "@components/AdvantagesBlock/AdvantagesBlock";
 import StepByStepGuide from "@components/StepByStepGuide/StepByStepGuide";

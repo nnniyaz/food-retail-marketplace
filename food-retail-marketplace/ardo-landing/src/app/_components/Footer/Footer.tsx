@@ -1,10 +1,10 @@
+import {headers} from "next/headers";
 import {Langs} from "@/domain/mlString/mlString";
 import {translate} from "@/pkg/translate/translate";
 import LinkedinSVG from "@assets/linkedin.svg";
 import WhatsAppSVG from "@assets/whatsapp.svg";
 import LogoSymbolSVG from "@assets/logo-symbol.svg";
 import classes from "./Footer.module.scss";
-import {headers} from "next/headers";
 
 export default function Footer() {
     const headersList = headers();

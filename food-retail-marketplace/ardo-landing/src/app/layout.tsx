@@ -1,5 +1,7 @@
 import type {Metadata} from "next";
 import {Roboto} from "next/font/google";
+import type {Viewport} from "next";
+import NextTopLoader from 'nextjs-toploader';
 import Header from "@components/Header/Header";
 import Footer from "@components/Footer/Footer";
 import "./layout.scss";
@@ -30,6 +32,13 @@ export const metadata: Metadata = {
     },
 };
 
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+};
+
 export default function RootLayout({children}: Readonly<{ children: React.ReactNode }>) {
     return (
         <html lang="en">
@@ -41,6 +50,7 @@ export default function RootLayout({children}: Readonly<{ children: React.ReactN
         <body className={roboto.className} suppressHydrationWarning={true}>
         <main className={"main"}>
             <div className={"container"}>
+                <NextTopLoader color={"#005FF9"}/>
                 <Header/>
                 {children}
                 <Footer/>

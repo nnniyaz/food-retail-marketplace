@@ -1,13 +1,12 @@
 import {v4 as uuidv4} from 'uuid';
-import {NextApiRequest, NextApiResponse} from "next";
+import {headers} from "next/headers";
+import {NextResponse} from "next/server";
 import {Langs} from "@/domain/mlString/mlString";
 import {connectToDatabase} from "@/pkg/mongo/mongo";
 import {responseError} from "@/pkg/http/response";
 import {translate} from "@/pkg/translate/translate";
 import {validateEmail} from "@/pkg/email/email";
 import {validatePhone} from "@/pkg/phone/phone";
-import {NextResponse} from "next/server";
-import {headers} from "next/headers";
 
 interface ApplicationIn {
     firstName: string,

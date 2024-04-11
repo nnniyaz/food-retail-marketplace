@@ -1,8 +1,8 @@
 import Image from "next/image";
 import {Langs} from "@/domain/mlString/mlString";
 import {translate} from "@/pkg/translate/translate";
-import classes from './MainBlock.module.scss';
 import ButtonForm from "@components/MainBlock/_components/ButtonForm/ButtonForm";
+import classes from './MainBlock.module.scss';
 
 interface MainBlockProps {
     lang: Langs
@@ -47,7 +47,7 @@ export default function MainBlock({lang, isSupplierPage}: MainBlockProps) {
                     />
                 </div>
                 <p>{translate("welcome_sub_text", lang)}</p>
-                <ButtonForm lang={lang}/>
+                <ButtonForm lang={lang} isSupplierPage={isSupplierPage}/>
             </div>
             <div className={classes.main_block__group}>
                 <Image

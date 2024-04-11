@@ -87,3 +87,7 @@
 "phone_invalid","Неверный формат телефона","Invalid phone format"
 "application_submitted","Ваша заявка отправлена","Your application has been submitted"
 "internal_server_error","Внутренняя ошибка сервера","Internal server error"
+"form_submitted_successfully","Форма успешно отправлена","Form submitted successfully"
+"form_submitted_successfully_description","Спасибо за вашу заявку. Наша команда свяжется с вами в ближайшее время","Thank you for your application. Our team will contact you shortly"
+"error_submitting_form","Ошибка отправки формы","Error submitting form"
+"error_submitting_form_description","Пожалуйста, попробуйте еще раз позже","Please try again later"

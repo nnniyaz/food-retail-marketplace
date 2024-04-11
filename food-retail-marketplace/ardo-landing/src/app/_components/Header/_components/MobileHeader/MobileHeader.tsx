@@ -35,9 +35,25 @@ export default function MobileHeader(props: NavbarProps) {
         unmounted: classes.sidebar__container__exit__done,
     }
 
+    const closeMenu = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        setIsMenuOpen(false);
+    }
+
+    const handleSidebarClick = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+        e.stopPropagation();
+    }
+
     useEffect(() => {
         setIsMenuOpen(false);
     }, [pathname]);
+
+    useEffect(() => {
+        if (isMenuOpen) {
+            document.body.style.overflow = "hidden";
+        } else {
+            document.body.style.overflow = "auto";
+        }
+    }, [isMenuOpen]);
 
     return (
         <React.Fragment>
@@ -66,8 +82,8 @@ export default function MobileHeader(props: NavbarProps) {
             </ul>
             <Transition in={isMenuOpen} timeout={300} mountOnEnter unmountOnExit>
                 {state => (
-                    <div className={`${classes.sidebar__container} ${transitionClasses[state]}`}>
-                        <section className={classes.sidebar}>
+                    <div className={`${classes.sidebar__container} ${transitionClasses[state]}`} onClick={closeMenu}>
+                        <section className={classes.sidebar} onClick={handleSidebarClick}>
                             <header className={classes.sidebar__header}>
                                 <BurgerMenuSVG
                                     className={classes.sidebar__header__item}
