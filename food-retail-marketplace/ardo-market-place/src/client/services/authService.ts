@@ -1,8 +1,8 @@
 import {AxiosResponse} from "axios";
 import $api, {ApiCfg} from "@pkg/api";
+import {Phone} from "@domain/base/phone/phone.ts";
 import {ApiRoutes} from "@pkg/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@pkg/api/response/response.ts";
-import {Langs} from "@domain/base/mlString/mlString.ts";
 
 export interface LoginRequest {
     email: string;
@@ -10,11 +10,15 @@ export interface LoginRequest {
 }
 
 export interface RegisterRequest {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    preferredLang: Langs;
+    firstName: string,
+    lastName: string,
+    phone: Phone,
+    email: string,
+    password: string,
+    address: string,
+    floor: string,
+    apartment: string,
+    deliveryInstruction: string,
 }
 
 export default class AuthService {

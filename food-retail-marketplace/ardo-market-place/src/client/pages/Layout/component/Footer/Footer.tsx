@@ -1,9 +1,9 @@
 import {NavLink, useLocation} from "react-router-dom";
 import {RouteNames} from "@pages/index.tsx";
 import HomeSVG from "@assets/icons/home.svg?react";
-import ListSVG from "@assets/icons/list.svg?react";
+import SearchSVG from "@assets/icons/search.svg?react";
 import CartSVG from "@assets/icons/cart.svg?react";
-import HeartSVG from "@assets/icons/heart.svg?react";
+// import ShoppingBagSVG from "@assets/icons/shopping-bag.svg?react";
 import UserSVG from "@assets/icons/user.svg?react";
 import classes from "./Footer.module.scss";
 
@@ -37,7 +37,7 @@ export const Footer = () => {
                                 : classes.navbar__list_item__link
                             }
                         >
-                            <ListSVG className={classes.navbar__list_item__icon}/>
+                            <SearchSVG className={classes.navbar__list_item__icon}/>
                         </NavLink>
                     </li>
                     <li className={classes.navbar__list_item}>
@@ -51,17 +51,17 @@ export const Footer = () => {
                             <CartSVG className={classes.navbar__list_item__icon}/>
                         </NavLink>
                     </li>
-                    <li className={classes.navbar__list_item}>
-                        <NavLink
-                            to={RouteNames.FAVOURITES}
-                            className={location.pathname === RouteNames.FAVOURITES
-                                ? classes.navbar__list_item__link__active
-                                : classes.navbar__list_item__link
-                            }
-                        >
-                            <HeartSVG className={classes.navbar__list_item__icon}/>
-                        </NavLink>
-                    </li>
+                    {/*<li className={classes.navbar__list_item}>*/}
+                    {/*    <NavLink*/}
+                    {/*        to={RouteNames.FAVOURITES}*/}
+                    {/*        className={location.pathname === RouteNames.FAVOURITES*/}
+                    {/*            ? classes.navbar__list_item__link__active*/}
+                    {/*            : classes.navbar__list_item__link*/}
+                    {/*        }*/}
+                    {/*    >*/}
+                    {/*        <ShoppingBagSVG className={classes.navbar__list_item__icon}/>*/}
+                    {/*    </NavLink>*/}
+                    {/*</li>*/}
                     <li className={classes.navbar__list_item}>
                         <NavLink
                             to={RouteNames.PROFILE}

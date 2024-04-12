@@ -17,20 +17,19 @@ export const SignUp = () => {
     const {isLoadingRegister} = useTypedSelector(state => state.userState);
     const {register} = useActions();
     const [userCredentials, setUserCredentials] = useState({
-        firstName: "",
-        lastName: "",
+        firstName: "Niyaz",
+        lastName: "Nassyrov",
         phone: {
-            number: "",
+            number: "12345678",
             countryCode: cfg.defaultCountryCode
         },
-        email: "",
-        password: "",
-        address: "",
-        floor: "",
-        apartment: "",
-        deliveryInstruction: ""
+        email: "nassyrovich@gmail.com",
+        password: "Niyazbey2001!",
+        address: "Al-farabi 93/19",
+        floor: "1",
+        apartment: "1",
+        deliveryInstruction: "Do not call!"
     });
-    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
 
     const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setUserCredentials({...userCredentials, firstName: e.target.value});
@@ -74,13 +73,7 @@ export const SignUp = () => {
 
     const handleRegister = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        register({
-            firstName: "",
-            lastName: "",
-            email: "",
-            password: "",
-            preferredLang: currentLang,
-        });
+        register({...userCredentials});
     }
 
     return (
@@ -88,50 +81,24 @@ export const SignUp = () => {
             <form onSubmit={handleRegister} name={"login"} id={"login"}>
                 <h1>{translate("sign_up", currentLang, langs)}</h1>
                 <div className={classes.form__row}>
-                    <div>
-                        <label style={{borderColor: true ? "#ee1616" : ""}}>
-                            <input
-                                value={userCredentials.firstName}
-                                onChange={handleFirstNameChange}
-                                placeholder={translate("first_name", currentLang, langs)}
-                                type={"text"}
-                                autoComplete={"given-name"}
-                                required
-                            />
-                        </label>
-                        {/*{!!authError.email && (*/}
-                        {/*    <div className={classes.error__message}>*/}
-                        {/*        {authError.email[0].toUpperCase() + authError.email.slice(1)}*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
-                    </div>
-                    <div>
-                        <label style={{borderColor: true ? "#ee1616" : ""}}>
-                            <input
-                                value={userCredentials.lastName}
-                                onChange={handleLastNameChange}
-                                placeholder={translate("last_name", currentLang, langs)}
-                                type={"text"}
-                                autoComplete={"family-name"}
-                                required
-                            />
-                        </label>
-                        {/*{!!authError.email && (*/}
-                        {/*    <div className={classes.error__message}>*/}
-                        {/*        {authError.email[0].toUpperCase() + authError.email.slice(1)}*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
-                    </div>
+                    <RowInput
+                        value={userCredentials.firstName}
+                        onChange={handleFirstNameChange}
+                        placeholder={translate("first_name", currentLang, langs)}
+                        type={"text"}
+                        autoComplete={"given-name"}
+                        required={true}
+                    />
+                    <RowInput
+                        value={userCredentials.lastName}
+                        onChange={handleLastNameChange}
+                        placeholder={translate("last_name", currentLang, langs)}
+                        type={"text"}
+                        autoComplete={"family-name"}
+                        required={true}
+                    />
                 </div>
                 <div>
-                    {/*<input*/}
-                    {/*    value={userCredentials.phone.number}*/}
-                    {/*    onChange={handlePhoneChange}*/}
-                    {/*    placeholder={translate("phone", currentLang, langs)}*/}
-                    {/*    type={"tel"}*/}
-                    {/*    autoComplete={"tel-national"}*/}
-                    {/*    required*/}
-                    {/*/>*/}
                     <PhoneInput
                         label={translate("phone", currentLang, langs)}
                         placeholder={translate("enter_phone", currentLang, langs)}
@@ -142,119 +109,62 @@ export const SignUp = () => {
                         required={true}
                         valid={true}
                     />
-                    {/*{!!authError.email && (*/}
-                    {/*    <div className={classes.error__message}>*/}
-                    {/*        {authError.email[0].toUpperCase() + authError.email.slice(1)}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
-                </div>
-                <div>
-                    <label style={{borderColor: true ? "#ee1616" : ""}}>
-                        <input
-                            value={userCredentials.email}
-                            onChange={handleEmailChange}
-                            placeholder={translate("email", currentLang, langs)}
-                            type={"email"}
-                            autoComplete={"email"}
-                            required
-                        />
-                    </label>
-                    {/*{!!authError.email && (*/}
-                    {/*    <div className={classes.error__message}>*/}
-                    {/*        {authError.email[0].toUpperCase() + authError.email.slice(1)}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
-                </div>
-                <div>
-                    <label style={{borderColor: true ? "#ee1616" : ""}}>
-                        <input
-                            value={userCredentials.password}
-                            onChange={handlePasswordChange}
-                            placeholder={translate("password", currentLang, langs)}
-                            type={isPasswordVisible ? "text" : "password"}
-                            autoComplete={"new-password"}
-                            required
-                        />
-                        {
-                            isPasswordVisible
-                                ? <EyeInvisibleOutlined onClick={() => setIsPasswordVisible(false)}/>
-                                : <EyeOutlined onClick={() => setIsPasswordVisible(true)}/>
-                        }
-                    </label>
-                    {/*{!!authError.password && (*/}
-                    {/*    <div className={classes.error__message}>*/}
-                    {/*        {authError.password[0].toUpperCase() + authError.password.slice(1)}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
-                </div>
-                <div>
-                    <label style={{borderColor: true ? "#ee1616" : ""}}>
-                        <input
-                            value={userCredentials.address}
-                            onChange={handleAddressChange}
-                            placeholder={translate("address", currentLang, langs) + ". " + translate("ex_establishment_name", currentLang, langs)}
-                            type={"text"}
-                            autoComplete={"street-address"}
-                            required
-                        />
-                    </label>
-                    {/*{!!authError.password && (*/}
-                    {/*    <div className={classes.error__message}>*/}
-                    {/*        {authError.password[0].toUpperCase() + authError.password.slice(1)}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
                 </div>
                 <div className={classes.form__row}>
-                    <div>
-                        <label style={{borderColor: true ? "#ee1616" : ""}}>
-                            <input
-                                value={userCredentials.floor}
-                                onChange={handleFloorChange}
-                                placeholder={translate("floor", currentLang, langs)}
-                                type={"text"}
-                                autoComplete={"address-level1"}
-                                required
-                            />
-                        </label>
-                        {/*{!!authError.password && (*/}
-                        {/*    <div className={classes.error__message}>*/}
-                        {/*        {authError.password[0].toUpperCase() + authError.password.slice(1)}*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
-                    </div>
-                    <div>
-                        <label style={{borderColor: true ? "#ee1616" : ""}}>
-                            <input
-                                value={userCredentials.apartment}
-                                onChange={handleApartmentChange}
-                                placeholder={translate("apartment", currentLang, langs)}
-                                type={"text"}
-                                autoComplete={"address-level2"}
-                                required
-                            />
-                        </label>
-                        {/*{!!authError.password && (*/}
-                        {/*    <div className={classes.error__message}>*/}
-                        {/*        {authError.password[0].toUpperCase() + authError.password.slice(1)}*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
-                    </div>
+                    <RowInput
+                        value={userCredentials.email}
+                        onChange={handleEmailChange}
+                        placeholder={translate("email", currentLang, langs)}
+                        type={"email"}
+                        autoComplete={"email"}
+                        required={true}
+                    />
+                    <RowInput
+                        value={userCredentials.password}
+                        onChange={handlePasswordChange}
+                        placeholder={translate("password", currentLang, langs)}
+                        type={"password"}
+                        autoComplete={"new-password"}
+                        required={true}
+                    />
                 </div>
                 <div>
-                    <label style={{borderColor: true ? "#ee1616" : ""}}>
-                        <input
-                            value={userCredentials.deliveryInstruction}
-                            onChange={handleDeliveryInstructionChange}
-                            placeholder={translate("delivery_instruction_for_courier", currentLang, langs)}
-                            type={"text"}
-                            autoComplete={"address-level3"}
-                        />
-                    </label>
-                    {/*{!!authError.password && (*/}
-                    {/*    <div className={classes.error__message}>*/}
-                    {/*        {authError.password[0].toUpperCase() + authError.password.slice(1)}*/}
-                    {/*    </div>*/}
-                    {/*)}*/}
+                    <RowInput
+                        value={userCredentials.address}
+                        onChange={handleAddressChange}
+                        placeholder={translate("address", currentLang, langs) + ". " + translate("ex_establishment_name", currentLang, langs)}
+                        type={"text"}
+                        autoComplete={"street-address"}
+                        required={true}
+                    />
+                </div>
+                <div className={classes.form__row}>
+                    <RowInput
+                        value={userCredentials.floor}
+                        onChange={handleFloorChange}
+                        placeholder={translate("floor", currentLang, langs)}
+                        type={"text"}
+                        autoComplete={"address-level1"}
+                        required={true}
+                    />
+                    <RowInput
+                        value={userCredentials.apartment}
+                        onChange={handleApartmentChange}
+                        placeholder={translate("apartment", currentLang, langs)}
+                        type={"text"}
+                        autoComplete={"address-level2"}
+                        required={true}
+                    />
+                </div>
+                <div>
+                    <RowInput
+                        value={userCredentials.deliveryInstruction}
+                        onChange={handleDeliveryInstructionChange}
+                        placeholder={translate("delivery_instruction_for_courier", currentLang, langs)}
+                        type={"text"}
+                        autoComplete={"address-level3"}
+                        required={false}
+                    />
                 </div>
                 <button type={"submit"} disabled={isLoadingRegister}>
                     <span>{translate("register", currentLang, langs)}</span>
@@ -276,6 +186,38 @@ export const SignUp = () => {
     )
 }
 
+interface RowInputProps {
+    placeholder: string;
+    value: string;
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    type?: string;
+    autoComplete?: string;
+    required?: boolean;
+}
+
+const RowInput = ({placeholder, value, onChange, type, autoComplete, required}: RowInputProps) => {
+    const [isPasswordVisible, setIsPasswordVisible] = useState<boolean>(false);
+    return (
+        <label>
+            <input
+                value={value}
+                onChange={onChange}
+                placeholder={placeholder}
+                type={type === "password" ? (isPasswordVisible ? "text" : "password") : (type ?? "text")}
+                autoComplete={autoComplete}
+                required={required ?? false}
+            />
+            {
+                type === "password" && (
+                    isPasswordVisible
+                        ? <EyeInvisibleOutlined onClick={() => setIsPasswordVisible(false)}/>
+                        : <EyeOutlined onClick={() => setIsPasswordVisible(true)}/>
+                )
+            }
+        </label>
+    )
+}
+
 interface PhoneInputProps {
     label: string;
     placeholder: string;
@@ -289,7 +231,6 @@ interface PhoneInputProps {
 
 const PhoneInput = (
     {
-        label,
         placeholder,
         value,
         onChange,
@@ -299,16 +240,9 @@ const PhoneInput = (
         setSelectCountryCode
     }: PhoneInputProps
 ) => {
-    const [isFocused, setIsFocused] = useState(false);
     return (
         <label className={classes.phone__input__row}>
-            {/*<span>{required && <span style={{color: "red", marginRight: "5px"}}>*</span>}{label}</span>*/}
-            <div
-                className={isFocused
-                    ? `${classes.phone__input__container} ${classes.phone__input__container__focused}`
-                    : classes.phone__input__container
-                }
-            >
+            <div className={classes.phone__input__container}>
                 <Select
                     value={selectedCountryCode}
                     onChange={setSelectCountryCode}
@@ -329,11 +263,10 @@ const PhoneInput = (
                     onChange={onChange}
                     required={required || false}
                     placeholder={placeholder}
+                    maxLength={8}
                     type={"tel"}
                     inputMode={"tel"}
                     autoComplete={"tel-national"}
-                    onFocus={() => setIsFocused(true)}
-                    onBlur={() => setIsFocused(false)}
                     style={{
                         borderColor: valid || valid === undefined ? "" : "red",
                     }}

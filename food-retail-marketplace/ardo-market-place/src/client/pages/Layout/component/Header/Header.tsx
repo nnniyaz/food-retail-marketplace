@@ -1,12 +1,11 @@
 import {Link} from "react-router-dom";
 import {RouteNames} from "@pages/index.tsx";
 import HomeSVG from "@assets/icons/home.svg?react";
-import ListSVG from "@assets/icons/list.svg?react";
+import SearchSVG from "@assets/icons/search.svg?react";
 import CartSVG from "@assets/icons/cart.svg?react";
-import HeartSVG from "@assets/icons/heart.svg?react";
+// import ShoppingBagSVG from "@assets/icons/shopping-bag.svg?react";
 import UserSVG from "@assets/icons/user.svg?react";
 import LogoSVG from "@assets/icons/logo.svg?react";
-// import BellSVG from "@assets/icons/bell.svg?react";
 import classes from "./Header.module.scss";
 
 export const Header = () => {
@@ -23,29 +22,18 @@ export const Header = () => {
                         <HomeSVG className={classes.nav__item__icon}/>
                     </Link>
                     <Link className={classes.nav__item} to={RouteNames.CATALOG}>
-                        <ListSVG className={classes.nav__item__icon}/>
+                        <SearchSVG className={classes.nav__item__icon}/>
                     </Link>
                     <Link className={classes.nav__item} to={RouteNames.CART}>
                         <CartSVG className={classes.nav__item__icon}/>
                     </Link>
-                    <Link className={classes.nav__item} to={RouteNames.FAVOURITES}>
-                        <HeartSVG className={classes.nav__item__icon}/>
-                    </Link>
+                    {/*<Link className={classes.nav__item} to={RouteNames.FAVOURITES}>*/}
+                    {/*    <ShoppingBagSVG className={classes.nav__item__icon}/>*/}
+                    {/*</Link>*/}
                     <Link className={classes.nav__item} to={RouteNames.PROFILE}>
                         <UserSVG className={classes.nav__item__icon}/>
                     </Link>
-                    {/*<div className={classes.nav__item}>*/}
-                    {/*    <div className={classes.notification}>*/}
-                    {/*        <div className={classes.notification__number}>7</div>*/}
-                    {/*        <BellSVG className={classes.notification__bell}/>*/}
-                    {/*    </div>*/}
-                    {/*</div>*/}
                 </nav>
-
-                {/*<div className={classes.notification}>*/}
-                {/*    <div className={classes.notification__number}>7</div>*/}
-                {/*    <BellSVG className={classes.notification__bell}/>*/}
-                {/*</div>*/}
             </div>
         </header>
     )

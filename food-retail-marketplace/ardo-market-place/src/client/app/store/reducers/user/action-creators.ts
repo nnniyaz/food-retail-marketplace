@@ -149,7 +149,9 @@ export const UserActionCreator = {
             if (res.data.success) {
                 Notify.Success({message: txts["confirmation_mail_was_sent_to_your_email"][currentLang]});
             } else {
-                Notify.Error({message: txts["failed_to_register"][currentLang]});
+                res.data.messages.forEach((message: string) => {
+                    Notify.Error({message: message});
+                });
             }
         } catch (e: any) {
             Notify.Error({message: txts["failed_to_register"][currentLang]});
