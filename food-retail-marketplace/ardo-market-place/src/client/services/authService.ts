@@ -3,6 +3,7 @@ import $api, {ApiCfg} from "@pkg/api";
 import {Phone} from "@domain/base/phone/phone.ts";
 import {ApiRoutes} from "@pkg/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@pkg/api/response/response.ts";
+import {Langs} from "@domain/base/mlString/mlString.ts";
 
 export interface LoginRequest {
     email: string;
@@ -19,6 +20,7 @@ export interface RegisterRequest {
     floor: string,
     apartment: string,
     deliveryInstruction: string,
+    preferredLang: Langs,
 }
 
 export default class AuthService {

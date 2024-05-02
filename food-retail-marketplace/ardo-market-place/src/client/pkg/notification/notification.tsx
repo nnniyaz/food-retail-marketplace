@@ -63,8 +63,8 @@ export class Notify {
 const NotificationComponentStyles: { [key: string]: CSSProperties } = {
     notification: {
         width: "100%",
-        padding: "10px 16px",
-        borderRadius: "16px",
+        padding: "20px 26px",
+        borderRadius: "8px",
         backgroundColor: "#F3F4F6",
         boxShadow: "1px 1px 2px 1px rgba(19, 24, 70, 0.10), 1px 12px 16px 1px rgba(19, 24, 70, 0.12)",
         display: "flex",

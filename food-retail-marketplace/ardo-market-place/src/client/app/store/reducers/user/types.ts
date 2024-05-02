@@ -11,6 +11,7 @@ export interface UserState {
     isLoadingGetUser: boolean;
     isLoadingLogout: boolean;
     isLoadingRegister: boolean;
+    isLoadingDeliveryPoint: boolean;
 }
 
 export enum UserActionEnum {
@@ -21,6 +22,7 @@ export enum UserActionEnum {
     SET_IS_LOADING_GET_USER = "SET_IS_LOADING_GET_USER",
     SET_IS_LOADING_LOGOUT = "SET_IS_LOADING_LOGOUT",
     SET_IS_LOADING_REGISTER = "SET_IS_LOADING_REGISTER",
+    SET_IS_LOADING_DELIVERY_POINT = "SET_IS_LOADING_DELIVERY_POINT",
 }
 
 export interface SetIsLoadingLoginAction {
@@ -61,6 +63,11 @@ export interface SetIsLoadingRegisterAction {
     payload: boolean;
 }
 
+export interface SetIsLoadingDeliveryPointAction {
+    type: UserActionEnum.SET_IS_LOADING_DELIVERY_POINT;
+    payload: boolean;
+}
+
 export type UserAction =
     SetIsAuthAction |
     SetUserAction |
@@ -68,4 +75,6 @@ export type UserAction =
     SetIsLoadingLoginAction |
     SetIsLoadingGetUserAction |
     SetIsLoadingLogoutAction |
-    SetIsLoadingRegisterAction;
+    SetIsLoadingRegisterAction |
+    SetIsLoadingDeliveryPointAction;
+

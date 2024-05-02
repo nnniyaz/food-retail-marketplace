@@ -16,7 +16,7 @@ import classes from "./Cart.module.scss";
 const {ShoppingCartOutlined} = AntdIcons;
 
 export const Cart = () => {
-    const {currentLang, langs} = useTypedSelector(state => state.systemState);
+    const {currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {cart} = useTypedSelector(state => state.cartState);
     const {isAuth} = useTypedSelector(state => state.userState);
     const [orderPriceReportHeight, setOrderPriceReportHeight] = useState(0);
@@ -66,7 +66,7 @@ export const Cart = () => {
                                 <td className={classes.cart__price__label}>
                                     {translate("products", currentLang, langs)}
                                 </td>
-                                <td className={classes.cart__price}>{priceFormat(cartPrice(cart))}</td>
+                                <td className={classes.cart__price}>{priceFormat(cartPrice(cart), currency)}</td>
                             </tr>
                             </tbody>
                             <tfoot>
@@ -74,7 +74,7 @@ export const Cart = () => {
                                 <td className={classes.cart__total__price__label}>
                                     {translate("total", currentLang, langs)}
                                 </td>
-                                <td className={classes.cart__total__price}>{priceFormat(cartTotalPrice(cart))}</td>
+                                <td className={classes.cart__total__price}>{priceFormat(cartTotalPrice(cart), currency)}</td>
                             </tr>
                             </tfoot>
                         </table>
@@ -102,7 +102,7 @@ interface CartItemComponentProps {
 }
 
 const CartItemComponent = ({cartProduct}: CartItemComponentProps) => {
-    const {cfg, currentLang, langs} = useTypedSelector(state => state.systemState);
+    const {cfg, currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {catalog} = useTypedSelector(state => state.catalogState);
     const {incrementToCart, decrementFromCart, removeFromCart} = useActions();
     const [imgError, setImgError] = useState(false);
@@ -145,7 +145,7 @@ const CartItemComponent = ({cartProduct}: CartItemComponentProps) => {
                 </div>
                 <div className={classes.cart__item__info__group__lower}>
                     <p className={classes.cart__item__info__group__lower__price}>
-                        {priceFormat(cartProduct.price * cartProduct.quantity)}
+                        {priceFormat(cartProduct.price * cartProduct.quantity, currency)}
                     </p>
                     <button
                         className={classes.cart__item__info__group__lower__add}

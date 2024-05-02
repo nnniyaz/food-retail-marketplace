@@ -23,7 +23,7 @@ const $api = ({baseURL, lang}: ApiCfg) => axios.create({
         'Time-Zone': Intl.DateTimeFormat().resolvedOptions().timeZone,
         'Accept-Language': acceptLanguages[lang],
     },
-    timeout: 20000,
+    timeout: 60000,
     timeoutErrorMessage: 'Timeout error',
     validateStatus: validateStatus
 });

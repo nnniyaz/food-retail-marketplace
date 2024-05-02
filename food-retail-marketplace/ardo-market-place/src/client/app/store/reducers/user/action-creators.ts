@@ -7,6 +7,7 @@ import {
     SetIsLoadingGetUserAction,
     SetIsLoadingLogoutAction,
     SetIsLoadingRegisterAction,
+    SetIsLoadingDeliveryPointAction
 } from "@app/store/reducers/user/types.ts";
 import {CartActionCreator} from "@app/store/reducers/cart/action-creators.ts";
 import {AppDispatch, RootState} from "@app/store";
@@ -46,6 +47,10 @@ export const UserActionCreator = {
         type: UserActionEnum.SET_IS_LOADING_REGISTER,
         payload
     }),
+    setIsLoadingDeliveryPoint: (payload: boolean): SetIsLoadingDeliveryPointAction => ({
+        type: UserActionEnum.SET_IS_LOADING_DELIVERY_POINT,
+        payload
+    }),
 
     login: (email: string, password: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
@@ -80,11 +85,13 @@ export const UserActionCreator = {
         }
     },
 
-    fetchUser: (disableNotification: boolean) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    fetchUser: (disableNotification: boolean, disableLoading = false) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
         const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
-            dispatch(UserActionCreator.setIsLoadingGetUser(true));
+            if (!disableLoading) {
+                dispatch(UserActionCreator.setIsLoadingGetUser(true));
+            }
             const res = await UserService.getCurrentUser(apiCfg);
             if (res.data.success) {
                 dispatch(UserActionCreator.setUser(res.data.data));
@@ -120,7 +127,7 @@ export const UserActionCreator = {
         }
     },
 
-    Logout: () => async (dispatch: AppDispatch, getState: () => RootState) => {
+    logout: () => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
         const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
@@ -159,4 +166,88 @@ export const UserActionCreator = {
             dispatch(UserActionCreator.setIsLoadingRegister(false));
         }
     },
+
+    addDeliveryPoint: (address: string, floor: string, apartment: string, deliveryComment: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
+        try {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(true));
+            const res = await UserService.addDeliveryPoint(apiCfg, {address, floor, apartment, deliveryComment});
+            if (res.data.success) {
+                Notify.Success({message: txts["delivery_point_was_added"][currentLang]});
+                await UserActionCreator.fetchUser(true, true)(dispatch, getState);
+            } else {
+                res.data.messages.forEach((message: string) => {
+                    Notify.Error({message: message});
+                });
+            }
+        } catch (e: any) {
+            Notify.Error({message: txts["failed_to_add_delivery_point"][currentLang]});
+        } finally {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(false));
+        }
+    },
+
+    updateDeliveryPoint: (id: string, address: string, floor: string, apartment: string, deliveryComment: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
+        try {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(true));
+            const res = await UserService.updateDeliveryPoint(apiCfg, {id, address, floor, apartment, deliveryComment});
+            if (res.data.success) {
+                Notify.Success({message: txts["delivery_point_was_updated"][currentLang]});
+                await UserActionCreator.fetchUser(true, true)(dispatch, getState);
+            } else {
+                res.data.messages.forEach((message: string) => {
+                    Notify.Error({message: message});
+                });
+            }
+        } catch (e: any) {
+            Notify.Error({message: txts["failed_to_update_delivery_point"][currentLang]});
+        } finally {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(false));
+        }
+    },
+
+    deleteDeliveryPoint: (deliveryPointId: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
+        try {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(true));
+            const res = await UserService.deleteDeliveryPoint(apiCfg, {deliveryPointId});
+            if (res.data.success) {
+                Notify.Success({message: txts["delivery_point_was_deleted"][currentLang]});
+                await UserActionCreator.fetchUser(true, true)(dispatch, getState);
+            } else {
+                res.data.messages.forEach((message: string) => {
+                    Notify.Error({message: message});
+                });
+            }
+        } catch (e: any) {
+            Notify.Error({message: txts["failed_to_delete_delivery_point"][currentLang]});
+        } finally {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(false));
+        }
+    },
+
+    changeLastDeliveryPoint: (deliveryPointId: string) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang, cfg} = getState().systemState;
+        const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
+        try {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(true));
+            const res = await UserService.changeLastDeliveryPoint(apiCfg, {deliveryPointId});
+            if (res.data.success) {
+                Notify.Success({message: txts["last_delivery_point_was_changed"][currentLang]});
+                await UserActionCreator.fetchUser(true, true)(dispatch, getState);
+            } else {
+                res.data.messages.forEach((message: string) => {
+                    Notify.Error({message: message});
+                });
+            }
+        } catch (e: any) {
+            Notify.Error({message: txts["failed_to_change_last_delivery_point"][currentLang]});
+        } finally {
+            dispatch(UserActionCreator.setIsLoadingDeliveryPoint(false));
+        }
+    }
 }

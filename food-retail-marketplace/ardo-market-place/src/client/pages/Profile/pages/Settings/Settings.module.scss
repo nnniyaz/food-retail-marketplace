@@ -2,8 +2,9 @@
   width: 100%;
   display: flex;
   flex-direction: column;
-  padding: 15px 0;
+  padding: 15px;
   border-radius: 10px;
+  background-color: var(--secondary-bg-color);
 
   .checkout__info__row {
     width: 100%;
@@ -22,7 +23,7 @@
     }
 
     .checkout__info__row__label {
-      width: 150px;
+      width: 200px;
       color: var(--secondary-font-color);
       font-size: 18px;
       line-height: 21px;

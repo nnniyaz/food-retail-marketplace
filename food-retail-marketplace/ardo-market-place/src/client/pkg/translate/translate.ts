@@ -16,7 +16,11 @@ export function translate(word: MlString | string, currentLang, langs): string {
         if (word?.[currentLang]) {
             return word[currentLang][0].toUpperCase() + word[currentLang].slice(1);
         } else {
-            return findFromOtherLangs(word, langs)[0].toUpperCase() + findFromOtherLangs(word, langs).slice(1);
+            const found = findFromOtherLangs(word, langs);
+            if (found) {
+                return found[0].toUpperCase() + found.slice(1);
+            }
+            return (txts["translation_not_found"]?.[currentLang][0].toUpperCase() + txts["translation_not_found"]?.[currentLang].slice(1)) || "translation_not_found";
         }
     }
 }

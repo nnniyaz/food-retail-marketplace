@@ -38,7 +38,8 @@ export function ValidateOrderRequest(orderRequest: OrderRequest): Error | null {
     if (!orderRequest.totalPrice) {
         return new Error(txts["order_invalid_price"][Langs.EN]);
     }
-    if (orderRequest.products?.length !== orderRequest.quantity) {
+    const productTotalQuantity = orderRequest.products.reduce((acc, product) => acc + product.quantity, 0);
+    if (productTotalQuantity !== orderRequest.quantity) {
         return new Error(txts["order_products_number_not_equal_to_quantity"][Langs.EN]);
     }
     let totalPrice: number = 0;

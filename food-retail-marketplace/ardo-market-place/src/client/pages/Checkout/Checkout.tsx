@@ -18,7 +18,7 @@ const {LoadingOutlined} = AntdIcons;
 
 export const Checkout = () => {
     const navigate = useNavigate();
-    const {currentLang, langs} = useTypedSelector(state => state.systemState);
+    const {currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {
         cart,
         deliveryInfo,
@@ -224,7 +224,7 @@ export const Checkout = () => {
                             <td className={classes.checkout__price__label}>
                                 {translate("products", currentLang, langs)}
                             </td>
-                            <td className={classes.checkout__price}>{priceFormat(cartPrice(cart))}</td>
+                            <td className={classes.checkout__price}>{priceFormat(cartPrice(cart), currency)}</td>
                         </tr>
                         </tbody>
                         <tfoot>
@@ -232,11 +232,11 @@ export const Checkout = () => {
                             <td className={classes.checkout__total__price__label}>
                                 {translate("total", currentLang, langs).toUpperCase()}
                             </td>
-                            <td className={classes.checkout__total__price}>{priceFormat(cartTotalPrice(cart))}</td>
+                            <td className={classes.checkout__total__price}>{priceFormat(cartTotalPrice(cart), currency)}</td>
                         </tr>
                         </tfoot>
                     </table>
-                    <button className={classes.confirm__btn}>
+                    <button className={classes.confirm__btn} disabled={isLoadingMakeOrder} style={{opacity: isLoadingMakeOrder ? 0.5 : 1}}>
                         {translate("buy", currentLang, langs)}
                         {isLoadingMakeOrder && <LoadingOutlined className={classes.btn__loading}/>}
                     </button>

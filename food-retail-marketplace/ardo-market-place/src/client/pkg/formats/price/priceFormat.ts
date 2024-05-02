@@ -1,8 +1,7 @@
 import {currencies} from "./currencies.ts";
-import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
+import {Currency} from "@domain/base/currency/currency.ts";
 
-export function priceFormat(price: number): string {
-    const {currency} = useTypedSelector(state => state.systemState);
+export function priceFormat(price: number, currency: Currency): string {
     if (isNaN(price)) {
         return "";
     }

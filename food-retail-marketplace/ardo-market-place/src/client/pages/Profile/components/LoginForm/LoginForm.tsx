@@ -74,7 +74,7 @@ export const LoginForm = () => {
                         </div>
                     )}
                 </div>
-                <button type={"submit"} disabled={isLoadingLogin}>
+                <button type={"submit"} disabled={isLoadingLogin} style={{opacity: isLoadingLogin ? 0.5 : 1}}>
                     <span>{translate("login", currentLang, langs)}</span>
                     {isLoadingLogin && <LoadingOutlined className={classes.btn__loading}/>}
                 </button>

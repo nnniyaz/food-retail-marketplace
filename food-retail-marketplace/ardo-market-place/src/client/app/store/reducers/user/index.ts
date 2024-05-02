@@ -11,6 +11,7 @@ const initialState: UserState = {
     isLoadingGetUser: false,
     isLoadingLogout: false,
     isLoadingRegister: false,
+    isLoadingDeliveryPoint: false,
 };
 
 export default function userReducer(state = initialState, action: UserAction): UserState {
@@ -29,6 +30,8 @@ export default function userReducer(state = initialState, action: UserAction): U
             return {...state, isLoadingLogout: action.payload};
         case UserActionEnum.SET_IS_LOADING_REGISTER:
             return {...state, isLoadingRegister: action.payload};
+        case UserActionEnum.SET_IS_LOADING_DELIVERY_POINT:
+            return {...state, isLoadingDeliveryPoint: action.payload};
         default:
             return state;
     }

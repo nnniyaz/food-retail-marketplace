@@ -73,7 +73,7 @@ interface ProductProps {
 }
 
 const ProductItem = ({product}: ProductProps) => {
-    const {cfg, currentLang, langs} = useTypedSelector(state => state.systemState);
+    const {cfg, currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {cart} = useTypedSelector(state => state.cartState);
     const {incrementToCart, decrementFromCart} = useActions();
     const [imgError, setImgError] = useState(false);
@@ -115,7 +115,7 @@ const ProductItem = ({product}: ProductProps) => {
                 </p>
                 <p className={classes.product__price_per_unit}>
                     <span className={classes.product__price_per_unit__price}>
-                        {priceFormat(product.price)}
+                        {priceFormat(product.price, currency)}
                     </span>
                     <span className={classes.product__price_per_unit__moq}>
                         {!cartProduct && `• 1 pc`}
@@ -124,8 +124,8 @@ const ProductItem = ({product}: ProductProps) => {
                 <p className={classes.product__total_price_of_product}>
                     {
                         !!cartProduct
-                            ? priceFormat(product.price * cartProduct.quantity)
-                            : priceFormat(product.price)
+                            ? priceFormat(product.price * cartProduct.quantity, currency)
+                            : priceFormat(product.price, currency)
                     }
                 </p>
                 <button

@@ -2,10 +2,12 @@ import {CatalogActionCreator} from "@app/store/reducers/catalog/action-creators.
 import {SystemActionCreator} from "@app/store/reducers/system/action-creators.ts";
 import {CartActionCreator} from "@app/store/reducers/cart/action-creators.ts";
 import {UserActionCreator} from "@app/store/reducers/user/action-creators.ts";
+import {OrderHistoryActionCreator} from "@app/store/reducers/orderHistory/action-creators.ts";
 
 export const allActionCreators = {
     ...CatalogActionCreator,
     ...SystemActionCreator,
     ...CartActionCreator,
     ...UserActionCreator,
+    ...OrderHistoryActionCreator,
 }

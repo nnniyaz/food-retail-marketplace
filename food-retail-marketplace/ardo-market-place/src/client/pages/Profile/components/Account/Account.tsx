@@ -7,17 +7,23 @@ import {translate} from "@pkg/translate/translate";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import classes from "./Account.module.scss";
 import {phoneFormat} from "@pkg/formats/phone/phoneFormat.ts";
+import {useActions} from "@pkg/hooks/useActions.ts";
 
 const {EditOutlined} = AntdIcons;
 
 export const Account = () => {
     const {currentLang, langs} = useTypedSelector(state => state.systemState);
     const {user} = useTypedSelector(state => state.userState);
+    const {logout} = useActions();
     const profileRoutes = [
         {name: translate("delivery_addresses", currentLang, langs), path: RouteNames.ADDRESS},
         {name: translate("order_history", currentLang, langs), path: RouteNames.ORDERS},
-        {name: translate("favourite_products", currentLang, langs), path: RouteNames.FAVOURITES},
+        // {name: translate("favourite_products", currentLang, langs), path: RouteNames.FAVOURITES},
     ];
+
+    const handleLogout = async () => {
+        logout();
+    }
 
     if (!user) {
         return null;
@@ -68,6 +74,12 @@ export const Account = () => {
                             </Link>
                         </li>
                     ))}
+                    <li>
+                        <div className={classes.account__menu__bar__item} onClick={handleLogout}>
+                            {translate("logout", currentLang, langs)}
+                            {/*<ArrorSVG/>*/}
+                        </div>
+                    </li>
                 </ul>
             </div>
         </React.Fragment>

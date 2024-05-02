@@ -170,8 +170,7 @@
 
       @media (hover: hover) {
         &:hover {
-          background-color: var(--primary-bg-color);
-          color: var(--primary-font-color);
+          opacity: .7;
         }
       }
 

@@ -9,7 +9,7 @@ import {CartItem} from "@domain/cartItem";
 import classes from "./Success.module.scss";
 
 export const Success = () => {
-    const {currentLang, langs} = useTypedSelector(state => state.systemState)
+    const {currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const [successCart] = useState<CartItem[]>(JSON.parse(localStorage.getItem("ardo-market-place-success-cart")) || []);
     return (
         <React.Fragment>
@@ -26,6 +26,12 @@ export const Success = () => {
                             {translate("name", currentLang, langs)}
                         </th>
                         <th>
+                            {translate("price", currentLang, langs)}
+                        </th>
+                        <th>
+                            {translate("quantity", currentLang, langs)}
+                        </th>
+                        <th>
                             {translate("total", currentLang, langs)}
                         </th>
                     </tr>
@@ -34,10 +40,12 @@ export const Success = () => {
                     {successCart.map((item) => (
                         <tr key={item.id}>
                             <td>{translate(item.name, currentLang, langs)}</td>
+                            <td>{priceFormat(item.price, currency)}</td>
+                            <td>{item.quantity}</td>
                             <td>
                                 <div style={{display: "flex", flexDirection: "column", gap: "8px"}}>
-                                    <p>{`${priceFormat(item.price)} x ${item.quantity}`}</p>
-                                    <p>{priceFormat(item.totalPrice)}</p>
+                                    {/*<p>{`${priceFormat(item.price)} x ${item.quantity}`}</p>*/}
+                                    <p>{priceFormat(item.totalPrice, currency)}</p>
                                 </div>
                             </td>
                         </tr>
@@ -46,7 +54,9 @@ export const Success = () => {
                     <tfoot>
                     <tr>
                         <td>{translate("total", currentLang, langs)}</td>
-                        <td>{priceFormat(cartTotalPrice(successCart))}</td>
+                        <td></td>
+                        <td></td>
+                        <td>{priceFormat(cartTotalPrice(successCart), currency)}</td>
                     </tr>
                     </tfoot>
                 </table>

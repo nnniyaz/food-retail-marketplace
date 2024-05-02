@@ -4,6 +4,11 @@ import {txts} from "../../../server/pkg/core/txts.ts";
 import {DeliveryInfo} from "@domain/base/deliveryInfo/deliveryInfo.ts";
 import {Phone} from "@domain/base/phone/phone.ts";
 
+export type OrderData = {
+    orders: Order[];
+    count: number;
+}
+
 export type Order = {
     id: string;
     userId: string;
