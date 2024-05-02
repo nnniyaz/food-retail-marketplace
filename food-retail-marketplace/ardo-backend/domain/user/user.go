@@ -213,16 +213,14 @@ func (u *User) AddDeliveryPoint(address, floor, apartment, deliveryComment strin
 }
 
 func (u *User) UpdateDeliveryPoint(deliveryPointId uuid.UUID, address, floor, apartment, deliveryComment string) error {
-	for _, dp := range u.deliveryPoints {
-		if dp.GetId() == deliveryPointId {
+	for index, dp := range u.deliveryPoints {
+		if dp.GetId().String() == deliveryPointId.String() {
 			err := dp.Update(address, floor, apartment, deliveryComment)
 			if err != nil {
 				return err
 			}
-
-			if u.lastDeliveryPoint.GetId() == deliveryPointId {
-				u.lastDeliveryPoint = dp
-			}
+			u.lastDeliveryPoint = dp
+			u.deliveryPoints[index] = dp
 			break
 		}
 	}

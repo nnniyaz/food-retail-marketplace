@@ -101,8 +101,8 @@ type RegisterIn struct {
 	Password        string `json:"password"`
 	PreferredLang   string `json:"preferredLang"`
 	Address         string `json:"address"`
-	Floor           string `json:"floor"`
 	Apartment       string `json:"apartment"`
+	Floor           string `json:"floor"`
 	DeliveryComment string `json:"deliveryComment"`
 }
 

@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	minLastNameLength = 3
-	maxLastNameLength = 50
+	minLastNameLength = 2
+	maxLastNameLength = 100
 )
 
 var (

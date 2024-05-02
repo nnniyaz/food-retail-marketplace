@@ -129,10 +129,10 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 			foundActivationLink.UpdateLinkId()
 			err = a.linkService.UpdateLink(ctx, foundActivationLink)
 
-			link := a.config.GetApiUri() + "/api/auth/confirm/" + foundActivationLink.GetLinkId().String()
+			link := a.config.GetApiUri() + "/auth/confirm/" + foundActivationLink.GetLinkId().String()
 
 			subject := "Confirm your email"
-			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">%s</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link, link)
+			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link)
 			return a.emailService.SendMail([]string{email}, subject, htmlBody)
 		}
 	}
@@ -148,9 +148,9 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 		return err
 	}
 
-	link := a.config.GetApiUri() + "/api/auth/confirm/" + newActivationLink.GetLinkId().String()
+	link := a.config.GetApiUri() + "/auth/confirm/" + newActivationLink.GetLinkId().String()
 	subject := "Confirm your email"
-	htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">%s</a></p><p>Thanks,<br/>The Ardo Team</p>", newUser.GetFirstName(), link, link)
+	htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", newUser.GetFirstName(), link)
 	return a.emailService.SendMail([]string{newUser.GetEmail().String()}, subject, htmlBody)
 }
 

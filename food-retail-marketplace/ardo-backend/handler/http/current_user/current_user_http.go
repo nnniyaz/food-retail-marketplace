@@ -2,6 +2,7 @@ package current_user
 
 import (
 	"encoding/json"
+	"github.com/go-chi/chi/v5"
 	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/handler/http/response"
@@ -312,7 +313,7 @@ type UpdateCurrentUserDeliveryPointIn struct {
 //	@Param			data	body		UpdateCurrentUserDeliveryPointIn	true	"Update current user delivery point object"
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
-//	@Router			/me/delivery-points [put]
+//	@Router			/me/delivery-point [put]
 
 func (hd *HttpDelivery) UpdateCurrentUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCurrentUserDeliveryPointIn
@@ -329,10 +330,6 @@ func (hd *HttpDelivery) UpdateCurrentUserDeliveryPoint(w http.ResponseWriter, r 
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
-type DeleteCurrentUserDeliveryPointIn struct {
-	DeliveryPointId string `json:"deliveryPointId"`
-}
-
 // DeleteCurrentUserDeliveryPoint godoc
 //
 //	@Summary		Delete current user delivery point
@@ -340,19 +337,14 @@ type DeleteCurrentUserDeliveryPointIn struct {
 //	@Tags			Current User
 //	@Accept			json
 //	@Produce		json
-//	@Param			data	body		DeleteCurrentUserDeliveryPointIn	true	"Delete current user delivery point object"
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
-//	@Router			/me/delivery-points [put]
+//	@Router			/me/delivery-point/{delivery_point_id} [delete]
 
 func (hd *HttpDelivery) DeleteCurrentUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
-	var in DeleteCurrentUserDeliveryPointIn
-	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
-		response.NewBad(hd.logger, w, r, err)
-		return
-	}
+	deliveryPointId := chi.URLParam(r, "delivery_point_id")
 	u := r.Context().Value("user").(user.User)
-	err := hd.service.DeleteDeliveryPoint(r.Context(), &u, in.DeliveryPointId)
+	err := hd.service.DeleteDeliveryPoint(r.Context(), &u, deliveryPointId)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
@@ -374,7 +366,7 @@ type ChangeCurrentUserLastDeliveryPointIn struct {
 //	@Param			data	body		ChangeCurrentUserLastDeliveryPointIn	true	"Change current user last delivery point object"
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
-//	@Router			/me/delivery-points [put]
+//	@Router			/me/delivery-point [put]
 
 func (hd *HttpDelivery) ChangeCurrentUserLastDeliveryPoint(w http.ResponseWriter, r *http.Request) {
 	var in ChangeCurrentUserLastDeliveryPointIn

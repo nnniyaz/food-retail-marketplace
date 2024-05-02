@@ -2261,6 +2261,120 @@ const docTemplate = `{
                 }
             }
         },
+        "client.Order": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "currency": {
+                    "type": "string"
+                },
+                "customerContacts": {
+                    "type": "object",
+                    "properties": {
+                        "email": {
+                            "type": "string"
+                        },
+                        "name": {
+                            "type": "string"
+                        },
+                        "phone": {
+                            "type": "object",
+                            "properties": {
+                                "countryCode": {
+                                    "type": "string"
+                                },
+                                "number": {
+                                    "type": "string"
+                                }
+                            }
+                        }
+                    }
+                },
+                "deliveryInfo": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        },
+                        "apartment": {
+                            "type": "string"
+                        },
+                        "deliveryComment": {
+                            "type": "string"
+                        },
+                        "floor": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "id": {
+                    "type": "string"
+                },
+                "isDeleted": {
+                    "type": "boolean"
+                },
+                "number": {
+                    "type": "string"
+                },
+                "products": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "pricePerUnit": {
+                                "type": "number"
+                            },
+                            "productId": {
+                                "type": "string"
+                            },
+                            "productName": {
+                                "$ref": "#/definitions/core.MlString"
+                            },
+                            "quantity": {
+                                "type": "integer"
+                            },
+                            "totalPrice": {
+                                "type": "number"
+                            }
+                        }
+                    }
+                },
+                "quantity": {
+                    "type": "integer"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "totalPrice": {
+                    "type": "number"
+                },
+                "updatedAt": {
+                    "type": "string"
+                },
+                "userId": {
+                    "type": "string"
+                },
+                "version": {
+                    "type": "integer"
+                }
+            }
+        },
+        "client.OrdersData": {
+            "type": "object",
+            "properties": {
+                "count": {
+                    "type": "integer"
+                },
+                "orders": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/client.Order"
+                    }
+                }
+            }
+        },
         "core.MlString": {
             "type": "object",
             "additionalProperties": {

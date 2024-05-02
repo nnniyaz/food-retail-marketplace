@@ -3,6 +3,7 @@ package client
 import (
 	"encoding/json"
 	"github/nnniyaz/ardo/domain/base/deliveryInfo"
+	"github/nnniyaz/ardo/domain/order"
 	"github/nnniyaz/ardo/domain/order/valueobject"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/handler/http/response"
@@ -19,6 +20,156 @@ type HttpDelivery struct {
 
 func NewHttpDelivery(l logger.Logger, c client.ClientService) *HttpDelivery {
 	return &HttpDelivery{logger: l, service: c}
+}
+
+// -----------------------------------------------------------------------------
+// Queries
+// -----------------------------------------------------------------------------
+
+type Order struct {
+	Id       string `json:"id"`
+	UserId   string `json:"userId"`
+	Number   string `json:"number"`
+	Products []struct {
+		ProductId    string        `json:"productId"`
+		ProductName  core.MlString `json:"productName"`
+		Quantity     int64         `json:"quantity"`
+		PricePerUnit float64       `json:"pricePerUnit"`
+		TotalPrice   float64       `json:"totalPrice"`
+	} `json:"products"`
+	Quantity         int64   `json:"quantity"`
+	TotalPrice       float64 `json:"totalPrice"`
+	Currency         string  `json:"currency"`
+	CustomerContacts struct {
+		Name  string `json:"name"`
+		Phone struct {
+			Number      string `json:"number"`
+			CountryCode string `json:"countryCode"`
+		} `json:"phone"`
+		Email string `json:"email"`
+	} `json:"customerContacts"`
+	DeliveryInfo struct {
+		Address         string `json:"address"`
+		Floor           string `json:"floor"`
+		Apartment       string `json:"apartment"`
+		DeliveryComment string `json:"deliveryComment"`
+	} `json:"deliveryInfo"`
+	Status    string `json:"status"`
+	IsDeleted bool   `json:"isDeleted"`
+	CreatedAt string `json:"createdAt"`
+	UpdatedAt string `json:"updatedAt"`
+	Version   int    `json:"version"`
+}
+
+func NewOrder(o *order.Order) Order {
+	orderProducts := make([]struct {
+		ProductId    string        `json:"productId"`
+		ProductName  core.MlString `json:"productName"`
+		Quantity     int64         `json:"quantity"`
+		PricePerUnit float64       `json:"pricePerUnit"`
+		TotalPrice   float64       `json:"totalPrice"`
+	}, len(o.GetProducts()))
+	for i, p := range o.GetProducts() {
+		orderProducts[i] = struct {
+			ProductId    string        `json:"productId"`
+			ProductName  core.MlString `json:"productName"`
+			Quantity     int64         `json:"quantity"`
+			PricePerUnit float64       `json:"pricePerUnit"`
+			TotalPrice   float64       `json:"totalPrice"`
+		}{
+			ProductId:    p.GetProductId().String(),
+			ProductName:  p.GetProductName(),
+			Quantity:     p.GetQuantity(),
+			PricePerUnit: p.GetPricePerUnit(),
+			TotalPrice:   p.GetTotalPrice(),
+		}
+	}
+	orderCustomerContacts := o.GetCustomerContacts()
+	orderCustomerContactsPhone := orderCustomerContacts.GetPhone()
+	orderCustomerContactsEmail := orderCustomerContacts.GetEmail()
+	orderDeliveryInfo := o.GetDeliveryInfo()
+
+	return Order{
+		Id:         o.GetId().String(),
+		UserId:     o.GetUserId().String(),
+		Number:     o.GetNumber().String(),
+		Products:   orderProducts,
+		Quantity:   o.GetQuantity(),
+		TotalPrice: o.GetTotalPrice(),
+		Currency:   o.GetCurrency().String(),
+		CustomerContacts: struct {
+			Name  string `json:"name"`
+			Phone struct {
+				Number      string `json:"number"`
+				CountryCode string `json:"countryCode"`
+			} `json:"phone"`
+			Email string `json:"email"`
+		}{
+			Name: orderCustomerContacts.GetName(),
+			Phone: struct {
+				Number      string `json:"number"`
+				CountryCode string `json:"countryCode"`
+			}{
+				Number:      orderCustomerContactsPhone.GetNumber(),
+				CountryCode: orderCustomerContactsPhone.GetCountryCode(),
+			},
+			Email: orderCustomerContactsEmail.String(),
+		},
+		DeliveryInfo: struct {
+			Address         string `json:"address"`
+			Floor           string `json:"floor"`
+			Apartment       string `json:"apartment"`
+			DeliveryComment string `json:"deliveryComment"`
+		}{
+			Address:         orderDeliveryInfo.GetAddress(),
+			Floor:           orderDeliveryInfo.GetFloor(),
+			Apartment:       orderDeliveryInfo.GetApartment(),
+			DeliveryComment: orderDeliveryInfo.GetDeliveryComment(),
+		},
+		Status:    o.GetStatus().String(),
+		IsDeleted: o.GetIsDeleted(),
+		CreatedAt: o.GetCreatedAt().String(),
+		UpdatedAt: o.GetUpdatedAt().String(),
+		Version:   o.GetVersion(),
+	}
+}
+
+type OrdersData struct {
+	Orders []Order `json:"orders"`
+	Count  int64   `json:"count"`
+}
+
+func NewOrders(orders []*order.Order, count int64) OrdersData {
+	var ord []Order
+	for _, o := range orders {
+		ord = append(ord, NewOrder(o))
+	}
+	return OrdersData{Orders: ord, Count: count}
+}
+
+// GetOrdersHistory godoc
+//
+//	@Summary		Get orders history
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Orders
+//	@Accept			json
+//	@Produce		json
+//	@Param			offset		query		int		false	"Offset"
+//	@Param			limit		query		int		false	"Limit"
+//	@Param			is_deleted	query		bool	false	"Is deleted"
+//	@Success		200			{object}	response.Success{data=OrdersData}
+//	@Failure		default		{object}	response.Error
+//	@Router			/management/orders/{order_id} [get]
+func (hd *HttpDelivery) GetOrdersHistory(w http.ResponseWriter, r *http.Request) {
+	offset := r.Context().Value("offset").(int64)
+	limit := r.Context().Value("limit").(int64)
+	isDeleted := r.Context().Value("is_deleted").(bool)
+	orders, count, err := hd.service.GetAllByFilters(r.Context(), offset, limit, isDeleted)
+	if err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, NewOrders(orders, count))
 }
 
 // -----------------------------------------------------------------------------

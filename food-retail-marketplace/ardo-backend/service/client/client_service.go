@@ -16,6 +16,7 @@ import (
 )
 
 type ClientService interface {
+	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error)
 	MakeOrder(ctx context.Context, user *user.User, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryPointId string) (struct{ OrderNumber string }, error)
 }
 
@@ -28,6 +29,10 @@ type clientService struct {
 
 func NewClientService(l logger.Logger, orderService orderService.OrderService, emailService email.Email, userService userService.UserService) ClientService {
 	return &clientService{logger: l, orderService: orderService, emailService: emailService, userService: userService}
+}
+
+func (c *clientService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error) {
+	return c.orderService.GetAllByFilters(ctx, offset, limit, isDeleted)
 }
 
 func (c *clientService) MakeOrder(ctx context.Context, user *user.User, userId string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, currency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, deliveryPointId string) (struct{ OrderNumber string }, error) {
@@ -51,7 +56,7 @@ func (c *clientService) MakeOrder(ctx context.Context, user *user.User, userId s
 	contacts := newOrder.GetCustomerContacts()
 	subject := core.Txts[core.TXT_ORDER_NUMBER].GetByLangOrEmpty(ctx.Value("userLang").(core.Lang)) + " #" + newOrder.GetNumber().String()
 	htmlBody := format.FormatOrderConfirmation(newOrder, ctx.Value("userLang").(core.Lang))
-	err = c.emailService.SendMail([]string{contacts.GetEmail().String()}, subject, htmlBody)
+	go c.emailService.SendMail([]string{contacts.GetEmail().String()}, subject, htmlBody)
 
 	return struct{ OrderNumber string }{OrderNumber: newOrder.GetNumber().String()}, nil
 }

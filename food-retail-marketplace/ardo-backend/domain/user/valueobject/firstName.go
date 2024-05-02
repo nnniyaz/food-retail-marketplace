@@ -6,8 +6,8 @@ import (
 )
 
 const (
-	minFirstNameLength = 3
-	maxFirstNameLength = 50
+	minFirstNameLength = 2
+	maxFirstNameLength = 100
 )
 
 var (

@@ -119,7 +119,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 		r.Put("/password", h.User.UpdateCurrentUserPassword)
 		r.Post("/delivery-point", h.User.AddCurrentUserDeliveryPoint)
 		r.Put("/delivery-point", h.User.UpdateCurrentUserDeliveryPoint)
-		r.Delete("/delivery-point", h.User.DeleteCurrentUserDeliveryPoint)
+		r.Delete("/delivery-point/{delivery_point_id}", h.User.DeleteCurrentUserDeliveryPoint)
 		r.Put("/last-delivery-point", h.User.ChangeCurrentUserLastDeliveryPoint)
 	})
 
@@ -195,6 +195,7 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 
 	r.Route("/client", func(r chi.Router) {
 		r.Use(h.Middleware.UserAuth)
+		r.With(h.Middleware.PaginationParams).Get("/orders", h.Client.GetOrdersHistory)
 		r.With(h.Middleware.WithTransaction).Post("/make-order", h.Client.MakeOrder)
 	})
 	return r
