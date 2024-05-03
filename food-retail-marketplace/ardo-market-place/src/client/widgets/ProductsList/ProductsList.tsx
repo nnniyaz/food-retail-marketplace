@@ -1,4 +1,4 @@
-import {useMemo, useState} from "react";
+import React, {useMemo, useState} from "react";
 import PlusSVG from "@assets/icons/plus-circle.svg?react";
 import MinusSVG from "@assets/icons/minus-circle.svg?react";
 import {Product} from "@domain/product/product.ts";
@@ -8,6 +8,7 @@ import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import classes from "./ProductsList.module.scss";
+import {Drawer} from "antd";
 
 interface ProductsProps {
     sectionId: string;
@@ -83,6 +84,7 @@ const ProductItem = ({product}: ProductProps) => {
         }
         return cart.find((cartProduct) => cartProduct.id === product._id) || null;
     }, [cart]);
+    const [openDrawer, setOpenDrawer] = useState(false);
 
     const handleIncrementToCart = () => {
         incrementToCart({id: product._id, name: product.name, price: product.price});
@@ -96,60 +98,180 @@ const ProductItem = ({product}: ProductProps) => {
         return null;
     }
     return (
-        <li className={classes.product}>
-            <img
-                className={classes.product__img}
-                src={product.img}
-                title={translate(product.name, currentLang, langs)}
-                alt={translate(product.name, currentLang, langs)}
-                onError={(e) => {
-                    if (!imgError) {
-                        e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
-                        setImgError(true);
-                    }
-                }}
-            />
-            <div className={classes.product__info}>
-                <p className={classes.product__title}>
-                    {translate(product.name, currentLang, langs)}
-                </p>
-                <p className={classes.product__price_per_unit}>
-                    <span className={classes.product__price_per_unit__price}>
+        <React.Fragment>
+            <li className={classes.product} onClick={() => setOpenDrawer(true)}>
+                <div className={classes.product__img__container}>
+                    <img
+                        className={classes.product__img}
+                        src={product.img}
+                        title={translate(product.name, currentLang, langs)}
+                        alt={translate(product.name, currentLang, langs)}
+                        onError={(e) => {
+                            if (!imgError) {
+                                e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                                setImgError(true);
+                            }
+                        }}
+                    />
+                    {!!product?.tags?.length && (
+                        <div className={classes.product__tags}>
+                            {product.tags.map((tag, index) => (
+                                <span key={index} className={classes.product__tag}>{tag}</span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+                <div className={classes.product__info}>
+                    <p className={classes.product__title}>
+                        {translate(product.name, currentLang, langs)}
+                    </p>
+                    <p className={classes.product_available__amount}>
+                        {translate("available_amount", currentLang, langs)}: {product.quantity}
+                    </p>
+                    <p className={classes.product__price_per_unit}>
+                        {!!product?.originalPrice && (
+                            <span
+                                className={classes.product__price_per_unit__price}
+                                style={{textDecoration: !!product?.originalPrice ? "line-through" : ""}}
+                            >
+                                {priceFormat(product.originalPrice, currency)}
+                        </span>
+                        )}
+                        <span
+                            className={classes.product__price_per_unit__price}
+                            style={{color: !!product?.originalPrice ? "#4096ff" : ""}}
+                        >
                         {priceFormat(product.price, currency)}
                     </span>
-                    <span className={classes.product__price_per_unit__moq}>
+                        <span className={classes.product__price_per_unit__moq}>
                         {!cartProduct && `• 1 pc`}
                     </span>
-                </p>
-                <p className={classes.product__total_price_of_product}>
-                    {
-                        !!cartProduct
-                            ? priceFormat(product.price * cartProduct.quantity, currency)
-                            : priceFormat(product.price, currency)
-                    }
-                </p>
-                <button
-                    className={classes.product__add}
-                    onClick={() => {
-                        if (!cartProduct) {
-                            handleIncrementToCart();
+                    </p>
+                    <p className={classes.product__total_price_of_product}>
+                        {
+                            !!cartProduct
+                                ? priceFormat(product.price * cartProduct.quantity, currency)
+                                : priceFormat(product.price, currency)
                         }
-                    }}
-                >
-                    {!!cartProduct && (
-                        <MinusSVG className={classes.product__add__icon} onClick={handleDecrementFromCart}/>
-                    )}
-                    <span
-                        className={classes.product__add__text}
-                        style={{width: cartProduct?.quantity ? "fit-content" : ""}}
+                    </p>
+                    <button
+                        className={classes.product__add}
+                        onClick={(e) => {
+                            e.stopPropagation();
+                            if (!cartProduct) {
+                                handleIncrementToCart();
+                            }
+                        }}
                     >
+                        {!!cartProduct && (
+                            <MinusSVG className={classes.product__add__icon} onClick={handleDecrementFromCart}/>
+                        )}
+                        <span
+                            className={classes.product__add__text}
+                            style={{width: cartProduct?.quantity ? "fit-content" : ""}}
+                        >
                         {cartProduct?.quantity ?? translate("add", currentLang, langs)}
                     </span>
-                    {!!cartProduct && (
-                        <PlusSVG className={classes.product__add__icon} onClick={handleIncrementToCart}/>
+                        {!!cartProduct && (
+                            <PlusSVG className={classes.product__add__icon} onClick={handleIncrementToCart}/>
+                        )}
+                    </button>
+                </div>
+            </li>
+            <ProductItemDrawer product={product} openDrawer={openDrawer} setOpenDrawer={setOpenDrawer}/>
+        </React.Fragment>
+    )
+}
+
+interface ProductItemDrawerProps {
+    product: Product;
+    openDrawer: boolean;
+    setOpenDrawer: (open: boolean) => void;
+}
+
+const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDrawerProps) => {
+    const {cfg, currentLang, langs, currency} = useTypedSelector(state => state.systemState);
+    const {cart} = useTypedSelector(state => state.cartState);
+    const {incrementToCart} = useActions();
+    const cartProduct = useMemo(() => {
+        if (!product) {
+            return null;
+        }
+        return cart.find((cartProduct) => cartProduct.id === product._id) || null;
+    }, [cart]);
+    const [imgError, setImgError] = useState(false);
+
+    const handleIncrementToCart = () => {
+        incrementToCart({id: product._id, name: product.name, price: product.price});
+    }
+
+    return (
+        <Drawer open={openDrawer} onClose={() => setOpenDrawer(false)} styles={{body: {padding: "12px"}}}>
+            <div className={classes.product_drawer}>
+                <div className={classes.product_drawer__img__container}>
+                    <img
+                        className={classes.product_drawer__img}
+                        src={product.img}
+                        title={translate(product.name, currentLang, langs)}
+                        alt={translate(product.name, currentLang, langs)}
+                        onError={(e) => {
+                            if (!imgError) {
+                                e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                                setImgError(true);
+                            }
+                        }}
+                    />
+                    {!!product?.tags?.length && (
+                        <div className={classes.product_drawer__tags}>
+                            {product.tags.map((tag, index) => (
+                                <span key={index} className={classes.product_drawer__tag}>{tag}</span>
+                            ))}
+                        </div>
                     )}
-                </button>
+                </div>
+                <div className={classes.product_drawer__info}>
+                    <p className={classes.product_drawer__title}>
+                        {translate(product.name, currentLang, langs)}
+                    </p>
+                    <p className={classes.product_drawer__price_per_unit}>
+                        {!!product?.originalPrice && (
+                            <span
+                                className={classes.product_drawer__price_per_unit__price}
+                                style={{textDecoration: !!product?.originalPrice ? "line-through" : ""}}
+                            >
+                                    {priceFormat(product.originalPrice, currency)}
+                                </span>
+                        )}
+                        <span
+                            className={classes.product_drawer__price_per_unit__price}
+                            style={{color: !!product?.originalPrice ? "#4096ff" : ""}}
+                        >
+                                {priceFormat(product.price, currency)}
+                            </span>
+                        <span className={classes.product_drawer__price_per_unit__moq}>
+                                {!cartProduct && `• 1 pc`}
+                            </span>
+                    </p>
+                    <p className={classes.product_drawer__total_price_of_product}>
+                        {
+                            !!cartProduct
+                                ? priceFormat(product.price * cartProduct.quantity, currency)
+                                : priceFormat(product.price, currency)
+                        }
+                    </p>
+                    <p className={classes.product_drawer_available__amount}>
+                        {translate("available_amount", currentLang, langs)}: {product.quantity}
+                    </p>
+                    <button
+                        className={classes.product_drawer__add}
+                        onClick={handleIncrementToCart}
+                    >
+                        <span className={classes.product_drawer__add__text}>
+                            {translate("add", currentLang, langs)}
+                        </span>
+                    </button>
+                </div>
             </div>
-        </li>
+        </Drawer>
     )
 }

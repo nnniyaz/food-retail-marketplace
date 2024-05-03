@@ -8,7 +8,9 @@ export function priceFormat(price: number, currency: Currency): string {
     if (price < 0) {
         return "";
     }
-    const priceRounded = price.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    const priceRounded = Number.isInteger(price)
+        ? price.toFixed(0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
+        : price.toFixed(2).toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ")
     const currencyData = currencies[currency];
     if (!currencyData) {
         return priceRounded.toString();

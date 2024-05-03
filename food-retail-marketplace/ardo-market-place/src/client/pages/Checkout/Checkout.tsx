@@ -1,6 +1,6 @@
 import React, {Dispatch, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Select} from "antd";
+import {Alert, Select} from "antd";
 import * as AntdIcons from "@ant-design/icons";
 import {RouteNames} from "@pages/index.tsx";
 import {ReturnButton} from "@widgets/ReturnButton";
@@ -216,6 +216,12 @@ export const Checkout = () => {
                             />
                         </React.Fragment>
                     )}
+
+                    <Alert
+                        message={
+                            <span style={{color: "#000"}}>{"Please note that the total amount being displayed is not final summary of fees. This is average amount you will pay. All details about fees and delivery will be provided in the final invoice once Supplier confirms the order. Final price, catchweight and delivery time may slightly vary. The delivery is free for orders meeting MOQ and delivery range requirements. Otherwise, the delivery fee will be added to final invoice. By default, the items will be delivered within 24 hours, unless specified by the Buyer or Supplier. You can place an order on a platform any time. However, order confirmation is based on Supplier’s cut off time. After order placement please check order status and your email inbox. "}</span>
+                        }
+                    />
                 </section>
                 <section className={classes.checkout__group}>
                     <table className={classes.checkout__total}>
@@ -236,7 +242,11 @@ export const Checkout = () => {
                         </tr>
                         </tfoot>
                     </table>
-                    <button className={classes.confirm__btn} disabled={isLoadingMakeOrder} style={{opacity: isLoadingMakeOrder ? 0.5 : 1}}>
+                    <button
+                        className={classes.confirm__btn}
+                        disabled={isLoadingMakeOrder}
+                        style={{opacity: isLoadingMakeOrder ? 0.5 : 1}}
+                    >
                         {translate("buy", currentLang, langs)}
                         {isLoadingMakeOrder && <LoadingOutlined className={classes.btn__loading}/>}
                     </button>

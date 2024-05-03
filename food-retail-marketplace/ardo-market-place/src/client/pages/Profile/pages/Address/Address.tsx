@@ -5,16 +5,15 @@ import {RouteNames} from "@pages/index.tsx";
 import {translate} from "@pkg/translate/translate.ts";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
-import classes from "./Address.module.scss";
 import {DeliveryPoint} from "@domain/user/user.ts";
-import {useForm} from "antd/es/form/Form";
 import {rules} from "@pkg/form-rules/rules.ts";
+import classes from "./Address.module.scss";
 
 export const Address = () => {
     const {currentLang, langs} = useTypedSelector(state => state.systemState);
     const {user, isLoadingDeliveryPoint} = useTypedSelector(state => state.userState);
     const {addDeliveryPoint} = useActions();
-    const [form] = useForm();
+    const [form] = Form.useForm();
     const [addMode, setAddMode] = useState(false);
 
     const handleAddDeliveryPoint = () => {
@@ -174,7 +173,7 @@ const DeliveryPointComponent = ({deliveryPoint, active}: DeliveryPointProps) => 
     } = useActions();
 
     const [editMode, setEditMode] = useState(false);
-    const [form] = useForm();
+    const [form] = Form.useForm();
 
     const handleTurnOnEditMode = () => {
         setEditMode(true);
