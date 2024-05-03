@@ -25,32 +25,36 @@ func NewHttpDelivery(l logger.Logger, s management.ManagementProductService) *Ht
 // -----------------------------------------------------------------------------
 
 type Product struct {
-	Id        string        `json:"id"`
-	Name      core.MlString `json:"name"`
-	Desc      core.MlString `json:"desc"`
-	Price     float64       `json:"price"`
-	Quantity  int64         `json:"quantity"`
-	Img       string        `json:"img"`
-	Status    string        `json:"status"`
-	IsDeleted bool          `json:"isDeleted"`
-	CreatedAt string        `json:"createdAt"`
-	UpdatedAt string        `json:"updatedAt"`
-	Version   int           `json:"version"`
+	Id            string        `json:"id"`
+	Name          core.MlString `json:"name"`
+	Desc          core.MlString `json:"desc"`
+	Price         float64       `json:"price"`
+	OriginalPrice float64       `json:"originalPrice"`
+	Quantity      int64         `json:"quantity"`
+	Tags          []string      `json:"tags"`
+	Img           string        `json:"img"`
+	Status        string        `json:"status"`
+	IsDeleted     bool          `json:"isDeleted"`
+	CreatedAt     string        `json:"createdAt"`
+	UpdatedAt     string        `json:"updatedAt"`
+	Version       int           `json:"version"`
 }
 
 func NewProduct(p *product.Product) Product {
 	return Product{
-		Id:        p.GetId().String(),
-		Name:      p.GetName(),
-		Desc:      p.GetDesc(),
-		Price:     p.GetPrice(),
-		Quantity:  p.GetQuantity(),
-		Img:       p.GetImg(),
-		Status:    p.GetStatus().String(),
-		IsDeleted: p.GetIsDeleted(),
-		CreatedAt: p.GetCreatedAt().String(),
-		UpdatedAt: p.GetUpdatedAt().String(),
-		Version:   p.GetVersion(),
+		Id:            p.GetId().String(),
+		Name:          p.GetName(),
+		Desc:          p.GetDesc(),
+		Price:         p.GetPrice(),
+		OriginalPrice: p.GetOriginalPrice(),
+		Quantity:      p.GetQuantity(),
+		Tags:          p.GetTags(),
+		Img:           p.GetImg(),
+		Status:        p.GetStatus().String(),
+		IsDeleted:     p.GetIsDeleted(),
+		CreatedAt:     p.GetCreatedAt().String(),
+		UpdatedAt:     p.GetUpdatedAt().String(),
+		Version:       p.GetVersion(),
 	}
 }
 
@@ -117,12 +121,14 @@ func (hd *HttpDelivery) GetProductById(w http.ResponseWriter, r *http.Request) {
 // -----------------------------------------------------------------------------
 
 type AddProductIn struct {
-	Name     core.MlString `json:"name"`
-	Desc     core.MlString `json:"desc"`
-	Price    float64       `json:"price"`
-	Quantity int64         `json:"quantity"`
-	Img      string        `json:"img"`
-	Status   string        `json:"status"`
+	Name          core.MlString `json:"name"`
+	Desc          core.MlString `json:"desc"`
+	Price         float64       `json:"price"`
+	OriginalPrice float64       `json:"originalPrice"`
+	Quantity      int64         `json:"quantity"`
+	Tags          []string      `json:"tags"`
+	Img           string        `json:"img"`
+	Status        string        `json:"status"`
 }
 
 // AddProduct godoc
@@ -142,7 +148,7 @@ func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.AddProduct(r.Context(), in.Name, in.Desc, in.Price, in.Quantity, in.Img, in.Status); err != nil {
+	if err := hd.service.AddProduct(r.Context(), in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Tags, in.Img, in.Status); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
@@ -150,12 +156,14 @@ func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
 }
 
 type UpdateProductIn struct {
-	Name     core.MlString `json:"name"`
-	Desc     core.MlString `json:"desc"`
-	Price    float64       `json:"price"`
-	Quantity int64         `json:"quantity"`
-	Img      string        `json:"img"`
-	Status   string        `json:"status"`
+	Name          core.MlString `json:"name"`
+	Desc          core.MlString `json:"desc"`
+	Price         float64       `json:"price"`
+	OriginalPrice float64       `json:"originalPrice"`
+	Quantity      int64         `json:"quantity"`
+	Tags          []string      `json:"tags"`
+	Img           string        `json:"img"`
+	Status        string        `json:"status"`
 }
 
 // UpdateProduct godoc
@@ -176,7 +184,7 @@ func (hd *HttpDelivery) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.UpdateProduct(r.Context(), productId, in.Name, in.Desc, in.Price, in.Quantity, in.Img, in.Status); err != nil {
+	if err := hd.service.UpdateProduct(r.Context(), productId, in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Tags, in.Img, in.Status); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

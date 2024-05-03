@@ -9,20 +9,22 @@ import (
 )
 
 type Product struct {
-	id        uuid.UUID
-	name      core.MlString
-	desc      core.MlString
-	price     float64
-	quantity  int64
-	img       string
-	status    valueobject.ProductStatus
-	isDeleted bool
-	createdAt time.Time
-	updatedAt time.Time
-	version   int
+	id            uuid.UUID
+	name          core.MlString
+	desc          core.MlString
+	price         float64
+	originalPrice float64
+	quantity      int64
+	tags          []string
+	img           string
+	status        valueobject.ProductStatus
+	isDeleted     bool
+	createdAt     time.Time
+	updatedAt     time.Time
+	version       int
 }
 
-func NewProduct(name, desc core.MlString, price float64, quantity int64, img, status string) (*Product, error) {
+func NewProduct(name, desc core.MlString, price, originalPrice float64, quantity int64, tags []string, img, status string) (*Product, error) {
 	if name.IsEmpty() {
 		return nil, exceptions.ErrEmptyProductName
 	}
@@ -41,17 +43,19 @@ func NewProduct(name, desc core.MlString, price float64, quantity int64, img, st
 	}
 
 	return &Product{
-		id:        uuid.NewUUID(),
-		name:      name,
-		desc:      desc,
-		price:     price,
-		quantity:  quantity,
-		img:       img,
-		status:    productStatus,
-		isDeleted: false,
-		createdAt: time.Now(),
-		updatedAt: time.Now(),
-		version:   1,
+		id:            uuid.NewUUID(),
+		name:          name,
+		desc:          desc,
+		price:         price,
+		originalPrice: originalPrice,
+		quantity:      quantity,
+		tags:          tags,
+		img:           img,
+		status:        productStatus,
+		isDeleted:     false,
+		createdAt:     time.Now(),
+		updatedAt:     time.Now(),
+		version:       1,
 	}, nil
 }
 
@@ -71,8 +75,16 @@ func (p *Product) GetPrice() float64 {
 	return p.price
 }
 
+func (p *Product) GetOriginalPrice() float64 {
+	return p.originalPrice
+}
+
 func (p *Product) GetQuantity() int64 {
 	return p.quantity
+}
+
+func (p *Product) GetTags() []string {
+	return p.tags
 }
 
 func (p *Product) GetImg() string {
@@ -99,7 +111,7 @@ func (p *Product) GetVersion() int {
 	return p.version
 }
 
-func (p *Product) Update(name, desc core.MlString, price float64, quantity int64, img, status string) error {
+func (p *Product) Update(name, desc core.MlString, price, originalPrice float64, quantity int64, tags []string, img, status string) error {
 	if name.IsEmpty() {
 		return core.ErrEmptyMlString
 	}
@@ -120,7 +132,9 @@ func (p *Product) Update(name, desc core.MlString, price float64, quantity int64
 	p.name = name
 	p.desc = desc
 	p.price = price
+	p.originalPrice = originalPrice
 	p.quantity = quantity
+	p.tags = tags
 	p.img = img
 	p.status = productStatus
 	p.updatedAt = time.Now()
@@ -128,18 +142,20 @@ func (p *Product) Update(name, desc core.MlString, price float64, quantity int64
 	return nil
 }
 
-func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price float64, quantity int64, img string, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Product {
+func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price, originalPrice float64, quantity int64, tags []string, img string, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Product {
 	return &Product{
-		id:        id,
-		name:      name,
-		desc:      desc,
-		price:     price,
-		quantity:  quantity,
-		img:       img,
-		status:    valueobject.ProductStatus(status),
-		isDeleted: isDeleted,
-		createdAt: createdAt,
-		updatedAt: updatedAt,
-		version:   version,
+		id:            id,
+		name:          name,
+		desc:          desc,
+		price:         price,
+		originalPrice: originalPrice,
+		quantity:      quantity,
+		tags:          tags,
+		img:           img,
+		status:        valueobject.ProductStatus(status),
+		isDeleted:     isDeleted,
+		createdAt:     createdAt,
+		updatedAt:     updatedAt,
+		version:       version,
 	}
 }

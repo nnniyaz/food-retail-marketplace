@@ -26,37 +26,41 @@ func (r *RepoProduct) Coll() *mongo.Collection {
 }
 
 type mongoProduct struct {
-	Id        uuid.UUID     `bson:"_id"`
-	Name      core.MlString `bson:"name"`
-	Desc      core.MlString `bson:"desc"`
-	Price     float64       `bson:"price"`
-	Quantity  int64         `bson:"quantity"`
-	Img       string        `bson:"img"`
-	Status    string        `bson:"status"`
-	IsDeleted bool          `bson:"isDeleted"`
-	CreatedAt time.Time     `bson:"createdAt"`
-	UpdatedAt time.Time     `bson:"updatedAt"`
-	Version   int           `bson:"version"`
+	Id            uuid.UUID     `bson:"_id"`
+	Name          core.MlString `bson:"name"`
+	Desc          core.MlString `bson:"desc"`
+	Price         float64       `bson:"price"`
+	OriginalPrice float64       `bson:"originalPrice"`
+	Quantity      int64         `bson:"quantity"`
+	Tags          []string      `bson:"tags"`
+	Img           string        `bson:"img"`
+	Status        string        `bson:"status"`
+	IsDeleted     bool          `bson:"isDeleted"`
+	CreatedAt     time.Time     `bson:"createdAt"`
+	UpdatedAt     time.Time     `bson:"updatedAt"`
+	Version       int           `bson:"version"`
 }
 
 func newFromProduct(p *product.Product) *mongoProduct {
 	return &mongoProduct{
-		Id:        p.GetId(),
-		Name:      p.GetName(),
-		Desc:      p.GetDesc(),
-		Price:     p.GetPrice(),
-		Quantity:  p.GetQuantity(),
-		Img:       p.GetImg(),
-		Status:    p.GetStatus().String(),
-		IsDeleted: p.GetIsDeleted(),
-		CreatedAt: p.GetCreatedAt(),
-		UpdatedAt: p.GetUpdatedAt(),
-		Version:   p.GetVersion(),
+		Id:            p.GetId(),
+		Name:          p.GetName(),
+		Desc:          p.GetDesc(),
+		Price:         p.GetPrice(),
+		OriginalPrice: p.GetOriginalPrice(),
+		Quantity:      p.GetQuantity(),
+		Tags:          p.GetTags(),
+		Img:           p.GetImg(),
+		Status:        p.GetStatus().String(),
+		IsDeleted:     p.GetIsDeleted(),
+		CreatedAt:     p.GetCreatedAt(),
+		UpdatedAt:     p.GetUpdatedAt(),
+		Version:       p.GetVersion(),
 	}
 }
 
 func (m *mongoProduct) ToAggregate() *product.Product {
-	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.Quantity, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.OriginalPrice, m.Quantity, m.Tags, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoProduct) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {

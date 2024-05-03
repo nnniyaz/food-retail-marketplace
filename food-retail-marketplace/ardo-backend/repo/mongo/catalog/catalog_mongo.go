@@ -253,17 +253,19 @@ type mongoPublishedCatalog struct {
 		Version   int           `bson:"version"`
 	} `bson:"categories"`
 	Products map[string]struct {
-		Id        uuid.UUID     `bson:"_id"`
-		Name      core.MlString `bson:"name"`
-		Desc      core.MlString `bson:"desc"`
-		Price     float64       `bson:"price"`
-		Quantity  int64         `bson:"quantity"`
-		Img       string        `bson:"img"`
-		Status    string        `bson:"status"`
-		IsDeleted bool          `bson:"isDeleted"`
-		CreatedAt time.Time     `bson:"createdAt"`
-		UpdatedAt time.Time     `bson:"updatedAt"`
-		Version   int           `bson:"version"`
+		Id            uuid.UUID     `bson:"_id"`
+		Name          core.MlString `bson:"name"`
+		Desc          core.MlString `bson:"desc"`
+		Price         float64       `bson:"price"`
+		OriginalPrice float64       `bson:"originalPrice"`
+		Quantity      int64         `bson:"quantity"`
+		Tags          []string      `bson:"tags"`
+		Img           string        `bson:"img"`
+		Status        string        `bson:"status"`
+		IsDeleted     bool          `bson:"isDeleted"`
+		CreatedAt     time.Time     `bson:"createdAt"`
+		UpdatedAt     time.Time     `bson:"updatedAt"`
+		Version       int           `bson:"version"`
 	} `bson:"products"`
 	Slides []struct {
 		Id        uuid.UUID     `bson:"_id"`
@@ -404,44 +406,50 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 	}
 
 	selectedProductsMap := make(map[string]struct {
-		Id        uuid.UUID     `bson:"_id"`
-		Name      core.MlString `bson:"name"`
-		Desc      core.MlString `bson:"desc"`
-		Price     float64       `bson:"price"`
-		Quantity  int64         `bson:"quantity"`
-		Img       string        `bson:"img"`
-		Status    string        `bson:"status"`
-		IsDeleted bool          `bson:"isDeleted"`
-		CreatedAt time.Time     `bson:"createdAt"`
-		UpdatedAt time.Time     `bson:"updatedAt"`
-		Version   int           `bson:"version"`
+		Id            uuid.UUID     `bson:"_id"`
+		Name          core.MlString `bson:"name"`
+		Desc          core.MlString `bson:"desc"`
+		Price         float64       `bson:"price"`
+		OriginalPrice float64       `bson:"originalPrice"`
+		Quantity      int64         `bson:"quantity"`
+		Tags          []string      `bson:"tags"`
+		Img           string        `bson:"img"`
+		Status        string        `bson:"status"`
+		IsDeleted     bool          `bson:"isDeleted"`
+		CreatedAt     time.Time     `bson:"createdAt"`
+		UpdatedAt     time.Time     `bson:"updatedAt"`
+		Version       int           `bson:"version"`
 	}, len(selectedProducts))
 
 	for k, v := range selectedProducts {
 		selectedProductsMap[k] = struct {
-			Id        uuid.UUID     `bson:"_id"`
-			Name      core.MlString `bson:"name"`
-			Desc      core.MlString `bson:"desc"`
-			Price     float64       `bson:"price"`
-			Quantity  int64         `bson:"quantity"`
-			Img       string        `bson:"img"`
-			Status    string        `bson:"status"`
-			IsDeleted bool          `bson:"isDeleted"`
-			CreatedAt time.Time     `bson:"createdAt"`
-			UpdatedAt time.Time     `bson:"updatedAt"`
-			Version   int           `bson:"version"`
+			Id            uuid.UUID     `bson:"_id"`
+			Name          core.MlString `bson:"name"`
+			Desc          core.MlString `bson:"desc"`
+			Price         float64       `bson:"price"`
+			OriginalPrice float64       `bson:"originalPrice"`
+			Quantity      int64         `bson:"quantity"`
+			Tags          []string      `bson:"tags"`
+			Img           string        `bson:"img"`
+			Status        string        `bson:"status"`
+			IsDeleted     bool          `bson:"isDeleted"`
+			CreatedAt     time.Time     `bson:"createdAt"`
+			UpdatedAt     time.Time     `bson:"updatedAt"`
+			Version       int           `bson:"version"`
 		}{
-			Id:        v.GetId(),
-			Name:      v.GetName(),
-			Desc:      v.GetDesc(),
-			Price:     v.GetPrice(),
-			Quantity:  v.GetQuantity(),
-			Img:       v.GetImg(),
-			Status:    v.GetStatus().String(),
-			IsDeleted: v.GetIsDeleted(),
-			CreatedAt: v.GetCreatedAt(),
-			UpdatedAt: v.GetUpdatedAt(),
-			Version:   v.GetVersion(),
+			Id:            v.GetId(),
+			Name:          v.GetName(),
+			Desc:          v.GetDesc(),
+			Price:         v.GetPrice(),
+			OriginalPrice: v.GetOriginalPrice(),
+			Quantity:      v.GetQuantity(),
+			Tags:          v.GetTags(),
+			Img:           v.GetImg(),
+			Status:        v.GetStatus().String(),
+			IsDeleted:     v.GetIsDeleted(),
+			CreatedAt:     v.GetCreatedAt(),
+			UpdatedAt:     v.GetUpdatedAt(),
+			Version:       v.GetVersion(),
 		}
 	}
 
