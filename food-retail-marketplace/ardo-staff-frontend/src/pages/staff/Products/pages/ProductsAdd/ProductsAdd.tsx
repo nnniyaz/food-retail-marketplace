@@ -25,7 +25,9 @@ const initialFormValues = {
         [Langs.RU]: ""
     },
     price: 0,
+    originalPrice: 0,
     quantity: 0,
+    tags: [],
     image: "",
     status: ProductStatus.ACTIVE
 }
@@ -50,11 +52,15 @@ export const ProductsAdd: FC = () => {
             name: values.name,
             desc: values.desc,
             price: values.price,
+            originalPrice: values.originalPrice,
             quantity: values.quantity,
+            tags: values.tags,
             img: "",
             status: values.status
         }, {navigate, to: RouteNames.PRODUCTS});
     }
+
+    console.log(form.getFieldsValue());
 
     useEffect(() => {
         form.validateFields({validateOnly: true}).then(
@@ -103,6 +109,7 @@ export const ProductsAdd: FC = () => {
                             label={txt.price[currentLang]}
                             rules={[rules.required(txt.please_enter_price[currentLang])]}
                             className={classes.form__item}
+                            required={true}
                         >
                             <NumberInput
                                 value={form.getFieldValue("price")}
@@ -115,13 +122,36 @@ export const ProductsAdd: FC = () => {
                             label={txt.quantity[currentLang]}
                             rules={[rules.required(txt.please_enter_quantity[currentLang])]}
                             className={classes.form__item}
+                            required={true}
                         >
                             <NumberInput
                                 value={form.getFieldValue("quantity")}
                                 onChange={(value: number) => form.setFieldValue("quantity", value)}
                             />
                         </Form.Item>
+
+                        <Form.Item
+                            name={"originalPrice"}
+                            label={txt.original_price[currentLang]}
+                            className={classes.form__item}
+                        >
+                            <NumberInput
+                                value={form.getFieldValue("originalPrice")}
+                                onChange={(value: number) => form.setFieldValue("originalPrice", value)}
+                            />
+                        </Form.Item>
                     </div>
+
+                    <Form.Item
+                        name={"tags"}
+                        label={txt.tags[currentLang]}
+                    >
+                        <Select
+                            mode={"tags"}
+                            dropdownStyle={{display: "none"}}
+                            placeholder={txt.enter_tags[currentLang]}
+                        />
+                    </Form.Item>
 
                     <Form.Item
                         name={"status"}

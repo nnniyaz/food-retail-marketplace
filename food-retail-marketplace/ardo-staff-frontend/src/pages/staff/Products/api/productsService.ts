@@ -10,7 +10,9 @@ export interface AddProductReq {
     name: MlString;
     desc: MlString;
     price: number;
+    originalPrice: number;
     quantity: number;
+    tags: string[];
     img: string;
     status: ProductStatus;
 }
@@ -19,7 +21,9 @@ export interface EditProductCredentialsReq {
     name: MlString;
     desc: MlString;
     price: number;
+    originalPrice: number;
     quantity: number;
+    tags: string[];
     img: string;
     status: ProductStatus;
 }

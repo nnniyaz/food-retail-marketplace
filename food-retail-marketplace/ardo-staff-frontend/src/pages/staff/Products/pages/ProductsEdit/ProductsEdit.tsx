@@ -96,7 +96,9 @@ export const ProductsEdit: FC = () => {
             name: productById?.name,
             desc: productById?.desc,
             price: productById?.price,
+            originalPrice: productById?.originalPrice || 0,
             quantity: productById?.quantity,
+            tags: productById?.tags || [],
             img: "",
             status: productById?.status,
         });
@@ -149,6 +151,7 @@ export const ProductsEdit: FC = () => {
                                 label={txt.price[currentLang]}
                                 rules={[rules.required(txt.please_enter_price[currentLang])]}
                                 className={classes.form__item}
+                                required={true}
                             >
                                 <NumberInput
                                     value={form.getFieldValue("price")}
@@ -161,13 +164,36 @@ export const ProductsEdit: FC = () => {
                                 label={txt.quantity[currentLang]}
                                 rules={[rules.required(txt.please_enter_quantity[currentLang])]}
                                 className={classes.form__item}
+                                required={true}
                             >
                                 <NumberInput
                                     value={form.getFieldValue("quantity")}
                                     onChange={(value: number) => form.setFieldValue("quantity", value)}
                                 />
                             </Form.Item>
+
+                            <Form.Item
+                                name={"originalPrice"}
+                                label={txt.original_price[currentLang]}
+                                className={classes.form__item}
+                            >
+                                <NumberInput
+                                    value={form.getFieldValue("originalPrice")}
+                                    onChange={(value: number) => form.setFieldValue("originalPrice", value)}
+                                />
+                            </Form.Item>
                         </div>
+
+                        <Form.Item
+                            name={"tags"}
+                            label={txt.tags[currentLang]}
+                        >
+                            <Select
+                                mode={"tags"}
+                                dropdownStyle={{display: "none"}}
+                                placeholder={txt.enter_tags[currentLang]}
+                            />
+                        </Form.Item>
 
                         <Form.Item
                             name={"status"}
@@ -209,11 +235,19 @@ export const ProductsEdit: FC = () => {
                     />
                     <RowInfo
                         label={txt.price[currentLang]}
-                        value={`${productById?.price}` || "-"}
+                        value={`${productById?.price || "-"}`}
                     />
                     <RowInfo
                         label={txt.quantity[currentLang]}
-                        value={`${productById?.quantity}` || "-"}
+                        value={`${productById?.quantity || "-"}`}
+                    />
+                    <RowInfo
+                        label={txt.original_price[currentLang]}
+                        value={`${productById?.originalPrice || "-"}`}
+                    />
+                    <RowInfo
+                        label={txt.tags[currentLang]}
+                        value={`${productById?.tags?.join(", ") || "-"}`}
                     />
                     <RowInfo
                         label={txt.created_at[currentLang]}
