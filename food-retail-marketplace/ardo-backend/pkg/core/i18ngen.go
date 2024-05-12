@@ -91,6 +91,7 @@ const (
 	TXT_ORDER_NUMBER                      TxtKey = 86
 	TXT_EMPTY_COUNTRY_CODE                TxtKey = 87
 	TXT_EMPTY_CUSTOMER_PHONE_COUNTRY_CODE TxtKey = 88
+	TXT_INVALID_PRODUCT_UNIT              TxtKey = 89
 )
 
 var Txts = TxtResource{
@@ -446,6 +447,10 @@ var Txts = TxtResource{
 		RU: `Код страны телефона клиента не может быть пустым`,
 		EN: `Customer phone country code can not be empty`,
 	},
+	TXT_INVALID_PRODUCT_UNIT: MlString{
+		RU: `Неверная единица измерения продукта`,
+		EN: `Invalid product unit`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -626,6 +631,8 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "empty_country_code"
 	case TXT_EMPTY_CUSTOMER_PHONE_COUNTRY_CODE:
 		return "empty_customer_phone_country_code"
+	case TXT_INVALID_PRODUCT_UNIT:
+		return "invalid_product_unit"
 
 	default:
 		return ""

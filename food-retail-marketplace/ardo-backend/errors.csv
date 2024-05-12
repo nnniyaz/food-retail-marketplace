@@ -87,3 +87,4 @@ receipt,Чек,Receipt
 order_number,Номер заказа,Order number
 empty_country_code,Код страны не может быть пустым,Country code can not be empty
 empty_customer_phone_country_code,Код страны телефона клиента не может быть пустым,Customer phone country code can not be empty
+invalid_product_unit,Неверная единица измерения продукта,Invalid product unit

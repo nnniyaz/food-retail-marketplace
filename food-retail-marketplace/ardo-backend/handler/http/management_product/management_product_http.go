@@ -126,6 +126,7 @@ type AddProductIn struct {
 	Price         float64       `json:"price"`
 	OriginalPrice float64       `json:"originalPrice"`
 	Quantity      int64         `json:"quantity"`
+	Unit          string        `json:"unit"`
 	Tags          []string      `json:"tags"`
 	Img           string        `json:"img"`
 	Status        string        `json:"status"`
@@ -148,7 +149,7 @@ func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.AddProduct(r.Context(), in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Tags, in.Img, in.Status); err != nil {
+	if err := hd.service.AddProduct(r.Context(), in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Unit, in.Tags, in.Img, in.Status); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
@@ -161,6 +162,7 @@ type UpdateProductIn struct {
 	Price         float64       `json:"price"`
 	OriginalPrice float64       `json:"originalPrice"`
 	Quantity      int64         `json:"quantity"`
+	Unit          string        `json:"unit"`
 	Tags          []string      `json:"tags"`
 	Img           string        `json:"img"`
 	Status        string        `json:"status"`
@@ -184,7 +186,7 @@ func (hd *HttpDelivery) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.UpdateProduct(r.Context(), productId, in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Tags, in.Img, in.Status); err != nil {
+	if err := hd.service.UpdateProduct(r.Context(), productId, in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Unit, in.Tags, in.Img, in.Status); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

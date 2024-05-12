@@ -259,6 +259,7 @@ type mongoPublishedCatalog struct {
 		Price         float64       `bson:"price"`
 		OriginalPrice float64       `bson:"originalPrice"`
 		Quantity      int64         `bson:"quantity"`
+		Unit          string        `bson:"unit"`
 		Tags          []string      `bson:"tags"`
 		Img           string        `bson:"img"`
 		Status        string        `bson:"status"`
@@ -412,6 +413,7 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 		Price         float64       `bson:"price"`
 		OriginalPrice float64       `bson:"originalPrice"`
 		Quantity      int64         `bson:"quantity"`
+		Unit          string        `bson:"unit"`
 		Tags          []string      `bson:"tags"`
 		Img           string        `bson:"img"`
 		Status        string        `bson:"status"`
@@ -429,6 +431,7 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 			Price         float64       `bson:"price"`
 			OriginalPrice float64       `bson:"originalPrice"`
 			Quantity      int64         `bson:"quantity"`
+			Unit          string        `bson:"unit"`
 			Tags          []string      `bson:"tags"`
 			Img           string        `bson:"img"`
 			Status        string        `bson:"status"`
@@ -443,6 +446,7 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 			Price:         v.GetPrice(),
 			OriginalPrice: v.GetOriginalPrice(),
 			Quantity:      v.GetQuantity(),
+			Unit:          v.GetUnit().String(),
 			Tags:          v.GetTags(),
 			Img:           v.GetImg(),
 			Status:        v.GetStatus().String(),
