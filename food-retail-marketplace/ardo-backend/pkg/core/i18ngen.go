@@ -92,6 +92,7 @@ const (
 	TXT_EMPTY_COUNTRY_CODE                TxtKey = 87
 	TXT_EMPTY_CUSTOMER_PHONE_COUNTRY_CODE TxtKey = 88
 	TXT_INVALID_PRODUCT_UNIT              TxtKey = 89
+	TXT_INVALID_PRODUCT_MOQ               TxtKey = 90
 )
 
 var Txts = TxtResource{
@@ -451,6 +452,10 @@ var Txts = TxtResource{
 		RU: `Неверная единица измерения продукта`,
 		EN: `Invalid product unit`,
 	},
+	TXT_INVALID_PRODUCT_MOQ: MlString{
+		RU: `Неверное минимальное количество продукта`,
+		EN: `Invalid product MOQ`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -633,6 +638,8 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "empty_customer_phone_country_code"
 	case TXT_INVALID_PRODUCT_UNIT:
 		return "invalid_product_unit"
+	case TXT_INVALID_PRODUCT_MOQ:
+		return "invalid_product_moq"
 
 	default:
 		return ""

@@ -9,6 +9,7 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/management"
 	"net/http"
+	"time"
 )
 
 type HttpDelivery struct {
@@ -127,6 +128,8 @@ type AddProductIn struct {
 	OriginalPrice float64       `json:"originalPrice"`
 	Quantity      int64         `json:"quantity"`
 	Unit          string        `json:"unit"`
+	Moq           int64         `json:"moq"`
+	CutOffTime    time.Time     `json:"cutOffTime"`
 	Tags          []string      `json:"tags"`
 	Img           string        `json:"img"`
 	Status        string        `json:"status"`
@@ -149,7 +152,7 @@ func (hd *HttpDelivery) AddProduct(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.AddProduct(r.Context(), in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Unit, in.Tags, in.Img, in.Status); err != nil {
+	if err := hd.service.AddProduct(r.Context(), in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Unit, in.Moq, in.CutOffTime, in.Tags, in.Img, in.Status); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
@@ -163,6 +166,8 @@ type UpdateProductIn struct {
 	OriginalPrice float64       `json:"originalPrice"`
 	Quantity      int64         `json:"quantity"`
 	Unit          string        `json:"unit"`
+	Moq           int64         `json:"moq"`
+	CutOffTime    time.Time     `json:"cutOffTime"`
 	Tags          []string      `json:"tags"`
 	Img           string        `json:"img"`
 	Status        string        `json:"status"`
@@ -186,7 +191,7 @@ func (hd *HttpDelivery) UpdateProduct(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
-	if err := hd.service.UpdateProduct(r.Context(), productId, in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Unit, in.Tags, in.Img, in.Status); err != nil {
+	if err := hd.service.UpdateProduct(r.Context(), productId, in.Name, in.Desc, in.Price, in.OriginalPrice, in.Quantity, in.Unit, in.Moq, in.CutOffTime, in.Tags, in.Img, in.Status); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

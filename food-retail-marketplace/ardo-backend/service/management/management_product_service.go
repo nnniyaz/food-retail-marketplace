@@ -6,13 +6,14 @@ import (
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
 	productService "github/nnniyaz/ardo/service/product"
+	"time"
 )
 
 type ManagementProductService interface {
 	GetProductsByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
 	GetProductById(ctx context.Context, productId string) (*product.Product, error)
-	AddProduct(ctx context.Context, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, tags []string, img, status string) error
-	UpdateProduct(ctx context.Context, productId string, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, tags []string, img, status string) error
+	AddProduct(ctx context.Context, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error
+	UpdateProduct(ctx context.Context, productId string, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error
 	DeleteProduct(ctx context.Context, productId string) error
 	RecoverProduct(ctx context.Context, productId string) error
 }
@@ -38,20 +39,20 @@ func (m *managementProductService) GetProductById(ctx context.Context, productId
 	return m.productService.GetOneById(ctx, productId)
 }
 
-func (m *managementProductService) AddProduct(ctx context.Context, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, tags []string, img, status string) error {
-	newProduct, err := product.NewProduct(name, desc, price, originalPrice, quantity, unit, tags, img, status)
+func (m *managementProductService) AddProduct(ctx context.Context, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error {
+	newProduct, err := product.NewProduct(name, desc, price, originalPrice, quantity, unit, moq, cutOffTime, tags, img, status)
 	if err != nil {
 		return err
 	}
 	return m.productService.Create(ctx, newProduct)
 }
 
-func (m *managementProductService) UpdateProduct(ctx context.Context, productId string, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, tags []string, img, status string) error {
+func (m *managementProductService) UpdateProduct(ctx context.Context, productId string, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error {
 	foundProduct, err := m.productService.GetOneById(ctx, productId)
 	if err != nil {
 		return err
 	}
-	return m.productService.Update(ctx, foundProduct, name, desc, price, originalPrice, quantity, unit, tags, img, status)
+	return m.productService.Update(ctx, foundProduct, name, desc, price, originalPrice, quantity, unit, moq, cutOffTime, tags, img, status)
 }
 
 func (m *managementProductService) RecoverProduct(ctx context.Context, productId string) error {

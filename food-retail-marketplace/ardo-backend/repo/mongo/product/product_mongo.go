@@ -33,6 +33,8 @@ type mongoProduct struct {
 	OriginalPrice float64       `bson:"originalPrice"`
 	Quantity      int64         `bson:"quantity"`
 	Unit          string        `bson:"unit"`
+	Moq           int64         `bson:"moq"`
+	CutOffTime    time.Time     `bson:"cutOffTime"`
 	Tags          []string      `bson:"tags"`
 	Img           string        `bson:"img"`
 	Status        string        `bson:"status"`
@@ -51,6 +53,8 @@ func newFromProduct(p *product.Product) *mongoProduct {
 		OriginalPrice: p.GetOriginalPrice(),
 		Quantity:      p.GetQuantity(),
 		Unit:          p.GetUnit().String(),
+		Moq:           p.GetMoq(),
+		CutOffTime:    p.GetCutOffTime(),
 		Tags:          p.GetTags(),
 		Img:           p.GetImg(),
 		Status:        p.GetStatus().String(),
@@ -62,7 +66,7 @@ func newFromProduct(p *product.Product) *mongoProduct {
 }
 
 func (m *mongoProduct) ToAggregate() *product.Product {
-	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.OriginalPrice, m.Quantity, m.Unit, m.Tags, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.OriginalPrice, m.Quantity, m.Unit, m.Moq, m.CutOffTime, m.Tags, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoProduct) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {

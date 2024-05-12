@@ -260,6 +260,8 @@ type mongoPublishedCatalog struct {
 		OriginalPrice float64       `bson:"originalPrice"`
 		Quantity      int64         `bson:"quantity"`
 		Unit          string        `bson:"unit"`
+		Moq           int64         `bson:"moq"`
+		CutOffTime    time.Time     `bson:"cutOffTime"`
 		Tags          []string      `bson:"tags"`
 		Img           string        `bson:"img"`
 		Status        string        `bson:"status"`
@@ -414,6 +416,8 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 		OriginalPrice float64       `bson:"originalPrice"`
 		Quantity      int64         `bson:"quantity"`
 		Unit          string        `bson:"unit"`
+		Moq           int64         `bson:"moq"`
+		CutOffTime    time.Time     `bson:"cutOffTime"`
 		Tags          []string      `bson:"tags"`
 		Img           string        `bson:"img"`
 		Status        string        `bson:"status"`
@@ -432,6 +436,8 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 			OriginalPrice float64       `bson:"originalPrice"`
 			Quantity      int64         `bson:"quantity"`
 			Unit          string        `bson:"unit"`
+			Moq           int64         `bson:"moq"`
+			CutOffTime    time.Time     `bson:"cutOffTime"`
 			Tags          []string      `bson:"tags"`
 			Img           string        `bson:"img"`
 			Status        string        `bson:"status"`
@@ -447,6 +453,8 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 			OriginalPrice: v.GetOriginalPrice(),
 			Quantity:      v.GetQuantity(),
 			Unit:          v.GetUnit().String(),
+			Moq:           v.GetMoq(),
+			CutOffTime:    v.GetCutOffTime(),
 			Tags:          v.GetTags(),
 			Img:           v.GetImg(),
 			Status:        v.GetStatus().String(),

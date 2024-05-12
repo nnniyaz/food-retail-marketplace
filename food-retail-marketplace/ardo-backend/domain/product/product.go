@@ -16,6 +16,8 @@ type Product struct {
 	originalPrice float64
 	quantity      int64
 	unit          valueobject.ProductUnit
+	moq           int64
+	cutOffTime    time.Time
 	tags          []string
 	img           string
 	status        valueobject.ProductStatus
@@ -25,7 +27,7 @@ type Product struct {
 	version       int
 }
 
-func NewProduct(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, tags []string, img, status string) (*Product, error) {
+func NewProduct(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) (*Product, error) {
 	if name.IsEmpty() {
 		return nil, exceptions.ErrEmptyProductName
 	}
@@ -48,6 +50,10 @@ func NewProduct(name, desc core.MlString, price, originalPrice float64, quantity
 		return nil, err
 	}
 
+	if moq < 0 {
+		return nil, exceptions.ErrInvalidProductMoq
+	}
+
 	return &Product{
 		id:            uuid.NewUUID(),
 		name:          name,
@@ -56,6 +62,8 @@ func NewProduct(name, desc core.MlString, price, originalPrice float64, quantity
 		originalPrice: originalPrice,
 		quantity:      quantity,
 		unit:          productUnit,
+		moq:           moq,
+		cutOffTime:    cutOffTime,
 		tags:          tags,
 		img:           img,
 		status:        productStatus,
@@ -94,6 +102,14 @@ func (p *Product) GetUnit() valueobject.ProductUnit {
 	return p.unit
 }
 
+func (p *Product) GetMoq() int64 {
+	return p.moq
+}
+
+func (p *Product) GetCutOffTime() time.Time {
+	return p.cutOffTime
+}
+
 func (p *Product) GetTags() []string {
 	return p.tags
 }
@@ -122,7 +138,7 @@ func (p *Product) GetVersion() int {
 	return p.version
 }
 
-func (p *Product) Update(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, tags []string, img, status string) error {
+func (p *Product) Update(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error {
 	if name.IsEmpty() {
 		return core.ErrEmptyMlString
 	}
@@ -145,12 +161,18 @@ func (p *Product) Update(name, desc core.MlString, price, originalPrice float64,
 		return err
 	}
 
+	if moq < 0 {
+		return exceptions.ErrInvalidProductMoq
+	}
+
 	p.name = name
 	p.desc = desc
 	p.price = price
 	p.originalPrice = originalPrice
 	p.quantity = quantity
 	p.unit = productUnit
+	p.moq = moq
+	p.cutOffTime = cutOffTime
 	p.tags = tags
 	p.img = img
 	p.status = productStatus
@@ -159,7 +181,7 @@ func (p *Product) Update(name, desc core.MlString, price, originalPrice float64,
 	return nil
 }
 
-func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, tags []string, img string, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Product {
+func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img string, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Product {
 	return &Product{
 		id:            id,
 		name:          name,
@@ -168,6 +190,8 @@ func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price,
 		originalPrice: originalPrice,
 		quantity:      quantity,
 		unit:          valueobject.ProductUnit(unit),
+		moq:           moq,
+		cutOffTime:    cutOffTime,
 		tags:          tags,
 		img:           img,
 		status:        valueobject.ProductStatus(status),
