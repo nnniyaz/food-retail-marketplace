@@ -13,6 +13,9 @@ export interface AddProductReq {
     price: number;
     originalPrice: number;
     quantity: number;
+    unit: string;
+    moq: number;
+    cutOffTime: string;
     tags: string[];
     img: string;
     status: ProductStatus;

@@ -71,8 +71,11 @@ export const ProductsAdd: FC = () => {
             price: values.price,
             originalPrice: values.originalPrice,
             quantity: values.quantity,
+            unit: values.unit,
+            moq: values.moq,
+            cutOffTime: values.cutOffTime,
             tags: values.tags,
-            img: "",
+            img: values.img,
             status: values.status
         }, {navigate, to: RouteNames.PRODUCTS});
     }
