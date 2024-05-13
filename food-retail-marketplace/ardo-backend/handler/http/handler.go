@@ -198,6 +198,9 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 
 	r.Route("/upload", func(r chi.Router) {
 		r.Use(h.Middleware.StaffAuth)
+		r.Post("/slide-image", h.Upload.UploadSlidesImage)
+		r.Post("/section-image", h.Upload.UploadSectionImage)
+		r.Post("/category-image", h.Upload.UploadCategoriesImage)
 		r.Post("/product-image", h.Upload.UploadProductImage)
 	})
 
