@@ -17,7 +17,7 @@ type Product struct {
 	quantity      int64
 	unit          valueobject.ProductUnit
 	moq           int64
-	cutOffTime    time.Time
+	cutOffTime    string
 	tags          []string
 	img           string
 	status        valueobject.ProductStatus
@@ -27,7 +27,7 @@ type Product struct {
 	version       int
 }
 
-func NewProduct(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) (*Product, error) {
+func NewProduct(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime string, tags []string, img, status string) (*Product, error) {
 	if name.IsEmpty() {
 		return nil, exceptions.ErrEmptyProductName
 	}
@@ -106,7 +106,7 @@ func (p *Product) GetMoq() int64 {
 	return p.moq
 }
 
-func (p *Product) GetCutOffTime() time.Time {
+func (p *Product) GetCutOffTime() string {
 	return p.cutOffTime
 }
 
@@ -138,7 +138,7 @@ func (p *Product) GetVersion() int {
 	return p.version
 }
 
-func (p *Product) Update(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error {
+func (p *Product) Update(name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime string, tags []string, img, status string) error {
 	if name.IsEmpty() {
 		return core.ErrEmptyMlString
 	}
@@ -181,7 +181,7 @@ func (p *Product) Update(name, desc core.MlString, price, originalPrice float64,
 	return nil
 }
 
-func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img string, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Product {
+func UnmarshalProductFromDatabase(id uuid.UUID, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime string, tags []string, img string, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Product {
 	return &Product{
 		id:            id,
 		name:          name,

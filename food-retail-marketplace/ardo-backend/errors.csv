@@ -89,3 +89,4 @@ empty_country_code,Код страны не может быть пустым,Cou
 empty_customer_phone_country_code,Код страны телефона клиента не может быть пустым,Customer phone country code can not be empty
 invalid_product_unit,Неверная единица измерения продукта,Invalid product unit
 invalid_product_moq,Неверное минимальное количество продукта,Invalid product MOQ
+max_file_size_is_1mb,Максимальный размер файла 1MB,Maximum file size is 1MB

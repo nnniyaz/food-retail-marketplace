@@ -12,6 +12,7 @@ import (
 
 type User struct {
 	id                uuid.UUID
+	code              valueobject.UserCode
 	firstName         valueobject.FirstName
 	lastName          valueobject.LastName
 	email             email.Email
@@ -72,6 +73,7 @@ func NewUser(firstName, lastName, mail, phoneNumber, countryCode, password, user
 
 	return &User{
 		id:                userId,
+		code:              valueobject.NewUserCode(),
 		firstName:         userFirstName,
 		lastName:          userLastName,
 		email:             userEmail,
@@ -90,6 +92,10 @@ func NewUser(firstName, lastName, mail, phoneNumber, countryCode, password, user
 
 func (u *User) GetId() uuid.UUID {
 	return u.id
+}
+
+func (u *User) GetCode() valueobject.UserCode {
+	return u.code
 }
 
 func (u *User) GetFirstName() valueobject.FirstName {
@@ -256,10 +262,11 @@ func (u *User) ChangeLastDeliveryPoint(deliveryPointId uuid.UUID) error {
 	return nil
 }
 
-func UnmarshalUserFromDatabase(id uuid.UUID, firstName, lastName, mail, phoneNumber, countryCode, userType, preferredLang string, deliveryPoints []valueobject.DeliveryPoint, lastDeliveryPoint valueobject.DeliveryPoint, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time, version int) *User {
+func UnmarshalUserFromDatabase(id uuid.UUID, code, firstName, lastName, mail, phoneNumber, countryCode, userType, preferredLang string, deliveryPoints []valueobject.DeliveryPoint, lastDeliveryPoint valueobject.DeliveryPoint, password valueobject.Password, isDeleted bool, createdAt, updatedAt time.Time, version int) *User {
 	phoneNum, _ := phone.NewPhone(phoneNumber, countryCode)
 	return &User{
 		id:                id,
+		code:              valueobject.UserCode(code),
 		firstName:         valueobject.FirstName(firstName),
 		lastName:          valueobject.LastName(lastName),
 		email:             email.Email(mail),

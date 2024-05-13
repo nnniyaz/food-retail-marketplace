@@ -1,6 +1,7 @@
 package service
 
 import (
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/pkg/email"
 	"github/nnniyaz/ardo/pkg/logger"
@@ -17,6 +18,7 @@ import (
 	"github/nnniyaz/ardo/service/section"
 	"github/nnniyaz/ardo/service/session"
 	"github/nnniyaz/ardo/service/slide"
+	"github/nnniyaz/ardo/service/upload"
 	"github/nnniyaz/ardo/service/user"
 )
 
@@ -30,10 +32,11 @@ type Services struct {
 	ManagementSection  management.ManagementSectionService
 	ManagementCategory management.ManagementCategoryService
 	ManagementSlide    management.ManagementSlideService
+	Upload             upload.UploadService
 	Client             client.ClientService
 }
 
-func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, emailService email.Email) *Services {
+func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, emailService email.Email, s3 *s3.S3) *Services {
 	sessionService := session.NewSessionService(l, repos.RepoSession)
 	linkService := link.NewActivationLinkService(l, repos.RepoActivationLink)
 	userService := user.NewUserService(l, repos.RepoUser)
@@ -54,6 +57,7 @@ func NewService(repos *repo.Repository, config *config.Config, l logger.Logger, 
 		ManagementSection:  management.NewManagementSectionService(l, sectionService),
 		ManagementCategory: management.NewManagementCategoryService(l, categoryService),
 		ManagementSlide:    management.NewManagementSlideService(l, slideService),
+		Upload:             upload.NewUploadService(l, s3),
 		Client:             client.NewClientService(l, orderService, emailService, userService),
 	}
 }

@@ -2422,6 +2422,9 @@ const docTemplate = `{
         "current_user.User": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2870,14 +2873,23 @@ const docTemplate = `{
         "management_product.AddProductIn": {
             "type": "object",
             "properties": {
+                "cutOffTime": {
+                    "type": "string"
+                },
                 "desc": {
                     "$ref": "#/definitions/core.MlString"
                 },
                 "img": {
                     "type": "string"
                 },
+                "moq": {
+                    "type": "integer"
+                },
                 "name": {
                     "$ref": "#/definitions/core.MlString"
+                },
+                "originalPrice": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"
@@ -2887,6 +2899,15 @@ const docTemplate = `{
                 },
                 "status": {
                     "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
+                    "type": "string"
                 }
             }
         },
@@ -2894,6 +2915,9 @@ const docTemplate = `{
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "string"
+                },
+                "cutOffTime": {
                     "type": "string"
                 },
                 "desc": {
@@ -2908,8 +2932,14 @@ const docTemplate = `{
                 "isDeleted": {
                     "type": "boolean"
                 },
+                "moq": {
+                    "type": "integer"
+                },
                 "name": {
                     "$ref": "#/definitions/core.MlString"
+                },
+                "originalPrice": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"
@@ -2918,6 +2948,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -2945,14 +2984,23 @@ const docTemplate = `{
         "management_product.UpdateProductIn": {
             "type": "object",
             "properties": {
+                "cutOffTime": {
+                    "type": "string"
+                },
                 "desc": {
                     "$ref": "#/definitions/core.MlString"
                 },
                 "img": {
                     "type": "string"
                 },
+                "moq": {
+                    "type": "integer"
+                },
                 "name": {
                     "$ref": "#/definitions/core.MlString"
+                },
+                "originalPrice": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"
@@ -2961,6 +3009,15 @@ const docTemplate = `{
                     "type": "integer"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
                     "type": "string"
                 }
             }
@@ -3173,6 +3230,9 @@ const docTemplate = `{
         "management_user.User": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },

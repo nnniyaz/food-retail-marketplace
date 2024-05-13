@@ -26,6 +26,7 @@ func NewHttpDelivery(l logger.Logger, s management.ManagementUserService) *HttpD
 
 type User struct {
 	Id            string    `json:"id"`
+	Code          string    `json:"code"`
 	Email         string    `json:"email"`
 	FirstName     string    `json:"firstName"`
 	LastName      string    `json:"lastName"`
@@ -40,6 +41,7 @@ type User struct {
 func NewUser(u *user.User) User {
 	return User{
 		Id:            u.GetId().String(),
+		Code:          u.GetCode().String(),
 		Email:         u.GetEmail().String(),
 		FirstName:     u.GetFirstName().String(),
 		LastName:      u.GetLastName().String(),

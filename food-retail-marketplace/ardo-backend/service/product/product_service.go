@@ -8,7 +8,6 @@ import (
 	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
-	"time"
 )
 
 type ProductService interface {
@@ -16,7 +15,7 @@ type ProductService interface {
 	GetOneById(ctx context.Context, productId string) (*product.Product, error)
 	Create(ctx context.Context, product *product.Product) error
 	CreateMany(ctx context.Context, products []*product.Product) error
-	Update(ctx context.Context, product *product.Product, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error
+	Update(ctx context.Context, product *product.Product, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime string, tags []string, img, status string) error
 	Recover(ctx context.Context, productId string) error
 	Delete(ctx context.Context, productId string) error
 }
@@ -56,7 +55,7 @@ func (p *productService) CreateMany(ctx context.Context, products []*product.Pro
 	return p.productRepo.CreateMany(ctx, products)
 }
 
-func (p *productService) Update(ctx context.Context, product *product.Product, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime time.Time, tags []string, img, status string) error {
+func (p *productService) Update(ctx context.Context, product *product.Product, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime string, tags []string, img, status string) error {
 	if err := product.Update(name, desc, price, originalPrice, quantity, unit, moq, cutOffTime, tags, img, status); err != nil {
 		return err
 	}

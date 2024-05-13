@@ -2418,6 +2418,9 @@
         "current_user.User": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },
@@ -2866,14 +2869,23 @@
         "management_product.AddProductIn": {
             "type": "object",
             "properties": {
+                "cutOffTime": {
+                    "type": "string"
+                },
                 "desc": {
                     "$ref": "#/definitions/core.MlString"
                 },
                 "img": {
                     "type": "string"
                 },
+                "moq": {
+                    "type": "integer"
+                },
                 "name": {
                     "$ref": "#/definitions/core.MlString"
+                },
+                "originalPrice": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"
@@ -2883,6 +2895,15 @@
                 },
                 "status": {
                     "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
+                    "type": "string"
                 }
             }
         },
@@ -2890,6 +2911,9 @@
             "type": "object",
             "properties": {
                 "createdAt": {
+                    "type": "string"
+                },
+                "cutOffTime": {
                     "type": "string"
                 },
                 "desc": {
@@ -2904,8 +2928,14 @@
                 "isDeleted": {
                     "type": "boolean"
                 },
+                "moq": {
+                    "type": "integer"
+                },
                 "name": {
                     "$ref": "#/definitions/core.MlString"
+                },
+                "originalPrice": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"
@@ -2914,6 +2944,15 @@
                     "type": "integer"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
                     "type": "string"
                 },
                 "updatedAt": {
@@ -2941,14 +2980,23 @@
         "management_product.UpdateProductIn": {
             "type": "object",
             "properties": {
+                "cutOffTime": {
+                    "type": "string"
+                },
                 "desc": {
                     "$ref": "#/definitions/core.MlString"
                 },
                 "img": {
                     "type": "string"
                 },
+                "moq": {
+                    "type": "integer"
+                },
                 "name": {
                     "$ref": "#/definitions/core.MlString"
+                },
+                "originalPrice": {
+                    "type": "number"
                 },
                 "price": {
                     "type": "number"
@@ -2957,6 +3005,15 @@
                     "type": "integer"
                 },
                 "status": {
+                    "type": "string"
+                },
+                "tags": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "unit": {
                     "type": "string"
                 }
             }
@@ -3169,6 +3226,9 @@
         "management_user.User": {
             "type": "object",
             "properties": {
+                "code": {
+                    "type": "string"
+                },
                 "createdAt": {
                     "type": "string"
                 },

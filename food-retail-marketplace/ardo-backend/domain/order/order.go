@@ -57,7 +57,7 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64
 		currency:         convertedCurrency,
 		customerContacts: customerContacts,
 		deliveryInfo:     deliveryInfo,
-		status:           valueobject.NEW,
+		status:           valueobject.ORDER_HAS_BEEN_PLACED,
 		isDeleted:        false,
 		createdAt:        ts,
 		updatedAt:        ts,

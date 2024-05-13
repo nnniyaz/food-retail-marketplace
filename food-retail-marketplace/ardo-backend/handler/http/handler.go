@@ -17,6 +17,7 @@ import (
 	"github/nnniyaz/ardo/handler/http/management_slide"
 	"github/nnniyaz/ardo/handler/http/management_user"
 	middleware2 "github/nnniyaz/ardo/handler/http/middleware"
+	"github/nnniyaz/ardo/handler/http/upload"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service"
 	"go.mongodb.org/mongo-driver/mongo"
@@ -34,6 +35,7 @@ type Handler struct {
 	ManagementSection  *management_section.HttpDelivery
 	ManagementCategory *management_category.HttpDelivery
 	ManagementSlide    *management_slide.HttpDelivery
+	Upload             *upload.HttpDelivery
 	Client             *client.HttpDelivery
 }
 
@@ -49,6 +51,7 @@ func NewHandler(c *mongo.Client, clientUri string, s *service.Services, l logger
 		ManagementSection:  management_section.NewHttpDelivery(l, s.ManagementSection),
 		ManagementCategory: management_category.NewHttpDelivery(l, s.ManagementCategory),
 		ManagementSlide:    management_slide.NewHttpDelivery(l, s.ManagementSlide),
+		Upload:             upload.NewHttpDelivery(l, s.Upload),
 		Client:             client.NewHttpDelivery(l, s.Client),
 	}
 }
@@ -191,6 +194,11 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			r.Put("/recover/{slide_id}", h.ManagementSlide.RecoverSlide)
 			r.Delete("/{slide_id}", h.ManagementSlide.DeleteSlide)
 		})
+	})
+
+	r.Route("/upload", func(r chi.Router) {
+		r.Use(h.Middleware.StaffAuth)
+		r.Post("/product-image", h.Upload.UploadProductImage)
 	})
 
 	r.Route("/client", func(r chi.Router) {

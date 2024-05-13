@@ -67,6 +67,7 @@ func (m *mongoDeliveryPoint) ToAggregate() valueobject.DeliveryPoint {
 
 type mongoUser struct {
 	Id        uuid.UUID `bson:"_id"`
+	Code      string    `bson:"code"`
 	FirstName string    `bson:"firstName"`
 	LastName  string    `bson:"lastName"`
 	Email     string    `bson:"email"`
@@ -93,6 +94,7 @@ func newFromUser(u *user.User) *mongoUser {
 	userPhone := u.GetPhone()
 	return &mongoUser{
 		Id:        u.GetId(),
+		Code:      u.GetCode().String(),
 		FirstName: u.GetFirstName().String(),
 		LastName:  u.GetLastName().String(),
 		Email:     u.GetEmail().String(),
@@ -120,7 +122,7 @@ func (m *mongoUser) ToAggregate() *user.User {
 	for _, d := range m.DeliveryPoints {
 		deliveryPoints = append(deliveryPoints, valueobject.UnmarshalDeliveryPointFromDatabase(d.Id, d.Address, d.Floor, d.Apartment, d.DeliveryComment))
 	}
-	return user.UnmarshalUserFromDatabase(m.Id, m.FirstName, m.LastName, m.Email, m.Phone.Number, m.Phone.CountryCode, m.UserType, m.PreferredLang, deliveryPoints, valueobject.UnmarshalDeliveryPointFromDatabase(m.LastDeliveryPoint.Id, m.LastDeliveryPoint.Address, m.LastDeliveryPoint.Floor, m.LastDeliveryPoint.Apartment, m.LastDeliveryPoint.DeliveryComment), m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+	return user.UnmarshalUserFromDatabase(m.Id, m.Code, m.FirstName, m.LastName, m.Email, m.Phone.Number, m.Phone.CountryCode, m.UserType, m.PreferredLang, deliveryPoints, valueobject.UnmarshalDeliveryPointFromDatabase(m.LastDeliveryPoint.Id, m.LastDeliveryPoint.Address, m.LastDeliveryPoint.Floor, m.LastDeliveryPoint.Apartment, m.LastDeliveryPoint.DeliveryComment), m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {

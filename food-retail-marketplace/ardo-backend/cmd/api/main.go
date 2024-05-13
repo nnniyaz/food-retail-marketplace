@@ -3,6 +3,10 @@ package main
 import (
 	"context"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/credentials"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/s3"
 	"github/nnniyaz/ardo"
 	"github/nnniyaz/ardo/config"
 	"github/nnniyaz/ardo/handler/http"
@@ -44,7 +48,7 @@ func main() {
 	ctx = context.WithValue(ctx, "start", start)
 
 	// --- init settings
-	cf := config.New(
+	cfg := config.New(
 		env.MustGetEnvAsBool("IS_DEV_MODE"),
 		env.MustGetEnvAsInt("SMTP_PORT"),
 		env.MustGetEnv("SMTP_USER"),
@@ -55,17 +59,21 @@ func main() {
 		env.MustGetEnv("CLIENT_URI"),
 		env.MustGetEnv("SPACE_KEY"),
 		env.MustGetEnv("SPACE_SECRET"),
+		env.MustGetEnv("SPACE_ENDPOINT"),
+		env.MustGetEnv("SPACE_REGION"),
+		env.MustGetEnv("SPACE_NAME"),
+		env.MustGetEnv("SPACE_HOST"),
 	)
 
 	// --- init logger
-	lg, err := logger.NewLogger(cf.GetIsDevMode())
+	lg, err := logger.NewLogger(cfg.GetIsDevMode())
 	if err != nil {
 		panic(err)
 	}
 	defer lg.Sync()
 
 	// --- init mongodb db
-	db, err := mongo.New(ctx, cf.GetMongoUri())
+	db, err := mongo.New(ctx, cfg.GetMongoUri())
 	if err != nil {
 		lg.Fatal("failed to init mongodb", zap.Error(err))
 		return
@@ -73,19 +81,34 @@ func main() {
 	defer db.Disconnect(ctx)
 
 	// --- init email service
-	emailService, err := email.New(cf.GetEmailCfg())
+	emailService, err := email.New(cfg.GetEmailCfg())
 	if err != nil {
 		lg.Fatal("failed to init email service", zap.Error(err))
 		return
 	}
 
+	// --- init s3 client
+
+	s3Config := &aws.Config{
+		Credentials: credentials.NewStaticCredentials(cfg.GetSpaceKey(), cfg.GetSpaceSecret(), ""),
+		Endpoint:    aws.String(cfg.GetSpaceEndPoint()),
+		Region:      aws.String(cfg.GetSpaceRegion()),
+	}
+
+	newSession, err := session.NewSession(s3Config)
+	if err != nil {
+		lg.Fatal("failed to init s3 session", zap.Error(err))
+		return
+	}
+	s3Client := s3.New(newSession)
+
 	repos := repo.NewRepository(db)
-	services := service.NewService(repos, cf, lg, emailService)
-	handlers := http.NewHandler(db, cf.GetClientUri(), services, lg)
+	services := service.NewService(repos, cfg, lg, emailService, s3Client)
+	handlers := http.NewHandler(db, cfg.GetClientUri(), services, lg)
 
 	srv := new(ardo.Server)
 	go func() {
-		if err = srv.Run(port, handlers.InitRoutes(cf.GetIsDevMode()), start); err != nil && err != nHttp.ErrServerClosed {
+		if err = srv.Run(port, handlers.InitRoutes(cfg.GetIsDevMode()), start); err != nil && err != nHttp.ErrServerClosed {
 			lg.Fatal("error occurred while running http server: ", zap.Error(err))
 		}
 	}()

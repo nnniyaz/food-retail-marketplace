@@ -189,6 +189,8 @@ definitions:
     type: object
   current_user.User:
     properties:
+      code:
+        type: string
       createdAt:
         type: string
       deliveryPoints:
@@ -479,22 +481,36 @@ definitions:
     type: object
   management_product.AddProductIn:
     properties:
+      cutOffTime:
+        type: string
       desc:
         $ref: '#/definitions/core.MlString'
       img:
         type: string
+      moq:
+        type: integer
       name:
         $ref: '#/definitions/core.MlString'
+      originalPrice:
+        type: number
       price:
         type: number
       quantity:
         type: integer
       status:
         type: string
+      tags:
+        items:
+          type: string
+        type: array
+      unit:
+        type: string
     type: object
   management_product.Product:
     properties:
       createdAt:
+        type: string
+      cutOffTime:
         type: string
       desc:
         $ref: '#/definitions/core.MlString'
@@ -504,13 +520,23 @@ definitions:
         type: string
       isDeleted:
         type: boolean
+      moq:
+        type: integer
       name:
         $ref: '#/definitions/core.MlString'
+      originalPrice:
+        type: number
       price:
         type: number
       quantity:
         type: integer
       status:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      unit:
         type: string
       updatedAt:
         type: string
@@ -528,17 +554,29 @@ definitions:
     type: object
   management_product.UpdateProductIn:
     properties:
+      cutOffTime:
+        type: string
       desc:
         $ref: '#/definitions/core.MlString'
       img:
         type: string
+      moq:
+        type: integer
       name:
         $ref: '#/definitions/core.MlString'
+      originalPrice:
+        type: number
       price:
         type: number
       quantity:
         type: integer
       status:
+        type: string
+      tags:
+        items:
+          type: string
+        type: array
+      unit:
         type: string
     type: object
   management_section.CreateSectionIn:
@@ -675,6 +713,8 @@ definitions:
     type: object
   management_user.User:
     properties:
+      code:
+        type: string
       createdAt:
         type: string
       email:

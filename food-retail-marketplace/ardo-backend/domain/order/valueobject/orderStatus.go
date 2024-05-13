@@ -9,17 +9,17 @@ var (
 type OrderStatus string
 
 const (
-	NEW       OrderStatus = "NEW"
-	PENDING   OrderStatus = "PENDING"
-	ACCEPTED  OrderStatus = "ACCEPTED"
-	CANCELED  OrderStatus = "CANCELED"
-	DELIVERED OrderStatus = "DELIVERED"
+	ORDER_HAS_BEEN_PLACED OrderStatus = "ORDER_HAS_BEEN_PLACED"
+	ORDER_CONFIRMED       OrderStatus = "ORDER_CONFIRMED"
+	FINAL_INVOICE_SENT    OrderStatus = "FINAL_INVOICE_SENT"
+	GOODS_DELIVERED       OrderStatus = "GOODS_DELIVERED"
+	PAID                  OrderStatus = "PAID"
 )
 
 func NewOrderStatus(status string) (OrderStatus, error) {
 	convertedStatus := OrderStatus(status)
 	switch convertedStatus {
-	case NEW, ACCEPTED, CANCELED, PENDING, DELIVERED:
+	case ORDER_HAS_BEEN_PLACED, ORDER_CONFIRMED, FINAL_INVOICE_SENT, GOODS_DELIVERED, PAID:
 		return convertedStatus, nil
 	}
 	return "", ErrInvalidOrderStatus

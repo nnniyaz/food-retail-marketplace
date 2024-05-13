@@ -27,6 +27,7 @@ func NewHttpDelivery(l logger.Logger, s currentUserService.CurrentUserService) *
 
 type User struct {
 	Id        string `json:"id"`
+	Code      string `json:"code"`
 	FirstName string `json:"firstName"`
 	LastName  string `json:"lastName"`
 	Email     string `json:"email"`
@@ -83,6 +84,7 @@ func newUser(u *user.User) User {
 
 	return User{
 		Id:        u.GetId().String(),
+		Code:      u.GetCode().String(),
 		FirstName: u.GetFirstName().String(),
 		LastName:  u.GetLastName().String(),
 		Email:     u.GetEmail().String(),

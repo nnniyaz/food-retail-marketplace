@@ -93,6 +93,7 @@ const (
 	TXT_EMPTY_CUSTOMER_PHONE_COUNTRY_CODE TxtKey = 88
 	TXT_INVALID_PRODUCT_UNIT              TxtKey = 89
 	TXT_INVALID_PRODUCT_MOQ               TxtKey = 90
+	TXT_MAX_FILE_SIZE_IS_1MB              TxtKey = 91
 )
 
 var Txts = TxtResource{
@@ -456,6 +457,10 @@ var Txts = TxtResource{
 		RU: `Неверное минимальное количество продукта`,
 		EN: `Invalid product MOQ`,
 	},
+	TXT_MAX_FILE_SIZE_IS_1MB: MlString{
+		RU: `Максимальный размер файла 1MB`,
+		EN: `Maximum file size is 1MB`,
+	},
 }
 
 func GetTxtKeyAsString(k TxtKey) string {
@@ -640,6 +645,8 @@ func GetTxtKeyAsString(k TxtKey) string {
 		return "invalid_product_unit"
 	case TXT_INVALID_PRODUCT_MOQ:
 		return "invalid_product_moq"
+	case TXT_MAX_FILE_SIZE_IS_1MB:
+		return "max_file_size_is_1mb"
 
 	default:
 		return ""

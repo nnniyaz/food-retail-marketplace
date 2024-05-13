@@ -34,7 +34,7 @@ type mongoProduct struct {
 	Quantity      int64         `bson:"quantity"`
 	Unit          string        `bson:"unit"`
 	Moq           int64         `bson:"moq"`
-	CutOffTime    time.Time     `bson:"cutOffTime"`
+	CutOffTime    string        `bson:"cutOffTime"`
 	Tags          []string      `bson:"tags"`
 	Img           string        `bson:"img"`
 	Status        string        `bson:"status"`

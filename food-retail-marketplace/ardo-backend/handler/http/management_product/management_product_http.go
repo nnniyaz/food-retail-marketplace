@@ -9,7 +9,6 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/management"
 	"net/http"
-	"time"
 )
 
 type HttpDelivery struct {
@@ -32,6 +31,9 @@ type Product struct {
 	Price         float64       `json:"price"`
 	OriginalPrice float64       `json:"originalPrice"`
 	Quantity      int64         `json:"quantity"`
+	Unit          string        `json:"unit"`
+	Moq           int64         `json:"moq"`
+	CutOffTime    string        `json:"cutOffTime"`
 	Tags          []string      `json:"tags"`
 	Img           string        `json:"img"`
 	Status        string        `json:"status"`
@@ -49,6 +51,9 @@ func NewProduct(p *product.Product) Product {
 		Price:         p.GetPrice(),
 		OriginalPrice: p.GetOriginalPrice(),
 		Quantity:      p.GetQuantity(),
+		Unit:          p.GetUnit().String(),
+		Moq:           p.GetMoq(),
+		CutOffTime:    p.GetCutOffTime(),
 		Tags:          p.GetTags(),
 		Img:           p.GetImg(),
 		Status:        p.GetStatus().String(),
@@ -129,7 +134,7 @@ type AddProductIn struct {
 	Quantity      int64         `json:"quantity"`
 	Unit          string        `json:"unit"`
 	Moq           int64         `json:"moq"`
-	CutOffTime    time.Time     `json:"cutOffTime"`
+	CutOffTime    string        `json:"cutOffTime"`
 	Tags          []string      `json:"tags"`
 	Img           string        `json:"img"`
 	Status        string        `json:"status"`
@@ -167,7 +172,7 @@ type UpdateProductIn struct {
 	Quantity      int64         `json:"quantity"`
 	Unit          string        `json:"unit"`
 	Moq           int64         `json:"moq"`
-	CutOffTime    time.Time     `json:"cutOffTime"`
+	CutOffTime    string        `json:"cutOffTime"`
 	Tags          []string      `json:"tags"`
 	Img           string        `json:"img"`
 	Status        string        `json:"status"`
