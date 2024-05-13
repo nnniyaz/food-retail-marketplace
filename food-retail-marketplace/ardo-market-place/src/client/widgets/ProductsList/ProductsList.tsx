@@ -144,7 +144,7 @@ const ProductItem = ({product}: ProductProps) => {
                         {priceFormat(product.price, currency)}
                     </span>
                         <span className={classes.product__price_per_unit__moq}>
-                        {!cartProduct && `• 1 pc`}
+                        {!cartProduct && `• 1 ${product.unit || "pc"}`}
                     </span>
                     </p>
                     <p className={classes.product__total_price_of_product}>
@@ -233,6 +233,9 @@ const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDraw
                     <p className={classes.product_drawer__title}>
                         {translate(product.name, currentLang, langs)}
                     </p>
+                    <p className={classes.product_drawer__desc}>
+                        {translate(product.desc, currentLang, langs)}
+                    </p>
                     <p className={classes.product_drawer__price_per_unit}>
                         {!!product?.originalPrice && (
                             <span
@@ -261,6 +264,15 @@ const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDraw
                     </p>
                     <p className={classes.product_drawer_available__amount}>
                         {translate("available_amount", currentLang, langs)}: {product.quantity}
+                    </p>
+                    <p className={classes.product_drawer_available__amount}>
+                        {translate("unit", currentLang, langs)}: {product.unit || "-"}
+                    </p>
+                    <p className={classes.product_drawer_available__amount}>
+                        {translate("moq", currentLang, langs).toUpperCase()}: {product.moq || "-"}
+                    </p>
+                    <p className={classes.product_drawer_available__amount}>
+                        {translate("cutOffTime", currentLang, langs)}: {product.cutOffTime || "-"}
                     </p>
                     <button
                         className={classes.product_drawer__add}

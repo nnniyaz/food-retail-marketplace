@@ -119,3 +119,6 @@
 "delivery_point_add","добавление точки доставки","delivery point add"
 "settings","настройки","settings"
 "available_amount","доступное количество","available amount"
+"unit","единица измерения","unit"
+"moq","минимальное количество заказа","moq"
+"cutOffTime","время последнего заказа","cut-off time"

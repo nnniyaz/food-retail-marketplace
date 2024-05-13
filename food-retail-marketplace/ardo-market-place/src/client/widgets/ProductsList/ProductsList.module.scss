@@ -316,6 +316,16 @@
       transition: .1s linear;
     }
 
+    .product_drawer__desc {
+      margin-top: 10px;
+
+      font-size: 17px;
+      font-weight: 500;
+      line-height: 24px;
+      font-style: normal;
+      color: var(--secondary-font-color);
+    }
+
     .product_drawer__price_per_unit {
       margin-top: 10px;
 
