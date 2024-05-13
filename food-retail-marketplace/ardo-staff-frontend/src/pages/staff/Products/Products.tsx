@@ -96,10 +96,14 @@ export const Products: FC = () => {
     }
 
     useEffect(() => {
+        setPagination({...pagination, pagination: {...pagination.pagination, total: productsCount}});
+    }, [productsCount]);
+
+    useEffect(() => {
         const controller = new AbortController();
         fetchProducts({
             limit: pagination.pagination?.pageSize || 25,
-            offset: pagination.pagination?.current! - 1,
+            offset: (pagination.pagination?.current! - 1) * pagination.pagination?.pageSize!,
             is_deleted: filters.isDeleted
         }, controller, {navigate: navigate});
         return () => controller.abort();

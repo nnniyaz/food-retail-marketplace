@@ -116,7 +116,7 @@ export const Users: FC = () => {
         const controller = new AbortController();
         fetchUsers({
             limit: pagination.pagination?.pageSize || 25,
-            offset: pagination.pagination?.current! - 1,
+            offset: (pagination.pagination?.current! - 1) * pagination.pagination?.pageSize!,
             is_deleted: filters.isDeleted
         }, controller, {navigate: navigate});
         return () => controller.abort();
