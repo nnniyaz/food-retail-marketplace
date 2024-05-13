@@ -219,7 +219,13 @@ export const Checkout = () => {
 
                     <Alert
                         message={
-                            <span style={{color: "#000"}}>{"Please note that the total amount being displayed is not final summary of fees. This is average amount you will pay. All details about fees and delivery will be provided in the final invoice once Supplier confirms the order. Final price, catchweight and delivery time may slightly vary. The delivery is free for orders meeting MOQ and delivery range requirements. Otherwise, the delivery fee will be added to final invoice. By default, the items will be delivered within 24 hours, unless specified by the Buyer or Supplier. You can place an order on a platform any time. However, order confirmation is based on Supplier’s cut off time. After order placement please check order status and your email inbox. "}</span>
+                            <span style={{color: "#000"}}>{"Please note that the total amount being displayed is not final summary of fees. This is average amount you will pay. All details about fees and delivery will be provided in the final invoice once Supplier confirms the order. Final price, catchweight and delivery time may slightly vary. The delivery is free for orders meeting MOQ and delivery range requirements. Otherwise, the delivery fee will be added to final invoice. By default, the items will be delivered within 24 hours, unless specified by the Buyer or Supplier. You can place an order on a platform any time. However, order confirmation is based on Supplier’s cut off time. After order placement please check order status and your email inbox."}</span>
+                        }
+                    />
+
+                    <Alert
+                        message={
+                            <span style={{color: "#000"}}>{"Apart from that you also should understand that there is a Minimum Order Quantity (MOQ) fee which will vary according to the order size. If the order size meets the MOQ, the MOQ fee will be not added to the total price."}</span>
                         }
                     />
                 </section>
