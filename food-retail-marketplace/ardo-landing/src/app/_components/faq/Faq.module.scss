@@ -1,0 +1,13 @@
+.faq {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .faq__item__title {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 24px;
+    color: var(--primary-font-color);
+  }
+}

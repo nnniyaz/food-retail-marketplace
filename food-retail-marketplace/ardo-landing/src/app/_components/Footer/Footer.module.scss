@@ -123,6 +123,14 @@
       gap: 5px;
       padding-top: 100px;
 
+      a {
+        text-decoration: none;
+        font-weight: 400;
+        font-size: 16px;
+        line-height: 20px;
+        color: var(--primary-font-color);
+      }
+
       p {
         font-weight: 400;
         font-size: 16px;

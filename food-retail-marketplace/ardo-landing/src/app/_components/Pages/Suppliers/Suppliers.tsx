@@ -11,6 +11,7 @@ import MainBlock from "@components/MainBlock/MainBlock";
 import NumbersBlock from "@components/NumbersBlock/NumbersBlock";
 import AdvantagesBlock from "@components/AdvantagesBlock/AdvantagesBlock";
 import StepByStepGuide from "@components/StepByStepGuide/StepByStepGuide";
+import Faq from "@components/faq/Faq";
 
 interface Props {
     lang: Langs;
@@ -96,6 +97,7 @@ export default function Suppliers({lang}: Props) {
                 tagLabel={translate("fill_the_form", lang)}
                 instructions={instructions}
             />
+            <Faq title={translate("faq", lang)}/>
         </React.Fragment>
     );
 }

@@ -1,4 +1,5 @@
 import {headers} from "next/headers";
+import Link from "next/link";
 import {Langs} from "@/domain/mlString/mlString";
 import {translate} from "@/pkg/translate/translate";
 import LinkedinSVG from "@assets/linkedin.svg";
@@ -54,6 +55,11 @@ export default function Footer() {
             <div className={classes.footer__group}>
                 <p>Ardo Group Ltd.</p>
                 <p>{`© 2023. ${translate("all_rights_reserved", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs)}.`}</p>
+                <p style={{display: "flex", alignItems: "center", gap: "10px"}}>
+                    <span><Link href={"/terms-of-use/en"}>{translate("terms_of_use", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs)}</Link></span>
+                    <span>•</span>
+                    <span><Link href={"/terms-and-conditions/en"}>{translate("terms_and_conditions", headersList.get("x-pathname")?.split("/")?.[2]?.toUpperCase() as Langs)}</Link></span>
+                </p>
             </div>
         </footer>
     )
