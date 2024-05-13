@@ -17,6 +17,11 @@ import {I18NTextarea} from "@shared/ui/Textarea";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {productStatusOptions} from "@shared/lib/options/productStatusOptions";
 import classes from "./ProductsEdit.module.scss";
+import {ProductUnit} from "@entities/product/product";
+import {Upload} from "@shared/ui/Upload/Upload";
+import {productUnitOptions} from "@shared/lib/options/productUnitOptions";
+import {productCutOffTimeOptions} from "@shared/lib/options/productCutOffTimeOptions";
+import {SpaceFolders} from "@entities/base/spaceFolders";
 
 export const ProductsEdit: FC = () => {
     const {id} = useParams();
@@ -27,13 +32,15 @@ export const ProductsEdit: FC = () => {
         isLoadingGetProductById,
         isLoadingEditProduct,
         isLoadingDeleteProduct,
-        isLoadingRecoverProduct
+        isLoadingRecoverProduct,
+        isLoadingProductImageUpload
     } = useTypedSelector(state => state.products);
     const {
         getProductById,
         editProductCredentials,
         deleteProduct,
         recoverProduct,
+        uploadProductImage
     } = useActions();
     const [form] = useForm();
     const values = useWatch([], form);
@@ -62,6 +69,15 @@ export const ProductsEdit: FC = () => {
 
     const handleReset = () => {
         form.resetFields();
+    }
+
+    const handleUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const filename = await uploadProductImage(formData);
+        if (filename) {
+            form.setFieldValue("img", filename);
+        }
     }
 
     const handleEdit = async () => {
@@ -98,8 +114,11 @@ export const ProductsEdit: FC = () => {
             price: productById?.price,
             originalPrice: productById?.originalPrice || 0,
             quantity: productById?.quantity,
+            unit: productById?.unit || ProductUnit.PC,
+            moq: productById?.moq || 1,
+            cutOffTime: productById?.cutOffTime || "12:00",
             tags: productById?.tags || [],
-            img: "",
+            img: productById?.img,
             status: productById?.status,
         });
     }, [productById]);
@@ -115,10 +134,24 @@ export const ProductsEdit: FC = () => {
             {editMode ? (
                 <Card bodyStyle={{padding: "10px", borderRadius: "8px"}} loading={isLoadingGetProductById}>
                     <RowInfo label={txt.id[currentLang]} value={productById?.id || "-"}/>
-                    <RowInfo label={txt.created_at[currentLang]} value={dateFormat(productById?.createdAt || "") || "-"}/>
-                    <RowInfo label={txt.updated_at[currentLang]} value={dateFormat(productById?.updatedAt || "") || "-"}/>
+                    <RowInfo label={txt.created_at[currentLang]}
+                             value={dateFormat(productById?.createdAt || "") || "-"}/>
+                    <RowInfo label={txt.updated_at[currentLang]}
+                             value={dateFormat(productById?.updatedAt || "") || "-"}/>
 
                     <Form form={form} layout={"vertical"} onFinish={handleEdit} initialValues={formInitialValues}>
+                        <Form.Item name={"img"}>
+                            <Upload
+                                imgSrc={
+                                    form.getFieldValue("img")
+                                        ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.PRODUCTS}/${form.getFieldValue("img")}`
+                                        : ""
+                                }
+                                onUpload={handleUpload}
+                                loading={isLoadingProductImageUpload}
+                            />
+                        </Form.Item>
+
                         <Form.Item
                             name={"name"}
                             label={txt.name[currentLang]}
@@ -196,6 +229,33 @@ export const ProductsEdit: FC = () => {
                         </Form.Item>
 
                         <Form.Item
+                            name={"unit"}
+                            label={txt.unit[currentLang]}
+                            rules={[rules.required(txt.please_select_unit[currentLang])]}
+                        >
+                            <Select options={productUnitOptions}/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name={"moq"}
+                            label={txt.moq[currentLang]}
+                            rules={[rules.required(txt.please_enter_moq[currentLang])]}
+                        >
+                            <NumberInput
+                                value={form.getFieldValue("moq")}
+                                onChange={(value: number) => form.setFieldValue("moq", value)}
+                            />
+                        </Form.Item>
+
+                        <Form.Item
+                            name={"cutOffTime"}
+                            label={txt.cut_off_time[currentLang]}
+                            rules={[rules.required(txt.please_select_cut_off_time[currentLang])]}
+                        >
+                            <Select options={productCutOffTimeOptions}/>
+                        </Form.Item>
+
+                        <Form.Item
                             name={"status"}
                             label={txt.status[currentLang]}
                             rules={[rules.required(txt.please_select_status[currentLang])]}
@@ -229,10 +289,19 @@ export const ProductsEdit: FC = () => {
                 <Card bodyStyle={{padding: "10px", borderRadius: "8px"}} loading={isLoadingGetProductById}>
                     <h1 className={classes.title}>{productById?.name?.[currentLang]}</h1>
                     <h3 className={classes.subtitle}>{productById?.id || "-"}</h3>
-                    <RowInfo
-                        label={txt.desc[currentLang]}
-                        value={productById?.desc?.[currentLang] || "-"}
-                    />
+
+                    {!!productById?.img && (
+                        <div style={{margin: "20px 0"}}>
+                            <Upload
+                                imgSrc={
+                                    productById?.img
+                                        ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.PRODUCTS}/${productById?.img}`
+                                        : ""
+                                }
+                            />
+                        </div>
+                    )}
+
                     <RowInfo
                         label={txt.price[currentLang]}
                         value={`${productById?.price || "-"}`}
@@ -240,6 +309,18 @@ export const ProductsEdit: FC = () => {
                     <RowInfo
                         label={txt.quantity[currentLang]}
                         value={`${productById?.quantity || "-"}`}
+                    />
+                    <RowInfo
+                        label={txt.unit[currentLang]}
+                        value={`${productById?.unit || "-"}`}
+                    />
+                    <RowInfo
+                        label={txt.moq[currentLang]}
+                        value={`${productById?.moq || "-"}`}
+                    />
+                    <RowInfo
+                        label={txt.cut_off_time[currentLang]}
+                        value={`${productById?.cutOffTime || "-"}`}
                     />
                     <RowInfo
                         label={txt.original_price[currentLang]}
@@ -256,6 +337,10 @@ export const ProductsEdit: FC = () => {
                     <RowInfo
                         label={txt.updated_at[currentLang]}
                         value={dateFormat(productById?.updatedAt || "") || "-"}
+                    />
+                    <RowInfo
+                        label={txt.desc[currentLang]}
+                        value={productById?.desc?.[currentLang] || "-"}
                     />
 
                     <div className={classes.row__btns}>

@@ -4,7 +4,7 @@ import {Button, Card, Form, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {RouteNames} from "@pages/index";
 import {Langs, MlString} from "@entities/base/MlString";
-import {ProductStatus} from "@entities/product/product";
+import {ProductStatus, ProductUnit} from "@entities/product/product";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
@@ -14,6 +14,11 @@ import {I18NTextarea} from "@shared/ui/Textarea";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {productStatusOptions} from "@shared/lib/options/productStatusOptions";
 import classes from "./ProductsAdd.module.scss";
+import {productCutOffTimeOptions} from "@shared/lib/options/productCutOffTimeOptions";
+import {productUnitOptions} from "@shared/lib/options/productUnitOptions";
+import {PlusOutlined} from "@ant-design/icons";
+import {Upload} from "@shared/ui/Upload/Upload";
+import {SpaceFolders} from "@entities/base/spaceFolders";
 
 const initialFormValues = {
     name: {
@@ -27,20 +32,32 @@ const initialFormValues = {
     price: 0,
     originalPrice: 0,
     quantity: 0,
+    unit: ProductUnit.PC,
+    moq: 1,
+    cutOffTime: "00:00",
     tags: [],
-    image: "",
+    img: "",
     status: ProductStatus.ACTIVE
 }
 
 export const ProductsAdd: FC = () => {
     const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {isLoadingAddProduct} = useTypedSelector(state => state.products);
-    const {addProduct} = useActions();
+    const {isLoadingAddProduct, isLoadingProductImageUpload} = useTypedSelector(state => state.products);
+    const {addProduct, uploadProductImage} = useActions();
     const [form] = useForm();
     const values = useWatch([], form);
 
     const [submittable, setSubmittable] = useState(false);
+
+    const handleUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const filename = await uploadProductImage(formData);
+        if (filename) {
+            form.setFieldValue("img", filename);
+        }
+    }
 
     const handleCancel = () => {
         navigate(RouteNames.PRODUCTS);
@@ -60,8 +77,6 @@ export const ProductsAdd: FC = () => {
         }, {navigate, to: RouteNames.PRODUCTS});
     }
 
-    console.log(form.getFieldsValue());
-
     useEffect(() => {
         form.validateFields({validateOnly: true}).then(
             () => setSubmittable(true),
@@ -75,33 +90,50 @@ export const ProductsAdd: FC = () => {
 
     return (
         <div className={classes.main}>
-            <Card bodyStyle={{padding: "20px 10px", borderRadius: "8px"}}>
+            <Card bodyStyle={{padding: "20px", borderRadius: "8px"}}>
                 <Form form={form} layout={"vertical"} onFinish={handleSubmit} initialValues={initialFormValues}>
-                    <Form.Item
-                        name={"name"}
-                        label={txt.name[currentLang]}
-                        rules={[rules.requiredI18n(txt.please_enter_name[currentLang])]}
-                        required={true}
-                    >
-                        <I18NInput
-                            value={form.getFieldValue("name")}
-                            onChange={(mlString: MlString) => form.setFieldValue("name", mlString)}
-                            placeholder={txt.enter_name[currentLang]}
-                        />
-                    </Form.Item>
+                    <div className={classes.header}>
+                        <div className={classes.header__group}>
+                            <Form.Item name={"img"}>
+                                <Upload
+                                    imgSrc={
+                                        form.getFieldValue("img")
+                                            ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.PRODUCTS}/${form.getFieldValue("img")}`
+                                            : ""
+                                    }
+                                    onUpload={handleUpload}
+                                    loading={isLoadingProductImageUpload}
+                                />
+                            </Form.Item>
+                        </div>
+                        <div className={classes.header__group}>
+                            <Form.Item
+                                name={"name"}
+                                label={txt.name[currentLang]}
+                                rules={[rules.requiredI18n(txt.please_enter_name[currentLang])]}
+                                required={true}
+                            >
+                                <I18NInput
+                                    value={form.getFieldValue("name")}
+                                    onChange={(mlString: MlString) => form.setFieldValue("name", mlString)}
+                                    placeholder={txt.enter_name[currentLang]}
+                                />
+                            </Form.Item>
 
-                    <Form.Item
-                        name={"desc"}
-                        label={txt.desc[currentLang]}
-                        rules={[rules.requiredI18n(txt.please_enter_desc[currentLang])]}
-                        required={true}
-                    >
-                        <I18NTextarea
-                            value={form.getFieldValue("desc")}
-                            onChange={(mlString: MlString) => form.setFieldValue("desc", mlString)}
-                            placeholder={txt.enter_desc[currentLang]}
-                        />
-                    </Form.Item>
+                            <Form.Item
+                                name={"desc"}
+                                label={txt.desc[currentLang]}
+                                rules={[rules.requiredI18n(txt.please_enter_desc[currentLang])]}
+                                required={true}
+                            >
+                                <I18NTextarea
+                                    value={form.getFieldValue("desc")}
+                                    onChange={(mlString: MlString) => form.setFieldValue("desc", mlString)}
+                                    placeholder={txt.enter_desc[currentLang]}
+                                />
+                            </Form.Item>
+                        </div>
+                    </div>
 
                     <div className={classes.form__row}>
                         <Form.Item
@@ -151,6 +183,33 @@ export const ProductsAdd: FC = () => {
                             dropdownStyle={{display: "none"}}
                             placeholder={txt.enter_tags[currentLang]}
                         />
+                    </Form.Item>
+
+                    <Form.Item
+                        name={"unit"}
+                        label={txt.unit[currentLang]}
+                        rules={[rules.required(txt.please_select_unit[currentLang])]}
+                    >
+                        <Select options={productUnitOptions}/>
+                    </Form.Item>
+
+                    <Form.Item
+                        name={"moq"}
+                        label={txt.moq[currentLang]}
+                        rules={[rules.required(txt.please_enter_moq[currentLang])]}
+                    >
+                        <NumberInput
+                            value={form.getFieldValue("moq")}
+                            onChange={(value: number) => form.setFieldValue("moq", value)}
+                        />
+                    </Form.Item>
+
+                    <Form.Item
+                        name={"cutOffTime"}
+                        label={txt.cut_off_time[currentLang]}
+                        rules={[rules.required(txt.please_select_cut_off_time[currentLang])]}
+                    >
+                        <Select options={productCutOffTimeOptions}/>
                     </Form.Item>
 
                     <Form.Item

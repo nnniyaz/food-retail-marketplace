@@ -18,6 +18,7 @@ import {
     SetIsLoadingEditProductAction,
     SetIsLoadingDeleteProductAction,
     SetIsLoadingRecoverProductAction,
+    SetIsLoadingProductImageUploadAction,
 } from "./types";
 
 export const ProductsActionCreators = {
@@ -34,6 +35,10 @@ export const ProductsActionCreators = {
     setIsLoadingDeleteProduct: (payload: boolean): SetIsLoadingDeleteProductAction => ({type: ProductActionEnum.SET_IS_LOADING_DELETE_PRODUCT, payload}),
     setIsLoadingRecoverProduct: (payload: boolean): SetIsLoadingRecoverProductAction => ({
         type: ProductActionEnum.SET_IS_LOADING_RECOVER_PRODUCT,
+        payload
+    }),
+    setIsLoadingProductImageUpload: (payload: boolean): SetIsLoadingProductImageUploadAction => ({
+        type: ProductActionEnum.SET_IS_LOADING_PRODUCT_IMAGE_UPLOAD,
         payload
     }),
 
@@ -203,6 +208,32 @@ export const ProductsActionCreators = {
             });
         } finally {
             dispatch(ProductsActionCreators.setIsLoadingDeleteProduct(false));
+        }
+    },
+
+    uploadProductImage: (request: FormData) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(ProductsActionCreators.setIsLoadingProductImageUpload(true));
+            const res = await ProductsService.uploadProductImage(request);
+            if (res.data.success) {
+                Notify.Success({title: txt.product_image_successfully_uploaded[currentLang], message: ""});
+                return res.data.data?.filename;
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+            });
+        } finally {
+            dispatch(ProductsActionCreators.setIsLoadingProductImageUpload(false));
         }
     },
 }

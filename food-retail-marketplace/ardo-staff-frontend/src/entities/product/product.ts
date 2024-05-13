@@ -5,6 +5,12 @@ export enum ProductStatus {
     ARCHIVE = "ARCHIVE",
 }
 
+export enum ProductUnit {
+    PC = "pc",
+    KG = "kg",
+    LB = "lb",
+}
+
 export interface Product {
     id: UUID,
     name: MlString,
@@ -12,6 +18,9 @@ export interface Product {
     price: number,
     originalPrice: number,
     quantity: number,
+    unit: ProductUnit,
+    moq: number,
+    cutOffTime: string,
     tags: string[],
     img: string,
     status: ProductStatus,

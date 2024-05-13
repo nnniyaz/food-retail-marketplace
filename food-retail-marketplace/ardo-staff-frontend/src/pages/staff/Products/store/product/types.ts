@@ -10,6 +10,7 @@ export interface ProductState {
     isLoadingEditProduct: boolean;
     isLoadingDeleteProduct: boolean;
     isLoadingRecoverProduct: boolean;
+    isLoadingProductImageUpload: boolean;
 }
 
 export enum ProductActionEnum {
@@ -22,6 +23,7 @@ export enum ProductActionEnum {
     SET_IS_LOADING_EDIT_PRODUCT = "SET_IS_LOADING_EDIT_PRODUCT",
     SET_IS_LOADING_DELETE_PRODUCT = "SET_IS_LOADING_DELETE_PRODUCT",
     SET_IS_LOADING_RECOVER_PRODUCT = "SET_IS_LOADING_RECOVER_PRODUCT",
+    SET_IS_LOADING_PRODUCT_IMAGE_UPLOAD = "SET_IS_LOADING_PRODUCT_IMAGE_UPLOAD",
 }
 
 export interface SetProductsAction {
@@ -69,6 +71,11 @@ export interface SetIsLoadingRecoverProductAction {
     payload: boolean;
 }
 
+export interface SetIsLoadingProductImageUploadAction {
+    type: ProductActionEnum.SET_IS_LOADING_PRODUCT_IMAGE_UPLOAD;
+    payload: boolean;
+}
+
 export type ProductAction =
     SetProductsAction |
     SetProductByIdAction |
@@ -78,4 +85,5 @@ export type ProductAction =
     SetIsLoadingGetProductByIdAction |
     SetIsLoadingEditProductAction |
     SetIsLoadingDeleteProductAction |
-    SetIsLoadingRecoverProductAction;
+    SetIsLoadingRecoverProductAction |
+    SetIsLoadingProductImageUploadAction;

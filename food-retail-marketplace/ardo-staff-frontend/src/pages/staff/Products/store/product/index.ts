@@ -10,6 +10,7 @@ const initialState: ProductState = {
     isLoadingEditProduct: false,
     isLoadingDeleteProduct: false,
     isLoadingRecoverProduct: false,
+    isLoadingProductImageUpload: false,
 }
 
 export default function productReducer(state = initialState, action: ProductAction): ProductState {
@@ -32,6 +33,8 @@ export default function productReducer(state = initialState, action: ProductActi
             return {...state, isLoadingRecoverProduct: action.payload}
         case ProductActionEnum.SET_IS_LOADING_DELETE_PRODUCT:
             return {...state, isLoadingDeleteProduct: action.payload}
+        case ProductActionEnum.SET_IS_LOADING_PRODUCT_IMAGE_UPLOAD:
+            return {...state, isLoadingProductImageUpload: action.payload}
         default:
             return state;
     }

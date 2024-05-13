@@ -12,3 +12,17 @@
     width: 90%;
   }
 }
+
+@media (max-width: 700px) {
+  .i18n_textarea_row_wrapper {
+    flex-direction: column;
+
+    .i18n_textarea_select {
+      width: 100%;
+    }
+
+    .i18n_textarea {
+      width: 100%;
+    }
+  }
+}

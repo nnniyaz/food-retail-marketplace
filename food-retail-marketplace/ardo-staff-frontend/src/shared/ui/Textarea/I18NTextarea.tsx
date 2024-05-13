@@ -1,10 +1,10 @@
 import React, {FC, useState} from "react";
-import classes from "./I18NTextarea.module.scss";
-import {Langs, MlString} from "@entities/base/MlString";
-import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {Select} from "antd";
-import {langOptions} from "@shared/lib/options/langOptions";
 import TextArea from "antd/lib/input/TextArea";
+import {Langs, MlString} from "@entities/base/MlString";
+import {langOptions} from "@shared/lib/options/langOptions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
+import classes from "./I18NTextarea.module.scss";
 
 interface I18NTextareaProps {
     value: MlString;

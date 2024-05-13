@@ -1,5 +1,5 @@
 import {AxiosResponse} from "axios";
-import $api from "@shared/api";
+import {$api} from "@shared/api";
 import {ApiRoutes} from "@shared/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@shared/api/response/response";
 

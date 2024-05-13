@@ -1,7 +1,7 @@
 import {AxiosResponse} from "axios";
 import {Paginate} from "@entities/base/paginate";
 import {CatalogData, CatalogPublishTime, CatalogsStructure} from "@entities/catalog/catalog";
-import $api from "@shared/api";
+import {$api} from "@shared/api";
 import {ApiRoutes} from "@shared/api/api-routes";
 import {ErrorResponse, SuccessResponse} from "@shared/api/response/response";
 

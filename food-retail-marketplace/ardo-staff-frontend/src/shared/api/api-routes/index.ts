@@ -68,4 +68,7 @@ export enum ApiRoutes {
     PUT_SLIDE = "/management/slides/:slide_id",
     PUT_SLIDE_RECOVER = "/management/slides/recover/:slide_id",
     DELETE_SLIDE = "/management/slides/:slide_id",
+
+    // -------------------------------- UPLOAD --------------------------------
+    POST_UPLOAD_PRODUCT_IMAGE = "/upload/product-image",
 }
