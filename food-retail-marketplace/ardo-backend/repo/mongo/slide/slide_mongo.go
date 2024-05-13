@@ -54,7 +54,7 @@ func (r *RepoSlide) FindByFilters(ctx context.Context, offset, limit int64, isDe
 	if err != nil {
 		return nil, 0, err
 	}
-	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSkip(offset).SetLimit(limit))
+	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSort(bson.D{{"createdAt", -1}}).SetSkip(offset).SetLimit(limit))
 	if err != nil {
 		return nil, 0, err
 	}
