@@ -1,4 +1,5 @@
 import {AxiosResponse} from "axios";
+import {Phone} from "@entities/base/phone";
 import {Langs} from "@entities/base/MlString";
 import {Paginate} from "@entities/base/paginate";
 import {User, UsersData, UserType} from "@entities/user/user";
@@ -10,9 +11,14 @@ export interface AddUserReq {
     firstName: string;
     lastName: string;
     email: string;
+    phone: Phone;
     password: string
     userType: UserType;
     preferredLang: Langs;
+    address: string;
+    floor: string;
+    apartment: string;
+    deliveryComment: string;
 }
 
 export interface EditUserCredentialsReq {
@@ -24,8 +30,40 @@ export interface EditUserEmailReq {
     email: string;
 }
 
+export interface EditUserPhoneReq {
+    phoneNumber: string;
+    countryCode: string;
+}
+
 export interface EditUserPreferredLangReq {
     preferredLang: Langs;
+}
+
+export interface EditUserRoleReq {
+    role: UserType;
+}
+
+export interface AddUserDeliveryPointReq {
+    address: string;
+    floor: string;
+    apartment: string;
+    deliveryComment: string;
+}
+
+export interface EditUserDeliveryPointReq {
+    id: string;
+    address: string;
+    floor: string;
+    apartment: string;
+    deliveryComment: string;
+}
+
+export interface DeleteUserDeliveryPointReq {
+    deliveryPointId: string;
+}
+
+export interface EditUserLastDeliveryPointReq {
+    deliveryPointId: string;
 }
 
 export interface EditUserPasswordReq {
@@ -53,8 +91,32 @@ export default class UsersService {
         return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_EMAIL.replace(":user_id", userId), {...request});
     }
 
+    static async editUserPhone(userId: string, request: EditUserPhoneReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_PHONE.replace(":user_id", userId), {...request});
+    }
+
     static async editUserPreferredLang(userId: string, request: EditUserPreferredLangReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
         return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_PREFERRED_LANG.replace(":user_id", userId), {...request});
+    }
+
+    static async editUserRole(userId: string, request: EditUserRoleReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_ROLE.replace(":user_id", userId), {...request});
+    }
+
+    static async addUserDeliveryPoint(userId: string, request: AddUserDeliveryPointReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_USER_DELIVERY_POINT.replace(":user_id", userId), {...request});
+    }
+
+    static async editUserDeliveryPoint(userId: string, request: EditUserDeliveryPointReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_DELIVERY_POINT.replace(":user_id", userId), {...request});
+    }
+
+    static async deleteUserDeliveryPoint(userId: string, request: DeleteUserDeliveryPointReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.DELETE_USER_DELIVERY_POINT.replace(":user_id", userId), {...request});
+    }
+
+    static async editUserLastDeliveryPoint(userId: string, request: EditUserLastDeliveryPointReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_LAST_DELIVERY_POINT.replace(":user_id", userId), {...request});
     }
 
     static async editUserPassword(userId: string, request: EditUserPasswordReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {

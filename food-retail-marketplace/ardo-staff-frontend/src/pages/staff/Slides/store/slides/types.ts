@@ -10,6 +10,7 @@ export interface SlideState {
     isLoadingEditSlide: boolean;
     isLoadingRecoverSlide: boolean;
     isLoadingDeleteSlide: boolean;
+    isLoadingSlideImageUpload: boolean;
 }
 
 export enum SlideActionEnum {
@@ -22,6 +23,7 @@ export enum SlideActionEnum {
     SET_IS_LOADING_EDIT_SLIDE = "SET_IS_LOADING_EDIT_SLIDE",
     SET_IS_LOADING_RECOVER_SLIDE = "SET_IS_LOADING_RECOVER_SLIDE",
     SET_IS_LOADING_DELETE_SLIDE = "SET_IS_LOADING_DELETE_SLIDE",
+    SET_IS_LOADING_SLIDE_IMAGE_UPLOAD = "SET_IS_LOADING_SLIDE_IMAGE_UPLOAD",
 }
 
 export interface SetSlidesAction {
@@ -69,6 +71,11 @@ export interface SetIsLoadingDeleteSlideAction {
     payload: boolean;
 }
 
+export interface SetIsLoadingSlideImageUploadAction {
+    type: SlideActionEnum.SET_IS_LOADING_SLIDE_IMAGE_UPLOAD;
+    payload: boolean;
+}
+
 export type SlideAction =
     SetSlidesAction |
     SetSlideByIdAction |
@@ -78,4 +85,5 @@ export type SlideAction =
     SetIsLoadingAddSlideAction |
     SetIsLoadingEditSlideAction |
     SetIsLoadingRecoverSlideAction |
-    SetIsLoadingDeleteSlideAction;
+    SetIsLoadingDeleteSlideAction |
+    SetIsLoadingSlideImageUploadAction;

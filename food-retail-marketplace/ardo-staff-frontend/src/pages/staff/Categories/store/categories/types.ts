@@ -10,6 +10,7 @@ export interface CategoryState {
     isLoadingEditCategory: boolean;
     isLoadingDeleteCategory: boolean;
     isLoadingRecoverCategory: boolean;
+    isLoadingCategoryImageUpload: boolean;
 }
 
 export enum CategoryActionEnum {
@@ -22,6 +23,7 @@ export enum CategoryActionEnum {
     SET_IS_LOADING_EDIT_CATEGORY = "SET_IS_LOADING_EDIT_CATEGORY",
     SET_IS_LOADING_DELETE_CATEGORY = "SET_IS_LOADING_DELETE_CATEGORY",
     SET_IS_LOADING_RECOVER_CATEGORY = "SET_IS_LOADING_RECOVER_CATEGORY",
+    SET_IS_LOADING_CATEGORY_IMAGE_UPLOAD = "SET_IS_LOADING_CATEGORY_IMAGE_UPLOAD",
 }
 
 export interface SetCategoriesAction {
@@ -69,6 +71,11 @@ export interface SetIsLoadingRecoverCategoryAction {
     payload: boolean;
 }
 
+export interface SetIsLoadingCategoryImageUploadAction {
+    type: CategoryActionEnum.SET_IS_LOADING_CATEGORY_IMAGE_UPLOAD;
+    payload: boolean;
+}
+
 export type CategoryAction =
     SetCategoriesAction |
     SetCategoryByIdAction |
@@ -78,4 +85,5 @@ export type CategoryAction =
     SetIsLoadingGetCategoryByIdAction |
     SetIsLoadingEditCategoryAction |
     SetIsLoadingDeleteCategoryAction |
-    SetIsLoadingRecoverCategoryAction;
+    SetIsLoadingRecoverCategoryAction |
+    SetIsLoadingCategoryImageUploadAction;

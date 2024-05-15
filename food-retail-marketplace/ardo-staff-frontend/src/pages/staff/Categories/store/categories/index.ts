@@ -10,6 +10,7 @@ const initialState: CategoryState = {
     isLoadingEditCategory: false,
     isLoadingDeleteCategory: false,
     isLoadingRecoverCategory: false,
+    isLoadingCategoryImageUpload: false,
 };
 
 export default function categoryReducer(state = initialState, action: CategoryAction): CategoryState {
@@ -32,6 +33,8 @@ export default function categoryReducer(state = initialState, action: CategoryAc
             return {...state, isLoadingDeleteCategory: action.payload};
         case CategoryActionEnum.SET_IS_LOADING_RECOVER_CATEGORY:
             return {...state, isLoadingRecoverCategory: action.payload};
+        case CategoryActionEnum.SET_IS_LOADING_CATEGORY_IMAGE_UPLOAD:
+            return {...state, isLoadingCategoryImageUpload: action.payload};
         default:
             return state;
     }

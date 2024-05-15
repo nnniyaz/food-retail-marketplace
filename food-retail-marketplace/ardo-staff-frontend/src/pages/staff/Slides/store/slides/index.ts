@@ -1,4 +1,4 @@
-import {SlideActionEnum, SlideState} from "@pages/staff/Slides/store/slides/types";
+import {SlideAction, SlideActionEnum, SlideState} from "@pages/staff/Slides/store/slides/types";
 
 const initialState: SlideState = {
     slides: [],
@@ -10,9 +10,10 @@ const initialState: SlideState = {
     isLoadingEditSlide: false,
     isLoadingRecoverSlide: false,
     isLoadingDeleteSlide: false,
+    isLoadingSlideImageUpload: false,
 }
 
-export default function slideReducer(state = initialState, action: any): SlideState {
+export default function slideReducer(state = initialState, action: SlideAction): SlideState {
     switch (action.type) {
         case SlideActionEnum.SET_SLIDES:
             return {...state, slides: action.payload};
@@ -32,6 +33,8 @@ export default function slideReducer(state = initialState, action: any): SlideSt
             return {...state, isLoadingRecoverSlide: action.payload};
         case SlideActionEnum.SET_IS_LOADING_DELETE_SLIDE:
             return {...state, isLoadingDeleteSlide: action.payload};
+        case SlideActionEnum.SET_IS_LOADING_SLIDE_IMAGE_UPLOAD:
+            return {...state, isLoadingSlideImageUpload: action.payload};
         default:
             return state;
     }

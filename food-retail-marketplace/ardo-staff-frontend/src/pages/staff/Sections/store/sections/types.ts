@@ -10,6 +10,7 @@ export interface SectionState {
     isLoadingEditSection: boolean;
     isLoadingDeleteSection: boolean;
     isLoadingRecoverSection: boolean;
+    isLoadingSectionImageUpload: boolean;
 }
 
 export enum SectionActionEnum {
@@ -22,6 +23,7 @@ export enum SectionActionEnum {
     SET_IS_LOADING_EDIT_SECTION = "SET_IS_LOADING_EDIT_SECTION",
     SET_IS_LOADING_DELETE_SECTION = "SET_IS_LOADING_DELETE_SECTION",
     SET_IS_LOADING_RECOVER_SECTION = "SET_IS_LOADING_RECOVER_SECTION",
+    SET_IS_LOADING_SECTION_IMAGE_UPLOAD = "SET_IS_LOADING_SECTION_IMAGE_UPLOAD",
 }
 
 export interface SetSectionsAction {
@@ -69,6 +71,11 @@ export interface SetIsLoadingRecoverSectionAction {
     payload: boolean;
 }
 
+export interface SetIsLoadingSectionImageUploadAction {
+    type: SectionActionEnum.SET_IS_LOADING_SECTION_IMAGE_UPLOAD;
+    payload: boolean;
+}
+
 export type SectionAction =
     SetSectionsAction |
     SetSectionByIdAction |
@@ -78,4 +85,5 @@ export type SectionAction =
     SetIsLoadingGetSectionByIdAction |
     SetIsLoadingEditSectionAction |
     SetIsLoadingDeleteSectionAction |
-    SetIsLoadingRecoverSectionAction;
+    SetIsLoadingRecoverSectionAction |
+    SetIsLoadingSectionImageUploadAction;

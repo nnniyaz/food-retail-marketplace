@@ -17,7 +17,8 @@ import {
     SetIsLoadingGetCategoryByIdAction,
     SetIsLoadingEditCategoryAction,
     SetIsLoadingDeleteCategoryAction,
-    SetIsLoadingRecoverCategoryAction
+    SetIsLoadingRecoverCategoryAction,
+    SetIsLoadingCategoryImageUploadAction,
 } from "./types";
 
 export const CategoryActionCreators = {
@@ -55,6 +56,10 @@ export const CategoryActionCreators = {
     }),
     setIsLoadingRecoverCategory: (payload: boolean): SetIsLoadingRecoverCategoryAction => ({
         type: CategoryActionEnum.SET_IS_LOADING_RECOVER_CATEGORY,
+        payload
+    }),
+    setIsLoadingCategoryImageUpload: (payload: boolean): SetIsLoadingCategoryImageUploadAction => ({
+        type: CategoryActionEnum.SET_IS_LOADING_CATEGORY_IMAGE_UPLOAD,
         payload
     }),
 
@@ -224,6 +229,32 @@ export const CategoryActionCreators = {
             });
         } finally {
             dispatch(CategoryActionCreators.setIsLoadingDeleteCategory(false));
+        }
+    },
+
+    uploadCategoryImage: (request: FormData) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(CategoryActionCreators.setIsLoadingCategoryImageUpload(true));
+            const res = await CategoryService.uploadCategoryImage(request);
+            if (res.data.success) {
+                Notify.Success({title: txt.category_image_successfully_uploaded[currentLang], message: ""});
+                return res.data.data?.filename;
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+            });
+        } finally {
+            dispatch(CategoryActionCreators.setIsLoadingCategoryImageUpload(false));
         }
     },
 }

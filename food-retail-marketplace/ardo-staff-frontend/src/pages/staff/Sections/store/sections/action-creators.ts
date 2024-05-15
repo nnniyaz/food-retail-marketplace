@@ -1,5 +1,4 @@
 import {AppDispatch, RootState} from "@app/store";
-import {RouteNames} from "@pages/index";
 import {AddSectionReq, EditSectionReq, SectionService} from "@pages/staff/Sections/api/sectionService";
 import {Section} from "@entities/section/section";
 import {Paginate} from "@entities/base/paginate";
@@ -18,7 +17,8 @@ import {
     SetIsLoadingGetSectionByIdAction,
     SetIsLoadingEditSectionAction,
     SetIsLoadingDeleteSectionAction,
-    SetIsLoadingRecoverSectionAction
+    SetIsLoadingRecoverSectionAction,
+    SetIsLoadingSectionImageUploadAction,
 } from "./types";
 
 export const SectionActionCreators = {
@@ -56,6 +56,10 @@ export const SectionActionCreators = {
     }),
     setIsLoadingRecoverSection: (payload: boolean): SetIsLoadingRecoverSectionAction => ({
         type: SectionActionEnum.SET_IS_LOADING_RECOVER_SECTION,
+        payload
+    }),
+    setIsLoadingSectionImageUpload: (payload: boolean): SetIsLoadingSectionImageUploadAction => ({
+        type: SectionActionEnum.SET_IS_LOADING_SECTION_IMAGE_UPLOAD,
         payload
     }),
 
@@ -226,5 +230,31 @@ export const SectionActionCreators = {
         } finally {
             dispatch(SectionActionCreators.setIsLoadingDeleteSection(false));
         }
-    }
+    },
+
+    uploadSectionImage: (request: FormData) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(SectionActionCreators.setIsLoadingSectionImageUpload(true));
+            const res = await SectionService.uploadSectionImage(request);
+            if (res.data.success) {
+                Notify.Success({title: txt.section_image_successfully_uploaded[currentLang], message: ""});
+                return res.data.data?.filename;
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+            });
+        } finally {
+            dispatch(SectionActionCreators.setIsLoadingSectionImageUpload(false));
+        }
+    },
 }

@@ -2,17 +2,17 @@ import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {Langs} from "@entities/base/MlString";
+import {RouteNames} from "@pages//";
 import {TableParams} from "@entities/base/tableParams";
 import {User, UserType} from "@entities/user/user";
+import {CountryCodes, Phone} from "@entities/base/phone";
 import {txt} from "@shared/core/i18ngen";
 import {Filters} from "@shared/ui/Filters";
 import {useActions} from "@shared/lib/hooks/useActions";
-import {dateFormat} from "@shared/lib/date/date-format";
+import {phoneFormat} from "@shared/lib/phone/phoneFormat";
 import {TableHeader} from "@shared/ui/TableTools/TableHeader";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {userTypeTranslate} from "@shared/lib/options/userTypeOptions";
-import {RouteNames} from "@pages//";
 import classes from "./Users.module.scss";
 
 export const Users: FC = () => {
@@ -44,6 +44,11 @@ export const Users: FC = () => {
             dataIndex: "id"
         },
         {
+            key: "code",
+            title: txt.code[currentLang],
+            dataIndex: "code"
+        },
+        {
             key: "firstName",
             title: txt.first_name[currentLang],
             dataIndex: "firstName"
@@ -52,6 +57,12 @@ export const Users: FC = () => {
             key: "lastName",
             title: txt.last_name[currentLang],
             dataIndex: "lastName"
+        },
+        {
+            key: "phone",
+            title: txt.phone[currentLang],
+            dataIndex: "phone",
+            render: (phone: Phone) => phone?.countryCode && phone?.number ? `${CountryCodes[phone.countryCode].dialCode} ${phoneFormat(phone.number, phone.countryCode)}` : ""
         },
         {
             key: "email",
@@ -63,36 +74,6 @@ export const Users: FC = () => {
             title: txt.user_type[currentLang],
             dataIndex: "userType",
             render: (userType: UserType) => userTypeTranslate(userType, currentLang)
-        },
-        {
-            key: "preferredLang",
-            title: txt.preferred_lang[currentLang],
-            dataIndex: "preferredLang",
-            render: (preferredLang: Langs) => preferredLang
-        },
-        {
-            key: "isDeleted",
-            title: txt.is_deleted[currentLang],
-            dataIndex: "isDeleted",
-            render: (isDeleted: boolean) => isDeleted ? txt.yes[currentLang] : txt.no[currentLang]
-        },
-        {
-            key: "createdAt",
-            title: txt.created_at[currentLang],
-            dataIndex: "createdAt",
-            render: (createdAt: Timestamp) => dateFormat(createdAt)
-        },
-        {
-            key: "updatedAt",
-            title: txt.updated_at[currentLang],
-            dataIndex: "updatedAt",
-            render: (updateAt: Timestamp) => dateFormat(updateAt)
-        },
-        {
-            key: "version",
-            title: txt.version[currentLang],
-            dataIndex: "version",
-            align: "center"
         },
     ];
 

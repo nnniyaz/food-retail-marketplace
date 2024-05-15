@@ -2,9 +2,10 @@ import { AxiosResponse } from "axios";
 import {Paginate} from "@entities/base/paginate";
 import {MlString} from "@entities/base/MlString";
 import { SectionsData, Section } from "@entities/section/section";
-import {$api} from "@shared/api";
+import {$api, $apiFormData} from "@shared/api";
 import {ApiRoutes} from "@shared/api/api-routes";
 import {ErrorResponse, SuccessResponse } from "@shared/api/response/response";
+import {ImageUploadResponse} from "@entities/base/imageUploadResponse";
 
 export interface AddSectionReq {
     name: MlString;
@@ -39,5 +40,9 @@ export class SectionService {
 
     static async deleteSection(sectionId: string): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
         return $api.delete<SuccessResponse<null> | ErrorResponse>(ApiRoutes.DELETE_SECTION.replace(":section_id", sectionId));
+    }
+
+    static async uploadSectionImage(request: FormData): Promise<AxiosResponse<SuccessResponse<ImageUploadResponse> | ErrorResponse>> {
+        return $apiFormData.post<SuccessResponse<ImageUploadResponse> | ErrorResponse>(ApiRoutes.POST_UPLOAD_SECTION_IMAGE, request);
     }
 }

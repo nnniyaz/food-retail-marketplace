@@ -10,6 +10,7 @@ const initialState: SectionState = {
     isLoadingEditSection: false,
     isLoadingDeleteSection: false,
     isLoadingRecoverSection: false,
+    isLoadingSectionImageUpload: false,
 };
 
 export default function sectionReducer(state = initialState, action: SectionAction): SectionState {
@@ -32,6 +33,8 @@ export default function sectionReducer(state = initialState, action: SectionActi
             return {...state, isLoadingDeleteSection: action.payload};
         case SectionActionEnum.SET_IS_LOADING_RECOVER_SECTION:
             return {...state, isLoadingRecoverSection: action.payload};
+        case SectionActionEnum.SET_IS_LOADING_SECTION_IMAGE_UPLOAD:
+            return {...state, isLoadingSectionImageUpload: action.payload};
         default:
             return state;
     }

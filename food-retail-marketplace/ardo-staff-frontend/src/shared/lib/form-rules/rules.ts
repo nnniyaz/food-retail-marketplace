@@ -1,6 +1,7 @@
 import {FormInstance, FormRule} from "antd";
 import {Langs, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
+import {CountryCodeEnum, CountryCodes, Phone} from "@entities/base/phone";
 
 interface IRules {
     required: (message: string) => FormRule,
@@ -8,6 +9,7 @@ interface IRules {
     email: (message: string) => FormRule,
     minmaxLen: (message: string, min: number, max: number) => FormRule,
     matchPass: (form: FormInstance, lang: Langs) => FormRule,
+    phone: (form: FormInstance, lang: Langs) => FormRule,
 }
 
 export const rules: IRules = {
@@ -44,5 +46,34 @@ export const rules: IRules = {
             }
             return Promise.reject(new Error(txt.password_does_not_match[lang]));
         },
+    }),
+    phone: (form: FormInstance, lang: Langs) => ({
+        validator(_: any, value: string) {
+            const phone = form.getFieldValue('phone') as Phone;
+            if (!phone.number) {
+                return Promise.resolve();
+            }
+
+            switch (phone.countryCode) {
+                case CountryCodeEnum.KZ:
+                    if (phone.number.length !== 10) {
+                        return Promise.reject(txt.phone_invalid_format[lang]);
+                    }
+                    if (`${CountryCodes[phone.countryCode].dialCode}${phone.number}`.match(/^\+77\d{9}$/) === null) {
+                        return Promise.reject(txt.phone_invalid_format[lang]);
+                    }
+                    break;
+                case CountryCodeEnum.HK:
+                    if (phone.number.length !== 8) {
+                        return Promise.reject(txt.phone_invalid_format[lang]);
+                    }
+                    if (`${CountryCodes[phone.countryCode].dialCode}${phone.number}`.match(/^\+852\d{8}$/) === null) {
+                        return Promise.reject(txt.phone_invalid_format[lang]);
+                    }
+                    break;
+            }
+
+            return Promise.resolve();
+        }
     }),
 }

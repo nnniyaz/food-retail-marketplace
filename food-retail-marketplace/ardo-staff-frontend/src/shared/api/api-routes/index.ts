@@ -17,7 +17,13 @@ export enum ApiRoutes {
     POST_USER = "/management/users",
     PUT_USER_CREDENTIALS = "/management/users/credentials/:user_id",
     PUT_USER_EMAIL = "/management/users/email/:user_id",
+    PUT_USER_PHONE = "/management/users/phone/:user_id",
     PUT_USER_PREFERRED_LANG = "/management/users/preferred-lang/:user_id",
+    PUT_USER_ROLE = "/management/users/role/:user_id",
+    POST_USER_DELIVERY_POINT = "/delivery-point/:user_id",
+    PUT_USER_DELIVERY_POINT = "/delivery-point/:user_id",
+    DELETE_USER_DELIVERY_POINT = "/delivery-point/:user_id",
+    PUT_USER_LAST_DELIVERY_POINT = "/last-delivery-point/:user_id",
     PUT_USER_PASSWORD = "/management/users/password/:user_id",
     PUT_USER_RECOVER = "/management/users/:user_id",
     DELETE_USER = "/management/users/:user_id",
@@ -70,5 +76,8 @@ export enum ApiRoutes {
     DELETE_SLIDE = "/management/slides/:slide_id",
 
     // -------------------------------- UPLOAD --------------------------------
+    POST_UPLOAD_SLIDE_IMAGE = "/upload/slide-image",
+    POST_UPLOAD_SECTION_IMAGE = "/upload/section-image",
+    POST_UPLOAD_CATEGORY_IMAGE = "/upload/category-image",
     POST_UPLOAD_PRODUCT_IMAGE = "/upload/product-image",
 }

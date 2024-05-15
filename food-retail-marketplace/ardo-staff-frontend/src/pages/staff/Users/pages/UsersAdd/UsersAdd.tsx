@@ -5,8 +5,10 @@ import {Button, Card, Form, Input, Select} from "antd";
 import {RouteNames} from "@pages//";
 import {Langs} from "@entities/base/MlString";
 import {UserType} from "@entities/user/user";
+import {CountryCodeEnum, Phone} from "@entities/base/phone";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
+import {PhoneInput} from "@shared/ui/Input/PhoneInput";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {langOptions} from "@shared/lib/options/langOptions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
@@ -17,9 +19,17 @@ const initialFormValues = {
     firstName: "",
     lastName: "",
     email: "",
+    phone: {
+        countryCode: CountryCodeEnum.HK,
+        number: ""
+    },
     password: "",
     userType: UserType.CLIENT,
     preferredLang: Langs.EN,
+    address: "",
+    floor: "",
+    apartment: "",
+    deliveryComment: "",
 }
 
 export const UsersAdd: FC = () => {
@@ -53,9 +63,14 @@ export const UsersAdd: FC = () => {
             firstName: values.firstName,
             lastName: values.lastName,
             email: values.email,
+            phone: values.phone,
             password: values.password,
             userType: values.userType,
-            preferredLang: values.preferredLang
+            preferredLang: values.preferredLang,
+            address: values.address,
+            floor: values.floor,
+            apartment: values.apartment,
+            deliveryComment: values.deliveryComment
         }, {navigate, to: RouteNames.USERS});
     }
 
@@ -90,16 +105,34 @@ export const UsersAdd: FC = () => {
                         </Form.Item>
                     </div>
 
-                    <Form.Item
-                        name={"email"}
-                        label={txt.email[currentLang]}
-                        rules={[
-                            rules.required(txt.please_enter_email[currentLang]),
-                            rules.email(txt.please_enter_valid_email[currentLang])
-                        ]}
-                    >
-                        <Input placeholder={txt.enter_email[currentLang]}/>
-                    </Form.Item>
+                    <div className={classes.form__row}>
+                        <Form.Item
+                            name={"email"}
+                            label={txt.email[currentLang]}
+                            className={classes.form__item}
+                            rules={[
+                                rules.required(txt.please_enter_email[currentLang]),
+                                rules.email(txt.please_enter_valid_email[currentLang])
+                            ]}
+                        >
+                            <Input placeholder={txt.enter_email[currentLang]}/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name={"phone"}
+                            label={txt.phone[currentLang]}
+                            className={classes.form__item}
+                            rules={[
+                                rules.required(txt.please_enter_phone[currentLang]),
+                                rules.phone(form, currentLang)
+                            ]}
+                        >
+                            <PhoneInput
+                                value={form.getFieldValue("phone")}
+                                onChange={(value: Phone) => form.setFieldValue("phone", value)}
+                            />
+                        </Form.Item>
+                    </div>
 
                     <Form.Item
                         name={"userType"}
@@ -143,6 +176,51 @@ export const UsersAdd: FC = () => {
                             ]}
                         >
                             <Input placeholder={txt.enter_confirm_password[currentLang]}/>
+                        </Form.Item>
+                    </div>
+
+                    <div className={classes.form__row}>
+                        <Form.Item
+                            name={"address"}
+                            label={txt.address[currentLang]}
+                            className={classes.form__item}
+                            rules={[
+                                rules.required(txt.please_enter_address[currentLang]),
+                            ]}
+                        >
+                            <Input placeholder={txt.enter_address[currentLang]}/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name={"floor"}
+                            label={txt.floor[currentLang]}
+                            className={classes.form__item}
+                            rules={[
+                                rules.required(txt.please_enter_floor[currentLang]),
+                            ]}
+                        >
+                            <Input placeholder={txt.enter_floor[currentLang]}/>
+                        </Form.Item>
+                    </div>
+
+                    <div className={classes.form__row}>
+                        <Form.Item
+                            name={"apartment"}
+                            label={txt.apartment[currentLang]}
+                            className={classes.form__item}
+                            rules={[
+                                rules.required(txt.please_enter_apartment[currentLang]),
+                            ]}
+                        >
+                            <Input placeholder={txt.enter_apartment[currentLang]}/>
+                        </Form.Item>
+
+                        <Form.Item
+                            name={"deliveryComment"}
+                            label={txt.delivery_comment[currentLang]}
+                            className={classes.form__item}
+                        >
+                            <Input placeholder={txt.enter_delivery_comment[currentLang]}/>
                         </Form.Item>
                     </div>
 

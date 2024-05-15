@@ -17,6 +17,7 @@ import {
     SetIsLoadingEditSlideAction,
     SetIsLoadingRecoverSlideAction,
     SetIsLoadingDeleteSlideAction,
+    SetIsLoadingSlideImageUploadAction,
 } from "./types";
 
 export const SlideActionCreators = {
@@ -54,6 +55,10 @@ export const SlideActionCreators = {
     }),
     setIsLoadingDeleteSlide: (payload: boolean): SetIsLoadingDeleteSlideAction => ({
         type: SlideActionEnum.SET_IS_LOADING_DELETE_SLIDE,
+        payload
+    }),
+    setIsLoadingSlideImageUpload: (payload: boolean): SetIsLoadingSlideImageUploadAction => ({
+        type: SlideActionEnum.SET_IS_LOADING_SLIDE_IMAGE_UPLOAD,
         payload
     }),
 
@@ -223,6 +228,32 @@ export const SlideActionCreators = {
             });
         } finally {
             dispatch(SlideActionCreators.setIsLoadingDeleteSlide(false));
+        }
+    },
+
+    uploadSlideImage: (request: FormData) => async (dispatch: AppDispatch, getState: () => RootState) => {
+        const {currentLang} = getState().lang;
+        try {
+            dispatch(SlideActionCreators.setIsLoadingSlideImageUpload(true));
+            const res = await SlidesService.uploadSlideImage(request);
+            if (res.data.success) {
+                Notify.Success({title: txt.slide_image_successfully_uploaded[currentLang], message: ""});
+                return res.data.data?.filename;
+            } else {
+                FailedResponseHandler({
+                    messages: res.data?.messages,
+                    httpStatus: res.status,
+                });
+            }
+        } catch (e: any) {
+            httpHandler({
+                error: e,
+                httpStatus: e?.response?.status,
+                dispatch: dispatch,
+                currentLang: currentLang,
+            });
+        } finally {
+            dispatch(SlideActionCreators.setIsLoadingSlideImageUpload(false));
         }
     },
 }
