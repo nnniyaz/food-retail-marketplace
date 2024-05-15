@@ -94,6 +94,15 @@ export const Users: FC = () => {
     }
 
     useEffect(() => {
+        setPagination({
+            pagination: {
+                ...pagination.pagination,
+                total: usersCount
+            }
+        });
+    }, [usersCount]);
+
+    useEffect(() => {
         const controller = new AbortController();
         fetchUsers({
             limit: pagination.pagination?.pageSize || 25,

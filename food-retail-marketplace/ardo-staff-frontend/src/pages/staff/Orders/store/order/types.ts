@@ -5,6 +5,11 @@ export interface OrderState {
     orderById: Order | null;
     ordersCount: number;
     isLoadingGetOrders: boolean;
+    isLoadingGetOrderById: boolean;
+    isLoadingAddOrder: boolean;
+    isLoadingEditOrderStatus: boolean;
+    isLoadingRecoverOrder: boolean;
+    isLoadingDeleteOrder: boolean;
 }
 
 export enum OrderActionEnum {
@@ -12,6 +17,11 @@ export enum OrderActionEnum {
     SET_ORDER_BY_ID = "SET_ORDER_BY_ID",
     SET_ORDERS_COUNT = "SET_ORDERS_COUNT",
     SET_IS_LOADING_GET_ORDERS = "SET_IS_LOADING_GET_ORDERS",
+    SET_IS_LOADING_GET_ORDER_BY_ID = "SET_IS_LOADING_GET_ORDER_BY_ID",
+    SET_IS_LOADING_ADD_ORDER = "SET_IS_LOADING_ADD_ORDER",
+    SET_IS_LOADING_EDIT_ORDER_STATUS = "SET_IS_LOADING_EDIT_ORDER_STATUS",
+    SET_IS_LOADING_RECOVER_ORDER = "SET_IS_LOADING_RECOVER_ORDER",
+    SET_IS_LOADING_DELETE_ORDER = "SET_IS_LOADING_DELETE_ORDER",
 }
 
 export interface SetOrdersAction {
@@ -34,4 +44,38 @@ export interface SetIsLoadingGetOrdersAction {
     payload: boolean;
 }
 
-export type OrderAction = SetOrdersAction | SetOrderByIdAction | SetOrdersCountAction | SetIsLoadingGetOrdersAction;
+export interface SetIsLoadingGetOrderByIdAction {
+    type: OrderActionEnum.SET_IS_LOADING_GET_ORDER_BY_ID;
+    payload: boolean;
+}
+
+export interface SetIsLoadingAddOrderAction {
+    type: OrderActionEnum.SET_IS_LOADING_ADD_ORDER;
+    payload: boolean;
+}
+
+export interface SetIsLoadingEditOrderStatusAction {
+    type: OrderActionEnum.SET_IS_LOADING_EDIT_ORDER_STATUS;
+    payload: boolean;
+}
+
+export interface SetIsLoadingRecoverOrderAction {
+    type: OrderActionEnum.SET_IS_LOADING_RECOVER_ORDER;
+    payload: boolean;
+}
+
+export interface SetIsLoadingDeleteOrderAction {
+    type: OrderActionEnum.SET_IS_LOADING_DELETE_ORDER;
+    payload: boolean;
+}
+
+export type OrderAction =
+    SetOrdersAction |
+    SetOrderByIdAction |
+    SetOrdersCountAction |
+    SetIsLoadingGetOrdersAction |
+    SetIsLoadingGetOrderByIdAction |
+    SetIsLoadingAddOrderAction |
+    SetIsLoadingEditOrderStatusAction |
+    SetIsLoadingRecoverOrderAction |
+    SetIsLoadingDeleteOrderAction;

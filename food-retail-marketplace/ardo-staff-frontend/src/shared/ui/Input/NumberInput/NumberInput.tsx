@@ -13,6 +13,7 @@ export const NumberInput: FC<NumberInputProps> = (props) => {
             type={"number"}
             onChange={(e) => {
                 if (isNaN(Number(e.target.value))) return;
+                console.log(Number(e.target.value));
                 props.onChange(Number(e.target.value));
             }}
         />

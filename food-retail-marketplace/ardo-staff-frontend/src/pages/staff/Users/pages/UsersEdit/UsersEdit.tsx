@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {Button, Card, Form, Input, Select} from "antd";
 import {isEmpty} from "lodash";
-import {RouteNames} from "@pages/";
+import {RouteNames} from "@pages/index";
 import {UserType} from "@entities/user/user";
 import {CountryCodeEnum, CountryCodes, Phone} from "@entities/base/phone";
 import {txt} from "@shared/core/i18ngen";

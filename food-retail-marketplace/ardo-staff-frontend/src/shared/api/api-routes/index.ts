@@ -34,7 +34,7 @@ export enum ApiRoutes {
     GET_ORDER = "/management/orders/:order_id",
     POST_ORDER = "/management/orders",
     PUT_ORDER_STATUS = "/management/orders/status/:order_id",
-    PUT_ORDER_RECOVER = "/management/orders/:order_id",
+    PUT_ORDER_RECOVER = "/management/orders/recover/:order_id",
     DELETE_ORDER = "/management/orders/:order_id",
 
     // ------------------------ MANAGEMENT OF CATALOG -----------------------

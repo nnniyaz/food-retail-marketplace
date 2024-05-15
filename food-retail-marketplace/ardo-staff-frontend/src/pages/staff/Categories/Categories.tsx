@@ -90,6 +90,15 @@ export const Categories = () => {
     }
 
     useEffect(() => {
+        setPagination({
+            pagination: {
+                ...pagination.pagination,
+                total: categoriesCount
+            }
+        });
+    }, [categoriesCount]);
+
+    useEffect(() => {
         const controller = new AbortController();
         fetchCategories({
             limit: pagination.pagination?.pageSize || 25,

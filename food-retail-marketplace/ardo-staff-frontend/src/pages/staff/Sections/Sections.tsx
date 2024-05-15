@@ -91,6 +91,15 @@ export const Sections = () => {
     }
 
     useEffect(() => {
+        setPagination({
+            pagination: {
+                ...pagination.pagination,
+                total: sectionsCount
+            }
+        });
+    }, [sectionsCount]);
+
+    useEffect(() => {
         const controller = new AbortController();
         fetchSections({
             limit: pagination.pagination?.pageSize || 25,

@@ -91,6 +91,15 @@ export const Slides: FC = () => {
     }
 
     useEffect(() => {
+        setPagination({
+            pagination: {
+                ...pagination.pagination,
+                total: slidesCount
+            }
+        });
+    }, [slidesCount]);
+
+    useEffect(() => {
         const controller = new AbortController();
         fetchSlides({
             limit: pagination.pagination?.pageSize || 25,

@@ -3,13 +3,15 @@ import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {RouteNames} from "@pages/index";
-import {Order} from "@entities/order/order";
+import {Order, OrderProduct} from "@entities/order/order";
+import {Currency} from "@entities/base/currency";
 import {TableParams} from "@entities/base/tableParams";
 import {txt} from "@shared/core/i18ngen";
 import {Filters} from "@shared/ui/Filters";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {dateFormat} from "@shared/lib/date/date-format";
 import {TableHeader} from "@shared/ui/TableTools/TableHeader";
+import {priceFormat} from "@shared/lib/price/priceFormat";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "@pages/staff/Orders/Orders.module.scss";
 
@@ -37,11 +39,6 @@ export const Orders: FC = () => {
             )
         },
         {
-            key: "id",
-            title: txt.id[currentLang],
-            dataIndex: "id"
-        },
-        {
             key: "number",
             title: txt.order_number[currentLang],
             dataIndex: "number",
@@ -54,19 +51,14 @@ export const Orders: FC = () => {
         {
             key: "totalPrice",
             title: txt.total_price[currentLang],
-            dataIndex: "totalPrice"
+            dataIndex: "totalPrice",
+            render: (_, record) => priceFormat(record.totalPrice, record.currency)
         },
         {
             key: "createdAt",
             title: txt.created_at[currentLang],
             dataIndex: "createdAt",
             render: (createdAt: Timestamp) => dateFormat(createdAt)
-        },
-        {
-            key: "updatedAt",
-            title: txt.updated_at[currentLang],
-            dataIndex: "updatedAt",
-            render: (updatedAt: Timestamp) => dateFormat(updatedAt)
         },
     ];
 
@@ -83,8 +75,17 @@ export const Orders: FC = () => {
 
     const handleOnAddProduct = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent> | React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
         e.preventDefault();
-        navigate(RouteNames.PRODUCTS_ADD);
+        navigate(RouteNames.ORDERS_ADD);
     }
+
+    useEffect(() => {
+        setPagination({
+            pagination: {
+                ...pagination.pagination,
+                total: ordersCount
+            }
+        });
+    }, [ordersCount]);
 
     useEffect(() => {
         const controller = new AbortController();
@@ -118,12 +119,67 @@ export const Orders: FC = () => {
                     ]}
                 />
                 <Table
+                    bordered={true}
                     columns={columns}
                     dataSource={data}
                     loading={isLoadingGetOrders}
                     scroll={{x: 500}}
                     pagination={pagination.pagination}
                     onChange={(pagination) => setPagination({pagination})}
+                    expandable={{
+                        expandedRowRender: (record) => (
+                            <Table
+                                style={{margin: "20px 10px 20px 0"}}
+                                size={"small"}
+                                pagination={false}
+                                dataSource={record.products}
+                                bordered={true}
+                                columns={[
+                                    {
+                                        key: "productName",
+                                        title: txt.name[currentLang],
+                                        dataIndex: "productName",
+                                        render: (_, subRecord: OrderProduct) => subRecord.productName[currentLang]
+                                    },
+                                    {
+                                        key: "pricePerUnit",
+                                        title: txt.price[currentLang],
+                                        dataIndex: "pricePerUnit",
+                                        render: (_, subRecord: OrderProduct) => priceFormat(subRecord.pricePerUnit, record.currency)
+                                    },
+                                    {
+                                        key: "quantity",
+                                        title: txt.quantity[currentLang],
+                                        dataIndex: "quantity",
+                                    },
+                                    {
+                                        key: "totalPrice",
+                                        dataIndex: "totalPrice",
+                                        title: txt.total_price[currentLang],
+                                        render: (_, subRecord: OrderProduct) => priceFormat(subRecord.totalPrice, record.currency)
+                                    },
+                                ]}
+                                summary={() => (
+                                    <Table.Summary>
+                                        <Table.Summary.Row>
+                                            <Table.Summary.Cell index={0}></Table.Summary.Cell>
+                                            <Table.Summary.Cell index={1}></Table.Summary.Cell>
+                                            <Table.Summary.Cell index={2}>
+                                                <p style={{color: "#005FF9"}}>
+                                                    {txt.total[currentLang].toUpperCase()}
+                                                </p>
+                                            </Table.Summary.Cell>
+                                            <Table.Summary.Cell index={3}>
+                                                <p style={{color: "#005FF9"}}>
+                                                    {priceFormat(record.totalPrice, record.currency)}
+                                                </p>
+                                            </Table.Summary.Cell>
+                                        </Table.Summary.Row>
+                                    </Table.Summary>
+                                )}
+                            />
+                        )
+                    }}
                 />
             </Card>
         </div>

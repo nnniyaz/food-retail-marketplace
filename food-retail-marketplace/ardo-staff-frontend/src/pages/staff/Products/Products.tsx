@@ -2,18 +2,18 @@ import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
-import {Product, ProductStatus} from "@entities/product/product";
+import {RouteNames} from "@pages/index";
+import {MlString} from "@entities/base/MlString";
 import {TableParams} from "@entities/base/tableParams";
+import {Product, ProductStatus} from "@entities/product/product";
 import {txt} from "@shared/core/i18ngen";
 import {Filters} from "@shared/ui/Filters";
+import {dateFormat} from "@shared/lib/date/date-format";
+import {useActions} from "@shared/lib/hooks/useActions";
 import {TableHeader} from "@shared/ui/TableTools/TableHeader";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import {RouteNames} from "@pages//";
-import classes from "./Products.module.scss";
-import {useActions} from "@shared/lib/hooks/useActions";
-import {dateFormat} from "@shared/lib/date/date-format";
-import {MlString} from "@entities/base/MlString";
 import {productStatusTranslate} from "@shared/lib/options/productStatusOptions";
+import classes from "./Products.module.scss";
 
 export const Products: FC = () => {
     const navigate = useNavigate();

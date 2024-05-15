@@ -9,6 +9,7 @@ import {phoneFormat} from "@shared/lib/phone/phoneFormat";
 interface PhoneInputProps {
     value: Phone;
     onChange: (value: Phone) => void;
+    disabled?: boolean;
 }
 
 export const PhoneInput: FC<PhoneInputProps> = (props) => {
@@ -49,6 +50,7 @@ export const PhoneInput: FC<PhoneInputProps> = (props) => {
                     });
                 }}
                 style={{width: "75px"}}
+                disabled={props.disabled}
             />
             <Input
                 type={"tel"}
@@ -65,6 +67,7 @@ export const PhoneInput: FC<PhoneInputProps> = (props) => {
                     });
                 }}
                 style={{width: "calc(100% - 75px)"}}
+                disabled={props.disabled}
             />
         </Space.Compact>
     );
