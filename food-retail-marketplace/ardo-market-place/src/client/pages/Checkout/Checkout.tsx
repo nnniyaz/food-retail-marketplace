@@ -26,12 +26,15 @@ export const Checkout = () => {
         customerContacts
     } = useTypedSelector(state => state.cartState);
     const {user} = useTypedSelector(state => state.userState);
+    const {catalog} = useTypedSelector(state => state.catalogState);
     const {setDeliveryInfo, makeOrder, setCustomerContacts} = useActions();
     const [isValid, setIsValid] = useState({
         address: true,
         floor: true,
         phone: true
     });
+
+    const [deliveryDate, setDeliveryDate] = useState("");
 
     const handleAddressChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setDeliveryInfo({...deliveryInfo, address: e.target.value});
@@ -91,7 +94,7 @@ export const Checkout = () => {
 
     const handleMakeOrder = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        makeOrder({navigate: navigate, path: RouteNames.SUCCESS});
+        makeOrder(deliveryDate, {navigate: navigate, path: RouteNames.SUCCESS});
     }
 
     return (
@@ -208,24 +211,27 @@ export const Checkout = () => {
                                 required={false}
                             />
                             <CheckoutInput
-                                label={translate("delivery_instruction_for_courier", currentLang, langs)}
-                                placeholder={translate("enter_delivery_instruction", currentLang, langs)}
+                                label={translate("please_write_down_the_delivery_date_and_time", currentLang, langs)}
+                                placeholder={translate("may_16th_2024_10_00", currentLang, langs)}
                                 value={deliveryInfo.deliveryComment}
                                 onChange={handleDeliveryCommentChange}
-                                required={false}
+                                required={true}
                             />
                         </React.Fragment>
                     )}
 
-                    <Alert
-                        message={
-                            <span style={{color: "#000"}}>{"Please note that the total amount being displayed is not final summary of fees. This is average amount you will pay. All details about fees and delivery will be provided in the final invoice once Supplier confirms the order. Final price, catchweight and delivery time may slightly vary. The delivery is free for orders meeting MOQ and delivery range requirements. Otherwise, the delivery fee will be added to final invoice. By default, the items will be delivered within 24 hours, unless specified by the Buyer or Supplier. You can place an order on a platform any time. However, order confirmation is based on Supplier’s cut off time. After order placement please check order status and your email inbox."}</span>
-                        }
+                    <CheckoutInput
+                        label={translate("please_write_down_the_delivery_date_and_time", currentLang, langs)}
+                        placeholder={translate("may_16th_2024_10_00", currentLang, langs)}
+                        value={deliveryDate}
+                        onChange={(e) => setDeliveryDate(e.target.value)}
+                        required={true}
                     />
 
                     <Alert
                         message={
-                            <span style={{color: "#000"}}>{"Apart from that you also should understand that there is a Minimum Order Quantity (MOQ) fee which will vary according to the order size. If the order size meets the MOQ, the MOQ fee will be not added to the total price."}</span>
+                            <span
+                                style={{color: "#000"}}>{"Please note that the total amount being displayed is not final summary of fees. This is average amount you will pay. All details about fees and delivery will be provided in the final invoice once Supplier confirms the order. Final price, catchweight and delivery time may slightly vary. The delivery is free for orders meeting MOQ and delivery range requirements. Otherwise, the delivery fee will be added to final invoice. By default, the items will be delivered within 24 hours, unless specified by the Buyer or Supplier. You can place an order on a platform any time. However, order confirmation is based on Supplier’s cut off time. After order placement please check order status and your email inbox."}</span>
                         }
                     />
                 </section>
@@ -238,6 +244,14 @@ export const Checkout = () => {
                             </td>
                             <td className={classes.checkout__price}>{priceFormat(cartPrice(cart), currency)}</td>
                         </tr>
+                        {catalog.orderSettings.moq.freeFrom > cartTotalPrice(cart) && (
+                            <tr>
+                                <td className={classes.checkout__price__label}>
+                                    {translate("moq_not_met", currentLang, langs)}
+                                </td>
+                                <td className={classes.checkout__price}>{priceFormat(catalog.orderSettings.moq.fee, currency)}</td>
+                            </tr>
+                        )}
                         </tbody>
                         <tfoot>
                         <tr>
@@ -277,7 +291,10 @@ const CheckoutInput = (
 ) => {
     return (
         <label className={classes.checkout__input__row}>
-            <span>{required && <span style={{color: "red", marginRight: "5px"}}>*</span>}{label}</span>
+            <span>{required && <span style={{
+                color: "red",
+                marginRight: "5px"
+            }}>*</span>}{label[0].toUpperCase() + label.slice(1).toLowerCase()}</span>
             <input
                 value={value}
                 onChange={onChange}

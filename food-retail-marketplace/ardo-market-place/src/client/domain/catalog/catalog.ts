@@ -15,6 +15,12 @@ export type PublishedCatalog = {
     categories: { [categoryId: string]: Category };
     products: { [productId: string]: Product };
     slides: Slide[];
+    orderSettings: {
+        moq: {
+            fee: number;
+            freeFrom: number;
+        };
+    }
     createdAt: string;
     updatedAt: string;
     version: number;

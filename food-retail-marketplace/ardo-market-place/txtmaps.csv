@@ -122,3 +122,7 @@
 "unit","единица измерения","unit"
 "moq","минимальное количество заказа","moq"
 "cutOffTime","время последнего заказа","cut-off time"
+"please_write_down_the_delivery_date_and_time","пожалуйста, запишите дату и время доставки","please write down the delivery date and time"
+"may_16th_2024_10_00","16 мая 2024, 14:30","may 16th 2024, 14:30"
+"delivery_date","дата доставки","delivery date"
+"moq_not_met","минимальное количество заказа не выполнено","MOQ not met"

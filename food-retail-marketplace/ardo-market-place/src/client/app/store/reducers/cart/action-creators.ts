@@ -76,7 +76,7 @@ export const CartActionCreator = {
         payload
     }),
 
-    makeOrder: (navigateCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    makeOrder: (deliveryDate: string, navigateCallback: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
         const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
@@ -120,7 +120,12 @@ export const CartActionCreator = {
                 order.totalPrice += item.totalPrice;
             });
             order.customerContacts = getState().cartState.customerContacts;
-            order.deliveryInfo = getState().cartState.deliveryInfo;
+            order.deliveryInfo = {
+                ...getState().cartState.deliveryInfo,
+                deliveryComment: getState().cartState.deliveryInfo.deliveryComment
+                    ? getState().cartState.deliveryInfo.deliveryComment + "; " + txts["delivery_date"][currentLang][0].toUpperCase() + txts["delivery_date"][currentLang].slice(1).toLowerCase() + ": " + deliveryDate
+                    : txts["delivery_date"][currentLang][0].toUpperCase() + txts["delivery_date"][currentLang].slice(1).toLowerCase() + ": " + deliveryDate,
+            };
 
             err = ValidateOrderRequest(order);
             if (err !== null) {
