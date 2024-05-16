@@ -3,7 +3,7 @@ import {Link, useNavigate} from "react-router-dom";
 import {Card, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {RouteNames} from "@pages/index";
-import {Order, OrderProduct} from "@entities/order/order";
+import {Order, OrderProduct, StatusHistory} from "@entities/order/order";
 import {Currency} from "@entities/base/currency";
 import {TableParams} from "@entities/base/tableParams";
 import {txt} from "@shared/core/i18ngen";
@@ -14,6 +14,7 @@ import {TableHeader} from "@shared/ui/TableTools/TableHeader";
 import {priceFormat} from "@shared/lib/price/priceFormat";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "@pages/staff/Orders/Orders.module.scss";
+import {getLastStatusHistory} from "@shared/lib/status/getLastStatusHistory";
 
 export const Orders: FC = () => {
     const navigate = useNavigate();
@@ -44,9 +45,10 @@ export const Orders: FC = () => {
             dataIndex: "number",
         },
         {
-            key: "status",
+            key: "statusHistory",
             title: txt.status[currentLang],
-            dataIndex: "status",
+            dataIndex: "statusHistory",
+            render: (statusHistory: StatusHistory[]) => getLastStatusHistory(statusHistory)?.status || ""
         },
         {
             key: "totalPrice",

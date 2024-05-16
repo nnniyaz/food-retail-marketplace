@@ -11,7 +11,7 @@ import {
     AppstoreOutlined,
     AppstoreAddOutlined,
     UnorderedListOutlined,
-    ShoppingOutlined, PictureOutlined,
+    ShoppingOutlined, PictureOutlined, LayoutOutlined,
 } from "@ant-design/icons";
 import {MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
@@ -41,6 +41,7 @@ import {SectionsEdit} from "@pages/staff/Sections/pages/SectionsEdit";
 import {Slides} from "@pages/staff/Slides";
 import {SlidesAdd} from "@pages/staff/Slides/pages/SlidesAdd";
 import {SlidesEdit} from "@pages/staff/Slides/pages/SlidesEdit";
+import {OrderSettings} from "@pages/staff/OrderSettings";
 
 export interface IRoute {
     path: string;
@@ -77,6 +78,7 @@ export enum RouteNames {
     PRODUCTS_EDIT = "/products/edit/:id",
     SETTINGS = "/settings",
     NOT_FOUND = "/page-not-found",
+    ORDER_SETTINGS = "/order-settings",
 
     // ADMIN
 
@@ -95,6 +97,7 @@ export const staffRoutesSidebar: IRoute[] = [
     {path: RouteNames.SECTIONS, element: Sections, name: txt.sections, icon: <UnorderedListOutlined/>},
     {path: RouteNames.CATEGORIES, element: Categories, name: txt.categories, icon: <AppstoreOutlined/>},
     {path: RouteNames.PRODUCTS, element: Products, name: txt.products, icon: <ShoppingOutlined />},
+    {path: RouteNames.ORDER_SETTINGS, element: OrderSettings, name: txt.order_settings, icon: <LayoutOutlined />},
     {path: RouteNames.SETTINGS, element: Settings, name: txt.settings, icon: <SettingOutlined/>},
 ];
 

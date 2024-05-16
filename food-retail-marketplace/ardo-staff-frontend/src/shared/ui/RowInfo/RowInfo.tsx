@@ -8,14 +8,7 @@ interface RowInfoProps {
 }
 
 export const RowInfo: FC<RowInfoProps> = ({label, value, layout = "horizontal"}) => (
-    <div
-        className={classes.row__info}
-        style={{
-            flexDirection: layout === "horizontal" ? "row" : "column",
-            alignItems: layout === "horizontal" ? "center" : "flex-start",
-            gap: layout === "horizontal" ? "20px" : "10px"
-        }}
-    >
+    <div className={layout === "horizontal" ? classes.row__info : classes.row__info__vertical}>
         <div className={classes.row__info__label}>{label}</div>
         {!!value && (
             <div className={classes.row__info__value}>{value}</div>

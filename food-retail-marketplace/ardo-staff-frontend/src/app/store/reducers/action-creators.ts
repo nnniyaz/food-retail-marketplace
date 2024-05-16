@@ -9,6 +9,7 @@ import {CategoryActionCreators} from "@pages/staff/Categories/store/categories/a
 import {CatalogActionCreators} from "@pages/staff/Catalog/store/catalog/action-creators";
 import {SlideActionCreators} from "@pages/staff/Slides/store/slides/action-creators";
 import {OrdersActionCreators} from "@pages/staff/Orders/store/order/action-creators";
+import {OrderSettingsActionCreator} from "@pages/staff/OrderSettings/store/orderSettings/action-creators";
 
 export const allActionCreators = {
     ...LangActionCreators,
@@ -21,5 +22,6 @@ export const allActionCreators = {
     ...CategoryActionCreators,
     ...CatalogActionCreators,
     ...SlideActionCreators,
-    ...OrdersActionCreators
+    ...OrdersActionCreators,
+    ...OrderSettingsActionCreator
 }

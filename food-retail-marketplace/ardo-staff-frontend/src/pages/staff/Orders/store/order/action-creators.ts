@@ -119,6 +119,7 @@ export const OrdersActionCreators = {
             const res = await OrdersService.updateOrderStatus(orderId, request);
             if (res.data.success) {
                 Notify.Success({title: txt.order_status_successfully_edited[currentLang], message: ""});
+                await OrdersActionCreators.getOrderById(orderId, new AbortController(), navigationCallback)(dispatch, getState);
             } else {
                 FailedResponseHandler({
                     messages: res.data?.messages,
@@ -145,6 +146,7 @@ export const OrdersActionCreators = {
             const res = await OrdersService.recoverOrder(orderId);
             if (res.data.success) {
                 Notify.Success({title: txt.order_successfully_recovered[currentLang], message: ""});
+                await OrdersActionCreators.getOrderById(orderId, new AbortController(), navigationCallback)(dispatch, getState);
             } else {
                 FailedResponseHandler({
                     messages: res.data?.messages,
@@ -171,6 +173,7 @@ export const OrdersActionCreators = {
             const res = await OrdersService.deleteOrder(orderId);
             if (res.data.success) {
                 Notify.Success({title: txt.order_successfully_deleted[currentLang], message: ""});
+                await OrdersActionCreators.getOrderById(orderId, new AbortController(), navigationCallback)(dispatch, getState);
             } else {
                 FailedResponseHandler({
                     messages: res.data?.messages,

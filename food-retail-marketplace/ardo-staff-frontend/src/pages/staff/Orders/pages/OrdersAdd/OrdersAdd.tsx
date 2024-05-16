@@ -445,6 +445,7 @@ const UsersTable = ({selectedUser, onUserSelect}: UsersTableProps) => {
             pagination={pagination.pagination}
             onChange={(pagination) => setPagination({pagination})}
             title={() => txt.please_select_client[currentLang]}
+            scroll={{x: 500}}
             bordered={true}
             size={"small"}
         />
@@ -602,13 +603,19 @@ const ProductsTable = (
                 loading={isLoadingGetProducts}
                 pagination={pagination.pagination}
                 onChange={(pagination) => setPagination({pagination})}
+                scroll={{x: 500}}
             />
-            <Divider>{txt.select_from_top_table_to_the_bottom_table[currentLang]}</Divider>
+            <Divider plain>
+                <p style={{whiteSpace: "pre-wrap"}}>
+                    {txt.select_from_top_table_to_the_bottom_table[currentLang]}
+                </p>
+            </Divider>
             <Table
                 bordered={true}
                 title={() => txt.selected_products[currentLang]}
                 columns={columnsTarget}
                 dataSource={dataTarget}
+                scroll={{x: 500}}
                 pagination={false}
             />
         </>

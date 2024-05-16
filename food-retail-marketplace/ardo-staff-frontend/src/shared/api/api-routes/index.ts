@@ -75,6 +75,10 @@ export enum ApiRoutes {
     PUT_SLIDE_RECOVER = "/management/slides/recover/:slide_id",
     DELETE_SLIDE = "/management/slides/:slide_id",
 
+    // ------------------------ MANAGEMENT OF ORDER SETTINGS -----------------------
+    GET_ORDER_SETTINGS = "/management/order-settings", // with query params: offset, limit, is_deleted
+    PUT_ORDER_SETTINGS_MOQ_FEE = "/management/order-settings/moq-fee",
+
     // -------------------------------- UPLOAD --------------------------------
     POST_UPLOAD_SLIDE_IMAGE = "/upload/slide-image",
     POST_UPLOAD_SECTION_IMAGE = "/upload/section-image",

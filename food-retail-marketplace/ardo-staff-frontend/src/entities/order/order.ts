@@ -31,6 +31,11 @@ export interface DeliveryInfo {
     deliveryComment: string,
 }
 
+export interface StatusHistory {
+    status: OrderStatus,
+    updatedAt: Timestamp,
+}
+
 export interface Order {
     id: UUID,
     userId: UUID,
@@ -41,7 +46,7 @@ export interface Order {
     currency: Currency,
     customerContacts: CustomerContacts,
     deliveryInfo: DeliveryInfo,
-    status: OrderStatus,
+    statusHistory: StatusHistory[],
     isDeleted: boolean,
     createdAt: Timestamp,
     updatedAt: Timestamp,
