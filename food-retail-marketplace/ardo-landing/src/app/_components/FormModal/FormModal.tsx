@@ -53,7 +53,7 @@ export default function FormModal(props: FormProps) {
                 method: "POST",
                 body: JSON.stringify({
                     ...values,
-                    phone: values.phone
+                    phone: `+852${values.phone}`
                 }),
                 headers: {
                     "Content-Type": "application/json",

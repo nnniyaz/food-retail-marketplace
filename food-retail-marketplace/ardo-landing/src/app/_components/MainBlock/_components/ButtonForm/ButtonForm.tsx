@@ -31,7 +31,7 @@ export default function ButtonForm({lang, isSupplierPage}: ButtonFormProps) {
                 ) : (
                     <Link
                         className={classes.button}
-                        href={process.env.NEXT_PUBLIC_APP_URI + "/profile"}
+                        href={process.env.NEXT_PUBLIC_APP_URI || ""}
                         key={"sign_in"}
                         role={"link"}
                         aria-label={"Restaurants"}
