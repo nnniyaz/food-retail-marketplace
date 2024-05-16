@@ -9,6 +9,7 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/management"
 	"net/http"
+	"time"
 )
 
 type HttpDelivery struct {
@@ -58,8 +59,8 @@ func NewProduct(p *product.Product) Product {
 		Img:           p.GetImg(),
 		Status:        p.GetStatus().String(),
 		IsDeleted:     p.GetIsDeleted(),
-		CreatedAt:     p.GetCreatedAt().String(),
-		UpdatedAt:     p.GetUpdatedAt().String(),
+		CreatedAt:     p.GetCreatedAt().Format(time.RFC3339),
+		UpdatedAt:     p.GetUpdatedAt().Format(time.RFC3339),
 		Version:       p.GetVersion(),
 	}
 }

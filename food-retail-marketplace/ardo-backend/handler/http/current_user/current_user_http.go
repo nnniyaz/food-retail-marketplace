@@ -49,11 +49,11 @@ type User struct {
 		Apartment       string `json:"apartment"`
 		DeliveryComment string `json:"deliveryComment"`
 	} `json:"lastDeliveryPoint"`
-	UserType      string    `json:"userType"`
-	PreferredLang string    `json:"preferredLang"`
-	CreatedAt     time.Time `json:"createdAt"`
-	UpdatedAt     time.Time `json:"updatedAt"`
-	Version       int       `json:"version"`
+	UserType      string `json:"userType"`
+	PreferredLang string `json:"preferredLang"`
+	CreatedAt     string `json:"createdAt"`
+	UpdatedAt     string `json:"updatedAt"`
+	Version       int    `json:"version"`
 }
 
 func newUser(u *user.User) User {
@@ -111,8 +111,8 @@ func newUser(u *user.User) User {
 		},
 		UserType:      u.GetUserType().String(),
 		PreferredLang: u.GetUserPreferredLang().String(),
-		CreatedAt:     u.GetCreatedAt(),
-		UpdatedAt:     u.GetUpdatedAt(),
+		CreatedAt:     u.GetCreatedAt().Format(time.RFC3339),
+		UpdatedAt:     u.GetUpdatedAt().Format(time.RFC3339),
 		Version:       u.GetVersion(),
 	}
 }
@@ -276,7 +276,6 @@ type AddCurrentUserDeliveryPointIn struct {
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
 //	@Router			/me/delivery-point [post]
-
 func (hd *HttpDelivery) AddCurrentUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
 	var in AddCurrentUserDeliveryPointIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -316,7 +315,6 @@ type UpdateCurrentUserDeliveryPointIn struct {
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
 //	@Router			/me/delivery-point [put]
-
 func (hd *HttpDelivery) UpdateCurrentUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
 	var in UpdateCurrentUserDeliveryPointIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
@@ -342,7 +340,6 @@ func (hd *HttpDelivery) UpdateCurrentUserDeliveryPoint(w http.ResponseWriter, r 
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
 //	@Router			/me/delivery-point/{delivery_point_id} [delete]
-
 func (hd *HttpDelivery) DeleteCurrentUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
 	deliveryPointId := chi.URLParam(r, "delivery_point_id")
 	u := r.Context().Value("user").(user.User)
@@ -368,8 +365,7 @@ type ChangeCurrentUserLastDeliveryPointIn struct {
 //	@Param			data	body		ChangeCurrentUserLastDeliveryPointIn	true	"Change current user last delivery point object"
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
-//	@Router			/me/delivery-point [put]
-
+//	@Router			/me/last-delivery-point [put]
 func (hd *HttpDelivery) ChangeCurrentUserLastDeliveryPoint(w http.ResponseWriter, r *http.Request) {
 	var in ChangeCurrentUserLastDeliveryPointIn
 	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {

@@ -30,8 +30,8 @@ type Slide struct {
 	Caption   core.MlString `json:"caption"`
 	Img       string        `json:"img"`
 	IsDeleted bool          `json:"isDeleted"`
-	CreatedAt time.Time     `json:"createdAt"`
-	UpdatedAt time.Time     `json:"updatedAt"`
+	CreatedAt string        `json:"createdAt"`
+	UpdatedAt string        `json:"updatedAt"`
 	Version   int           `json:"version"`
 }
 
@@ -41,8 +41,8 @@ func NewSlide(s *slide.Slide) *Slide {
 		Caption:   s.GetCaption(),
 		Img:       s.GetImg(),
 		IsDeleted: s.GetIsDeleted(),
-		CreatedAt: s.GetCreatedAt(),
-		UpdatedAt: s.GetUpdatedAt(),
+		CreatedAt: s.GetCreatedAt().Format(time.RFC3339),
+		UpdatedAt: s.GetUpdatedAt().Format(time.RFC3339),
 		Version:   s.GetVersion(),
 	}
 }

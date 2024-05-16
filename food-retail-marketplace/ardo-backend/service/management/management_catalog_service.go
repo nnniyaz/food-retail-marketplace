@@ -12,10 +12,12 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	catalogService "github/nnniyaz/ardo/service/catalog"
 	categoryService "github/nnniyaz/ardo/service/category"
+	orderSettingsService "github/nnniyaz/ardo/service/orderSettings"
 	productService "github/nnniyaz/ardo/service/product"
 	sectionService "github/nnniyaz/ardo/service/section"
 	slideService "github/nnniyaz/ardo/service/slide"
 	"go.mongodb.org/mongo-driver/mongo"
+	"sync"
 	"time"
 )
 
@@ -29,16 +31,17 @@ type ManagementCatalogService interface {
 }
 
 type managementCatalogService struct {
-	logger          logger.Logger
-	catalogService  catalogService.CatalogService
-	sectionService  sectionService.SectionService
-	categoryService categoryService.CategoryService
-	productService  productService.ProductService
-	slideService    slideService.SlideService
+	logger               logger.Logger
+	catalogService       catalogService.CatalogService
+	sectionService       sectionService.SectionService
+	categoryService      categoryService.CategoryService
+	productService       productService.ProductService
+	slideService         slideService.SlideService
+	orderSettingsService orderSettingsService.OrderSettingsService
 }
 
-func NewManagementCatalogService(l logger.Logger, catalogService catalogService.CatalogService, sectionService sectionService.SectionService, categoryService categoryService.CategoryService, productService productService.ProductService, slideService slideService.SlideService) ManagementCatalogService {
-	return &managementCatalogService{logger: l, catalogService: catalogService, sectionService: sectionService, categoryService: categoryService, productService: productService, slideService: slideService}
+func NewManagementCatalogService(l logger.Logger, catalogService catalogService.CatalogService, sectionService sectionService.SectionService, categoryService categoryService.CategoryService, productService productService.ProductService, slideService slideService.SlideService, orderSettingsService orderSettingsService.OrderSettingsService) ManagementCatalogService {
+	return &managementCatalogService{logger: l, catalogService: catalogService, sectionService: sectionService, categoryService: categoryService, productService: productService, slideService: slideService, orderSettingsService: orderSettingsService}
 }
 
 func (m *managementCatalogService) GetAllCatalogs(ctx context.Context) ([]*catalog.Catalog, int64, error) {
@@ -58,6 +61,8 @@ func (m *managementCatalogService) UpdateCatalog(ctx context.Context, catalogId 
 }
 
 func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId string) error {
+	var wg sync.WaitGroup
+
 	foundCatalog, err := m.catalogService.GetOneById(ctx, catalogId)
 	if err != nil {
 		return err
@@ -99,6 +104,7 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 		}
 	}
 
+	wg.Add(1)
 	for _, promoSection := range foundCatalog.GetPromo() {
 		_, ok := selectedSections[promoSection.GetId().String()]
 		if ok {
@@ -144,11 +150,19 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 		}
 	}
 
+	wg.Add(1)
 	slides, _, err := m.slideService.GetAllByFilters(ctx, 0, 0, false)
 	if err != nil {
 		return err
 	}
-	return m.catalogService.Publish(ctx, foundCatalog, selectedSections, selectedCategories, selectedProducts, slides)
+
+	wg.Add(1)
+	orderSettings, err := m.orderSettingsService.GetOrderSettings(ctx)
+	if err != nil {
+		return err
+	}
+
+	return m.catalogService.Publish(ctx, foundCatalog, selectedSections, selectedCategories, selectedProducts, slides, orderSettings)
 }
 
 func (m *managementCatalogService) GetTimeOfPublish(ctx context.Context, catalogId string) (time.Time, error) {

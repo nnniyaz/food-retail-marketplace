@@ -11,6 +11,7 @@ import (
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/service/management"
 	"net/http"
+	"time"
 )
 
 type HttpDelivery struct {
@@ -54,7 +55,10 @@ type Order struct {
 		Apartment       string `json:"apartment"`
 		DeliveryComment string `json:"deliveryComment"`
 	} `json:"deliveryInfo"`
-	Status    string `json:"status"`
+	StatusHistory []struct {
+		Status    string `json:"status"`
+		UpdatedAt string `json:"updatedAt"`
+	} `json:"statusHistory"`
 	IsDeleted bool   `json:"isDeleted"`
 	CreatedAt string `json:"createdAt"`
 	UpdatedAt string `json:"updatedAt"`
@@ -88,6 +92,21 @@ func NewOrder(o *order.Order) Order {
 	orderCustomerContactsPhone := orderCustomerContacts.GetPhone()
 	orderCustomerContactsEmail := orderCustomerContacts.GetEmail()
 	orderDeliveryInfo := o.GetDeliveryInfo()
+
+	orderStatusHistory := make([]struct {
+		Status    string `json:"status"`
+		UpdatedAt string `json:"updatedAt"`
+	}, len(o.GetStatusHistory()))
+
+	for i, s := range o.GetStatusHistory() {
+		orderStatusHistory[i] = struct {
+			Status    string `json:"status"`
+			UpdatedAt string `json:"updatedAt"`
+		}{
+			Status:    s.GetStatus().String(),
+			UpdatedAt: s.GetUpdatedAt().Format(time.RFC3339),
+		}
+	}
 
 	return Order{
 		Id:         o.GetId().String(),
@@ -126,11 +145,11 @@ func NewOrder(o *order.Order) Order {
 			Apartment:       orderDeliveryInfo.GetApartment(),
 			DeliveryComment: orderDeliveryInfo.GetDeliveryComment(),
 		},
-		Status:    o.GetStatus().String(),
-		IsDeleted: o.GetIsDeleted(),
-		CreatedAt: o.GetCreatedAt().String(),
-		UpdatedAt: o.GetUpdatedAt().String(),
-		Version:   o.GetVersion(),
+		StatusHistory: orderStatusHistory,
+		IsDeleted:     o.GetIsDeleted(),
+		CreatedAt:     o.GetCreatedAt().Format(time.RFC3339),
+		UpdatedAt:     o.GetUpdatedAt().Format(time.RFC3339),
+		Version:       o.GetVersion(),
 	}
 }
 
@@ -151,7 +170,7 @@ func NewOrders(orders []*order.Order, count int64) OrdersData {
 //
 //	@Summary		Get orders by filters
 //	@Description	This can only be done by the logged-in user.
-//	@Tags			Management Orders
+//	@Tags			Client
 //	@Accept			json
 //	@Produce		json
 //	@Param			offset		query		int		false	"Offset"
@@ -159,7 +178,7 @@ func NewOrders(orders []*order.Order, count int64) OrdersData {
 //	@Param			is_deleted	query		bool	false	"Is deleted"
 //	@Success		200			{object}	response.Success{data=OrdersData}
 //	@Failure		default		{object}	response.Error
-//	@Router			/management/orders/{order_id} [get]
+//	@Router			/client/orders/{order_id} [get]
 func (hd *HttpDelivery) GetOrdersByFilters(w http.ResponseWriter, r *http.Request) {
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)

@@ -196,6 +196,67 @@ const docTemplate = `{
                 }
             }
         },
+        "/client/orders/{order_id}": {
+            "get": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Client"
+                ],
+                "summary": "Get orders by filters",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Offset",
+                        "name": "offset",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Limit",
+                        "name": "limit",
+                        "in": "query"
+                    },
+                    {
+                        "type": "boolean",
+                        "description": "Is deleted",
+                        "name": "is_deleted",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Success"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/management_order.OrdersData"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/management/catalog": {
             "get": {
                 "description": "This can only be done by the logged-in user.",
@@ -579,6 +640,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/management/order-settings": {
+            "get": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management Order Settings"
+                ],
+                "summary": "Get order settings",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/response.Success"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/management_order_settings.OrderSettings"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/management/orders": {
             "post": {
                 "description": "This can only be done by the logged-in user.",
@@ -589,17 +691,17 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "Management Orders"
+                    "Management Order Settings"
                 ],
-                "summary": "Create order",
+                "summary": "Update order settings MOQ",
                 "parameters": [
                     {
-                        "description": "Create order object",
+                        "description": "MOQ",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/management_order.CreateOrderIn"
+                            "$ref": "#/definitions/management_order_settings.UpdateOrderSettingsMoqIn"
                         }
                     }
                 ],
@@ -1708,6 +1810,122 @@ const docTemplate = `{
                 }
             }
         },
+        "/management/users/delivery-point/{user_id}": {
+            "put": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management Users"
+                ],
+                "summary": "Update user delivery point",
+                "parameters": [
+                    {
+                        "description": "Update user delivery point object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/management_user.UpdateUserDeliveryPointIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management Users"
+                ],
+                "summary": "Add user delivery point",
+                "parameters": [
+                    {
+                        "description": "Add user delivery point object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/management_user.AddUserDeliveryPointIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management Users"
+                ],
+                "summary": "Delete user delivery point",
+                "parameters": [
+                    {
+                        "description": "Delete user delivery point object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/management_user.DeleteUserDeliveryPointIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/management/users/email/{user_id}": {
             "put": {
                 "description": "This can only be done by the logged-in user.",
@@ -1720,15 +1938,55 @@ const docTemplate = `{
                 "tags": [
                     "Management Users"
                 ],
-                "summary": "Update user email",
+                "summary": "Update user phone",
                 "parameters": [
                     {
-                        "description": "Update user email object",
+                        "description": "Update user phone object",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/management_user.UpdateUserEmailIn"
+                            "$ref": "#/definitions/management_user.UpdateUserPhoneIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/management/users/last-delivery-point/{user_id}": {
+            "put": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management Users"
+                ],
+                "summary": "Change user last delivery point",
+                "parameters": [
+                    {
+                        "description": "Change user last delivery point object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/management_user.ChangeUserLastDeliveryPointIn"
                         }
                     }
                 ],
@@ -1841,6 +2099,46 @@ const docTemplate = `{
                     "Management Users"
                 ],
                 "summary": "Recover user",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/management/users/role/{user_id}": {
+            "put": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management Users"
+                ],
+                "summary": "Update user role",
+                "parameters": [
+                    {
+                        "description": "Update user role object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/management_user.UpdateUserRoleIn"
+                        }
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
@@ -2006,6 +2304,113 @@ const docTemplate = `{
                 }
             }
         },
+        "/me/delivery-point": {
+            "put": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Current User"
+                ],
+                "summary": "Update current user delivery point",
+                "parameters": [
+                    {
+                        "description": "Update current user delivery point object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/current_user.UpdateCurrentUserDeliveryPointIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Current User"
+                ],
+                "summary": "Add current user delivery point",
+                "parameters": [
+                    {
+                        "description": "Add current user delivery point object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/current_user.AddCurrentUserDeliveryPointIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/delivery-point/{delivery_point_id}": {
+            "delete": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Current User"
+                ],
+                "summary": "Delete current user delivery point",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
         "/me/email": {
             "put": {
                 "description": "This can only be done by the logged-in user.",
@@ -2027,6 +2432,46 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/current_user.UpdateCurrentUserEmailIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/me/last-delivery-point": {
+            "put": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Current User"
+                ],
+                "summary": "Change current user last delivery point",
+                "parameters": [
+                    {
+                        "description": "Change current user last delivery point object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/current_user.ChangeCurrentUserLastDeliveryPointIn"
                         }
                     }
                 ],
@@ -2108,6 +2553,158 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/current_user.UpdateCurrentLanguageIn"
                         }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload/category-image": {
+            "post": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Uploads a category image",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file to upload",
+                        "name": "data",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload/product-image": {
+            "post": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Uploads a product image",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file to upload",
+                        "name": "data",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload/section-image": {
+            "post": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Uploads a section image",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file to upload",
+                        "name": "data",
+                        "in": "formData",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/upload/slide-image": {
+            "post": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "multipart/form-data"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Upload"
+                ],
+                "summary": "Uploads a slide image",
+                "parameters": [
+                    {
+                        "type": "file",
+                        "description": "file to upload",
+                        "name": "data",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -2344,8 +2941,19 @@ const docTemplate = `{
                 "quantity": {
                     "type": "integer"
                 },
-                "status": {
-                    "type": "string"
+                "statusHistory": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "status": {
+                                "type": "string"
+                            },
+                            "updatedAt": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 },
                 "totalPrice": {
                     "type": "number"
@@ -2381,6 +2989,31 @@ const docTemplate = `{
                 "type": "string"
             }
         },
+        "current_user.AddCurrentUserDeliveryPointIn": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
+                "floor": {
+                    "type": "string"
+                }
+            }
+        },
+        "current_user.ChangeCurrentUserLastDeliveryPointIn": {
+            "type": "object",
+            "properties": {
+                "deliveryPointId": {
+                    "type": "string"
+                }
+            }
+        },
         "current_user.UpdateCurrentLanguageIn": {
             "type": "object",
             "properties": {
@@ -2396,6 +3029,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastName": {
+                    "type": "string"
+                }
+            }
+        },
+        "current_user.UpdateCurrentUserDeliveryPointIn": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
+                "floor": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 }
             }
@@ -2831,8 +3484,19 @@ const docTemplate = `{
                 "quantity": {
                     "type": "integer"
                 },
-                "status": {
-                    "type": "string"
+                "statusHistory": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "status": {
+                                "type": "string"
+                            },
+                            "updatedAt": {
+                                "type": "string"
+                            }
+                        }
+                    }
                 },
                 "totalPrice": {
                     "type": "number"
@@ -2867,6 +3531,33 @@ const docTemplate = `{
             "properties": {
                 "status": {
                     "type": "string"
+                }
+            }
+        },
+        "management_order_settings.OrderSettings": {
+            "type": "object",
+            "properties": {
+                "moq": {
+                    "type": "object",
+                    "properties": {
+                        "fee": {
+                            "type": "integer"
+                        },
+                        "freeFrom": {
+                            "type": "integer"
+                        }
+                    }
+                }
+            }
+        },
+        "management_order_settings.UpdateOrderSettingsMoqIn": {
+            "type": "object",
+            "properties": {
+                "fee": {
+                    "type": "integer"
+                },
+                "freeFrom": {
+                    "type": "integer"
                 }
             }
         },
@@ -3146,6 +3837,23 @@ const docTemplate = `{
                 }
             }
         },
+        "management_user.AddUserDeliveryPointIn": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
+                "floor": {
+                    "type": "string"
+                }
+            }
+        },
         "management_user.AddUserIn": {
             "type": "object",
             "properties": {
@@ -3192,6 +3900,22 @@ const docTemplate = `{
                 }
             }
         },
+        "management_user.ChangeUserLastDeliveryPointIn": {
+            "type": "object",
+            "properties": {
+                "deliveryPointId": {
+                    "type": "string"
+                }
+            }
+        },
+        "management_user.DeleteUserDeliveryPointIn": {
+            "type": "object",
+            "properties": {
+                "deliveryPointId": {
+                    "type": "string"
+                }
+            }
+        },
         "management_user.UpdateUserCredentialsIn": {
             "type": "object",
             "properties": {
@@ -3199,6 +3923,26 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "lastName": {
+                    "type": "string"
+                }
+            }
+        },
+        "management_user.UpdateUserDeliveryPointIn": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "apartment": {
+                    "type": "string"
+                },
+                "deliveryComment": {
+                    "type": "string"
+                },
+                "floor": {
+                    "type": "string"
+                },
+                "id": {
                     "type": "string"
                 }
             }
@@ -3219,10 +3963,29 @@ const docTemplate = `{
                 }
             }
         },
+        "management_user.UpdateUserPhoneIn": {
+            "type": "object",
+            "properties": {
+                "countryCode": {
+                    "type": "string"
+                },
+                "phoneNumber": {
+                    "type": "string"
+                }
+            }
+        },
         "management_user.UpdateUserPreferredLangIn": {
             "type": "object",
             "properties": {
                 "lang": {
+                    "type": "string"
+                }
+            }
+        },
+        "management_user.UpdateUserRoleIn": {
+            "type": "object",
+            "properties": {
+                "role": {
                     "type": "string"
                 }
             }
@@ -3236,6 +3999,29 @@ const docTemplate = `{
                 "createdAt": {
                     "type": "string"
                 },
+                "deliveryPoints": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "address": {
+                                "type": "string"
+                            },
+                            "apartment": {
+                                "type": "string"
+                            },
+                            "deliveryComment": {
+                                "type": "string"
+                            },
+                            "floor": {
+                                "type": "string"
+                            },
+                            "id": {
+                                "type": "string"
+                            }
+                        }
+                    }
+                },
                 "email": {
                     "type": "string"
                 },
@@ -3248,8 +4034,39 @@ const docTemplate = `{
                 "isDeleted": {
                     "type": "boolean"
                 },
+                "lastDeliveryPoint": {
+                    "type": "object",
+                    "properties": {
+                        "address": {
+                            "type": "string"
+                        },
+                        "apartment": {
+                            "type": "string"
+                        },
+                        "deliveryComment": {
+                            "type": "string"
+                        },
+                        "floor": {
+                            "type": "string"
+                        },
+                        "id": {
+                            "type": "string"
+                        }
+                    }
+                },
                 "lastName": {
                     "type": "string"
+                },
+                "phone": {
+                    "type": "object",
+                    "properties": {
+                        "countryCode": {
+                            "type": "string"
+                        },
+                        "number": {
+                            "type": "string"
+                        }
+                    }
                 },
                 "preferredLang": {
                     "type": "string"

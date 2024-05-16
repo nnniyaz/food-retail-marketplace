@@ -277,7 +277,7 @@ type TimeOfPublish struct {
 }
 
 func NewTimeOfPublish(foundTime time.Time) *TimeOfPublish {
-	return &TimeOfPublish{PublishedAt: foundTime.String()}
+	return &TimeOfPublish{PublishedAt: foundTime.Format(time.RFC3339)}
 }
 
 // GetTimeOfPublish godoc

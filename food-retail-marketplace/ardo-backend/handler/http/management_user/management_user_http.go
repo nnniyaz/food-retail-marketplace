@@ -25,31 +25,95 @@ func NewHttpDelivery(l logger.Logger, s management.ManagementUserService) *HttpD
 // -----------------------------------------------------------------------------
 
 type User struct {
-	Id            string    `json:"id"`
-	Code          string    `json:"code"`
-	Email         string    `json:"email"`
-	FirstName     string    `json:"firstName"`
-	LastName      string    `json:"lastName"`
-	UserType      string    `json:"userType"`
-	PreferredLang string    `json:"preferredLang"`
-	IsDeleted     bool      `json:"isDeleted"`
-	CreatedAt     time.Time `json:"createdAt"`
-	UpdatedAt     time.Time `json:"updatedAt"`
-	Version       int       `json:"version"`
+	Id        string `json:"id"`
+	Code      string `json:"code"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+	Email     string `json:"email"`
+	Phone     struct {
+		Number      string `json:"number"`
+		CountryCode string `json:"countryCode"`
+	} `json:"phone"`
+	DeliveryPoints []struct {
+		Id              string `json:"id"`
+		Address         string `json:"address"`
+		Floor           string `json:"floor"`
+		Apartment       string `json:"apartment"`
+		DeliveryComment string `json:"deliveryComment"`
+	} `json:"deliveryPoints"`
+	LastDeliveryPoint struct {
+		Id              string `json:"id"`
+		Address         string `json:"address"`
+		Floor           string `json:"floor"`
+		Apartment       string `json:"apartment"`
+		DeliveryComment string `json:"deliveryComment"`
+	} `json:"lastDeliveryPoint"`
+	UserType      string `json:"userType"`
+	PreferredLang string `json:"preferredLang"`
+	IsDeleted     bool   `json:"isDeleted"`
+	CreatedAt     string `json:"createdAt"`
+	UpdatedAt     string `json:"updatedAt"`
+	Version       int    `json:"version"`
 }
 
 func NewUser(u *user.User) User {
+	userPhone := u.GetPhone()
+	userDeliveryPoints := u.GetDeliveryPoints()
+	deliveryPoints := make([]struct {
+		Id              string `json:"id"`
+		Address         string `json:"address"`
+		Floor           string `json:"floor"`
+		Apartment       string `json:"apartment"`
+		DeliveryComment string `json:"deliveryComment"`
+	}, len(userDeliveryPoints))
+	for i, dp := range userDeliveryPoints {
+		deliveryPoints[i] = struct {
+			Id              string `json:"id"`
+			Address         string `json:"address"`
+			Floor           string `json:"floor"`
+			Apartment       string `json:"apartment"`
+			DeliveryComment string `json:"deliveryComment"`
+		}{
+			Id:              dp.GetId().String(),
+			Address:         dp.GetAddress(),
+			Floor:           dp.GetFloor(),
+			Apartment:       dp.GetApartment(),
+			DeliveryComment: dp.GetDeliveryComment(),
+		}
+	}
+	userLastDeliveryPoint := u.GetLastDeliveryPoint()
 	return User{
-		Id:            u.GetId().String(),
-		Code:          u.GetCode().String(),
-		Email:         u.GetEmail().String(),
-		FirstName:     u.GetFirstName().String(),
-		LastName:      u.GetLastName().String(),
+		Id:        u.GetId().String(),
+		Code:      u.GetCode().String(),
+		FirstName: u.GetFirstName().String(),
+		LastName:  u.GetLastName().String(),
+		Email:     u.GetEmail().String(),
+		Phone: struct {
+			Number      string `json:"number"`
+			CountryCode string `json:"countryCode"`
+		}{
+			Number:      userPhone.GetNumber(),
+			CountryCode: userPhone.GetCountryCode(),
+		},
+		DeliveryPoints: deliveryPoints,
+		LastDeliveryPoint: struct {
+			Id              string `json:"id"`
+			Address         string `json:"address"`
+			Floor           string `json:"floor"`
+			Apartment       string `json:"apartment"`
+			DeliveryComment string `json:"deliveryComment"`
+		}{
+			Id:              userLastDeliveryPoint.GetId().String(),
+			Address:         userLastDeliveryPoint.GetAddress(),
+			Floor:           userLastDeliveryPoint.GetFloor(),
+			Apartment:       userLastDeliveryPoint.GetApartment(),
+			DeliveryComment: userLastDeliveryPoint.GetDeliveryComment(),
+		},
 		UserType:      u.GetUserType().String(),
 		PreferredLang: u.GetUserPreferredLang().String(),
 		IsDeleted:     u.GetIsDeleted(),
-		CreatedAt:     u.GetCreatedAt(),
-		UpdatedAt:     u.GetUpdatedAt(),
+		CreatedAt:     u.GetCreatedAt().Format(time.RFC3339),
+		UpdatedAt:     u.GetUpdatedAt().Format(time.RFC3339),
 		Version:       u.GetVersion(),
 	}
 }
@@ -216,6 +280,36 @@ func (hd *HttpDelivery) UpdateUserEmail(w http.ResponseWriter, r *http.Request) 
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
+type UpdateUserPhoneIn struct {
+	PhoneNumber string `json:"phoneNumber"`
+	CountryCode string `json:"countryCode"`
+}
+
+// UpdateUserPhone godoc
+//
+//	@Summary		Update user phone
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateUserPhoneIn	true	"Update user phone object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/email/{user_id} [put]
+func (hd *HttpDelivery) UpdateUserPhone(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := UpdateUserPhoneIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.UpdateUserPhone(r.Context(), userId, in.PhoneNumber, in.CountryCode); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
 type UpdateUserPreferredLangIn struct {
 	Lang string `json:"lang"`
 }
@@ -239,6 +333,158 @@ func (hd *HttpDelivery) UpdateUserPreferredLang(w http.ResponseWriter, r *http.R
 		return
 	}
 	if err := hd.service.UpdateUserPreferredLang(r.Context(), userId, in.Lang); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateUserRoleIn struct {
+	Role string `json:"role"`
+}
+
+// UpdateUserRole godoc
+//
+//	@Summary		Update user role
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateUserRoleIn	true	"Update user role object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/role/{user_id} [put]
+func (hd *HttpDelivery) UpdateUserRole(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := UpdateUserRoleIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.UpdateUserRole(r.Context(), userId, in.Role); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type AddUserDeliveryPointIn struct {
+	Address         string `json:"address"`
+	Floor           string `json:"floor"`
+	Apartment       string `json:"apartment"`
+	DeliveryComment string `json:"deliveryComment"`
+}
+
+// AddUserDeliveryPoint godoc
+//
+//	@Summary		Add user delivery point
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		AddUserDeliveryPointIn	true	"Add user delivery point object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/delivery-point/{user_id} [post]
+func (hd *HttpDelivery) AddUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := AddUserDeliveryPointIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.AddUserDeliveryPoint(r.Context(), userId, in.Address, in.Floor, in.Apartment, in.DeliveryComment); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type UpdateUserDeliveryPointIn struct {
+	Id              string `json:"id"`
+	Address         string `json:"address"`
+	Floor           string `json:"floor"`
+	Apartment       string `json:"apartment"`
+	DeliveryComment string `json:"deliveryComment"`
+}
+
+// UpdateUserDeliveryPoint godoc
+//
+//	@Summary		Update user delivery point
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		UpdateUserDeliveryPointIn	true	"Update user delivery point object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/delivery-point/{user_id} [put]
+func (hd *HttpDelivery) UpdateUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := UpdateUserDeliveryPointIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.UpdateUserDeliveryPoint(r.Context(), userId, in.Id, in.Address, in.Floor, in.Apartment, in.DeliveryComment); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type DeleteUserDeliveryPointIn struct {
+	DeliveryPointId string `json:"deliveryPointId"`
+}
+
+// DeleteUserDeliveryPoint godoc
+//
+//	@Summary		Delete user delivery point
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		DeleteUserDeliveryPointIn	true	"Delete user delivery point object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/delivery-point/{user_id} [delete]
+func (hd *HttpDelivery) DeleteUserDeliveryPoint(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := DeleteUserDeliveryPointIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.DeleteUserDeliveryPoint(r.Context(), userId, in.DeliveryPointId); err != nil {
+		response.NewError(hd.logger, w, r, err)
+		return
+	}
+	response.NewSuccess(hd.logger, w, r, nil)
+}
+
+type ChangeUserLastDeliveryPointIn struct {
+	DeliveryPointId string `json:"deliveryPointId"`
+}
+
+// ChangeUserLastDeliveryPoint godoc
+//
+//	@Summary		Change user last delivery point
+//	@Description	This can only be done by the logged-in user.
+//	@Tags			Management Users
+//	@Accept			json
+//	@Produce		json
+//	@Param			data	body		ChangeUserLastDeliveryPointIn	true	"Change user last delivery point object"
+//	@Success		200		{object}	response.Success
+//	@Failure		default	{object}	response.Error
+//	@Router			/management/users/last-delivery-point/{user_id} [put]
+func (hd *HttpDelivery) ChangeUserLastDeliveryPoint(w http.ResponseWriter, r *http.Request) {
+	userId := chi.URLParam(r, "user_id")
+	in := ChangeUserLastDeliveryPointIn{}
+	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
+		response.NewBad(hd.logger, w, r, err)
+		return
+	}
+	if err := hd.service.ChangeUserLastDeliveryPoint(r.Context(), userId, in.DeliveryPointId); err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}

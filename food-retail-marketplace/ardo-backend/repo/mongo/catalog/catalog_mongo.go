@@ -8,6 +8,7 @@ import (
 	"github/nnniyaz/ardo/domain/catalog/exceptions"
 	"github/nnniyaz/ardo/domain/catalog/valueObject"
 	"github/nnniyaz/ardo/domain/category"
+	"github/nnniyaz/ardo/domain/orderSettings"
 	"github/nnniyaz/ardo/domain/product"
 	"github/nnniyaz/ardo/domain/section"
 	"github/nnniyaz/ardo/domain/slide"
@@ -279,10 +280,16 @@ type mongoPublishedCatalog struct {
 		UpdatedAt time.Time     `bson:"updatedAt"`
 		Version   int           `bson:"version"`
 	} `bson:"slides"`
+	OrderSettings struct {
+		Moq struct {
+			Fee      int64 `bson:"fee"`
+			FreeFrom int64 `bson:"freeFrom"`
+		} `bson:"moq"`
+	} `bson:"orderSettings"`
 	PublishedAt time.Time `bson:"publishedAt"`
 }
 
-func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) *mongoPublishedCatalog {
+func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide, selectedSettings *orderSettings.OrderSettings) *mongoPublishedCatalog {
 	structure := make([]struct {
 		SectionId  uuid.UUID `bson:"sectionId"`
 		Categories []struct {
@@ -495,25 +502,42 @@ func newFromPublishedCatalog(c *catalog.Catalog, selectedSections map[string]*se
 		}
 	}
 
+	moq := selectedSettings.GetMoq()
+	settings := struct {
+		Moq struct {
+			Fee      int64 `bson:"fee"`
+			FreeFrom int64 `bson:"freeFrom"`
+		} `bson:"moq"`
+	}{
+		Moq: struct {
+			Fee      int64 `bson:"fee"`
+			FreeFrom int64 `bson:"freeFrom"`
+		}{
+			Fee:      moq.GetFee(),
+			FreeFrom: moq.GetFreeFrom(),
+		},
+	}
+
 	return &mongoPublishedCatalog{
-		CatalogId:   c.GetId(),
-		Structure:   structure,
-		Promo:       promo,
-		Sections:    selectedSectionsMap,
-		Categories:  selectedCategoriesMap,
-		Products:    selectedProductsMap,
-		Slides:      slidesSlice,
-		PublishedAt: time.Now(),
+		CatalogId:     c.GetId(),
+		Structure:     structure,
+		Promo:         promo,
+		Sections:      selectedSectionsMap,
+		Categories:    selectedCategoriesMap,
+		Products:      selectedProductsMap,
+		Slides:        slidesSlice,
+		OrderSettings: settings,
+		PublishedAt:   time.Now(),
 	}
 }
 
-func (r *RepoCatalog) PublishCatalog(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) error {
+func (r *RepoCatalog) PublishCatalog(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide, settings *orderSettings.OrderSettings) error {
 	count, err := r.CollPublishedCatalog().CountDocuments(ctx, bson.M{"catalogId": catalog.GetId()})
 	if err != nil {
 		return err
 	}
 
-	pc := newFromPublishedCatalog(catalog, selectedSections, selectedCategories, selectedProducts, slides)
+	pc := newFromPublishedCatalog(catalog, selectedSections, selectedCategories, selectedProducts, slides, settings)
 	if count > 0 {
 		_, err = r.CollPublishedCatalog().UpdateOne(ctx, bson.M{"catalogId": catalog.GetId()}, bson.M{"$set": pc})
 		return err

@@ -17,7 +17,9 @@ type UserService interface {
 	Create(ctx context.Context, newUser *user.User) error
 	UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error
 	UpdateEmail(ctx context.Context, user *user.User, email string) error
+	UpdatePhone(ctx context.Context, user *user.User, phoneNumber, countryCode string) error
 	UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error
+	UpdateRole(ctx context.Context, user *user.User, role string) error
 	UpdatePassword(ctx context.Context, user *user.User, password string) error
 	Recover(ctx context.Context, userId string) error
 	Delete(ctx context.Context, userId string) error
@@ -91,11 +93,33 @@ func (u *userService) UpdateEmail(ctx context.Context, user *user.User, email st
 	return u.userRepo.Update(ctx, user)
 }
 
+func (u *userService) UpdatePhone(ctx context.Context, user *user.User, phoneNumber, countryCode string) error {
+	if user.GetIsDeleted() {
+		return exceptions.ErrUserNotFound
+	}
+	err := user.UpdatePhone(phoneNumber, countryCode)
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
+}
+
 func (u *userService) UpdatePreferredLang(ctx context.Context, user *user.User, preferredLang string) error {
 	if user.GetIsDeleted() {
 		return exceptions.ErrUserNotFound
 	}
 	err := user.UpdateLanguage(preferredLang)
+	if err != nil {
+		return err
+	}
+	return u.userRepo.Update(ctx, user)
+}
+
+func (u *userService) UpdateRole(ctx context.Context, user *user.User, role string) error {
+	if user.GetIsDeleted() {
+		return exceptions.ErrUserNotFound
+	}
+	err := user.UpdateRole(role)
 	if err != nil {
 		return err
 	}

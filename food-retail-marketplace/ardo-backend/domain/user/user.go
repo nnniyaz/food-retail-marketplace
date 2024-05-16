@@ -177,12 +177,34 @@ func (u *User) UpdateEmail(mail string) error {
 	return nil
 }
 
+func (u *User) UpdatePhone(phoneNumber, countryCode string) error {
+	userPhone, err := phone.NewPhone(phoneNumber, countryCode)
+	if err != nil {
+		return err
+	}
+	u.phone = userPhone
+	u.updatedAt = time.Now()
+	u.version++
+	return nil
+}
+
 func (u *User) UpdateLanguage(preferredLang string) error {
 	userPreferredLang, err := lang.NewLang(preferredLang)
 	if err != nil {
 		return err
 	}
 	u.preferredLang = userPreferredLang
+	u.updatedAt = time.Now()
+	u.version++
+	return nil
+}
+
+func (u *User) UpdateRole(role string) error {
+	userRole, err := valueobject.NewUserType(role)
+	if err != nil {
+		return err
+	}
+	u.userType = userRole
 	u.updatedAt = time.Now()
 	u.version++
 	return nil

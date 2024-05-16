@@ -55,7 +55,10 @@ type mongoOrder struct {
 		Apartment       string `bson:"apartment"`
 		DeliveryComment string `bson:"deliveryComment"`
 	} `bson:"deliveryInfo"`
-	Status    string    `bson:"status"`
+	StatusHistory []struct {
+		Status    string    `bson:"status"`
+		UpdatedAt time.Time `bson:"updatedAt"`
+	} `bson:"statusHistory"`
 	IsDeleted bool      `bson:"isDeleted"`
 	CreatedAt time.Time `bson:"createdAt"`
 	UpdatedAt time.Time `bson:"updatedAt"`
@@ -89,6 +92,20 @@ func newFromOrder(o *order.Order) *mongoOrder {
 	orderCustomerContactsPhone := orderCustomerContacts.GetPhone()
 	orderCustomerContactsEmail := orderCustomerContacts.GetEmail()
 	orderDeliveryInfo := o.GetDeliveryInfo()
+
+	orderStatusHistory := make([]struct {
+		Status    string    `bson:"status"`
+		UpdatedAt time.Time `bson:"updatedAt"`
+	}, len(o.GetStatusHistory()))
+	for i, s := range o.GetStatusHistory() {
+		orderStatusHistory[i] = struct {
+			Status    string    `bson:"status"`
+			UpdatedAt time.Time `bson:"updatedAt"`
+		}{
+			Status:    s.GetStatus().String(),
+			UpdatedAt: s.GetUpdatedAt(),
+		}
+	}
 
 	return &mongoOrder{
 		Id:         o.GetId(),
@@ -127,11 +144,11 @@ func newFromOrder(o *order.Order) *mongoOrder {
 			Apartment:       orderDeliveryInfo.GetApartment(),
 			DeliveryComment: orderDeliveryInfo.GetDeliveryComment(),
 		},
-		Status:    o.GetStatus().String(),
-		IsDeleted: o.GetIsDeleted(),
-		CreatedAt: o.GetCreatedAt(),
-		UpdatedAt: o.GetUpdatedAt(),
-		Version:   o.GetVersion(),
+		StatusHistory: orderStatusHistory,
+		IsDeleted:     o.GetIsDeleted(),
+		CreatedAt:     o.GetCreatedAt(),
+		UpdatedAt:     o.GetUpdatedAt(),
+		Version:       o.GetVersion(),
 	}
 }
 
@@ -142,7 +159,11 @@ func (m *mongoOrder) ToAggregate() *order.Order {
 	}
 	customerContacts := valueobject.UnmarshalCustomerContactsFromDatabase(m.CustomerContacts.Name, phone.UnmarshalPhoneFromDatabase(m.CustomerContacts.Phone.Number, m.CustomerContacts.Phone.CountryCode), m.CustomerContacts.Email)
 	orderDeliveryInfo := deliveryInfo.UnmarshalDeliveryInfoFromDatabase(m.DeliveryInfo.Address, m.DeliveryInfo.Floor, m.DeliveryInfo.Apartment, m.DeliveryInfo.DeliveryComment)
-	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, m.Number, products, m.Quantity, m.TotalPrice, m.Currency, customerContacts, orderDeliveryInfo, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
+	orderStatusHistory := make([]valueobject.OrderStatusHistory, len(m.StatusHistory))
+	for i, s := range m.StatusHistory {
+		orderStatusHistory[i] = valueobject.UnmarshalOrderStatusHistoryFromDatabase(s.Status, s.UpdatedAt)
+	}
+	return order.UnmarshalOrderFromDatabase(m.Id, m.UserId, m.Number, products, m.Quantity, m.TotalPrice, m.Currency, customerContacts, orderDeliveryInfo, orderStatusHistory, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
 func (r *RepoOrder) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error) {

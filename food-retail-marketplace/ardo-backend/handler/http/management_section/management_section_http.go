@@ -30,8 +30,8 @@ type Section struct {
 	Name      core.MlString `json:"name"`
 	Img       string        `json:"img"`
 	IsDeleted bool          `json:"isDeleted"`
-	CreatedAt time.Time     `json:"createdAt"`
-	UpdatedAt time.Time     `json:"updatedAt"`
+	CreatedAt string        `json:"createdAt"`
+	UpdatedAt string        `json:"updatedAt"`
 	Version   int           `json:"version"`
 }
 
@@ -41,8 +41,8 @@ func NewSection(s *section.Section) *Section {
 		Name:      s.GetName(),
 		Img:       s.GetImg(),
 		IsDeleted: s.GetIsDeleted(),
-		CreatedAt: s.GetCreatedAt(),
-		UpdatedAt: s.GetUpdatedAt(),
+		CreatedAt: s.GetCreatedAt().Format(time.RFC3339),
+		UpdatedAt: s.GetUpdatedAt().Format(time.RFC3339),
 		Version:   s.GetVersion(),
 	}
 }

@@ -1,10 +1,40 @@
 package valueobject
 
-import "github/nnniyaz/ardo/pkg/core"
+import (
+	"github/nnniyaz/ardo/pkg/core"
+	"time"
+)
 
 var (
 	ErrInvalidOrderStatus = core.NewI18NError(core.EINVALID, core.TXT_INVALID_ORDER_STATUS)
 )
+
+type OrderStatusHistory struct {
+	status    OrderStatus
+	updatedAt time.Time
+}
+
+func NewOrderStatusHistory(status OrderStatus) OrderStatusHistory {
+	return OrderStatusHistory{
+		status:    status,
+		updatedAt: time.Now(),
+	}
+}
+
+func (o OrderStatusHistory) GetStatus() OrderStatus {
+	return o.status
+}
+
+func (o OrderStatusHistory) GetUpdatedAt() time.Time {
+	return o.updatedAt
+}
+
+func UnmarshalOrderStatusHistoryFromDatabase(status string, updatedAt time.Time) OrderStatusHistory {
+	return OrderStatusHistory{
+		status:    OrderStatus(status),
+		updatedAt: updatedAt,
+	}
+}
 
 type OrderStatus string
 

@@ -7,6 +7,7 @@ import (
 	"github/nnniyaz/ardo/domain/catalog"
 	"github/nnniyaz/ardo/domain/category"
 	"github/nnniyaz/ardo/domain/order"
+	"github/nnniyaz/ardo/domain/orderSettings"
 	"github/nnniyaz/ardo/domain/product"
 	"github/nnniyaz/ardo/domain/section"
 	"github/nnniyaz/ardo/domain/session"
@@ -16,6 +17,7 @@ import (
 	catalogMongo "github/nnniyaz/ardo/repo/mongo/catalog"
 	categoryMongo "github/nnniyaz/ardo/repo/mongo/category"
 	orderMongo "github/nnniyaz/ardo/repo/mongo/order"
+	orderSettingsMongo "github/nnniyaz/ardo/repo/mongo/orderSettings"
 	productMongo "github/nnniyaz/ardo/repo/mongo/product"
 	sectionMongo "github/nnniyaz/ardo/repo/mongo/section"
 	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
@@ -77,7 +79,7 @@ type Catalog interface {
 	FindOneById(ctx context.Context, id uuid.UUID) (*catalog.Catalog, error)
 	CreateCatalog(ctx context.Context, catalog *catalog.Catalog) error
 	UpdateCatalog(ctx context.Context, catalog *catalog.Catalog) error
-	PublishCatalog(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide) error
+	PublishCatalog(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide, settings *orderSettings.OrderSettings) error
 	GetTimeOfPublish(ctx context.Context, catalogId uuid.UUID) (time.Time, error)
 }
 
@@ -108,6 +110,11 @@ type Slide interface {
 	Delete(ctx context.Context, id uuid.UUID) error
 }
 
+type OrderSettings interface {
+	GetOrderSettings(ctx context.Context) (*orderSettings.OrderSettings, error)
+	UpdateMoqFee(ctx context.Context, orderSettings *orderSettings.OrderSettings) error
+}
+
 type Repository struct {
 	RepoUser           User
 	RepoSession        Session
@@ -118,6 +125,7 @@ type Repository struct {
 	RepoSection        Section
 	RepoCategory       Category
 	RepoSlide          Slide
+	RepoOrderSettings  OrderSettings
 }
 
 func NewRepository(client *mongo.Client) *Repository {
@@ -131,5 +139,6 @@ func NewRepository(client *mongo.Client) *Repository {
 		RepoSection:        sectionMongo.NewRepoSection(client),
 		RepoCategory:       categoryMongo.NewRepoCategory(client),
 		RepoSlide:          slideMongo.NewRepoSlide(client),
+		RepoOrderSettings:  orderSettingsMongo.NewRepoOrderSettings(client),
 	}
 }

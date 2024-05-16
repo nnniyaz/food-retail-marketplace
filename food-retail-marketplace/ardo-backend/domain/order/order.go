@@ -19,7 +19,7 @@ type Order struct {
 	currency         currency.Currency
 	customerContacts valueobject.CustomerContacts
 	deliveryInfo     deliveryInfo.DeliveryInfo
-	status           valueobject.OrderStatus
+	statusHistory    []valueobject.OrderStatusHistory
 	isDeleted        bool
 	createdAt        time.Time
 	updatedAt        time.Time
@@ -47,6 +47,9 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64
 		return nil, err
 	}
 
+	orderStatuses := make([]valueobject.OrderStatusHistory, 0)
+	orderStatuses = append(orderStatuses, valueobject.NewOrderStatusHistory(valueobject.ORDER_HAS_BEEN_PLACED))
+
 	return &Order{
 		id:               uuid.NewUUID(),
 		userId:           convertedUserId,
@@ -57,7 +60,7 @@ func NewOrder(userId string, products []valueobject.OrderProduct, quantity int64
 		currency:         convertedCurrency,
 		customerContacts: customerContacts,
 		deliveryInfo:     deliveryInfo,
-		status:           valueobject.ORDER_HAS_BEEN_PLACED,
+		statusHistory:    orderStatuses,
 		isDeleted:        false,
 		createdAt:        ts,
 		updatedAt:        ts,
@@ -101,8 +104,8 @@ func (o *Order) GetDeliveryInfo() deliveryInfo.DeliveryInfo {
 	return o.deliveryInfo
 }
 
-func (o *Order) GetStatus() valueobject.OrderStatus {
-	return o.status
+func (o *Order) GetStatusHistory() []valueobject.OrderStatusHistory {
+	return o.statusHistory
 }
 
 func (o *Order) GetIsDeleted() bool {
@@ -126,13 +129,14 @@ func (o *Order) UpdateStatus(status string) error {
 	if err != nil {
 		return err
 	}
-	o.status = orderStatus
+	orderStatusAction := valueobject.NewOrderStatusHistory(orderStatus)
+	o.statusHistory = append(o.statusHistory, orderStatusAction)
 	o.updatedAt = time.Now()
 	o.version++
 	return nil
 }
 
-func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, number string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, orderCurrency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, status string, isDeleted bool, createdAt, updatedAt time.Time, version int) *Order {
+func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, number string, products []valueobject.OrderProduct, quantity int64, totalPrice float64, orderCurrency string, customerContacts valueobject.CustomerContacts, deliveryInfo deliveryInfo.DeliveryInfo, statusHistory []valueobject.OrderStatusHistory, isDeleted bool, createdAt, updatedAt time.Time, version int) *Order {
 	return &Order{
 		id:               id,
 		userId:           userId,
@@ -143,7 +147,7 @@ func UnmarshalOrderFromDatabase(id uuid.UUID, userId uuid.UUID, number string, p
 		currency:         currency.Currency(orderCurrency),
 		customerContacts: customerContacts,
 		deliveryInfo:     deliveryInfo,
-		status:           valueobject.OrderStatus(status),
+		statusHistory:    statusHistory,
 		isDeleted:        isDeleted,
 		createdAt:        createdAt,
 		updatedAt:        updatedAt,

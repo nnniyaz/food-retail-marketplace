@@ -139,8 +139,15 @@ definitions:
         type: array
       quantity:
         type: integer
-      status:
-        type: string
+      statusHistory:
+        items:
+          properties:
+            status:
+              type: string
+            updatedAt:
+              type: string
+          type: object
+        type: array
       totalPrice:
         type: number
       updatedAt:
@@ -163,6 +170,22 @@ definitions:
     additionalProperties:
       type: string
     type: object
+  current_user.AddCurrentUserDeliveryPointIn:
+    properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
+      floor:
+        type: string
+    type: object
+  current_user.ChangeCurrentUserLastDeliveryPointIn:
+    properties:
+      deliveryPointId:
+        type: string
+    type: object
   current_user.UpdateCurrentLanguageIn:
     properties:
       lang:
@@ -173,6 +196,19 @@ definitions:
       firstName:
         type: string
       lastName:
+        type: string
+    type: object
+  current_user.UpdateCurrentUserDeliveryPointIn:
+    properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
+      floor:
+        type: string
+      id:
         type: string
     type: object
   current_user.UpdateCurrentUserEmailIn:
@@ -454,8 +490,15 @@ definitions:
         type: array
       quantity:
         type: integer
-      status:
-        type: string
+      statusHistory:
+        items:
+          properties:
+            status:
+              type: string
+            updatedAt:
+              type: string
+          type: object
+        type: array
       totalPrice:
         type: number
       updatedAt:
@@ -478,6 +521,23 @@ definitions:
     properties:
       status:
         type: string
+    type: object
+  management_order_settings.OrderSettings:
+    properties:
+      moq:
+        properties:
+          fee:
+            type: integer
+          freeFrom:
+            type: integer
+        type: object
+    type: object
+  management_order_settings.UpdateOrderSettingsMoqIn:
+    properties:
+      fee:
+        type: integer
+      freeFrom:
+        type: integer
     type: object
   management_product.AddProductIn:
     properties:
@@ -659,6 +719,17 @@ definitions:
       img:
         type: string
     type: object
+  management_user.AddUserDeliveryPointIn:
+    properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
+      floor:
+        type: string
+    type: object
   management_user.AddUserIn:
     properties:
       address:
@@ -689,11 +760,34 @@ definitions:
       userType:
         type: string
     type: object
+  management_user.ChangeUserLastDeliveryPointIn:
+    properties:
+      deliveryPointId:
+        type: string
+    type: object
+  management_user.DeleteUserDeliveryPointIn:
+    properties:
+      deliveryPointId:
+        type: string
+    type: object
   management_user.UpdateUserCredentialsIn:
     properties:
       firstName:
         type: string
       lastName:
+        type: string
+    type: object
+  management_user.UpdateUserDeliveryPointIn:
+    properties:
+      address:
+        type: string
+      apartment:
+        type: string
+      deliveryComment:
+        type: string
+      floor:
+        type: string
+      id:
         type: string
     type: object
   management_user.UpdateUserEmailIn:
@@ -706,9 +800,21 @@ definitions:
       password:
         type: string
     type: object
+  management_user.UpdateUserPhoneIn:
+    properties:
+      countryCode:
+        type: string
+      phoneNumber:
+        type: string
+    type: object
   management_user.UpdateUserPreferredLangIn:
     properties:
       lang:
+        type: string
+    type: object
+  management_user.UpdateUserRoleIn:
+    properties:
+      role:
         type: string
     type: object
   management_user.User:
@@ -717,6 +823,21 @@ definitions:
         type: string
       createdAt:
         type: string
+      deliveryPoints:
+        items:
+          properties:
+            address:
+              type: string
+            apartment:
+              type: string
+            deliveryComment:
+              type: string
+            floor:
+              type: string
+            id:
+              type: string
+          type: object
+        type: array
       email:
         type: string
       firstName:
@@ -725,8 +846,28 @@ definitions:
         type: string
       isDeleted:
         type: boolean
+      lastDeliveryPoint:
+        properties:
+          address:
+            type: string
+          apartment:
+            type: string
+          deliveryComment:
+            type: string
+          floor:
+            type: string
+          id:
+            type: string
+        type: object
       lastName:
         type: string
+      phone:
+        properties:
+          countryCode:
+            type: string
+          number:
+            type: string
+        type: object
       preferredLang:
         type: string
       updatedAt:
@@ -893,6 +1034,43 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
       summary: Make order
+      tags:
+      - Client
+  /client/orders/{order_id}:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Offset
+        in: query
+        name: offset
+        type: integer
+      - description: Limit
+        in: query
+        name: limit
+        type: integer
+      - description: Is deleted
+        in: query
+        name: is_deleted
+        type: boolean
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_order.OrdersData'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get orders by filters
       tags:
       - Client
   /management/catalog:
@@ -1135,18 +1313,42 @@ paths:
       summary: Get category by id
       tags:
       - Management Categories
+  /management/order-settings:
+    get:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/response.Success'
+            - properties:
+                data:
+                  $ref: '#/definitions/management_order_settings.OrderSettings'
+              type: object
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Get order settings
+      tags:
+      - Management Order Settings
   /management/orders:
     post:
       consumes:
       - application/json
       description: This can only be done by the logged-in user.
       parameters:
-      - description: Create order object
+      - description: MOQ
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/management_order.CreateOrderIn'
+          $ref: '#/definitions/management_order_settings.UpdateOrderSettingsMoqIn'
       produces:
       - application/json
       responses:
@@ -1158,9 +1360,9 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/response.Error'
-      summary: Create order
+      summary: Update order settings MOQ
       tags:
-      - Management Orders
+      - Management Order Settings
   /management/orders/{order_id}:
     delete:
       consumes:
@@ -1889,18 +2091,18 @@ paths:
       summary: Update user credentials
       tags:
       - Management Users
-  /management/users/email/{user_id}:
-    put:
+  /management/users/delivery-point/{user_id}:
+    delete:
       consumes:
       - application/json
       description: This can only be done by the logged-in user.
       parameters:
-      - description: Update user email object
+      - description: Delete user delivery point object
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/management_user.UpdateUserEmailIn'
+          $ref: '#/definitions/management_user.DeleteUserDeliveryPointIn'
       produces:
       - application/json
       responses:
@@ -1912,7 +2114,109 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/response.Error'
-      summary: Update user email
+      summary: Delete user delivery point
+      tags:
+      - Management Users
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Add user delivery point object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.AddUserDeliveryPointIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Add user delivery point
+      tags:
+      - Management Users
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user delivery point object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserDeliveryPointIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user delivery point
+      tags:
+      - Management Users
+  /management/users/email/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user phone object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserPhoneIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user phone
+      tags:
+      - Management Users
+  /management/users/last-delivery-point/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Change user last delivery point object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.ChangeUserLastDeliveryPointIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Change user last delivery point
       tags:
       - Management Users
   /management/users/password/{user_id}:
@@ -1986,6 +2290,32 @@ paths:
       summary: Recover user
       tags:
       - Management Users
+  /management/users/role/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user role object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserRoleIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user role
+      tags:
+      - Management Users
   /me:
     get:
       consumes:
@@ -2036,6 +2366,76 @@ paths:
       summary: Update current user credentials
       tags:
       - Current User
+  /me/delivery-point:
+    post:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Add current user delivery point object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/current_user.AddCurrentUserDeliveryPointIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Add current user delivery point
+      tags:
+      - Current User
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update current user delivery point object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/current_user.UpdateCurrentUserDeliveryPointIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update current user delivery point
+      tags:
+      - Current User
+  /me/delivery-point/{delivery_point_id}:
+    delete:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Delete current user delivery point
+      tags:
+      - Current User
   /me/email:
     put:
       consumes:
@@ -2060,6 +2460,32 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
       summary: Update current user email
+      tags:
+      - Current User
+  /me/last-delivery-point:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Change current user last delivery point object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/current_user.ChangeCurrentUserLastDeliveryPointIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Change current user last delivery point
       tags:
       - Current User
   /me/password:
@@ -2114,6 +2540,106 @@ paths:
       summary: Update current user preferred language
       tags:
       - Current User
+  /upload/category-image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: file to upload
+        in: formData
+        name: data
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Uploads a category image
+      tags:
+      - Upload
+  /upload/product-image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: file to upload
+        in: formData
+        name: data
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Uploads a product image
+      tags:
+      - Upload
+  /upload/section-image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: file to upload
+        in: formData
+        name: data
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Uploads a section image
+      tags:
+      - Upload
+  /upload/slide-image:
+    post:
+      consumes:
+      - multipart/form-data
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: file to upload
+        in: formData
+        name: data
+        required: true
+        type: file
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Uploads a slide image
+      tags:
+      - Upload
 schemes:
 - https
 securityDefinitions:

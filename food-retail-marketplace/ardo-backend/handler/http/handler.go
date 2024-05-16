@@ -12,6 +12,7 @@ import (
 	"github/nnniyaz/ardo/handler/http/management_catalog"
 	"github/nnniyaz/ardo/handler/http/management_category"
 	"github/nnniyaz/ardo/handler/http/management_order"
+	"github/nnniyaz/ardo/handler/http/management_order_settings"
 	"github/nnniyaz/ardo/handler/http/management_product"
 	"github/nnniyaz/ardo/handler/http/management_section"
 	"github/nnniyaz/ardo/handler/http/management_slide"
@@ -25,34 +26,36 @@ import (
 )
 
 type Handler struct {
-	Middleware         *middleware2.Middleware
-	Auth               *auth.HttpDelivery
-	User               *current_user.HttpDelivery
-	ManagementUser     *management_user.HttpDelivery
-	ManagementProduct  *management_product.HttpDelivery
-	ManagementOrder    *management_order.HttpDelivery
-	ManagementCatalog  *management_catalog.HttpDelivery
-	ManagementSection  *management_section.HttpDelivery
-	ManagementCategory *management_category.HttpDelivery
-	ManagementSlide    *management_slide.HttpDelivery
-	Upload             *upload.HttpDelivery
-	Client             *client.HttpDelivery
+	Middleware              *middleware2.Middleware
+	Auth                    *auth.HttpDelivery
+	User                    *current_user.HttpDelivery
+	ManagementUser          *management_user.HttpDelivery
+	ManagementProduct       *management_product.HttpDelivery
+	ManagementOrder         *management_order.HttpDelivery
+	ManagementCatalog       *management_catalog.HttpDelivery
+	ManagementSection       *management_section.HttpDelivery
+	ManagementCategory      *management_category.HttpDelivery
+	ManagementSlide         *management_slide.HttpDelivery
+	ManagementOrderSettings *management_order_settings.HttpDelivery
+	Upload                  *upload.HttpDelivery
+	Client                  *client.HttpDelivery
 }
 
 func NewHandler(c *mongo.Client, clientUri string, s *service.Services, l logger.Logger) *Handler {
 	return &Handler{
-		Middleware:         middleware2.New(l, c, s.Auth),
-		Auth:               auth.NewHttpDelivery(l, clientUri, s.Auth),
-		User:               current_user.NewHttpDelivery(l, s.CurrentUser),
-		ManagementUser:     management_user.NewHttpDelivery(l, s.ManagementUser),
-		ManagementProduct:  management_product.NewHttpDelivery(l, s.ManagementProduct),
-		ManagementOrder:    management_order.NewHttpDelivery(l, s.ManagementOrder),
-		ManagementCatalog:  management_catalog.NewHttpDelivery(l, s.ManagementCatalog),
-		ManagementSection:  management_section.NewHttpDelivery(l, s.ManagementSection),
-		ManagementCategory: management_category.NewHttpDelivery(l, s.ManagementCategory),
-		ManagementSlide:    management_slide.NewHttpDelivery(l, s.ManagementSlide),
-		Upload:             upload.NewHttpDelivery(l, s.Upload),
-		Client:             client.NewHttpDelivery(l, s.Client),
+		Middleware:              middleware2.New(l, c, s.Auth),
+		Auth:                    auth.NewHttpDelivery(l, clientUri, s.Auth),
+		User:                    current_user.NewHttpDelivery(l, s.CurrentUser),
+		ManagementUser:          management_user.NewHttpDelivery(l, s.ManagementUser),
+		ManagementProduct:       management_product.NewHttpDelivery(l, s.ManagementProduct),
+		ManagementOrder:         management_order.NewHttpDelivery(l, s.ManagementOrder),
+		ManagementCatalog:       management_catalog.NewHttpDelivery(l, s.ManagementCatalog),
+		ManagementSection:       management_section.NewHttpDelivery(l, s.ManagementSection),
+		ManagementCategory:      management_category.NewHttpDelivery(l, s.ManagementCategory),
+		ManagementSlide:         management_slide.NewHttpDelivery(l, s.ManagementSlide),
+		ManagementOrderSettings: management_order_settings.NewHttpDelivery(l, s.ManagementOrderSettings),
+		Upload:                  upload.NewHttpDelivery(l, s.Upload),
+		Client:                  client.NewHttpDelivery(l, s.Client),
 	}
 }
 
@@ -105,6 +108,14 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
+	r.Route("/upload", func(r chi.Router) {
+		r.Use(h.Middleware.StaffAuth)
+		r.Post("/slide-image", h.Upload.UploadSlidesImage)
+		r.Post("/section-image", h.Upload.UploadSectionImage)
+		r.Post("/category-image", h.Upload.UploadCategoriesImage)
+		r.Post("/product-image", h.Upload.UploadProductImage)
+	})
+
 	r.Route("/auth", func(r chi.Router) {
 		r.Use(h.Middleware.NoAuth)
 		r.Post("/login", h.Auth.Login)
@@ -126,6 +137,12 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 		r.Put("/last-delivery-point", h.User.ChangeCurrentUserLastDeliveryPoint)
 	})
 
+	r.Route("/client", func(r chi.Router) {
+		r.Use(h.Middleware.UserAuth)
+		r.With(h.Middleware.PaginationParams).Get("/orders", h.Client.GetOrdersHistory)
+		r.With(h.Middleware.WithTransaction).Post("/make-order", h.Client.MakeOrder)
+	})
+
 	r.Route("/management", func(r chi.Router) {
 		r.Use(h.Middleware.StaffAuth)
 		r.Route("/users", func(r chi.Router) {
@@ -134,7 +151,14 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			r.With(h.Middleware.WithTransaction).Post("/", h.ManagementUser.AddUser)
 			r.Put("/credentials/{user_id}", h.ManagementUser.UpdateUserCredentials)
 			r.Put("/email/{user_id}", h.ManagementUser.UpdateUserEmail)
+			r.Put("/phone/{user_id}", h.ManagementUser.UpdateUserPhone)
 			r.Put("/preferred-lang/{user_id}", h.ManagementUser.UpdateUserPreferredLang)
+			r.Put("/role/{user_id}", h.ManagementUser.UpdateUserRole)
+			r.Post("/delivery-point/{user_id}", h.ManagementUser.AddUserDeliveryPoint)
+			r.Put("/delivery-point/{user_id}", h.ManagementUser.UpdateUserDeliveryPoint)
+			r.Delete("/delivery-point/{user_id}", h.ManagementUser.DeleteUserDeliveryPoint)
+			r.Put("/last-delivery-point/{user_id}", h.ManagementUser.ChangeUserLastDeliveryPoint)
+			r.Put("/role/{user_id}", h.ManagementUser.UpdateUserPreferredLang)
 			r.Put("/password/{user_id}", h.ManagementUser.UpdateUserPassword)
 			r.Put("/recover/{user_id}", h.ManagementUser.RecoverUser)
 			r.Delete("/{user_id}", h.ManagementUser.DeleteUser)
@@ -194,20 +218,11 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 			r.Put("/recover/{slide_id}", h.ManagementSlide.RecoverSlide)
 			r.Delete("/{slide_id}", h.ManagementSlide.DeleteSlide)
 		})
-	})
 
-	r.Route("/upload", func(r chi.Router) {
-		r.Use(h.Middleware.StaffAuth)
-		r.Post("/slide-image", h.Upload.UploadSlidesImage)
-		r.Post("/section-image", h.Upload.UploadSectionImage)
-		r.Post("/category-image", h.Upload.UploadCategoriesImage)
-		r.Post("/product-image", h.Upload.UploadProductImage)
-	})
-
-	r.Route("/client", func(r chi.Router) {
-		r.Use(h.Middleware.UserAuth)
-		r.With(h.Middleware.PaginationParams).Get("/orders", h.Client.GetOrdersHistory)
-		r.With(h.Middleware.WithTransaction).Post("/make-order", h.Client.MakeOrder)
+		r.Route("/order-settings", func(r chi.Router) {
+			r.Get("/", h.ManagementOrderSettings.GetOrderSettings)
+			r.Put("/moq-fee", h.ManagementOrderSettings.UpdateMoqFee)
+		})
 	})
 	return r
 }

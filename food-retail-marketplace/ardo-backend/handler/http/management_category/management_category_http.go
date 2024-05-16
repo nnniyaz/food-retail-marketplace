@@ -31,8 +31,8 @@ type Category struct {
 	Desc      core.MlString `json:"desc"`
 	Img       string        `json:"img"`
 	IsDeleted bool          `json:"isDeleted"`
-	CreatedAt time.Time     `json:"createdAt"`
-	UpdatedAt time.Time     `json:"updatedAt"`
+	CreatedAt string        `json:"createdAt"`
+	UpdatedAt string        `json:"updatedAt"`
 	Version   int           `json:"version"`
 }
 
@@ -43,8 +43,8 @@ func NewCategory(c *category.Category) *Category {
 		Desc:      c.GetDesc(),
 		Img:       c.GetImg(),
 		IsDeleted: c.GetIsDeleted(),
-		CreatedAt: c.GetCreatedAt(),
-		UpdatedAt: c.GetUpdatedAt(),
+		CreatedAt: c.GetCreatedAt().Format(time.RFC3339),
+		UpdatedAt: c.GetUpdatedAt().Format(time.RFC3339),
 		Version:   c.GetVersion(),
 	}
 }
