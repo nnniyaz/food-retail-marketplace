@@ -127,7 +127,7 @@ export const ProductsAdd: FC = () => {
                                 name={"desc"}
                                 label={txt.desc[currentLang]}
                                 rules={[rules.requiredI18n(txt.please_enter_desc[currentLang])]}
-                                required={true}
+                                required={false}
                             >
                                 <I18NTextarea
                                     value={form.getFieldValue("desc")}
