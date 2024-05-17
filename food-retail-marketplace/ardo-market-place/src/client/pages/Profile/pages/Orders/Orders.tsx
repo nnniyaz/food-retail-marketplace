@@ -8,11 +8,30 @@ import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {ReturnButton} from "@widgets/ReturnButton";
 import classes from "./Orders.module.scss";
 import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
+import {getLastStatusHistory} from "@pkg/status/getLastStatusHistory.ts";
+import {OrderStatus} from "@domain/order/order.ts";
 
 export const Orders = () => {
     const {currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {orders, isLoading} = useTypedSelector(state => state.orderHistoryState);
     const {fetchOrders} = useActions();
+
+    const translateStatus = (status: OrderStatus) => {
+        switch (status) {
+            case OrderStatus.ORDER_HAS_BEEN_PLACED:
+                return translate("order_has_been_placed", currentLang, langs);
+            case OrderStatus.ORDER_CONFIRMED:
+                return translate("order_confirmed", currentLang, langs);
+            case OrderStatus.FINAL_INVOICE_SENT:
+                return translate("final_invoice_sent", currentLang, langs);
+            case OrderStatus.GOODS_DELIVERED:
+                return translate("goods_delivered", currentLang, langs);
+            case OrderStatus.PAID:
+                return translate("paid", currentLang, langs);
+            default:
+                return "-";
+        }
+    }
 
     useEffect(() => {
         fetchOrders();
@@ -53,7 +72,7 @@ export const Orders = () => {
                                     <h2>{translate("no_orders", currentLang, langs)}</h2>
                                 </li>
                                 :
-                                orders.reverse().map((order) => (
+                                orders.map((order) => (
                                     <li className={classes.orders_list__item} key={order.id}>
                                         <div className={classes.orders_list__item__row}>
                                             <p className={classes.orders_list__item__row__label}>
@@ -79,7 +98,18 @@ export const Orders = () => {
                                                 {translate("order_status", currentLang, langs)}
                                             </p>
                                             <p className={classes.orders_list__item__row__value}>
-                                                {order.status}
+                                                {translateStatus(getLastStatusHistory(order.statusHistory)?.status) || "-"}
+                                            </p>
+                                        </div>
+                                        <div className={classes.orders_list__item__row}>
+                                            <p className={classes.orders_list__item__row__label}>
+                                                {translate("total", currentLang, langs)}
+                                            </p>
+                                            <p
+                                                className={classes.orders_list__item__row__value}
+                                                style={{fontWeight: "700"}}
+                                            >
+                                                {priceFormat(order.totalPrice, currency)}
                                             </p>
                                         </div>
                                         <div className={classes.orders_list__item__row} style={{padding: "5px 0"}}>
@@ -99,17 +129,6 @@ export const Orders = () => {
                                                 }
                                                 </tbody>
                                             </table>
-                                        </div>
-                                        <div className={classes.orders_list__item__row}>
-                                            <p className={classes.orders_list__item__row__label}>
-                                                {translate("total", currentLang, langs)}
-                                            </p>
-                                            <p
-                                                className={classes.orders_list__item__row__value}
-                                                style={{fontWeight: "700"}}
-                                            >
-                                                {priceFormat(order.totalPrice, currency)}
-                                            </p>
                                         </div>
                                     </li>
                                 ))

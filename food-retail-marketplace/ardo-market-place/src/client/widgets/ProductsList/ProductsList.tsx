@@ -103,12 +103,12 @@ const ProductItem = ({product}: ProductProps) => {
                 <div className={classes.product__img__container}>
                     <img
                         className={classes.product__img}
-                        src={product.img}
+                        src={`${cfg.assetsUri}/products/${product.img}`}
                         title={translate(product.name, currentLang, langs)}
                         alt={translate(product.name, currentLang, langs)}
                         onError={(e) => {
                             if (!imgError) {
-                                e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                                e.currentTarget.src = `/food_placeholder.png`;
                                 setImgError(true);
                             }
                         }}
@@ -211,12 +211,12 @@ const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDraw
                 <div className={classes.product_drawer__img__container}>
                     <img
                         className={classes.product_drawer__img}
-                        src={product.img}
+                        src={`${cfg.assetsUri}/products/${product.img}`}
                         title={translate(product.name, currentLang, langs)}
                         alt={translate(product.name, currentLang, langs)}
                         onError={(e) => {
                             if (!imgError) {
-                                e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                                e.currentTarget.src = `/food_placeholder.png`;
                                 setImgError(true);
                             }
                         }}

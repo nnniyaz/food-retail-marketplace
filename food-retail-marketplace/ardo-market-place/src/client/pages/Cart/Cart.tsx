@@ -123,7 +123,7 @@ const CartItemComponent = ({cartProduct}: CartItemComponentProps) => {
         <li key={cartProduct.id} className={classes.cart__item}>
             <img
                 className={classes.cart__item__image}
-                src={catalog.products[cartProduct.id].img}
+                src={`${cfg.assetsUri}/products/${catalog.products[cartProduct.id].img}`}
                 title={translate(cartProduct.name, currentLang, langs)}
                 alt={translate(cartProduct.name, currentLang, langs)}
                 onError={(e) => {

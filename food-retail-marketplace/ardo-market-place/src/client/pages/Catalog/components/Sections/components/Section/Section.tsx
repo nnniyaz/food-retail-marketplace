@@ -40,12 +40,12 @@ export const Section = ({sectionStructure}: SectionProps) => {
             >
                 <img
                     className={classes.section__preview}
-                    src={""}
+                    src={`${cfg.assetsUri}/sections/${catalog.sections[sectionStructure.sectionId].img}`}
                     title={translate(catalog.sections[sectionStructure.sectionId].name, currentLang, langs)}
                     alt={translate(catalog.sections[sectionStructure.sectionId].name, currentLang, langs)}
                     onError={(e) => {
                         if (!sectionImgError) {
-                            e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                            e.currentTarget.src = `/food_placeholder.png`;
                             setSectionImgError(true);
                         }
                     }}
@@ -120,12 +120,12 @@ const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryP
             >
                 <img
                     className={classes.category__preview}
-                    src={""}
+                    src={`${cfg.assetsUri}/categories/${catalog.categories[categoryStructure.categoryId].img}`}
                     title={translate(catalog.categories[categoryStructure.categoryId].name, currentLang, langs)}
                     alt={translate(catalog.categories[categoryStructure.categoryId].name, currentLang, langs)}
                     onError={(e) => {
                         if (!categoryImgError) {
-                            e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                            e.currentTarget.src = `/food_placeholder.png`;
                             setCategoryImgError(true);
                         }
                     }}

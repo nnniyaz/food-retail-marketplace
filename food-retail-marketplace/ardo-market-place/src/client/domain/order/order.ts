@@ -20,19 +20,24 @@ export type Order = {
     customerContacts: OrderCustomerContacts;
     deliveryInfo: DeliveryInfo;
     deliveryDate: string;
-    status: OrderStatus;
+    statusHistory: StatusHistory[];
     isDeleted: boolean;
     createdAt: string;
     updatedAt: string;
     version: number;
 }
 
+export interface StatusHistory {
+    status: OrderStatus;
+    updatedAt: string;
+}
+
 export enum OrderStatus {
-    NEW = "NEW",
-    PENDING = "PENDING",
-    ACCEPTED = "ACCEPTED",
-    CANCELED = "CANCELED",
-    DELIVERED = "DELIVERED",
+    ORDER_HAS_BEEN_PLACED = "ORDER_HAS_BEEN_PLACED",
+    ORDER_CONFIRMED = "ORDER_CONFIRMED",
+    FINAL_INVOICE_SENT = "FINAL_INVOICE_SENT",
+    GOODS_DELIVERED = "GOODS_DELIVERED",
+    PAID = "PAID",
 }
 
 export type OrderProduct = {

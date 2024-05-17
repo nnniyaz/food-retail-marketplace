@@ -221,11 +221,11 @@ export const Checkout = () => {
                     )}
 
                     <CheckoutInput
-                        label={translate("please_write_down_the_delivery_date_and_time", currentLang, langs)}
+                        label={translate("preferred_date_and_time_optional", currentLang, langs)}
                         placeholder={translate("may_16th_2024_10_00", currentLang, langs)}
                         value={deliveryDate}
                         onChange={(e) => setDeliveryDate(e.target.value)}
-                        required={true}
+                        required={false}
                     />
 
                     <Alert
@@ -244,14 +244,6 @@ export const Checkout = () => {
                             </td>
                             <td className={classes.checkout__price}>{priceFormat(cartPrice(cart), currency)}</td>
                         </tr>
-                        {catalog.orderSettings.moq.freeFrom > cartTotalPrice(cart) && (
-                            <tr>
-                                <td className={classes.checkout__price__label}>
-                                    {translate("moq_not_met", currentLang, langs)}
-                                </td>
-                                <td className={classes.checkout__price}>{priceFormat(catalog.orderSettings.moq.fee, currency)}</td>
-                            </tr>
-                        )}
                         </tbody>
                         <tfoot>
                         <tr>
@@ -270,6 +262,11 @@ export const Checkout = () => {
                         {translate("buy", currentLang, langs)}
                         {isLoadingMakeOrder && <LoadingOutlined className={classes.btn__loading}/>}
                     </button>
+                    <Alert
+                        message={`${translate("free_delivery_amount", currentLang, langs)} ${priceFormat(catalog.orderSettings.moq.freeFrom, currency)}`}
+                        type="info"
+                        showIcon
+                    />
                 </section>
             </form>
         </div>
