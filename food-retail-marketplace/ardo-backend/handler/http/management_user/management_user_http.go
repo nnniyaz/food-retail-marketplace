@@ -295,7 +295,7 @@ type UpdateUserPhoneIn struct {
 //	@Param			data	body		UpdateUserPhoneIn	true	"Update user phone object"
 //	@Success		200		{object}	response.Success
 //	@Failure		default	{object}	response.Error
-//	@Router			/management/users/email/{user_id} [put]
+//	@Router			/management/users/phone/{user_id} [put]
 func (hd *HttpDelivery) UpdateUserPhone(w http.ResponseWriter, r *http.Request) {
 	userId := chi.URLParam(r, "user_id")
 	in := UpdateUserPhoneIn{}

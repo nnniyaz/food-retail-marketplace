@@ -23,7 +23,7 @@ import (
 )
 
 const maxSessionsCount = 5
-const defaultUserType = valueobject.UserTypeAdmin
+const defaultUserType = valueobject.UserTypeClient
 
 var (
 	ErrEmailNotFound      = core.NewI18NError(core.EINVALID, core.TXT_EMAIL_DOESNT_EXIST)

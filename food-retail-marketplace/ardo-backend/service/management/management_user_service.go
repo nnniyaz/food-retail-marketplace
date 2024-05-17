@@ -2,10 +2,22 @@ package management
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"github/nnniyaz/ardo/config"
+	"github/nnniyaz/ardo/domain/activationLink"
 	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/user"
+	exceptionsUser "github/nnniyaz/ardo/domain/user/exceptions"
+	"github/nnniyaz/ardo/pkg/core"
+	"github/nnniyaz/ardo/pkg/email"
 	"github/nnniyaz/ardo/pkg/logger"
+	linkService "github/nnniyaz/ardo/service/link"
 	userService "github/nnniyaz/ardo/service/user"
+)
+
+var (
+	ErrEmailAlreadyExists = core.NewI18NError(core.EINVALID, core.TXT_EMAIL_ALREADY_EXISTS)
 )
 
 type ManagementUserService interface {
@@ -27,12 +39,15 @@ type ManagementUserService interface {
 }
 
 type managementUserService struct {
-	logger      logger.Logger
-	userService userService.UserService
+	logger       logger.Logger
+	config       *config.Config
+	emailService email.Email
+	userService  userService.UserService
+	linkService  linkService.ActivationLinkService
 }
 
-func NewManagementUserService(l logger.Logger, userService userService.UserService) ManagementUserService {
-	return &managementUserService{userService: userService, logger: l}
+func NewManagementUserService(l logger.Logger, config *config.Config, emailService email.Email, userService userService.UserService, linkService linkService.ActivationLinkService) ManagementUserService {
+	return &managementUserService{logger: l, config: config, emailService: emailService, userService: userService, linkService: linkService}
 }
 
 func (m *managementUserService) GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
@@ -48,11 +63,55 @@ func (m *managementUserService) GetUserById(ctx context.Context, userId string) 
 }
 
 func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error {
+	if u, err := m.userService.GetByEmail(ctx, email); err != nil && !errors.Is(err, exceptionsUser.ErrUserNotFound) || u != nil {
+		if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
+			return err
+		}
+
+		foundActivationLink, err := m.linkService.GetByUserId(ctx, u.GetId().String())
+		if err != nil {
+			return err
+		}
+		if foundActivationLink != nil && !u.GetIsDeleted() {
+			if foundActivationLink.GetIsActivated() {
+				return ErrEmailAlreadyExists
+			}
+
+			if !u.ComparePassword(password) {
+				err = m.userService.UpdatePassword(ctx, u, password)
+				if err != nil {
+					return err
+				}
+			}
+			foundActivationLink.UpdateLinkId()
+			err = m.linkService.UpdateLink(ctx, foundActivationLink)
+
+			link := m.config.GetApiUri() + "/auth/confirm/" + foundActivationLink.GetLinkId().String()
+
+			subject := "Confirm your email"
+			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link)
+			return m.emailService.SendMail([]string{email}, subject, htmlBody)
+		}
+	}
+
 	newUser, err := user.NewUser(firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment)
 	if err != nil {
 		return err
 	}
-	return m.userService.Create(ctx, newUser)
+	if err = m.userService.Create(ctx, newUser); err != nil {
+		return err
+	}
+
+	newActivationLink := activationLink.NewActivationLink(newUser.GetId())
+	err = m.linkService.Create(ctx, newActivationLink)
+	if err != nil {
+		return err
+	}
+
+	link := m.config.GetApiUri() + "/auth/confirm/" + newActivationLink.GetLinkId().String()
+	subject := "Confirm your email"
+	htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", newUser.GetFirstName(), link)
+	return m.emailService.SendMail([]string{newUser.GetEmail().String()}, subject, htmlBody)
 }
 
 func (m *managementUserService) UpdateUserCredentials(ctx context.Context, userId, firstName, lastName string) error {

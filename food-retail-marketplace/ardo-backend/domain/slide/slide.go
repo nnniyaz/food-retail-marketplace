@@ -18,9 +18,6 @@ type Slide struct {
 }
 
 func NewSlide(caption core.MlString, img string) (*Slide, error) {
-	if img == "" {
-		return nil, exceptions.ErrEmptySlideImg
-	}
 	return &Slide{
 		id:        uuid.NewUUID(),
 		caption:   caption,
