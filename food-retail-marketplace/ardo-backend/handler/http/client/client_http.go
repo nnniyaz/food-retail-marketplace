@@ -267,7 +267,7 @@ func (hd *HttpDelivery) MakeOrder(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	orderCreds, err := hd.service.MakeOrder(r.Context(), &u, u.GetId().String(), orderProducts, in.Quantity, in.TotalPrice, in.Currency, customerContacts, orderDeliveryInfo, in.DeliveryInfo.DeliveryPointId)
+	orderCreds, err := hd.service.MakeOrder(r.Context(), &u, u.GetId().String(), orderProducts, in.Quantity, in.TotalPrice, in.Currency, customerContacts, orderDeliveryInfo)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

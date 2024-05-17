@@ -17,7 +17,6 @@ import (
 	sectionService "github/nnniyaz/ardo/service/section"
 	slideService "github/nnniyaz/ardo/service/slide"
 	"go.mongodb.org/mongo-driver/mongo"
-	"sync"
 	"time"
 )
 
@@ -61,8 +60,6 @@ func (m *managementCatalogService) UpdateCatalog(ctx context.Context, catalogId 
 }
 
 func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId string) error {
-	var wg sync.WaitGroup
-
 	foundCatalog, err := m.catalogService.GetOneById(ctx, catalogId)
 	if err != nil {
 		return err
@@ -104,7 +101,6 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 		}
 	}
 
-	wg.Add(1)
 	for _, promoSection := range foundCatalog.GetPromo() {
 		_, ok := selectedSections[promoSection.GetId().String()]
 		if ok {
@@ -150,13 +146,11 @@ func (m *managementCatalogService) PublishCatalog(ctx context.Context, catalogId
 		}
 	}
 
-	wg.Add(1)
 	slides, _, err := m.slideService.GetAllByFilters(ctx, 0, 0, false)
 	if err != nil {
 		return err
 	}
 
-	wg.Add(1)
 	orderSettings, err := m.orderSettingsService.GetOrderSettings(ctx)
 	if err != nil {
 		return err
