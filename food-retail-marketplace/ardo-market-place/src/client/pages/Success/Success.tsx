@@ -10,7 +10,13 @@ import classes from "./Success.module.scss";
 
 export const Success = () => {
     const {currentLang, langs, currency} = useTypedSelector(state => state.systemState);
-    const [successCart] = useState<CartItem[]>(JSON.parse(localStorage.getItem("ardo-market-place-success-cart")) || []);
+    const [successCart] = useState<{ cart: CartItem[] }>(() => {
+        const localStorageData = JSON.parse(localStorage.getItem("ardo-market-place-success-cart"));
+        if (!localStorageData) {
+            return {cart: []};
+        }
+        return {cart: JSON.parse(localStorageData?.cart || "[]")};
+    });
     return (
         <React.Fragment>
             <ReturnButton
@@ -37,7 +43,7 @@ export const Success = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {successCart.map((item) => (
+                    {successCart.cart.map((item) => (
                         <tr key={item.id}>
                             <td>{translate(item.name, currentLang, langs)}</td>
                             <td>{priceFormat(item.price, currency)}</td>
@@ -56,7 +62,7 @@ export const Success = () => {
                         <td>{translate("total", currentLang, langs)}</td>
                         <td></td>
                         <td></td>
-                        <td>{priceFormat(cartTotalPrice(successCart), currency)}</td>
+                        <td>{priceFormat(cartTotalPrice(successCart.cart), currency)}</td>
                     </tr>
                     </tfoot>
                 </table>

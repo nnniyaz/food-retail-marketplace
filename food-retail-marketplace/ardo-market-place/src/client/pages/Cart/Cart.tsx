@@ -9,8 +9,8 @@ import {CartItem} from "@domain/cartItem";
 import {translate} from "@pkg/translate/translate";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
-import {cartPrice, cartTotalPrice} from "@pkg/cartPrice/cartPrice.tsx";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
+import {cartPrice, cartTotalPrice} from "@pkg/cartPrice/cartPrice.tsx";
 import classes from "./Cart.module.scss";
 
 const {ShoppingCartOutlined} = AntdIcons;
@@ -108,6 +108,9 @@ const CartItemComponent = ({cartProduct}: CartItemComponentProps) => {
     const [imgError, setImgError] = useState(false);
 
     const handleIncrementToCart = () => {
+        if (cartProduct?.quantity === catalog.products[cartProduct.id]?.quantity) {
+            return;
+        }
         incrementToCart({id: cartProduct.id, name: cartProduct.name, price: cartProduct.price});
     }
 
@@ -123,12 +126,12 @@ const CartItemComponent = ({cartProduct}: CartItemComponentProps) => {
         <li key={cartProduct.id} className={classes.cart__item}>
             <img
                 className={classes.cart__item__image}
-                src={`${cfg.assetsUri}/products/${catalog.products[cartProduct.id].img}`}
+                src={`${cfg.assetsUri}/products/${catalog.products[cartProduct.id]?.img}`}
                 title={translate(cartProduct.name, currentLang, langs)}
                 alt={translate(cartProduct.name, currentLang, langs)}
                 onError={(e) => {
                     if (!imgError) {
-                        e.currentTarget.src = `${cfg.assetsUri}/food_placeholder.png`;
+                        e.currentTarget.src = `/food_placeholder.png`;
                         setImgError(true);
                     }
                 }}

@@ -21,9 +21,7 @@ export type PublishedCatalog = {
             freeFrom: number;
         };
     }
-    createdAt: string;
-    updatedAt: string;
-    version: number;
+    publishedAt: string;
 }
 
 export type PublishedCatalogSections = {

@@ -1,14 +1,14 @@
 import React, {Dispatch, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
+import {Select} from "antd";
 import * as AntdIcons from "@ant-design/icons";
 import {RouteNames} from "@pages/index.tsx";
 import {translate} from "@pkg/translate/translate.ts";
 import {useActions} from "@pkg/hooks/useActions.ts";
-import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
-import classes from "./SignUp.module.scss";
-import {Select} from "antd";
-import {CountryCode, countryCodesInfo} from "@pkg/formats/phone/countryCodes.ts";
 import {phoneFormat} from "@pkg/formats/phone/phoneFormat.ts";
+import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
+import {CountryCode, countryCodesInfo} from "@pkg/formats/phone/countryCodes.ts";
+import classes from "./SignUp.module.scss";
 
 const {LoadingOutlined, EyeOutlined, EyeInvisibleOutlined} = AntdIcons;
 

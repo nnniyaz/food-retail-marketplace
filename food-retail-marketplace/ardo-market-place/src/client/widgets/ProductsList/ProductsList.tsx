@@ -1,4 +1,4 @@
-import React, {useMemo, useState} from "react";
+import React, {useEffect, useMemo, useState} from "react";
 import PlusSVG from "@assets/icons/plus-circle.svg?react";
 import MinusSVG from "@assets/icons/minus-circle.svg?react";
 import {Product} from "@domain/product/product.ts";
@@ -9,6 +9,7 @@ import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import {useActions} from "@pkg/hooks/useActions.ts";
 import classes from "./ProductsList.module.scss";
 import {Drawer} from "antd";
+import {useLocation} from "react-router-dom";
 
 interface ProductsProps {
     sectionId: string;
@@ -16,8 +17,9 @@ interface ProductsProps {
 }
 
 export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
+    const location = useLocation();
     const {currentLang, langs} = useTypedSelector(state => state.systemState);
-    const {catalog} = useTypedSelector(state => state.catalogState);
+    const {catalog, currentCategory} = useTypedSelector(state => state.catalogState);
     const sectionStructure = useMemo<PublishedCatalogSections | null>(() => {
         if (!catalog) {
             return null;
@@ -34,6 +36,19 @@ export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
         return foundSectionStructure;
     }, [sectionId, catalog.structure]);
 
+    const scrollTo = (id: string) => {
+        const element = document.getElementById(id);
+        if (element) {
+            element.scrollIntoView({behavior: "smooth"});
+        }
+    }
+
+    useEffect(() => {
+        if (!!catalog.categories[currentCategory.categoryId]) {
+            scrollTo(location.hash.replace("#", ""));
+        }
+    }, [location.hash]);
+
     if (!sectionStructure) {
         return null;
     }
@@ -42,16 +57,17 @@ export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
     }
     return (
         <div className={classes.products_widget}>
-            {!isPromo && (
-                <nav>Category Navigation</nav>
-            )}
             <div className={classes.products}>
                 {sectionStructure.categories.map((catalogsCategory) => {
                     if (!catalog.categories[catalogsCategory.categoryId]) {
                         return null;
                     }
                     return (
-                        <section key={catalogsCategory.categoryId} className={classes.products__category}>
+                        <section
+                            key={catalogsCategory.categoryId}
+                            className={classes.products__category}
+                            id={translate(catalog.categories[catalogsCategory.categoryId].name, currentLang, langs).toLowerCase().replace(/ /g, "_")}
+                        >
                             <h2>{translate(catalog.categories[catalogsCategory.categoryId].name, currentLang, langs)}</h2>
                             <ul className={classes.products__list}>
                                 {catalogsCategory.products.map((catalogsProduct) => (
@@ -69,11 +85,11 @@ export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
     );
 }
 
-interface ProductProps {
+export interface ProductProps {
     product: Product;
 }
 
-const ProductItem = ({product}: ProductProps) => {
+export const ProductItem = ({product}: ProductProps) => {
     const {cfg, currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {cart} = useTypedSelector(state => state.cartState);
     const {incrementToCart, decrementFromCart} = useActions();
@@ -87,6 +103,9 @@ const ProductItem = ({product}: ProductProps) => {
     const [openDrawer, setOpenDrawer] = useState(false);
 
     const handleIncrementToCart = () => {
+        if (cartProduct?.quantity === product.quantity) {
+            return;
+        }
         incrementToCart({id: product._id, name: product.name, price: product.price});
     }
 
@@ -123,7 +142,11 @@ const ProductItem = ({product}: ProductProps) => {
                 </div>
                 <div className={classes.product__info}>
                     <p className={classes.product__title}>
-                        {translate(product.name, currentLang, langs)}
+                        {
+                            translate(product.name, currentLang, langs).length > 30
+                                ? translate(product.name, currentLang, langs).slice(0, 30) + "..."
+                                : translate(product.name, currentLang, langs)
+                        }
                     </p>
                     <p className={classes.product_available__amount}>
                         {translate("available_amount", currentLang, langs)}: {product.quantity}
@@ -183,13 +206,13 @@ const ProductItem = ({product}: ProductProps) => {
     )
 }
 
-interface ProductItemDrawerProps {
+export interface ProductItemDrawerProps {
     product: Product;
     openDrawer: boolean;
     setOpenDrawer: (open: boolean) => void;
 }
 
-const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDrawerProps) => {
+export const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDrawerProps) => {
     const {cfg, currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {cart} = useTypedSelector(state => state.cartState);
     const {incrementToCart} = useActions();
@@ -202,6 +225,9 @@ const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDraw
     const [imgError, setImgError] = useState(false);
 
     const handleIncrementToCart = () => {
+        if (cartProduct?.quantity === product.quantity) {
+            return;
+        }
         incrementToCart({id: product._id, name: product.name, price: product.price});
     }
 

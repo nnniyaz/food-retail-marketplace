@@ -7,10 +7,12 @@ export interface SystemState {
     currentLang: Langs;
     langs: Langs[];
     currency: Currency;
+    search: string;
 }
 
 export enum SystemActionEnum {
     INIT_SYSTEM_STATE = "INIT_SYSTEM_STATE",
+    SET_SEARCH = "SET_SEARCH",
 }
 
 export interface InitSystemStateAction {
@@ -18,4 +20,9 @@ export interface InitSystemStateAction {
     payload: Cfg;
 }
 
-export type SystemAction = InitSystemStateAction;
+export interface SetSearchAction {
+    type: SystemActionEnum.SET_SEARCH;
+    payload: string;
+}
+
+export type SystemAction = InitSystemStateAction | SetSearchAction;

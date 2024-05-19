@@ -71,13 +71,7 @@ interface RoutingProps {
 }
 
 export const Routing = ({}: RoutingProps) => {
-    const {catalog} = useTypedSelector(state => state.catalogState);
     const {isAuth} = useTypedSelector(state => state.userState);
-
-    if (!catalog) {
-        return null;
-    }
-
     return (
         <Routes>
             <Route element={<Layout/>}>

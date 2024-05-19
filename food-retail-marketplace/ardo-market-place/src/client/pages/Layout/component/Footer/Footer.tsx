@@ -6,43 +6,54 @@ import CartSVG from "@assets/icons/cart.svg?react";
 // import ShoppingBagSVG from "@assets/icons/shopping-bag.svg?react";
 import UserSVG from "@assets/icons/user.svg?react";
 import classes from "./Footer.module.scss";
+import {translate} from "@pkg/translate/translate.ts";
+import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 
 export const Footer = () => {
     const location = useLocation();
+    const {currentLang, langs} = useTypedSelector(state => state.systemState);
     return (
         <footer className={classes.footer}>
-            <div className={classes.credentials}>
-                <p
-                    className={classes.credentials__text}
-                    style={{display: "flex", alignItems: "center", gap: "5px",}}
-                >
-                    <a
-                        className={classes.credentials__link}
-                        href={"https://ardogroup.org/suppliers/en#faq"}
-                        target={"_blank"}
-                    >
-                        FAQ
-                    </a>
-                    <span>|</span>
-                    <a
-                        className={classes.credentials__link}
-                        href={"https://ardogroup.org/terms-of-use/en"}
-                        target={"_blank"}
-                    >
-                        Terms of use
-                    </a>
-                    <span>|</span>
-                    <a
-                        className={classes.credentials__link}
-                        href={"https://ardogroup.org/terms-and-conditions/en"}
-                        target={"_blank"}
-                    >
-                        Terms and Conditions
-                    </a>
-                </p>
-                <p className={classes.credentials__text}>Ardo Group Ltd.</p>
-                <p className={classes.credentials__text}>© 2023. All rights are reserved.</p>
-            </div>
+            {
+                (location.pathname !== RouteNames.CART && location.pathname !== RouteNames.CHECKOUT) && (
+                    <div className={classes.credentials}>
+                        <a
+                            href={"https://wa.link/vnrfq1"}
+                            target={"_blank"}
+                            className={classes.credentials__text} style={{marginBottom: "5px", color: "#4096ff"}}
+                        >
+                            {translate("continue_with_whatsapp", currentLang, langs)}
+                        </a>
+                        <p className={classes.credentials__text}>
+                            <a
+                                className={classes.credentials__link}
+                                href={"https://ardogroup.org/suppliers/en#faq"}
+                                target={"_blank"}
+                            >
+                                FAQ
+                            </a>
+                            <span>|</span>
+                            <a
+                                className={classes.credentials__link}
+                                href={"https://ardogroup.org/terms-of-use/en"}
+                                target={"_blank"}
+                            >
+                                Terms of use
+                            </a>
+                            <span>|</span>
+                            <a
+                                className={classes.credentials__link}
+                                href={"https://ardogroup.org/terms-and-conditions/en"}
+                                target={"_blank"}
+                            >
+                                Terms and Conditions
+                            </a>
+                        </p>
+                        <p className={classes.credentials__text}>Ardo Group Ltd.</p>
+                        <p className={classes.credentials__text}>© 2023. All rights are reserved.</p>
+                    </div>
+                )
+            }
 
             <nav className={classes.navbar}>
                 <ul className={classes.navbar__list}>

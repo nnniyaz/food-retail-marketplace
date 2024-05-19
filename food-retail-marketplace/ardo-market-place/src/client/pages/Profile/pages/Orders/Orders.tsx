@@ -49,8 +49,8 @@ export const Orders = () => {
                     ?
                     <ul className={classes.orders_list}>
                         {
-                            Array(3).fill(0).map(() => (
-                                <li className={classes.orders_list__item}>
+                            Array(3).fill(0).map((_, index) => (
+                                <li className={classes.orders_list__item} key={index}>
                                     <Skeleton style={{width: "100%", height: "100%"}}/>
                                 </li>
                             ))
@@ -82,7 +82,7 @@ export const Orders = () => {
                                                 className={classes.orders_list__item__row__value}
                                                 style={{fontWeight: "700"}}
                                             >
-                                                {order.number}
+                                                {`#${order.number}`}
                                             </p>
                                         </div>
                                         <div className={classes.orders_list__item__row}>

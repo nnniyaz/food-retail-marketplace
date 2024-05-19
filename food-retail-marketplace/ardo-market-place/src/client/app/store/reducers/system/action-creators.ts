@@ -1,4 +1,4 @@
-import {InitSystemStateAction, SystemActionEnum} from "@app/store/reducers/system/types.ts";
+import {InitSystemStateAction, SystemActionEnum, SetSearchAction} from "@app/store/reducers/system/types.ts";
 import {Cfg} from "@domain/base/cfg/cfg.ts";
 
 export const SystemActionCreator = {
@@ -8,4 +8,10 @@ export const SystemActionCreator = {
             payload: cfg
         }
     },
+    setSearch: (search: string): SetSearchAction => {
+        return {
+            type: SystemActionEnum.SET_SEARCH,
+            payload: search
+        }
+    }
 }

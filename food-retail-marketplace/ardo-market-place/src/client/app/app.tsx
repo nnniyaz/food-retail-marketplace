@@ -21,27 +21,21 @@ interface EntryProps {
 export const App = (props: EntryProps) => {
     const {isLoadingGetUser} = useTypedSelector(state => state.userState);
     const {initCatalogState, initSystemState, initCartState, fetchUser} = useActions();
-    const [isPopulated, setIsPopulated] = useState<boolean>(false);
+    const [isPopulated, setIsPopulated] = useState(false);
 
-    function populateStoreWithData() {
+    async function populateStoreWithData() {
         initCatalogState(props.catalog);
         initSystemState(props.cfg);
-        initCartState({});
-        fetchUser(true);
+        initCartState({catalogPublishedTime: props.catalog.publishedAt});
+        await fetchUser(true);
         setIsPopulated(true);
     }
 
     useEffect(() => {
-        if (props.catalog !== null) {
-            populateStoreWithData();
-        }
+        populateStoreWithData();
     }, []);
 
-    if (props.catalog === null || !isPopulated) {
-        return null;
-    }
-
-    if (isLoadingGetUser) {
+    if (isLoadingGetUser || !isPopulated) {
         return (
             <div style={{
                 width: "100%",
@@ -50,7 +44,7 @@ export const App = (props: EntryProps) => {
                 alignItems: "center",
                 justifyContent: "center",
             }}>
-                <LoadingOutlined/>
+                <LoadingOutlined style={{fontSize: "50px", color: '#4096ff'}}/>
             </div>
         )
     }

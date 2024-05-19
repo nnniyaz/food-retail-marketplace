@@ -115,7 +115,7 @@ const SectionCategory = ({sectionStructure, categoryStructure}: SectionCategoryP
                 className={classes.category}
                 to={RouteNames.LIST
                     .replace(":sectionName", catalog.sections[sectionStructure.sectionId].name.EN.replace(" ", "-").toLowerCase())
-                    .replace(":sectionId", sectionStructure.sectionId)
+                    .replace(":sectionId", sectionStructure.sectionId) + `#${translate(catalog.categories[categoryStructure.categoryId].name, currentLang, langs).toLowerCase().replace(/ /g, "_")}`
                 }
             >
                 <img

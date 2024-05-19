@@ -25,7 +25,7 @@ import {
 import {txts} from "../../../../../server/pkg/core/txts.ts";
 
 export const CartActionCreator = {
-    initCartState: (payload: {}): InitCartStateAction => ({
+    initCartState: (payload: {catalogPublishedTime: string}): InitCartStateAction => ({
         type: CartActionEnum.INIT_CART_STATE,
         payload
     }),

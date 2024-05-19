@@ -12,7 +12,8 @@ const initialState: SystemState = {
     },
     currentLang: Langs.EN,
     langs: [Langs.EN, Langs.RU],
-    currency: Currency.HKD
+    currency: Currency.HKD,
+    search: "",
 };
 
 export default function systemStateReducer(state = initialState, action: SystemAction): SystemState {
@@ -22,6 +23,8 @@ export default function systemStateReducer(state = initialState, action: SystemA
                 action.payload.defaultCountryCode = CountryCode.HK;
             }
             return {...state, cfg: action.payload};
+        case SystemActionEnum.SET_SEARCH:
+            return {...state, search: action.payload};
         default:
             return state;
     }

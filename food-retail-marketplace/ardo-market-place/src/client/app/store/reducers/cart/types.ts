@@ -19,6 +19,7 @@ export interface CartState {
         }
     }
     isLoadingMakeOrder: boolean;
+    catalogPublishedTime: string;
 }
 
 export enum CartActionEnum {
@@ -40,7 +41,9 @@ export enum CartActionEnum {
 
 export interface InitCartStateAction {
     type: CartActionEnum.INIT_CART_STATE;
-    payload: {};
+    payload: {
+        catalogPublishedTime: string;
+    };
 }
 
 export interface IncrementToCartAction {
