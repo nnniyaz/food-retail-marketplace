@@ -100,9 +100,13 @@ export const ModalAddProduct: FC<ModalAddProductProps> = (
                         mode={"multiple"}
                         options={
                             products?.filter(product => {
-                                const structureProductIds = catalog?.structure?.flatMap(section => section?.categories).flatMap(category => category?.products).map(product => product?.productId);
-                                const promoProductIds = catalog?.promo?.flatMap(section => section?.categories).flatMap(category => category?.products).map(product => product?.productId);
-                                return !structureProductIds?.includes(product.id) && !promoProductIds?.includes(product.id);
+                                if (isPromo) {
+                                    const promoProductIds = catalog?.promo?.flatMap(section => section?.categories).flatMap(category => category?.products).map(product => product?.productId);
+                                    return !promoProductIds?.includes(product.id);
+                                } else {
+                                    const structureProductIds = catalog?.structure?.flatMap(section => section?.categories).flatMap(category => category?.products).map(product => product?.productId);
+                                    return !structureProductIds?.includes(product.id);
+                                }
                             })?.map(product => ({
                                 label: product.name[currentLang] || `${txt.not_translated[currentLang]} - ID: ${product.id}`,
                                 value: product.id

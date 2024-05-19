@@ -64,7 +64,7 @@ export enum ApiRoutes {
     GET_PRODUCT = "/management/products/:product_id",
     POST_PRODUCT = "/management/products",
     PUT_PRODUCT_CREDENTIALS = "/management/products/credentials/:product_id",
-    PUT_PRODUCT_RECOVER = "/management/products/:product_id",
+    PUT_PRODUCT_RECOVER = "/management/products/recover/:product_id",
     DELETE_PRODUCT = "/management/products/:product_id",
 
     // ------------------------ MANAGEMENT OF SLIDES -----------------------

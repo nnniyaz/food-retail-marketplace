@@ -8,8 +8,10 @@ import {Langs, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
 import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
+import {Upload} from "@shared/ui/Upload/Upload";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
 import {useActions} from "@shared/lib/hooks/useActions";
+import {SpaceFolders} from "@entities/base/spaceFolders";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./SlidesEdit.module.scss";
 
@@ -22,15 +24,25 @@ export const SlidesEdit: FC = () => {
         isLoadingEditSlide,
         isLoadingDeleteSlide,
         isLoadingRecoverSlide,
-        isLoadingGetSlideById
+        isLoadingGetSlideById,
+        isLoadingSlideImageUpload
     } = useTypedSelector(state => state.slides);
-    const {getSlideById, editSlide, deleteSlide, recoverSlide} = useActions();
+    const {getSlideById, editSlide, deleteSlide, recoverSlide, uploadSlideImage} = useActions();
     const [form] = useForm();
     const values = useWatch([], form);
 
     const [editMode, setEditMode] = useState(false);
     const [formInitialValues, setFormInitialValues] = useState({});
     const [submittable, setSubmittable] = useState(false);
+
+    const handleUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const filename = await uploadSlideImage(formData);
+        if (filename) {
+            form.setFieldValue("img", filename);
+        }
+    }
 
     const handleCancel = () => {
         back(RouteNames.SLIDES, navigate);
@@ -104,6 +116,18 @@ export const SlidesEdit: FC = () => {
             {editMode ? (
                 <Card bodyStyle={{padding: "20px 10px", borderRadius: "8px"}}>
                     <Form form={form} layout={"vertical"} onFinish={handleEdit} initialValues={formInitialValues}>
+                        <Form.Item name={"img"}>
+                            <Upload
+                                imgSrc={
+                                    form.getFieldValue("img")
+                                        ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.SLIDES}/${form.getFieldValue("img")}`
+                                        : ""
+                                }
+                                onUpload={handleUpload}
+                                loading={isLoadingSlideImageUpload}
+                            />
+                        </Form.Item>
+
                         <Form.Item
                             name={"caption"}
                             label={txt.name[currentLang]}
@@ -143,6 +167,19 @@ export const SlidesEdit: FC = () => {
                 <Card bodyStyle={{padding: "10px", borderRadius: "8px"}} loading={isLoadingGetSlideById}>
                     <h1 className={classes.title}>{slideById?.caption?.[currentLang]}</h1>
                     <h3 className={classes.subtitle}>{slideById?.id || "-"}</h3>
+
+                    {!!slideById?.img && (
+                        <div style={{margin: "20px 0"}}>
+                            <Upload
+                                imgSrc={
+                                    slideById?.img
+                                        ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.SLIDES}/${slideById?.img}`
+                                        : ""
+                                }
+                                loading={isLoadingSlideImageUpload}
+                            />
+                        </div>
+                    )}
 
                     <div className={classes.row__btns}>
                         <Button onClick={handleCancel}>

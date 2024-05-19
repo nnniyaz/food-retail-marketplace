@@ -4,7 +4,7 @@ import {Button, Card, Form} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {isEmpty} from "lodash";
 import {RouteNames} from "@pages/index";
-import {isEqualMlStrings, Langs, MlString} from "@entities/base/MlString";
+import {Langs, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
 import {back} from "@shared/lib/back/back";
 import {rules} from "@shared/lib/form-rules/rules";
@@ -13,6 +13,8 @@ import {I18NInput} from "@shared/ui/Input/I18NInput";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "./CategoriesEdit.module.scss";
+import {Upload} from "@shared/ui/Upload/Upload";
+import {SpaceFolders} from "@entities/base/spaceFolders";
 
 export const CategoriesEdit = () => {
     const {id} = useParams();
@@ -23,15 +25,25 @@ export const CategoriesEdit = () => {
         isLoadingEditCategory,
         isLoadingDeleteCategory,
         isLoadingRecoverCategory,
-        isLoadingGetCategoryById
+        isLoadingGetCategoryById,
+        isLoadingCategoryImageUpload
     } = useTypedSelector(state => state.categories);
-    const {getCategoryById, editCategory, deleteCategory, recoverCategory} = useActions();
+    const {getCategoryById, editCategory, deleteCategory, recoverCategory, uploadCategoryImage} = useActions();
     const [form] = useForm<{ img: string, name: MlString, desc: MlString }>();
     const values = useWatch([], form);
 
     const [editMode, setEditMode] = useState(false);
     const [formInitialValues, setFormInitialValues] = useState({});
     const [submittable, setSubmittable] = useState(false);
+
+    const handleUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const filename = await uploadCategoryImage(formData);
+        if (filename) {
+            form.setFieldValue("img", filename);
+        }
+    }
 
     const handleCancel = () => {
         back(RouteNames.CATEGORIES, navigate);
@@ -110,6 +122,18 @@ export const CategoriesEdit = () => {
             {editMode ? (
                 <Card bodyStyle={{padding: "20px 10px", borderRadius: "8px"}}>
                     <Form form={form} layout={"vertical"} onFinish={handleEdit} initialValues={formInitialValues}>
+                        <Form.Item name={"img"}>
+                            <Upload
+                                imgSrc={
+                                    form.getFieldValue("img")
+                                        ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.CATEGORIES}/${form.getFieldValue("img")}`
+                                        : ""
+                                }
+                                onUpload={handleUpload}
+                                loading={isLoadingCategoryImageUpload}
+                            />
+                        </Form.Item>
+
                         <Form.Item
                             name={"name"}
                             label={txt.name[currentLang]}
@@ -125,8 +149,6 @@ export const CategoriesEdit = () => {
                         <Form.Item
                             name={"desc"}
                             label={txt.desc[currentLang]}
-                            rules={[rules.requiredI18n(txt.please_enter_desc[currentLang])]}
-                            required={true}
                         >
                             <I18NInput
                                 value={form.getFieldValue("desc")}
@@ -161,6 +183,21 @@ export const CategoriesEdit = () => {
                 <Card bodyStyle={{padding: "10px", borderRadius: "8px"}} loading={isLoadingGetCategoryById}>
                     <h1 className={classes.title}>{categoryById?.name?.[currentLang]}</h1>
                     <h3 className={classes.subtitle}>{categoryById?.id || "-"}</h3>
+
+                    {!!categoryById?.img && (
+                        <div style={{margin: "20px 0"}}>
+                            <Upload
+                                imgSrc={
+                                    categoryById?.img
+                                        ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.CATEGORIES}/${categoryById?.img}`
+                                        : ""
+                                }
+                                onUpload={handleUpload}
+                                loading={isLoadingCategoryImageUpload}
+                            />
+                        </div>
+                    )}
+
                     <RowInfo
                         label={txt.desc[currentLang]}
                         value={categoryById?.desc?.[currentLang] || "-"}

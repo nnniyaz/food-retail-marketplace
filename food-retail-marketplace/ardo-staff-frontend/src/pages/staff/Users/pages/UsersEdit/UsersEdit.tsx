@@ -225,23 +225,23 @@ export const UsersEdit: FC = () => {
 
     useEffect(() => {
         formCredentials.validateFields({validateOnly: true}).then(
-            () => setSubmittableCredentials(userById?.firstName !== valuesCredentials.firstName || userById?.lastName !== valuesCredentials.lastName),
+            () => setSubmittableCredentials(userById?.firstName !== valuesCredentials?.firstName || userById?.lastName !== valuesCredentials?.lastName),
             () => setSubmittableCredentials(false)
         )
         formEmail.validateFields({validateOnly: true}).then(
-            () => setSubmittableEmail(userById?.email !== valuesEmail.email),
+            () => setSubmittableEmail(userById?.email !== valuesEmail?.email),
             () => setSubmittableEmail(false)
         )
         formPhone.validateFields({validateOnly: true}).then(
-            () => setSubmittablePhone(userById?.phone?.number !== valuesPhone.phone.number || userById?.phone?.countryCode !== valuesPhone.phone.countryCode),
+            () => setSubmittablePhone(userById?.phone?.number !== valuesPhone?.phone?.number || userById?.phone?.countryCode !== valuesPhone?.phone?.countryCode),
             () => setSubmittablePhone(false)
         )
         formPreferredLang.validateFields({validateOnly: true}).then(
-            () => setSubmittablePreferredLang(userById?.preferredLang !== valuesPreferredLang.preferredLang),
+            () => setSubmittablePreferredLang(userById?.preferredLang !== valuesPreferredLang?.preferredLang),
             () => setSubmittablePreferredLang(false)
         )
         formRole.validateFields({validateOnly: true}).then(
-            () => setSubmittableRole(userById?.userType !== valuesRole.role),
+            () => setSubmittableRole(userById?.userType !== valuesRole?.role),
             () => setSubmittableRole(false)
         )
         formAddDeliveryPoint.validateFields({validateOnly: true}).then(
@@ -261,7 +261,7 @@ export const UsersEdit: FC = () => {
             () => setSubmittableEditLastDeliveryPoint(false)
         )
         formPassword.validateFields({validateOnly: true}).then(
-            () => setSubmittableEditPassword(!!valuesPassword.password && !!valuesPassword.passwordConfirm),
+            () => setSubmittableEditPassword(!!valuesPassword?.password && !!valuesPassword?.passwordConfirm),
             () => setSubmittableEditPassword(false)
         )
     }, [

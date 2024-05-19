@@ -108,6 +108,17 @@ export const StaffLayout: FC = () => {
                 ...(routes.find(route => route.path === RouteNames.PRODUCTS_EDIT) || {} as IRoute),
                 path: location.pathname
             });
+        } else if (location.pathname === RouteNames.SLIDES_ADD) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.SLIDES) || {} as IRoute);
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.SLIDES_ADD) || {} as IRoute);
+        } else if (location.pathname.includes(RouteNames.SLIDES_EDIT.replace("/:id", ""))) {
+            breadcrumbs = [];
+            breadcrumbs.push(routes.find(route => route.path === RouteNames.SLIDES) || {} as IRoute);
+            breadcrumbs.push({
+                ...(routes.find(route => route.path === RouteNames.SLIDES_EDIT) || {} as IRoute),
+                path: location.pathname
+            });
         }
         setBreadcrumbs(breadcrumbs);
     }, [location.pathname]);

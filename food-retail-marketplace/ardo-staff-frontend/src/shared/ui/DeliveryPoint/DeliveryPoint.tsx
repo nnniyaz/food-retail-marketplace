@@ -19,8 +19,8 @@ export const DeliveryPoint = ({address, floor, apartment, deliveryComment}: Deli
     ];
     return (
         <div className={classes.delivery__point}>
-            {deliveryPoint.map((point) => (
-                <DeliveryPointRow label={point.label} value={point.value}/>
+            {deliveryPoint.map((point, index) => (
+                <DeliveryPointRow key={index} label={point.label} value={point.value}/>
             ))}
         </div>
     )

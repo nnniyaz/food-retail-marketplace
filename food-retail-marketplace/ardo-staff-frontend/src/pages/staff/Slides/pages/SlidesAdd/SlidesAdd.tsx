@@ -3,9 +3,11 @@ import {useNavigate} from "react-router-dom";
 import {Button, Card, Form} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {RouteNames} from "@pages/index";
+import {SpaceFolders} from "@entities/base/spaceFolders";
 import {Langs, MlString} from "@entities/base/MlString";
 import {txt} from "@shared/core/i18ngen";
-import {rules} from "@shared/lib/form-rules/rules";
+import {Upload} from "@shared/ui/Upload/Upload";
+import {Notify} from "@shared/lib/notification/notification";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
@@ -22,12 +24,21 @@ const initialFormValues = {
 export const SlidesAdd: FC = () => {
     const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
-    const {isLoadingAddSlide} = useTypedSelector(state => state.slides);
-    const {addSlide} = useActions();
+    const {isLoadingAddSlide, isLoadingSlideImageUpload} = useTypedSelector(state => state.slides);
+    const {addSlide, uploadSlideImage} = useActions();
     const [form] = useForm();
     const values = useWatch([], form);
 
     const [submittable, setSubmittable] = useState(false);
+
+    const handleUpload = async (file: File) => {
+        const formData = new FormData();
+        formData.append("file", file);
+        const filename = await uploadSlideImage(formData);
+        if (filename) {
+            form.setFieldValue("img", filename);
+        }
+    }
 
     const handleCancel = () => {
         navigate(RouteNames.SLIDES);
@@ -35,6 +46,10 @@ export const SlidesAdd: FC = () => {
 
     const handleSubmit = async () => {
         const values = form.getFieldsValue();
+        if (!values.img) {
+            Notify.Info({title: txt.please_upload_image[currentLang], message: ""})
+            return;
+        }
         await addSlide({
             img: values.img,
             caption: values.caption
@@ -52,11 +67,21 @@ export const SlidesAdd: FC = () => {
         <div className={classes.main}>
             <Card bodyStyle={{padding: "20px 10px", borderRadius: "8px"}}>
                 <Form form={form} layout={"vertical"} onFinish={handleSubmit} initialValues={initialFormValues}>
+                    <Form.Item name={"img"}>
+                        <Upload
+                            imgSrc={
+                                form.getFieldValue("img")
+                                    ? `${import.meta.env.VITE_SPACE_HOST}/${SpaceFolders.SLIDES}/${form.getFieldValue("img")}`
+                                    : ""
+                            }
+                            onUpload={handleUpload}
+                            loading={isLoadingSlideImageUpload}
+                        />
+                    </Form.Item>
+
                     <Form.Item
                         name={"caption"}
                         label={txt.name[currentLang]}
-                        rules={[rules.requiredI18n(txt.please_enter_name[currentLang])]}
-                        required={true}
                     >
                         <I18NInput
                             value={form.getFieldValue("caption")}

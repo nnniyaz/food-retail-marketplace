@@ -128,7 +128,7 @@ const AppRouter = () => {
                     {[...staffRoutesSidebar, ...staffRoutes].filter(route => !route.disabled).map(route => (
                         <Route path={route.path} element={<route.element/>} key={route.path}/>
                     ))}
-                    <Route path={"*"} element={<Navigate to={RouteNames.USERS}/>}/>
+                    <Route path={"*"} element={<Navigate to={RouteNames.ORDERS}/>}/>
                 </Route>
                 :
                 <Route element={<Layout/>}>

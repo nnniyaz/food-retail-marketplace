@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useMemo, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Button, Card, Modal, Row, Tabs, Typography} from "antd";
+import {Alert, Button, Card, Modal, Row, Tabs, Typography} from "antd";
 import {LoadingOutlined} from "@ant-design/icons";
 import {isEmpty} from "lodash";
 import {txt} from "@shared/core/i18ngen";
@@ -12,6 +12,7 @@ import {ModalAddSection} from "./components/ModalAddSection";
 import classes from "./Catalog.module.scss";
 import {Reorder} from "framer-motion";
 import {CatalogsStructure} from "@entities/catalog/catalog";
+import {Notify} from "@shared/lib/notification/notification";
 
 const {Title, Paragraph} = Typography;
 
@@ -95,6 +96,10 @@ export const Catalog: FC = () => {
 
     const handlePublishCatalog = async () => {
         if (!catalog) return;
+        if (catalogErrors.length > 0) {
+            Notify.Info({title: txt.please_fix_catalog_errors[currentLang], message: ""});
+            return;
+        }
         await publishCatalog(catalog.id, {navigate: navigate});
         setIsPublishCatalogModalVisible(false);
     }
@@ -111,6 +116,10 @@ export const Catalog: FC = () => {
 
     const handleSaveCatalogOrder = async () => {
         if (!catalog) return;
+        if (catalogErrors.length > 0) {
+            Notify.Info({title: txt.please_fix_catalog_errors[currentLang], message: ""});
+            return;
+        }
         await editCatalog({
             structure: catalog.structure,
             promo: catalog.promo
@@ -169,7 +178,7 @@ export const Catalog: FC = () => {
                                 {
                                     isLoadingGetPublishedAt
                                         ?
-                                        <LoadingOutlined style={{height: "22px", marginRight: "10px"}}/>
+                                        <LoadingOutlined style={{fontSize: "22px"}}/>
                                         : (
                                             !!publishedAt && (
                                                 `${txt.last_time_published[currentLang]}: ${relativeFormat(publishedAt, currentLang)}`
@@ -193,7 +202,6 @@ export const Catalog: FC = () => {
                 bodyStyle={{padding: "20px", borderRadius: "8px"}}
                 loading={isLoadingGetCatalog || isLoadingGetSections || isLoadingGetCategories || isLoadingGetProducts}
             >
-
                 <Tabs
                     defaultActiveKey={currentTab}
                     onChange={setCurrentTab}
@@ -213,9 +221,19 @@ export const Catalog: FC = () => {
                                         </Button>
                                     ) : (
                                         <div className={classes.catalog__preview}>
-                                            <div>
-                                                {`Catalogs error: ${catalogErrors.length}`}
-                                            </div>
+                                            <Alert
+                                                type={catalogErrors.length > 0 ? "error" : "info"}
+                                                message={
+                                                    catalogErrors.length > 0
+                                                        ? (
+                                                            <>
+                                                                <p>{`Catalog's error: ${catalogErrors.length}`}</p>
+                                                                <p>{'Please, check below, sections, categories and products. Item is deleted or not translated.'}</p>
+                                                            </>
+                                                        )
+                                                        : `Catalog's error: ${catalogErrors.length}`
+                                                }
+                                            />
 
                                             <div className={classes.catalog__preview__content}>
                                                 <h3>{`${txt.sections[currentLang]}:`}</h3>
@@ -273,9 +291,19 @@ export const Catalog: FC = () => {
                                         </Button>
                                     ) : (
                                         <div className={classes.catalog__preview}>
-                                            <div>
-                                                {`Promo section error: ${catalogErrors.length}`}
-                                            </div>
+                                            <Alert
+                                                type={catalogErrors.length > 0 ? "error" : "info"}
+                                                message={
+                                                    catalogErrors.length > 0
+                                                        ? (
+                                                            <>
+                                                                <p>{`Catalog's error: ${catalogErrors.length}`}</p>
+                                                                <p>{'Please, check below, sections, categories and products. Item is deleted or not translated.'}</p>
+                                                            </>
+                                                        )
+                                                        : `Catalog's error: ${catalogErrors.length}`
+                                                }
+                                            />
 
                                             <div className={classes.catalog__preview__content}>
                                                 <h3>{`${txt.promo_section[currentLang]}:`}</h3>
