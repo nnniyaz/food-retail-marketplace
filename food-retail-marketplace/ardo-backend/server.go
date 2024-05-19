@@ -16,7 +16,7 @@ func (s *Server) Run(port int, handler http.Handler, startedAt time.Time) error 
 	s.httpServer = &http.Server{
 		Addr:           ":" + strconv.Itoa(port),
 		Handler:        handler,
-		MaxHeaderBytes: 1 << 20, // 1 MB
+		MaxHeaderBytes: 5 << 20, // 5 MB
 	}
 
 	fmt.Println("+-----------------------------------------------+")

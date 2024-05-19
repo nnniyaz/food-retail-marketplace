@@ -1938,15 +1938,15 @@ const docTemplate = `{
                 "tags": [
                     "Management Users"
                 ],
-                "summary": "Update user phone",
+                "summary": "Update user email",
                 "parameters": [
                     {
-                        "description": "Update user phone object",
+                        "description": "Update user email object",
                         "name": "data",
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/management_user.UpdateUserPhoneIn"
+                            "$ref": "#/definitions/management_user.UpdateUserEmailIn"
                         }
                     }
                 ],
@@ -2027,6 +2027,46 @@ const docTemplate = `{
                         "required": true,
                         "schema": {
                             "$ref": "#/definitions/management_user.UpdateUserPasswordIn"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/response.Success"
+                        }
+                    },
+                    "default": {
+                        "description": "",
+                        "schema": {
+                            "$ref": "#/definitions/response.Error"
+                        }
+                    }
+                }
+            }
+        },
+        "/management/users/phone/{user_id}": {
+            "put": {
+                "description": "This can only be done by the logged-in user.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Management Users"
+                ],
+                "summary": "Update user phone",
+                "parameters": [
+                    {
+                        "description": "Update user phone object",
+                        "name": "data",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/management_user.UpdateUserPhoneIn"
                         }
                     }
                 ],

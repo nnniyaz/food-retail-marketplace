@@ -30,7 +30,7 @@ func FormatOrderConfirmation(order *order.Order, lang core.Lang) string {
 	// Order Number
 	htmlBody += fmt.Sprintf("<h1 style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; font-size: 19px; font-weight: 600; margin: 0; padding: 25px 0; text-align: left'>%s #%s</h1>", core.Txts[core.TXT_ORDER_NUMBER].GetByLangOrEmpty(lang), order.GetNumber().String())
 
-	// Product
+	// Products
 	htmlBody += "<table cellpadding='0' cellspacing='0' style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; width: 100%; margin: 0; padding: 25px 0 0'>"
 	htmlBody += "<tbody>"
 	htmlBody += "<tr>"
@@ -78,6 +78,7 @@ func FormatOrderConfirmation(order *order.Order, lang core.Lang) string {
 	htmlBody += "</td>"
 	htmlBody += "</tr>"
 
+	// Total Price
 	htmlBody += "<tr>"
 	htmlBody += "<td colspan='2' style='width: 85%; vertical-align: middle; font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box'>"
 	htmlBody += "<p style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; line-height: 1.5em; text-align: right; margin-top: 0; color: #74787e; font-size: 16px'>"
@@ -97,42 +98,45 @@ func FormatOrderConfirmation(order *order.Order, lang core.Lang) string {
 	htmlBody += "</tbody>"
 	htmlBody += "</table>"
 
-	// Link to Cheque
-	htmlBody += "<table cellpadding='0' cellspacing='0' align='center' style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; width: 100%; margin: 30px auto; padding: 0; text-align: center'>"
-	htmlBody += "<tbody>"
-	htmlBody += "<tr>"
-	htmlBody += "<td align='center'>"
-	htmlBody += "<table cellpadding='0' cellspacing='0' border='0'>"
-	htmlBody += "<tbody>"
-	htmlBody += "<tr>"
-	htmlBody += "<td align='center'>"
-	htmlBody += "<table cellpadding='0' cellspacing='0' border='0'>"
-	htmlBody += "<tbody>"
-	htmlBody += "<tr>"
-	htmlBody += "<td>"
-	htmlBody += "<a href='' style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; color: #ffffff; border-right :18px solid #005FF9; border-bottom: 10px solid #005FF9; border-left: 18px solid #005FF9; display: inline-block; text-decoration: none; border-radius: 3px; background-color: #005FF9; border-top: 10px solid #005FF9' target='_blank' data-saferedirecturl=''>"
-	htmlBody += core.Txts[core.TXT_RECEIPT].GetByLangOrEmpty(lang)
-	htmlBody += "</a>"
-	htmlBody += "</td>"
-	htmlBody += "</tr>"
-	htmlBody += "</tbody>"
-	htmlBody += "</table>"
-	htmlBody += "</td>"
-	htmlBody += "</tr>"
-	htmlBody += "</tbody>"
-	htmlBody += "</table>"
-	htmlBody += "</td>"
-	htmlBody += "</tr>"
-	htmlBody += "</tbody>"
-	htmlBody += "</table>"
+	// Button Link to Cheque
+	//htmlBody += "<table cellpadding='0' cellspacing='0' align='center' style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; width: 100%; margin: 30px auto; padding: 0; text-align: center'>"
+	//htmlBody += "<tbody>"
+	//htmlBody += "<tr>"
+	//htmlBody += "<td align='center'>"
+	//htmlBody += "<table cellpadding='0' cellspacing='0' border='0'>"
+	//htmlBody += "<tbody>"
+	//htmlBody += "<tr>"
+	//htmlBody += "<td align='center'>"
+	//htmlBody += "<table cellpadding='0' cellspacing='0' border='0'>"
+	//htmlBody += "<tbody>"
+	//htmlBody += "<tr>"
+	//htmlBody += "<td>"
+	//htmlBody += "<a href='' style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; color: #ffffff; border-right :18px solid #005FF9; border-bottom: 10px solid #005FF9; border-left: 18px solid #005FF9; display: inline-block; text-decoration: none; border-radius: 3px; background-color: #005FF9; border-top: 10px solid #005FF9' target='_blank' data-saferedirecturl=''>"
+	//htmlBody += core.Txts[core.TXT_RECEIPT].GetByLangOrEmpty(lang)
+	//htmlBody += "</a>"
+	//htmlBody += "</td>"
+	//htmlBody += "</tr>"
+	//htmlBody += "</tbody>"
+	//htmlBody += "</table>"
+	//htmlBody += "</td>"
+	//htmlBody += "</tr>"
+	//htmlBody += "</tbody>"
+	//htmlBody += "</table>"
+	//htmlBody += "</td>"
+	//htmlBody += "</tr>"
+	//htmlBody += "</tbody>"
+	//htmlBody += "</table>"
 
 	// Credentials
-	htmlBody += "<table style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; margin-top: 25px; padding-top: 25px; border-top: 1px solid #e9eaec'>"
+	// With Border Top
+	//htmlBody += "<table style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; margin-top: 25px; padding-top: 25px; border-top: 1px solid #e9eaec'>"
+	// Without Border Top
+	htmlBody += "<table style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; margin-top: 25px; padding-top: 25px;'>"
 	htmlBody += "<tbody>"
 	htmlBody += "<tr>"
 	htmlBody += "<td>"
 	htmlBody += "<p style='font-family: Arial, Helvetica Neue, Helvetica, sans-serif; box-sizing: border-box; line-height: 1.5em; text-align: left; margin-top: 0; color: #74787e; font-size: 12px'>"
-	htmlBody += "The reason for this letter is that '<span style='background-color: rgba(0, 95, 249, 0.2); color: #222'>Ardo</span> Group Ltd.' has written down your e-mail address to send a fiscal cheque."
+	htmlBody += "Your order has been placed. The supplier will immediately review it and confirm. The price, catchweight and delivery details might slightly vary. The final invoice will be sent to your prior the delivery date. Please check your order status <a href='https://app.ardogroup.org/profile' target='_blank'>in your profile's</a> Order History page or by checking your inbox."
 	htmlBody += "</p>"
 	htmlBody += "</td>"
 	htmlBody += "</tr>"

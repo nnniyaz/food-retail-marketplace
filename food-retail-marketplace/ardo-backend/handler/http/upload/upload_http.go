@@ -28,7 +28,7 @@ func NewHttpDelivery(l logger.Logger, s upload.UploadService) *HttpDelivery {
 //	@Failure		default	{object}	response.Error
 //	@Router			/upload/slide-image [post]
 func (hd *HttpDelivery) UploadSlidesImage(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(1 << 20)
+	r.ParseMultipartForm(5 << 20)
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
@@ -59,7 +59,7 @@ func (hd *HttpDelivery) UploadSlidesImage(w http.ResponseWriter, r *http.Request
 //	@Failure		default	{object}	response.Error
 //	@Router			/upload/section-image [post]
 func (hd *HttpDelivery) UploadSectionImage(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(1 << 20)
+	r.ParseMultipartForm(5 << 20)
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
@@ -90,7 +90,7 @@ func (hd *HttpDelivery) UploadSectionImage(w http.ResponseWriter, r *http.Reques
 //	@Failure		default	{object}	response.Error
 //	@Router			/upload/category-image [post]
 func (hd *HttpDelivery) UploadCategoriesImage(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(1 << 20)
+	r.ParseMultipartForm(5 << 20) // 5 MB
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
@@ -121,7 +121,7 @@ func (hd *HttpDelivery) UploadCategoriesImage(w http.ResponseWriter, r *http.Req
 //	@Failure		default	{object}	response.Error
 //	@Router			/upload/product-image [post]
 func (hd *HttpDelivery) UploadProductImage(w http.ResponseWriter, r *http.Request) {
-	r.ParseMultipartForm(1 << 20)
+	r.ParseMultipartForm(5 << 20)
 	file, header, err := r.FormFile("file")
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)

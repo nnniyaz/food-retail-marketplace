@@ -2173,12 +2173,12 @@ paths:
       - application/json
       description: This can only be done by the logged-in user.
       parameters:
-      - description: Update user phone object
+      - description: Update user email object
         in: body
         name: data
         required: true
         schema:
-          $ref: '#/definitions/management_user.UpdateUserPhoneIn'
+          $ref: '#/definitions/management_user.UpdateUserEmailIn'
       produces:
       - application/json
       responses:
@@ -2190,7 +2190,7 @@ paths:
           description: ""
           schema:
             $ref: '#/definitions/response.Error'
-      summary: Update user phone
+      summary: Update user email
       tags:
       - Management Users
   /management/users/last-delivery-point/{user_id}:
@@ -2243,6 +2243,32 @@ paths:
           schema:
             $ref: '#/definitions/response.Error'
       summary: Update user preferred lang
+      tags:
+      - Management Users
+  /management/users/phone/{user_id}:
+    put:
+      consumes:
+      - application/json
+      description: This can only be done by the logged-in user.
+      parameters:
+      - description: Update user phone object
+        in: body
+        name: data
+        required: true
+        schema:
+          $ref: '#/definitions/management_user.UpdateUserPhoneIn'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/response.Success'
+        default:
+          description: ""
+          schema:
+            $ref: '#/definitions/response.Error'
+      summary: Update user phone
       tags:
       - Management Users
   /management/users/preferred-lang/{user_id}:
