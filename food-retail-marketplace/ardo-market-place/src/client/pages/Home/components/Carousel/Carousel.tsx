@@ -1,7 +1,6 @@
 import {useEffect, useState} from "react";
 import {Swiper, SwiperSlide} from 'swiper/react';
 import {Autoplay, Pagination, Navigation} from 'swiper';
-import {translate} from "@pkg/translate/translate";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
 import 'swiper/css';
 import 'swiper/css/pagination';

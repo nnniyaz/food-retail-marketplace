@@ -278,7 +278,7 @@ export const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductI
                                 {priceFormat(product.price, currency)}
                             </span>
                         <span className={classes.product_drawer__price_per_unit__moq}>
-                                {!cartProduct && `• 1 pc`}
+                                {!cartProduct && `• 1 ${product.unit || "pc"}`}
                             </span>
                     </p>
                     <p className={classes.product_drawer__total_price_of_product}>
