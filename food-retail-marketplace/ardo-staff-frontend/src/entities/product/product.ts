@@ -9,6 +9,9 @@ export enum ProductUnit {
     PC = "pc",
     KG = "kg",
     LB = "lb",
+    CASE = "case",
+    PUNNET = "punnet",
+    PACK = "pack",
 }
 
 export interface Product {
