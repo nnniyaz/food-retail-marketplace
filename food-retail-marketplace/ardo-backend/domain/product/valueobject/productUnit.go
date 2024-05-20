@@ -9,15 +9,18 @@ var (
 type ProductUnit string
 
 const (
-	PC ProductUnit = "pc"
-	KG ProductUnit = "kg"
-	LB ProductUnit = "lb"
+	PC     ProductUnit = "pc"
+	KG     ProductUnit = "kg"
+	LB     ProductUnit = "lb"
+	CASE   ProductUnit = "case"
+	PUNNET ProductUnit = "punnet"
+	PACK   ProductUnit = "pack"
 )
 
 func NewProductUnit(unit string) (ProductUnit, error) {
 	convertedUnit := ProductUnit(unit)
 	switch convertedUnit {
-	case PC, KG, LB:
+	case PC, KG, LB, CASE, PUNNET, PACK:
 		return convertedUnit, nil
 	}
 	return "", ErrInvalidProductUnit
