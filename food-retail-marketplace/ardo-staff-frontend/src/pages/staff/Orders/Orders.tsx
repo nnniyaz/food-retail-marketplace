@@ -219,6 +219,7 @@ export const Orders: FC = () => {
             <Modal
                 title={txt.move_to_whatsapp[currentLang]}
                 open={isWhatsAppModalVisible}
+                onOk={() => window.open(`https://wa.me/${selectedOrder?.customerContacts?.phone?.number}?text=${generateMessageFromOrder(selectedOrder as Order, whatsAppMessageLanguage, whatsAppMessageFrom)}`)}
                 onCancel={() => {
                     setIsWhatsAppModalVisible(false);
                     setSelectedOrder(null);
