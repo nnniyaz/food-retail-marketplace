@@ -50,7 +50,7 @@ export const Carousel = () => {
             >
                 {catalog.slides.map((slide) => (
                     <SwiperSlide key={slide._id} className={classes.carousel__item}>
-                        <CarouselItem img={slide.img} caption={slide.caption}/>
+                        <CarouselItem img={slide.img}/>
                     </SwiperSlide>
                 ))}
             </Swiper>
@@ -58,20 +58,20 @@ export const Carousel = () => {
     )
 }
 
-const CarouselItem = ({img, caption}) => {
-    const {currentLang, langs} = useTypedSelector(state => state.systemState);
-    const [imgError, setImgError] = useState(false);
+const CarouselItem = ({img}) => {
+    // const {currentLang, langs, cfg} = useTypedSelector(state => state.systemState);
+    const {cfg} = useTypedSelector(state => state.systemState);
+    const imgPath = `url('${cfg.assetsUri}/slides/${img}')`;
+    // const isCaptionExist = Object.values(caption).some((value) => value !== "");
     return (
-        <div
-            className={classes.carousel__item__container}
-            style={{
-                backgroundImage: (imgError || !img) ? "url(food_placeholder.png)" : `url(${img})`,
-            }}
-            onError={() => setImgError(true)}
-        >
-            <div className={classes.carousel__item__inner__container}>
-                {translate(caption, currentLang, langs) ?? null}
-            </div>
+        <div className={classes.carousel__item__container} style={{backgroundImage: imgPath}}>
+            {/*{*/}
+            {/*    isCaptionExist && (*/}
+            {/*        <div className={classes.carousel__item__inner__container}>*/}
+            {/*            {translate(caption, currentLang, langs) ?? null}*/}
+            {/*        </div>*/}
+            {/*    )*/}
+            {/*}*/}
         </div>
     )
 }
