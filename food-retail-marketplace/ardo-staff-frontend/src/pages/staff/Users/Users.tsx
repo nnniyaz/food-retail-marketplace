@@ -140,6 +140,7 @@ export const Users: FC = () => {
                     scroll={{x: 500}}
                     pagination={pagination.pagination}
                     onChange={(pagination) => setPagination({pagination})}
+                    bordered={true}
                 />
             </Card>
         </div>

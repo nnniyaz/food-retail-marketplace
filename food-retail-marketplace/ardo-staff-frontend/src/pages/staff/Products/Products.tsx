@@ -14,6 +14,8 @@ import {TableHeader} from "@shared/ui/TableTools/TableHeader";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import {productStatusTranslate} from "@shared/lib/options/productStatusOptions";
 import classes from "./Products.module.scss";
+import {priceFormat} from "@shared/lib/price/priceFormat";
+import {Currency} from "@entities/base/currency";
 
 export const Products: FC = () => {
     const navigate = useNavigate();
@@ -63,7 +65,8 @@ export const Products: FC = () => {
         {
             key: "price",
             title: txt.price[currentLang],
-            dataIndex: "price"
+            dataIndex: "price",
+            render: (price: number) => priceFormat(price, Currency.HKD)
         },
         {
             key: "createdAt",
@@ -137,6 +140,7 @@ export const Products: FC = () => {
                     scroll={{x: 500}}
                     pagination={pagination.pagination}
                     onChange={(pagination) => setPagination({pagination})}
+                    bordered={true}
                 />
             </Card>
         </div>
