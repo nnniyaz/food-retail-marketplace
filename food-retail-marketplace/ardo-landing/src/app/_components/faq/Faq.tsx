@@ -44,7 +44,7 @@ export default function Faq({title}: Props) {
             children: 'If you want to follow certain ingredients but do not want to place order immediately, you can add these to “ Favourites”. When browsing, click heart shaped button to move the ingredients to “ Favourites”, then you can easily stay up to date on information and price of ingredients for future orders.'
         },
         {
-            label: 'How to Do Modify / Cancel Order ?',
+            label: 'How to Do Modify / Cancel Order?',
             children: (
                 <>
                     <p>{'You cannot modify or cancel your purchase order after it is "Processing". Please direct message us if you encounter any problems.'}</p>
@@ -121,8 +121,8 @@ export default function Faq({title}: Props) {
     ]
 
     return (
-        <Block title={title}>
-            <div id={'faq'} className={classes.faq}>
+        <Block title={title} id={'faq'}>
+            <div className={classes.faq}>
                 <Collapse
                     items={items.map((item, index) => ({
                         key: index,

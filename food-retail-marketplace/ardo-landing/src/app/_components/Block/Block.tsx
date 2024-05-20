@@ -8,11 +8,12 @@ interface BlockProps {
         icon?: React.ReactNode
     }
     children: React.ReactNode
+    id?: string
 }
 
-export default function Block({ title, tag, children}: BlockProps) {
+export default function Block({ title, tag, children, id}: BlockProps) {
     return (
-        <section className={classes.block}>
+        <section className={classes.block} id={id}>
             <div className={classes.block__header}>
                 <h2>{title}</h2>
                 {

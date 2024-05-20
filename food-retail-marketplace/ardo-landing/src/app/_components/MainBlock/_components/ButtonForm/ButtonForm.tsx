@@ -10,9 +10,10 @@ import classes from './ButtonForm.module.scss';
 interface ButtonFormProps {
     lang: Langs
     isSupplierPage: boolean
+    link: string
 }
 
-export default function ButtonForm({lang, isSupplierPage}: ButtonFormProps) {
+export default function ButtonForm({lang, isSupplierPage, link}: ButtonFormProps) {
     const [isOpen, setIsOpen] = React.useState<boolean>(false);
 
     const handleButtonClick = () => {
@@ -31,7 +32,7 @@ export default function ButtonForm({lang, isSupplierPage}: ButtonFormProps) {
                 ) : (
                     <Link
                         className={classes.button}
-                        href={process.env.NEXT_PUBLIC_APP_URI || ""}
+                        href={link}
                         key={"sign_in"}
                         role={"link"}
                         aria-label={"Restaurants"}

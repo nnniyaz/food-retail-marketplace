@@ -47,7 +47,7 @@ export default function MainBlock({lang, isSupplierPage}: MainBlockProps) {
                     />
                 </div>
                 <p>{translate("welcome_sub_text", lang)}</p>
-                <ButtonForm lang={lang} isSupplierPage={isSupplierPage}/>
+                <ButtonForm lang={lang} isSupplierPage={isSupplierPage} link={process.env.NEXT_PUBLIC_APP_URI || ""}/>
             </div>
             <div className={classes.main_block__group}>
                 <Image
