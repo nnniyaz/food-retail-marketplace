@@ -1,6 +1,6 @@
 import React, {FC, useEffect, useState} from "react";
 import {Link, useNavigate} from "react-router-dom";
-import {Card, Table} from "antd";
+import {Card, Input, Modal, Select, Table} from "antd";
 import {ColumnsType} from "antd/es/table";
 import {RouteNames} from "@pages/index";
 import {Order, OrderProduct, StatusHistory} from "@entities/order/order";
@@ -15,12 +15,22 @@ import {priceFormat} from "@shared/lib/price/priceFormat";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
 import classes from "@pages/staff/Orders/Orders.module.scss";
 import {getLastStatusHistory} from "@shared/lib/status/getLastStatusHistory";
+import TextArea from "antd/lib/input/TextArea";
+import {generateMessageFromOrder} from "@shared/lib/whatsapp/generateMessageFromOrder";
+import {Langs} from "@entities/base/MlString";
+import {langOptions} from "@shared/lib/options/langOptions";
 
 export const Orders: FC = () => {
     const navigate = useNavigate();
     const {currentLang} = useTypedSelector(state => state.lang);
     const {orders, ordersCount, isLoadingGetOrders} = useTypedSelector(state => state.orders);
     const {fetchOrders} = useActions();
+
+    const [isWhatsAppModalVisible, setIsWhatsAppModalVisible] = useState(false);
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+    const [whatsAppMessageFrom, setWhatsAppMessageFrom] = useState("");
+    const [whatsAppMessageLanguage, setWhatsAppMessageLanguage] = useState(Langs.EN);
+
     const [pagination, setPagination] = useState<TableParams>({
         pagination: {
             current: 1,
@@ -32,12 +42,33 @@ export const Orders: FC = () => {
 
     const columns: ColumnsType<Order> = [
         {
-            key: "action",
+            key: "action-details",
             title: txt.action[currentLang],
             dataIndex: "action",
             render: (_, record) => (
                 <Link to={RouteNames.ORDERS_EDIT.replace(":id", record?.id)}>{txt.details[currentLang]}</Link>
-            )
+            ),
+            colSpan: 2,
+        },
+        {
+            key: "action-whatsapp",
+            colSpan: 0,
+            title: txt.action[currentLang],
+            dataIndex: "action",
+            render: (_, record) => (
+                <div
+                    onClick={() => {
+                        setIsWhatsAppModalVisible(true);
+                        setSelectedOrder(record);
+                    }}
+                    style={{
+                        color: "#005FF9",
+                        cursor: "pointer",
+                    }}
+                >
+                    {"WhatsApp"}
+                </div>
+            ),
         },
         {
             key: "number",
@@ -184,6 +215,35 @@ export const Orders: FC = () => {
                     }}
                 />
             </Card>
+
+            <Modal
+                title={txt.move_to_whatsapp[currentLang]}
+                open={isWhatsAppModalVisible}
+                onCancel={() => {
+                    setIsWhatsAppModalVisible(false);
+                    setSelectedOrder(null);
+                }}
+                okText={txt.ok[currentLang]}
+                cancelText={txt.cancel[currentLang]}
+            >
+                <Input
+                    placeholder={txt.message_from[currentLang]}
+                    value={whatsAppMessageFrom}
+                    onChange={(e) => setWhatsAppMessageFrom(e.target.value)}
+                    style={{marginBottom: "20px"}}
+                />
+                <Select
+                    options={langOptions}
+                    value={whatsAppMessageLanguage}
+                    onChange={(value) => setWhatsAppMessageLanguage(value)}
+                    style={{marginBottom: "20px"}}
+                />
+                <TextArea
+                    value={generateMessageFromOrder(selectedOrder as Order, whatsAppMessageLanguage, whatsAppMessageFrom)}
+                    readOnly
+                    autoSize={{minRows: 7}}
+                />
+            </Modal>
         </div>
     );
 };
