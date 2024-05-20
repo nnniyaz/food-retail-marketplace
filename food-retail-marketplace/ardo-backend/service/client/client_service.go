@@ -53,6 +53,9 @@ func (c *clientService) MakeOrder(ctx context.Context, user *user.User, userId s
 	subject := core.Txts[core.TXT_ORDER_NUMBER].GetByLangOrEmpty(ctx.Value("userLang").(core.Lang)) + " #" + newOrder.GetNumber().String()
 	htmlBody := format.FormatOrderConfirmation(newOrder, ctx.Value("userLang").(core.Lang))
 	go c.emailService.SendMail([]string{contacts.GetEmail().String()}, subject, htmlBody)
+	go c.emailService.SendMail([]string{"akhatmussabayev@ardogroup.org"}, subject, htmlBody)
+	go c.emailService.SendMail([]string{"bryanyu@ardogroup.org"}, subject, htmlBody)
+	go c.emailService.SendMail([]string{"nassyrovniyaz@ardogroup.org"}, subject, htmlBody)
 
 	return struct{ OrderNumber string }{OrderNumber: newOrder.GetNumber().String()}, nil
 }
