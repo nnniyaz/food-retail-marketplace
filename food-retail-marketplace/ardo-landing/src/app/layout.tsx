@@ -12,13 +12,13 @@ const roboto = Roboto({subsets: ["latin"], weight: ["100", "300", "400", "500", 
 
 export const metadata: Metadata = {
     metadataBase: new URL("https://app.ardogroup.org/"),
-    title: "Ardo",
+    title: "Ardo: Products for Restaurants, Cafes and Hotels | Hong Kong",
     description: "ARDO is an AI-driven platform that helps F&B suppliers sell surplus at best prices. Online food vendor company for restaurants, cafes and hotels in Hong Kong - HK.",
     publisher: "Ardo Group Ltd.",
     creator: "Ardo Group Ltd.",
     manifest: "/site.webmanifest",
     openGraph: {
-        title: "Reduce food expenses of your restaurant, cafe or hotel with the help of Ardo Group Ltd. (Hong Kong - HK)",
+        title: "Ardo: Products for Restaurants, Cafes and Hotels | Hong Kong",
         description: "ARDO is an AI-driven platform that helps F&B suppliers sell surplus at best prices. Online food vendor company for restaurants, cafes and hotels in Hong Kong - HK.",
         type: "website",
         url: "https://ardogroup.org/",
@@ -27,10 +27,10 @@ export const metadata: Metadata = {
                 url: "https://ardodev.fra1.digitaloceanspaces.com/logos/ardo-logo.jpeg",
                 width: 897,
                 height: 330,
-                alt: "Ardo Group Ltd.",
+                alt: "Ardo: Products for Restaurants, Cafes and Hotels | Hong Kong",
             },
         ],
-        siteName: "ARDO is an AI-driven platform that helps F&B suppliers sell surplus at best prices. Online food vendor company for restaurants, cafes and hotels in Hong Kong - HK.",
+        siteName: "Ardo: Products for Restaurants, Cafes and Hotels | Hong Kong",
     },
 };
 
