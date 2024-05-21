@@ -27,6 +27,7 @@ interface IRoute {
 export enum RouteNames {
     HOME = "/",
     CATALOG = "/catalog",
+    CATALOG_PRODUCT = "/catalog/:productId/:productName",
     LIST = "/:sectionName/:sectionId",
     PRODUCT = "/:sectionName/:sectionId/:categoryName/:categoryId/:productName/:productId",
     CART = "/cart",
@@ -47,6 +48,7 @@ export enum RouteNames {
 const publicRoutes: IRoute[] = [
     {path: RouteNames.HOME, component: Home},
     {path: RouteNames.CATALOG, component: Catalog},
+    {path: RouteNames.CATALOG_PRODUCT, component: Catalog},
     {path: RouteNames.LIST, component: List},
     {path: RouteNames.CART, component: Cart},
     {path: RouteNames.FAVOURITES, component: Favourites},

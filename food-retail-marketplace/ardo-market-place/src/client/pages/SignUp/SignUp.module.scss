@@ -5,7 +5,6 @@
   flex: 1;
   align-items: center;
   justify-content: center;
-  margin-bottom: -100px;
 
   form {
     width: 800px;
@@ -81,7 +80,7 @@
         background-color: var(--secondary-bg-color);
         transition: .2s linear;
 
-        .phone__input_select {
+        .phone__input__select {
           text-align: center;
 
           > div {

@@ -18,18 +18,18 @@ export const SignUp = () => {
     const {isLoadingRegister} = useTypedSelector(state => state.userState);
     const {register} = useActions();
     const [userCredentials, setUserCredentials] = useState({
-        firstName: "Niyaz",
-        lastName: "Nassyrov",
+        firstName: "",
+        lastName: "",
         phone: {
-            number: "12345678",
+            number: "",
             countryCode: cfg.defaultCountryCode
         },
-        email: "nassyrovich@gmail.com",
-        password: "Niyazbey2001!",
-        address: "Al-farabi 93/19",
-        floor: "1",
-        apartment: "1",
-        deliveryInstruction: "Do not call!",
+        email: "",
+        password: "",
+        address: "",
+        floor: "",
+        apartment: "",
+        deliveryInstruction: "",
         preferredLang: currentLang
     });
 
@@ -297,7 +297,7 @@ const PhoneInput = (
                     options={[
                         ...Object.keys(countryCodesInfo).map((code) => ({
                             value: code,
-                            label: `${countryCodesInfo[code].dial_code} ${countryCodesInfo[code].flag}`
+                            label: `${countryCodesInfo[code].flag} ${countryCodesInfo[code].dial_code}`
                         }))
                     ]}
                     className={classes.phone__input__select}
@@ -312,6 +312,7 @@ const PhoneInput = (
                     type={"tel"}
                     inputMode={"tel"}
                     autoComplete={"tel-national"}
+                    prefix={countryCodesInfo[selectedCountryCode].dial_code}
                     style={{
                         borderColor: valid || valid === undefined ? "" : "red",
                     }}

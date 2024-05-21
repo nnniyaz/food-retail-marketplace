@@ -1,15 +1,16 @@
+import {Drawer, Skeleton} from "antd";
 import React, {useEffect, useMemo, useState} from "react";
+import {useLocation, useNavigate} from "react-router-dom";
+import {RouteNames} from "@pages/index.tsx";
 import PlusSVG from "@assets/icons/plus-circle.svg?react";
 import MinusSVG from "@assets/icons/minus-circle.svg?react";
 import {Product} from "@domain/product/product.ts";
 import {PublishedCatalogSections} from "@domain/catalog/catalog.ts";
 import {translate} from "@pkg/translate/translate";
+import {useActions} from "@pkg/hooks/useActions.ts";
 import {priceFormat} from "@pkg/formats/price/priceFormat.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
-import {useActions} from "@pkg/hooks/useActions.ts";
 import classes from "./ProductsList.module.scss";
-import {Drawer} from "antd";
-import {useLocation} from "react-router-dom";
 
 interface ProductsProps {
     sectionId: string;
@@ -87,9 +88,12 @@ export const ProductsList = ({sectionId, isPromo}: ProductsProps) => {
 
 export interface ProductProps {
     product: Product;
+    loading?: boolean;
 }
 
-export const ProductItem = ({product}: ProductProps) => {
+export const ProductItem = ({product, loading}: ProductProps) => {
+    const navigate = useNavigate();
+    const location = useLocation();
     const {cfg, currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {cart} = useTypedSelector(state => state.cartState);
     const {incrementToCart, decrementFromCart} = useActions();
@@ -102,6 +106,31 @@ export const ProductItem = ({product}: ProductProps) => {
     }, [cart]);
     const [openDrawer, setOpenDrawer] = useState(false);
 
+    const handleDrawerOpen = () => {
+        setOpenDrawer(true);
+
+        if (!location.pathname.includes(RouteNames.CATALOG)) {
+            return;
+        }
+        navigate(
+            RouteNames.CATALOG_PRODUCT
+                .replace(":productId", product._id)
+                .replace(":productName", translate(product.name, currentLang, langs).toLowerCase()
+                    .replace(/-/g, "")
+                    .replace(/ /g, "_")
+                )
+            + location.search
+        )
+    }
+
+    const handleDrawerClose = () => {
+        setOpenDrawer(false);
+        if (!location.pathname.includes(RouteNames.CATALOG)) {
+            return;
+        }
+        navigate(RouteNames.CATALOG)
+    }
+
     const handleIncrementToCart = () => {
         if (cartProduct?.quantity === product.quantity) {
             return;
@@ -113,16 +142,33 @@ export const ProductItem = ({product}: ProductProps) => {
         decrementFromCart(product._id);
     }
 
+    useEffect(() => {
+        const productIdFromPath = location.pathname.split("/")[2];
+        if (productIdFromPath === product._id) {
+            setOpenDrawer(true);
+        }
+    }, []);
+
     if (!product) {
         return null;
     }
+    if (loading) {
+        return (
+            <li className={classes.product} onClick={handleDrawerOpen}>
+                <div className={classes.product__img__container}>
+                    <Skeleton.Image className={classes.product__img} active/>
+                </div>
+                <Skeleton className={classes.product__info} active/>
+            </li>
+        )
+    }
     return (
         <React.Fragment>
-            <li className={classes.product} onClick={() => setOpenDrawer(true)}>
+            <li className={classes.product} onClick={handleDrawerOpen}>
                 <div className={classes.product__img__container}>
                     <img
                         className={classes.product__img}
-                        src={`${cfg.assetsUri}/products/${product.img}`}
+                        src={imgError ? `/food_placeholder.png` : `${cfg.assetsUri}/products/${product.img}`}
                         title={translate(product.name, currentLang, langs)}
                         alt={translate(product.name, currentLang, langs)}
                         onError={(e) => {
@@ -201,7 +247,7 @@ export const ProductItem = ({product}: ProductProps) => {
                     </button>
                 </div>
             </li>
-            <ProductItemDrawer product={product} openDrawer={openDrawer} setOpenDrawer={setOpenDrawer}/>
+            <ProductItemDrawer product={product} openDrawer={openDrawer} handleDrawerClose={handleDrawerClose}/>
         </React.Fragment>
     )
 }
@@ -209,13 +255,13 @@ export const ProductItem = ({product}: ProductProps) => {
 export interface ProductItemDrawerProps {
     product: Product;
     openDrawer: boolean;
-    setOpenDrawer: (open: boolean) => void;
+    handleDrawerClose: () => void;
 }
 
-export const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductItemDrawerProps) => {
+export const ProductItemDrawer = ({product, openDrawer, handleDrawerClose}: ProductItemDrawerProps) => {
     const {cfg, currentLang, langs, currency} = useTypedSelector(state => state.systemState);
     const {cart} = useTypedSelector(state => state.cartState);
-    const {incrementToCart} = useActions();
+    const {incrementToCart, decrementFromCart} = useActions();
     const cartProduct = useMemo(() => {
         if (!product) {
             return null;
@@ -231,8 +277,17 @@ export const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductI
         incrementToCart({id: product._id, name: product.name, price: product.price});
     }
 
+    const handleDecrementFromCart = () => {
+        decrementFromCart(product._id);
+    }
+
     return (
-        <Drawer open={openDrawer} onClose={() => setOpenDrawer(false)} styles={{body: {padding: "12px"}}}>
+        <Drawer
+            open={openDrawer}
+            onClose={handleDrawerClose}
+            title={<p style={{fontSize: "20px", fontWeight: 600}}>{translate("close", currentLang, langs)}</p>}
+            styles={{body: {padding: "12px"}}}
+        >
             <div className={classes.product_drawer}>
                 <div className={classes.product_drawer__img__container}>
                     <img
@@ -302,11 +357,24 @@ export const ProductItemDrawer = ({product, openDrawer, setOpenDrawer}: ProductI
                     </p>
                     <button
                         className={classes.product_drawer__add}
-                        onClick={handleIncrementToCart}
+                        onClick={() => {
+                            if (!cartProduct) {
+                                handleIncrementToCart();
+                            }
+                        }}
                     >
-                        <span className={classes.product_drawer__add__text}>
-                            {translate("add", currentLang, langs)}
+                        {!!cartProduct && (
+                            <MinusSVG className={classes.product_drawer__add__icon} onClick={handleDecrementFromCart}/>
+                        )}
+                        <span
+                            className={classes.product_drawer__add__text}
+                            style={{width: cartProduct?.quantity ? "fit-content" : ""}}
+                        >
+                            {cartProduct?.quantity ?? translate("add", currentLang, langs)}
                         </span>
+                        {!!cartProduct && (
+                            <PlusSVG className={classes.product_drawer__add__icon} onClick={handleIncrementToCart}/>
+                        )}
                     </button>
                 </div>
             </div>
