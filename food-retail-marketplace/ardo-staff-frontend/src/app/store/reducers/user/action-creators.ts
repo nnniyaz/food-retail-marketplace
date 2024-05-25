@@ -1,7 +1,7 @@
 import {AppDispatch, RootState} from "@app/store";
 import {LangActionCreators} from "@app/store/reducers/lang/action-creators";
 import UserService from "@pages/public/Login/api/userService";
-import {User} from "@entities/user/user";
+import {User, UserType} from "@entities/user/user";
 import {Langs} from "@entities/base/MlString";
 import {NavigateCallback} from "@entities/base/navigateCallback";
 import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
@@ -27,17 +27,13 @@ export const UserActionCreators = {
             dispatch(UserActionCreators.setIsLoadingGetUser(true));
             const res = await UserService.getCurrentUser();
             if (res.data.success) {
-                // if (res.data.data.userType === UserType.CLIENT) {
-                //     const mainClientUri = process.env.VITE_MAIN_CLIENT_URI;
-                //     if (mainClientUri) {
-                //         window.location.href = mainClientUri;
-                //     }
-                //     Notify.Info({
-                //         title: txt.email[currentLang],
-                //         message: txt.you_dont_have_access_to_the_system[currentLang],
-                //     })
-                //     return;
-                // }
+                if (res.data.data.userType === UserType.CLIENT) {
+                    const mainClientUri = import.meta.env.VITE_MAIN_CLIENT_URI;
+                    if (mainClientUri) {
+                        window.location.href = mainClientUri + "/profile";
+                    }
+                    return;
+                }
                 dispatch(UserActionCreators.setUser(res.data.data));
                 dispatch(LangActionCreators.setLang(res.data.data.preferredLang || Langs.EN));
                 dispatch(UserActionCreators.setAuth(true));
