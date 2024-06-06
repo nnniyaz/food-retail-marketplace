@@ -187,6 +187,7 @@ export const CatalogCategory: FC<CatalogCategoryProps> = (
                                             productStructure={product}
                                             productIndex={productIndex}
                                             catalogErrors={catalogErrors}
+                                            isPromo={isPromo}
                                         />
                                     ))}
                                 </Reorder.Group>

@@ -14,9 +14,10 @@ interface CatalogProductProps {
     productStructure: CatalogsProduct;
     productIndex: number;
     catalogErrors: string[];
+    isPromo?: boolean;
 }
 
-export const CatalogProduct: FC<CatalogProductProps> = ({productStructure, productIndex}) => {
+export const CatalogProduct: FC<CatalogProductProps> = ({productStructure, productIndex, isPromo}) => {
     const {currentLang} = useTypedSelector(state => state.lang);
     const {catalog} = useTypedSelector(state => state.catalog);
     const {products} = useTypedSelector(state => state.products);
@@ -29,22 +30,41 @@ export const CatalogProduct: FC<CatalogProductProps> = ({productStructure, produ
 
     const handleDelete = () => {
         if (!catalog) return;
-        setCatalog({
-            ...catalog,
-            structure: [
-                ...(catalog?.structure || []).map(section => {
-                    return {
-                        sectionId: section.sectionId,
-                        categories: section.categories.map(category => {
-                            return {
-                                categoryId: category.categoryId,
-                                products: category.products.filter(product => product.productId !== productStructure.productId)
-                            }
-                        })
-                    }
-                }),
-            ],
-        });
+        if (isPromo) {
+            setCatalog({
+                ...catalog,
+                promo: [
+                    ...(catalog?.promo || []).map(section => {
+                        return {
+                            sectionId: section.sectionId,
+                            categories: section.categories?.map(category => {
+                                return {
+                                    categoryId: category.categoryId,
+                                    products: category.products?.filter(product => product.productId !== productStructure.productId)
+                                }
+                            })
+                        }
+                    }),
+                ],
+            });
+        } else {
+            setCatalog({
+                ...catalog,
+                structure: [
+                    ...(catalog?.structure || []).map(section => {
+                        return {
+                            sectionId: section.sectionId,
+                            categories: section.categories?.map(category => {
+                                return {
+                                    categoryId: category.categoryId,
+                                    products: category.products?.filter(product => product.productId !== productStructure.productId)
+                                }
+                            })
+                        }
+                    }),
+                ],
+            });
+        }
         setIsDeleteModalVisible(false);
     }
 
