@@ -2,12 +2,18 @@ package user
 
 import (
 	"context"
+	"errors"
 	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
 	"github/nnniyaz/ardo/domain/user/exceptions"
+	"github/nnniyaz/ardo/pkg/core"
 	"github/nnniyaz/ardo/pkg/logger"
 	"github/nnniyaz/ardo/repo"
+)
+
+var (
+	ErrUserRecoveryNotPossibleBecauseUserWithThisEmailAlreadyExists = core.NewI18NError(core.EINVALID, core.TXT_USER_RECOVERY_NOT_POSSIBLE_BECAUSE_USER_WITH_THIS_EMAIL_ALREADY_EXISTS)
 )
 
 type UserService interface {
@@ -137,6 +143,13 @@ func (u *userService) Recover(ctx context.Context, userId string) error {
 	}
 	if !foundUser.GetIsDeleted() {
 		return exceptions.ErrUserAlreadyExist
+	}
+	foundUsersByEmail, err := u.GetByEmail(ctx, foundUser.GetEmail().String(), false)
+	if err != nil && !errors.Is(err, exceptions.ErrUserNotFound) {
+		return err
+	}
+	if foundUsersByEmail != nil {
+		return ErrUserRecoveryNotPossibleBecauseUserWithThisEmailAlreadyExists
 	}
 	return u.userRepo.Recover(ctx, foundUser.GetId())
 }
