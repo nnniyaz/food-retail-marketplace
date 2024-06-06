@@ -111,7 +111,6 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 	r.Route("/auth", func(r chi.Router) {
 		r.Use(h.Middleware.NoAuth)
 		r.Post("/login", h.Auth.Login)
-		r.Post("/login-staff", h.Auth.LoginStaff)
 		r.With(h.Middleware.UserAuth).Post("/logout", h.Auth.Logout)
 		r.With(h.Middleware.WithTransaction).Post("/register", h.Auth.Register)
 		r.With(h.Middleware.ConfirmationLink).Get("/confirm/{link}", h.Auth.Confirm)

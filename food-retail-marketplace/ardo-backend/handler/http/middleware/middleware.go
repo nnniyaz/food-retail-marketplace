@@ -149,19 +149,13 @@ func (m *Middleware) UserAuth(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), "sessionKey", session.Value)
 		ctx = context.WithValue(ctx, "user", *u)
 
-		userLang, err := r.Cookie("Accept-Language")
-		if err != nil {
-			userLang = &http.Cookie{
-				Name:  "Accept-Language",
-				Value: "en",
-			}
-		}
-		if userLang.Value == "en" {
+		userLang := r.Header.Get("Accept-Language")
+		switch userLang {
+		case "en":
 			ctx = context.WithValue(ctx, "userLang", core.EN)
-		}
-		if userLang.Value == "ru" {
+		case "ru":
 			ctx = context.WithValue(ctx, "userLang", core.RU)
-		} else {
+		default:
 			ctx = context.WithValue(ctx, "userLang", core.EN)
 		}
 
@@ -199,19 +193,13 @@ func (m *Middleware) ClientAuth(next http.Handler) http.Handler {
 		ctx := context.WithValue(r.Context(), "sessionKey", session.Value)
 		ctx = context.WithValue(ctx, "user", *u)
 
-		userLang, err := r.Cookie("Accept-Language")
-		if err != nil {
-			userLang = &http.Cookie{
-				Name:  "Accept-Language",
-				Value: "en",
-			}
-		}
-		if userLang.Value == "en" {
+		userLang := r.Header.Get("Accept-Language")
+		switch userLang {
+		case "en":
 			ctx = context.WithValue(ctx, "userLang", core.EN)
-		}
-		if userLang.Value == "ru" {
+		case "ru":
 			ctx = context.WithValue(ctx, "userLang", core.RU)
-		} else {
+		default:
 			ctx = context.WithValue(ctx, "userLang", core.EN)
 		}
 
@@ -221,7 +209,7 @@ func (m *Middleware) ClientAuth(next http.Handler) http.Handler {
 
 func (m *Middleware) StaffAuth(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		session, err := r.Cookie("ardo-app-session-staff")
+		session, err := r.Cookie("ardo-app-session")
 		if err != nil {
 			response.NewUnauthorized(m.logger, w, r)
 			return

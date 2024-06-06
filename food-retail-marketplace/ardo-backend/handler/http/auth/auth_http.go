@@ -71,43 +71,6 @@ type LoginStaffIn struct {
 	Password string `json:"password"`
 }
 
-// LoginStaff godoc
-//
-//	@Summary		Login staff
-//	@Description	This can only be done by the unauthenticated user.
-//	@Tags			Auth
-//	@Accept			json
-//	@Produce		json
-//	@Param			data	body		LoginStaffIn	true	"Staff login object"
-//	@Success		200		{object}	response.Success
-//	@Failure		default	{object}	response.Error
-//	@Router			/auth/login-staff [post]
-func (hd *HttpDelivery) LoginStaff(w http.ResponseWriter, r *http.Request) {
-	requestInfo := r.Context().Value("requestInfo").(web.RequestInfo)
-
-	var in LoginStaffIn
-	if err := json.NewDecoder(r.Body).Decode(&in); err != nil {
-		response.NewBad(hd.logger, w, r, err)
-		return
-	}
-
-	token, err := hd.service.Login(r.Context(), in.Email, in.Password, requestInfo.UserAgent.String)
-	if err != nil {
-		response.NewError(hd.logger, w, r, err)
-		return
-	}
-
-	http.SetCookie(w, &http.Cookie{
-		Name:     "ardo-app-session-staff",
-		Value:    token.String(),
-		Path:     "/",
-		Secure:   true,
-		HttpOnly: true,
-		SameSite: http.SameSiteNoneMode,
-	})
-	response.NewSuccess(hd.logger, w, r, nil)
-}
-
 // Logout godoc
 //
 //	@Summary		Logout
