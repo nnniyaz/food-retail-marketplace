@@ -11,7 +11,7 @@ import (
 )
 
 type ProductService interface {
-	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
+	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*product.Product, int64, error)
 	GetOneById(ctx context.Context, productId string) (*product.Product, error)
 	Create(ctx context.Context, product *product.Product) error
 	CreateMany(ctx context.Context, products []*product.Product) error
@@ -29,14 +29,14 @@ func NewProductService(l logger.Logger, repo repo.Product) ProductService {
 	return &productService{logger: l, productRepo: repo}
 }
 
-func (p *productService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {
+func (p *productService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*product.Product, int64, error) {
 	if offset < 0 {
 		offset = 0
 	}
 	if limit < 0 {
 		limit = 0
 	}
-	return p.productRepo.FindByFilters(ctx, offset, limit, isDeleted)
+	return p.productRepo.FindByFilters(ctx, offset, limit, isDeleted, search)
 }
 
 func (p *productService) GetOneById(ctx context.Context, productId string) (*product.Product, error) {

@@ -2,6 +2,7 @@ package user
 
 import (
 	"context"
+	"errors"
 	"github/nnniyaz/ardo/domain/base/deliveryInfo"
 	"github/nnniyaz/ardo/domain/base/uuid"
 	"github/nnniyaz/ardo/domain/user"
@@ -11,7 +12,7 @@ import (
 )
 
 type UserService interface {
-	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
+	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error)
 	GetById(ctx context.Context, userId string) (*user.User, error)
 	GetByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, newUser *user.User) error
@@ -38,14 +39,14 @@ func NewUserService(l logger.Logger, repo repo.User) UserService {
 	return &userService{logger: l, userRepo: repo}
 }
 
-func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
+func (u *userService) GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error) {
 	if offset < 0 {
 		offset = 0
 	}
 	if limit < 0 {
 		limit = 0
 	}
-	return u.userRepo.FindByFilters(ctx, offset, limit, isDeleted)
+	return u.userRepo.FindByFilters(ctx, offset, limit, isDeleted, search)
 }
 
 func (u *userService) GetById(ctx context.Context, userId string) (*user.User, error) {
@@ -62,7 +63,7 @@ func (u *userService) GetByEmail(ctx context.Context, email string) (*user.User,
 
 func (u *userService) Create(ctx context.Context, newUser *user.User) error {
 	foundUser, err := u.userRepo.FindOneByEmail(ctx, newUser.GetEmail().String())
-	if err != nil && err != exceptions.ErrUserNotFound {
+	if err != nil && !(errors.Is(err, exceptions.ErrUserNotFound)) {
 		return err
 	}
 	if foundUser != nil && !foundUser.GetIsDeleted() {

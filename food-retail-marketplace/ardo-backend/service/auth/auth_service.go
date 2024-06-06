@@ -138,6 +138,10 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 	}
 
 	newUser, err := user.NewUser(firstName, lastName, email, phoneNumber, countryCode, password, defaultUserType.String(), preferredLang, address, floor, apartment, deliveryComment)
+	if err != nil {
+		return err
+	}
+
 	if err = a.userService.Create(ctx, newUser); err != nil {
 		return err
 	}

@@ -148,7 +148,8 @@ func (hd *HttpDelivery) GetUsersByFilters(w http.ResponseWriter, r *http.Request
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
 	isDeleted := r.Context().Value("is_deleted").(bool)
-	users, count, err := hd.service.GetUsersByFilters(r.Context(), offset, limit, isDeleted)
+	search := r.Context().Value("search").(string)
+	users, count, err := hd.service.GetUsersByFilters(r.Context(), offset, limit, isDeleted, search)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

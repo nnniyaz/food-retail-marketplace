@@ -9,7 +9,7 @@ import (
 )
 
 type ManagementCategoryService interface {
-	GetCategoriesByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*category.Category, int64, error)
+	GetCategoriesByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*category.Category, int64, error)
 	GetCategoryById(ctx context.Context, categoryId string) (*category.Category, error)
 	CreateCategory(ctx context.Context, name, desc core.MlString, img string) error
 	UpdateCategory(ctx context.Context, categoryId string, name, desc core.MlString, img string) error
@@ -26,8 +26,8 @@ func NewManagementCategoryService(l logger.Logger, categoryService categoryServi
 	return &managementCategoryService{logger: l, categoryService: categoryService}
 }
 
-func (m *managementCategoryService) GetCategoriesByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*category.Category, int64, error) {
-	categories, count, err := m.categoryService.GetAllByFilters(ctx, offset, limit, isDeleted)
+func (m *managementCategoryService) GetCategoriesByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*category.Category, int64, error) {
+	categories, count, err := m.categoryService.GetAllByFilters(ctx, offset, limit, isDeleted, search)
 	if err != nil {
 		return nil, 0, err
 	}

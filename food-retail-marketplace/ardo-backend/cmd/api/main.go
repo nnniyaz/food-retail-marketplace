@@ -27,13 +27,13 @@ import (
 const port = 8080
 
 //	@title			Ardo Backend API
-//	@version		1.0.0
+//	@version		0.0.1
 //	@description	Detailed info about all endpoints
 
 //	@contact.name	API Support
-//	@contact.url	https://nassyrov.t.me
+//	@contact.url	https://t.me/nassyrovich
 
-//	@host		api.ardogroup.org
+//	@host		https://api.ardogroup.org
 //	@schemes	https
 
 // @securityDefinitions.apikey	ApiKeyAuth

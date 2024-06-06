@@ -9,7 +9,7 @@ import (
 )
 
 type ManagementProductService interface {
-	GetProductsByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error)
+	GetProductsByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*product.Product, int64, error)
 	GetProductById(ctx context.Context, productId string) (*product.Product, error)
 	AddProduct(ctx context.Context, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime string, tags []string, img, status string) error
 	UpdateProduct(ctx context.Context, productId string, name, desc core.MlString, price, originalPrice float64, quantity int64, unit string, moq int64, cutOffTime string, tags []string, img, status string) error
@@ -26,8 +26,8 @@ func NewManagementProductService(l logger.Logger, productService productService.
 	return &managementProductService{logger: l, productService: productService}
 }
 
-func (m *managementProductService) GetProductsByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {
-	products, count, err := m.productService.GetAllByFilters(ctx, offset, limit, isDeleted)
+func (m *managementProductService) GetProductsByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*product.Product, int64, error) {
+	products, count, err := m.productService.GetAllByFilters(ctx, offset, limit, isDeleted, search)
 	if err != nil {
 		return nil, 0, err
 	}

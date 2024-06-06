@@ -8,6 +8,7 @@ import (
 	"github/nnniyaz/ardo/domain/user/exceptions"
 	"github/nnniyaz/ardo/domain/user/valueobject"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -125,7 +126,17 @@ func (m *mongoUser) ToAggregate() *user.User {
 	return user.UnmarshalUserFromDatabase(m.Id, m.Code, m.FirstName, m.LastName, m.Email, m.Phone.Number, m.Phone.CountryCode, m.UserType, m.PreferredLang, deliveryPoints, valueobject.UnmarshalDeliveryPointFromDatabase(m.LastDeliveryPoint.Id, m.LastDeliveryPoint.Address, m.LastDeliveryPoint.Floor, m.LastDeliveryPoint.Apartment, m.LastDeliveryPoint.DeliveryComment), m.Password.ToAggregate(), m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
-func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
+func (r *RepoUser) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error) {
+	filter := bson.D{
+		{"isDeleted", isDeleted},
+	}
+	if search != "" {
+		filter = append(filter, bson.E{"$or", bson.A{
+			bson.E{"firstName", bson.D{{"$regex", primitive.Regex{Pattern: search, Options: "i"}}}},
+			bson.E{"lastName", bson.D{{"$regex", primitive.Regex{Pattern: search, Options: "i"}}}},
+		}})
+	}
+
 	count, err := r.Coll().CountDocuments(ctx, bson.M{"isDeleted": isDeleted})
 	if err != nil {
 		return nil, 0, err

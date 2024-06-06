@@ -29,3 +29,7 @@ func NewLang(lang string) (Lang, error) {
 func (l Lang) String() string {
 	return string(l)
 }
+
+func GetLangs() []Lang {
+	return []Lang{RU, EN}
+}

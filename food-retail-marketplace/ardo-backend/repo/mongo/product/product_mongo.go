@@ -8,6 +8,7 @@ import (
 	"github/nnniyaz/ardo/domain/product/exceptions"
 	"github/nnniyaz/ardo/pkg/core"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -69,12 +70,23 @@ func (m *mongoProduct) ToAggregate() *product.Product {
 	return product.UnmarshalProductFromDatabase(m.Id, m.Name, m.Desc, m.Price, m.OriginalPrice, m.Quantity, m.Unit, m.Moq, m.CutOffTime, m.Tags, m.Img, m.Status, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
-func (r *RepoProduct) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*product.Product, int64, error) {
-	count, err := r.Coll().CountDocuments(ctx, bson.M{"isDeleted": isDeleted})
+func (r *RepoProduct) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*product.Product, int64, error) {
+	filter := bson.D{
+		{"isDeleted", isDeleted},
+	}
+	if search != "" {
+		filter = append(filter, bson.E{
+			Key:   "name.EN",
+			Value: bson.D{{"$regex", primitive.Regex{Pattern: search, Options: "i"}}},
+		})
+	}
+
+	count, err := r.Coll().CountDocuments(ctx, filter)
 	if err != nil {
 		return nil, 0, err
 	}
-	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSort(bson.D{{"createdAt", -1}}).SetSkip(offset).SetLimit(limit))
+
+	cur, err := r.Coll().Find(ctx, filter, options.Find().SetSort(bson.D{{"createdAt", -1}}).SetSkip(offset).SetLimit(limit))
 	if err != nil {
 		return nil, 0, err
 	}

@@ -11,7 +11,7 @@ import (
 )
 
 type CategoryService interface {
-	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*category.Category, int64, error)
+	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*category.Category, int64, error)
 	GetOneById(ctx context.Context, categoryId string) (*category.Category, error)
 	Create(ctx context.Context, category *category.Category) error
 	Update(ctx context.Context, category *category.Category, name, desc core.MlString, img string) error
@@ -28,14 +28,14 @@ func NewCategoryService(l logger.Logger, repo repo.Category) CategoryService {
 	return &categoryService{logger: l, categoryRepo: repo}
 }
 
-func (c *categoryService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*category.Category, int64, error) {
+func (c *categoryService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*category.Category, int64, error) {
 	if offset < 0 {
 		offset = 0
 	}
 	if limit < 0 {
 		limit = 0
 	}
-	return c.categoryRepo.FindByFilters(ctx, offset, limit, isDeleted)
+	return c.categoryRepo.FindByFilters(ctx, offset, limit, isDeleted, search)
 }
 
 func (c *categoryService) GetOneById(ctx context.Context, categoryId string) (*category.Category, error) {

@@ -9,7 +9,7 @@ import (
 )
 
 type ManagementSectionService interface {
-	GetSectionsByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*section.Section, int64, error)
+	GetSectionsByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*section.Section, int64, error)
 	GetSectionById(ctx context.Context, sectionId string) (*section.Section, error)
 	CreateSection(ctx context.Context, name core.MlString, img string) error
 	UpdateSection(ctx context.Context, sectionId string, name core.MlString, img string) error
@@ -26,8 +26,8 @@ func NewManagementSectionService(l logger.Logger, sectionService sectionService.
 	return &managementSectionService{logger: l, sectionService: sectionService}
 }
 
-func (m *managementSectionService) GetSectionsByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*section.Section, int64, error) {
-	sections, count, err := m.sectionService.GetAllByFilters(ctx, offset, limit, isDeleted)
+func (m *managementSectionService) GetSectionsByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*section.Section, int64, error) {
+	sections, count, err := m.sectionService.GetAllByFilters(ctx, offset, limit, isDeleted, search)
 	if err != nil {
 		return nil, 0, err
 	}

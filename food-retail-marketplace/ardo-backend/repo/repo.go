@@ -28,7 +28,7 @@ import (
 )
 
 type User interface {
-	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error)
 	FindOneByEmail(ctx context.Context, email string) (*user.User, error)
 	Create(ctx context.Context, user *user.User) error
@@ -55,7 +55,7 @@ type ActivationLink interface {
 }
 
 type Product interface {
-	FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool) ([]*product.Product, int64, error)
+	FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool, search string) ([]*product.Product, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*product.Product, error)
 	Create(ctx context.Context, product *product.Product) error
 	CreateMany(ctx context.Context, products []*product.Product) error
@@ -84,7 +84,7 @@ type Catalog interface {
 }
 
 type Section interface {
-	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*section.Section, int64, error)
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*section.Section, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*section.Section, error)
 	Create(ctx context.Context, section *section.Section) error
 	Update(ctx context.Context, section *section.Section) error
@@ -93,7 +93,7 @@ type Section interface {
 }
 
 type Category interface {
-	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*category.Category, int64, error)
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*category.Category, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*category.Category, error)
 	Create(ctx context.Context, category *category.Category) error
 	Update(ctx context.Context, category *category.Category) error

@@ -77,7 +77,8 @@ func (hd *HttpDelivery) GetSectionsByFilters(w http.ResponseWriter, r *http.Requ
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
 	isDeleted := r.Context().Value("is_deleted").(bool)
-	sections, count, err := hd.service.GetSectionsByFilters(r.Context(), offset, limit, isDeleted)
+	search := r.Context().Value("search").(string)
+	sections, count, err := hd.service.GetSectionsByFilters(r.Context(), offset, limit, isDeleted, search)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

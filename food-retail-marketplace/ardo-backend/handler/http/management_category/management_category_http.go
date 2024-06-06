@@ -79,7 +79,8 @@ func (hd *HttpDelivery) GetCategoriesByFilters(w http.ResponseWriter, r *http.Re
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
 	isDeleted := r.Context().Value("is_deleted").(bool)
-	categories, count, err := hd.service.GetCategoriesByFilters(r.Context(), offset, limit, isDeleted)
+	search := r.Context().Value("search").(string)
+	categories, count, err := hd.service.GetCategoriesByFilters(r.Context(), offset, limit, isDeleted, search)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return

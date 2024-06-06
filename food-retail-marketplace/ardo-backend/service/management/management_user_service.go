@@ -21,7 +21,7 @@ var (
 )
 
 type ManagementUserService interface {
-	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error)
+	GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error)
 	GetUserById(ctx context.Context, userId string) (*user.User, error)
 	AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error
 	UpdateUserCredentials(ctx context.Context, userId, firstName, lastName string) error
@@ -50,8 +50,8 @@ func NewManagementUserService(l logger.Logger, config *config.Config, emailServi
 	return &managementUserService{logger: l, config: config, emailService: emailService, userService: userService, linkService: linkService}
 }
 
-func (m *managementUserService) GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*user.User, int64, error) {
-	users, count, err := m.userService.GetByFilters(ctx, offset, limit, isDeleted)
+func (m *managementUserService) GetUsersByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error) {
+	users, count, err := m.userService.GetByFilters(ctx, offset, limit, isDeleted, search)
 	if err != nil {
 		return nil, 0, err
 	}

@@ -7,6 +7,7 @@ import (
 	"github/nnniyaz/ardo/domain/category"
 	"github/nnniyaz/ardo/pkg/core"
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"time"
@@ -52,12 +53,21 @@ func (m *mongoCategory) ToAggregate() *category.Category {
 	return category.UnmarshalCategoryFromDatabase(m.Id, m.Name, m.Desc, m.Img, m.IsDeleted, m.CreatedAt, m.UpdatedAt, m.Version)
 }
 
-func (r *RepoCategory) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*category.Category, int64, error) {
-	count, err := r.Coll().CountDocuments(ctx, bson.M{"isDeleted": isDeleted})
+func (r *RepoCategory) FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*category.Category, int64, error) {
+	filter := bson.D{
+		{"isDeleted", isDeleted},
+	}
+	if search != "" {
+		filter = append(filter, bson.E{
+			Key:   "name.EN",
+			Value: bson.D{{"$regex", primitive.Regex{Pattern: search, Options: "i"}}},
+		})
+	}
+	count, err := r.Coll().CountDocuments(ctx, filter)
 	if err != nil {
 		return nil, 0, err
 	}
-	cur, err := r.Coll().Find(ctx, bson.M{"isDeleted": isDeleted}, options.Find().SetSort(bson.D{{"createdAt", -1}}).SetSkip(offset).SetLimit(limit))
+	cur, err := r.Coll().Find(ctx, filter, options.Find().SetSort(bson.D{{"createdAt", -1}}).SetSkip(offset).SetLimit(limit))
 	if err != nil {
 		return nil, 0, err
 	}

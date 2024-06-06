@@ -16,9 +16,6 @@ type DeliveryPoint struct {
 }
 
 func NewDeliveryPoint(address, floor, apartment, deliveryComment string) (DeliveryPoint, error) {
-	if address == "" {
-		return DeliveryPoint{}, ErrEmptyDeliveryAddress
-	}
 	return DeliveryPoint{
 		id:              uuid.NewUUID(),
 		address:         address,

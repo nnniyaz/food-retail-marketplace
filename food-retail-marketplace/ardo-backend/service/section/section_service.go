@@ -11,7 +11,7 @@ import (
 )
 
 type SectionService interface {
-	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*section.Section, int64, error)
+	GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*section.Section, int64, error)
 	GetOneById(ctx context.Context, sectionId string) (*section.Section, error)
 	Create(ctx context.Context, section *section.Section) error
 	Update(ctx context.Context, section *section.Section, name core.MlString, img string) error
@@ -28,14 +28,14 @@ func NewSectionService(l logger.Logger, repo repo.Section) SectionService {
 	return &sectionService{logger: l, sectionRepo: repo}
 }
 
-func (s *sectionService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*section.Section, int64, error) {
+func (s *sectionService) GetAllByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*section.Section, int64, error) {
 	if offset < 0 {
 		offset = 0
 	}
 	if limit < 0 {
 		limit = 0
 	}
-	return s.sectionRepo.FindByFilters(ctx, offset, limit, isDeleted)
+	return s.sectionRepo.FindByFilters(ctx, offset, limit, isDeleted, search)
 }
 
 func (s *sectionService) GetOneById(ctx context.Context, sectionId string) (*section.Section, error) {

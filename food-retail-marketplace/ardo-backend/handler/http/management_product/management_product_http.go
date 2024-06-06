@@ -95,7 +95,8 @@ func (hd *HttpDelivery) GetProductsByFilters(w http.ResponseWriter, r *http.Requ
 	offset := r.Context().Value("offset").(int64)
 	limit := r.Context().Value("limit").(int64)
 	isDeleted := r.Context().Value("is_deleted").(bool)
-	products, count, err := hd.service.GetProductsByFilters(r.Context(), offset, limit, isDeleted)
+	search := r.Context().Value("search").(string)
+	products, count, err := hd.service.GetProductsByFilters(r.Context(), offset, limit, isDeleted, search)
 	if err != nil {
 		response.NewError(hd.logger, w, r, err)
 		return
