@@ -108,17 +108,10 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 
 	r.Get("/swagger/*", httpSwagger.WrapHandler)
 
-	r.Route("/upload", func(r chi.Router) {
-		r.Use(h.Middleware.StaffAuth)
-		r.Post("/slide-image", h.Upload.UploadSlidesImage)
-		r.Post("/section-image", h.Upload.UploadSectionImage)
-		r.Post("/category-image", h.Upload.UploadCategoriesImage)
-		r.Post("/product-image", h.Upload.UploadProductImage)
-	})
-
 	r.Route("/auth", func(r chi.Router) {
 		r.Use(h.Middleware.NoAuth)
 		r.Post("/login", h.Auth.Login)
+		r.Post("/login-staff", h.Auth.LoginStaff)
 		r.With(h.Middleware.UserAuth).Post("/logout", h.Auth.Logout)
 		r.With(h.Middleware.WithTransaction).Post("/register", h.Auth.Register)
 		r.With(h.Middleware.ConfirmationLink).Get("/confirm/{link}", h.Auth.Confirm)
@@ -141,6 +134,14 @@ func (h *Handler) InitRoutes(isDevMode bool) *chi.Mux {
 		r.Use(h.Middleware.UserAuth)
 		r.With(h.Middleware.PaginationParams).Get("/orders", h.Client.GetOrdersHistory)
 		r.With(h.Middleware.WithTransaction).Post("/make-order", h.Client.MakeOrder)
+	})
+
+	r.Route("/upload", func(r chi.Router) {
+		r.Use(h.Middleware.StaffAuth)
+		r.Post("/slide-image", h.Upload.UploadSlidesImage)
+		r.Post("/section-image", h.Upload.UploadSectionImage)
+		r.Post("/category-image", h.Upload.UploadCategoriesImage)
+		r.Post("/product-image", h.Upload.UploadProductImage)
 	})
 
 	r.Route("/management", func(r chi.Router) {

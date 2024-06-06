@@ -106,11 +106,11 @@ func (a *authService) Logout(ctx context.Context, token string) error {
 }
 
 func (a *authService) Register(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, preferredLang, address, floor, apartment, deliveryComment string) error {
-	if u, err := a.userService.GetByEmail(ctx, email, false); err != nil && err != exceptionsUser.ErrUserNotFound || u != nil {
-		if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
-			return err
-		}
-
+	u, err := a.userService.GetByEmail(ctx, email, false)
+	if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
+		return err
+	}
+	if u != nil {
 		foundActivationLink, err := a.linkService.GetByUserId(ctx, u.GetId().String())
 		if err != nil {
 			return err
@@ -119,7 +119,6 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 			if foundActivationLink.GetIsActivated() {
 				return ErrEmailAlreadyExists
 			}
-
 			if !u.ComparePassword(password) {
 				err = a.userService.UpdatePassword(ctx, u, password)
 				if err != nil {
@@ -128,9 +127,17 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 			}
 			foundActivationLink.UpdateLinkId()
 			err = a.linkService.UpdateLink(ctx, foundActivationLink)
-
 			link := a.config.GetApiUri() + "/auth/confirm/" + foundActivationLink.GetLinkId().String()
-
+			subject := "Confirm your email"
+			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link)
+			return a.emailService.SendMail([]string{email}, subject, htmlBody)
+		} else {
+			newActivationLink := activationLink.NewActivationLink(u.GetId())
+			err = a.linkService.Create(ctx, newActivationLink)
+			if err != nil {
+				return err
+			}
+			link := a.config.GetApiUri() + "/auth/confirm/" + newActivationLink.GetLinkId().String()
 			subject := "Confirm your email"
 			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link)
 			return a.emailService.SendMail([]string{email}, subject, htmlBody)
@@ -141,7 +148,6 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 	if err != nil {
 		return err
 	}
-
 	if err = a.userService.Create(ctx, newUser); err != nil {
 		return err
 	}

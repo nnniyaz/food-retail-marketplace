@@ -30,7 +30,7 @@ import (
 type User interface {
 	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error)
 	FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error)
-	FindOneByEmail(ctx context.Context, email string) (*user.User, error)
+	FindOneByEmail(ctx context.Context, email string, isDeleted bool) (*user.User, error)
 	Create(ctx context.Context, user *user.User) error
 	Update(ctx context.Context, user *user.User) error
 	Recover(ctx context.Context, id uuid.UUID) error

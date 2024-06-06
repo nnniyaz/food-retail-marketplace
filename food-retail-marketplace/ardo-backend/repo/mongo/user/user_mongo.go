@@ -169,10 +169,9 @@ func (r *RepoUser) FindOneById(ctx context.Context, id uuid.UUID) (*user.User, e
 	return foundUser.ToAggregate(), nil
 }
 
-func (r *RepoUser) FindOneByEmail(ctx context.Context, email string) (*user.User, error) {
+func (r *RepoUser) FindOneByEmail(ctx context.Context, email string, isDeleted bool) (*user.User, error) {
 	var foundUser mongoUser
-	err := r.Coll().FindOne(ctx, bson.M{"email": email}).Decode(&foundUser)
-	if err != nil {
+	if err := r.Coll().FindOne(ctx, bson.M{"email": email, "isDeleted": isDeleted}).Decode(&foundUser); err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, exceptions.ErrUserNotFound
 		}

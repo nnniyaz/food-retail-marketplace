@@ -63,11 +63,11 @@ func (m *managementUserService) GetUserById(ctx context.Context, userId string) 
 }
 
 func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error {
-	if u, err := m.userService.GetByEmail(ctx, email, false); err != nil && !errors.Is(err, exceptionsUser.ErrUserNotFound) || u != nil {
-		if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
-			return err
-		}
-
+	u, err := m.userService.GetByEmail(ctx, email, false)
+	if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
+		return err
+	}
+	if u != nil {
 		foundActivationLink, err := m.linkService.GetByUserId(ctx, u.GetId().String())
 		if err != nil {
 			return err
@@ -76,7 +76,6 @@ func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName
 			if foundActivationLink.GetIsActivated() {
 				return ErrEmailAlreadyExists
 			}
-
 			if !u.ComparePassword(password) {
 				err = m.userService.UpdatePassword(ctx, u, password)
 				if err != nil {
@@ -85,9 +84,17 @@ func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName
 			}
 			foundActivationLink.UpdateLinkId()
 			err = m.linkService.UpdateLink(ctx, foundActivationLink)
-
 			link := m.config.GetApiUri() + "/auth/confirm/" + foundActivationLink.GetLinkId().String()
-
+			subject := "Confirm your email"
+			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link)
+			return m.emailService.SendMail([]string{email}, subject, htmlBody)
+		} else {
+			newActivationLink := activationLink.NewActivationLink(u.GetId())
+			err = m.linkService.Create(ctx, newActivationLink)
+			if err != nil {
+				return err
+			}
+			link := m.config.GetApiUri() + "/auth/confirm/" + newActivationLink.GetLinkId().String()
 			subject := "Confirm your email"
 			htmlBody := fmt.Sprintf("<p>Hi %s,</p><p>Thanks for signing up for Ardo! We're excited to have you as an early user.</p><p>Click the link below to confirm your email address:</p><p><a href=\"%s\">Click here!</a></p><p>Thanks,<br/>The Ardo Team</p>", u.GetFirstName(), link)
 			return m.emailService.SendMail([]string{email}, subject, htmlBody)
