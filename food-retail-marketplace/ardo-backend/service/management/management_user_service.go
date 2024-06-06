@@ -63,7 +63,7 @@ func (m *managementUserService) GetUserById(ctx context.Context, userId string) 
 }
 
 func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, userType, preferredLang, address, floor, apartment, deliveryComment string) error {
-	if u, err := m.userService.GetByEmail(ctx, email); err != nil && !errors.Is(err, exceptionsUser.ErrUserNotFound) || u != nil {
+	if u, err := m.userService.GetByEmail(ctx, email, false); err != nil && !errors.Is(err, exceptionsUser.ErrUserNotFound) || u != nil {
 		if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
 			return err
 		}
@@ -72,7 +72,7 @@ func (m *managementUserService) AddUser(ctx context.Context, firstName, lastName
 		if err != nil {
 			return err
 		}
-		if foundActivationLink != nil && !u.GetIsDeleted() {
+		if foundActivationLink != nil {
 			if foundActivationLink.GetIsActivated() {
 				return ErrEmailAlreadyExists
 			}

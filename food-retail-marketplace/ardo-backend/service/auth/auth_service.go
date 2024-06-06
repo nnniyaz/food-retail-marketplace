@@ -55,7 +55,7 @@ func NewAuthService(l logger.Logger, config *config.Config, emailService email.E
 }
 
 func (a *authService) Login(ctx context.Context, email, password, userAgent string) (uuid.UUID, error) {
-	u, err := a.userService.GetByEmail(ctx, email)
+	u, err := a.userService.GetByEmail(ctx, email, false)
 	if err != nil {
 		return uuid.Nil, ErrEmailNotFound
 	}
@@ -106,7 +106,7 @@ func (a *authService) Logout(ctx context.Context, token string) error {
 }
 
 func (a *authService) Register(ctx context.Context, firstName, lastName, email, phoneNumber, countryCode, password, preferredLang, address, floor, apartment, deliveryComment string) error {
-	if u, err := a.userService.GetByEmail(ctx, email); err != nil && err != exceptionsUser.ErrUserNotFound || u != nil {
+	if u, err := a.userService.GetByEmail(ctx, email, false); err != nil && err != exceptionsUser.ErrUserNotFound || u != nil {
 		if err != nil && !errors.Is(exceptionsUser.ErrUserNotFound, err) {
 			return err
 		}
@@ -115,7 +115,7 @@ func (a *authService) Register(ctx context.Context, firstName, lastName, email, 
 		if err != nil {
 			return err
 		}
-		if foundActivationLink != nil && !u.GetIsDeleted() {
+		if foundActivationLink != nil {
 			if foundActivationLink.GetIsActivated() {
 				return ErrEmailAlreadyExists
 			}

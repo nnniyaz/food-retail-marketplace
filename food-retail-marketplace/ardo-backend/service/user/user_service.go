@@ -14,7 +14,7 @@ import (
 type UserService interface {
 	GetByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error)
 	GetById(ctx context.Context, userId string) (*user.User, error)
-	GetByEmail(ctx context.Context, email string) (*user.User, error)
+	GetByEmail(ctx context.Context, email string, isDeleted bool) (*user.User, error)
 	Create(ctx context.Context, newUser *user.User) error
 	UpdateCredentials(ctx context.Context, user *user.User, firstName, lastName string) error
 	UpdateEmail(ctx context.Context, user *user.User, email string) error
@@ -57,7 +57,7 @@ func (u *userService) GetById(ctx context.Context, userId string) (*user.User, e
 	return u.userRepo.FindOneById(ctx, convertedId)
 }
 
-func (u *userService) GetByEmail(ctx context.Context, email string) (*user.User, error) {
+func (u *userService) GetByEmail(ctx context.Context, email string, isDeleted bool) (*user.User, error) {
 	return u.userRepo.FindOneByEmail(ctx, email)
 }
 
