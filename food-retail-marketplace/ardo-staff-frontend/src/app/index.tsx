@@ -1,6 +1,7 @@
 import React, {useEffect} from "react";
 import {useNavigate} from "react-router-dom";
 import {ReactNotifications} from "react-notifications-component";
+import {notification} from "antd";
 import AppRouter, {RouteNames} from "@pages//";
 import {Loader} from "@shared/ui/Loader";
 import {useActions} from "@shared/lib/hooks/useActions";
@@ -13,6 +14,7 @@ export function App() {
     const navigate = useNavigate();
     const {isLoadingGetUser} = useTypedSelector(state => state.user);
     const {getCurrentUser} = useActions();
+    const [api, contextHolder] = notification.useNotification();
 
     useEffect(() => {
         getCurrentUser({navigate: navigate, to: RouteNames.LOGIN}, true);
@@ -28,7 +30,8 @@ export function App() {
 
     return (
         <React.Fragment>
-            <ReactNotifications className={"notifications"}/>
+            {/*<ReactNotifications className={"notifications"}/>*/}
+
             <AppRouter/>
         </React.Fragment>
     );

@@ -10,7 +10,10 @@ export interface LoginRequest {
 
 export default class AuthService {
     static async login (request: LoginRequest): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGIN, request)
+        return $api.post<SuccessResponse<null> | ErrorResponse>(ApiRoutes.POST_LOGIN, {
+            email: request.email.trim().toLowerCase(),
+            password: request.password.trim()
+        })
     }
 
     static async logout (): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {

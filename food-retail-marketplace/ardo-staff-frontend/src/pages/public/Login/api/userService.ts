@@ -16,7 +16,10 @@ export default class UserService {
     }
 
     static updateCurrentUserCredentials(request: EditUserCredentialsReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {
-        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_CREDENTIALS, request);
+        return $api.put<SuccessResponse<null> | ErrorResponse>(ApiRoutes.PUT_USER_CREDENTIALS, {
+            firstName: request.firstName.trim(),
+            lastName: request.lastName.trim(),
+        });
     }
 
     static updateCurrentUserEmail(request: EditUserEmailReq): Promise<AxiosResponse<SuccessResponse<null> | ErrorResponse>> {

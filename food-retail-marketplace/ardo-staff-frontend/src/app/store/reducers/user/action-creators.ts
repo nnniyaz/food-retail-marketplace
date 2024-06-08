@@ -6,6 +6,8 @@ import {Langs} from "@entities/base/MlString";
 import {NavigateCallback} from "@entities/base/navigateCallback";
 import {FailedResponseHandler, httpHandler} from "@shared/lib/http-handler/httpHandler";
 import {SetIsAuthAction, SetIsLoadingGetUserAction, SetUserAction, UserActionEnum} from "./types";
+import {Notify} from "@shared/lib/notification/notification";
+import {txt} from "@shared/core/i18ngen";
 
 export const UserActionCreators = {
     setUser: (payload: User): SetUserAction => ({
@@ -28,10 +30,10 @@ export const UserActionCreators = {
             const res = await UserService.getCurrentUser();
             if (res.data.success) {
                 if (res.data.data.userType === UserType.CLIENT) {
-                    const mainClientUri = import.meta.env.VITE_MAIN_CLIENT_URI;
-                    if (mainClientUri) {
-                        window.location.href = mainClientUri + "/profile";
-                    }
+                    Notify.Success({
+                        title: txt.you_dont_have_access[currentLang],
+                        message: txt.you_dont_have_access_to_the_system[currentLang]
+                    });
                     return;
                 }
                 dispatch(UserActionCreators.setUser(res.data.data));
