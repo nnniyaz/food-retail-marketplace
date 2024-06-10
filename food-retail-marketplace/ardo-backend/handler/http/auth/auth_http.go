@@ -92,6 +92,16 @@ func (hd *HttpDelivery) Logout(w http.ResponseWriter, r *http.Request) {
 		response.NewError(hd.logger, w, r, err)
 		return
 	}
+
+	http.SetCookie(w, &http.Cookie{
+		Name:     "ardo-app-session",
+		Value:    "",
+		Path:     "/",
+		MaxAge:   -1,
+		Secure:   true,
+		HttpOnly: true,
+		SameSite: http.SameSiteNoneMode,
+	})
 	response.NewSuccess(hd.logger, w, r, nil)
 }
 
