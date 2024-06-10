@@ -40,7 +40,14 @@ export const Categories = () => {
         {
             key: "img",
             title: txt.image[currentLang],
-            dataIndex: "img"
+            dataIndex: "img",
+            render: (img: string) => (
+                <img
+                    src={`${import.meta.env.VITE_SPACE_HOST}/categories/${img}`}
+                    alt={txt.image[currentLang]}
+                    style={{width: "100px", height: "50px"}}
+                />
+            )
         },
         {
             key: "id",

@@ -41,7 +41,13 @@ export const Sections = () => {
             key: "img",
             title: txt.image[currentLang],
             dataIndex: "img",
-            render: (img: string) => <img src={img} alt={txt.image[currentLang]} style={{width: "50px"}}/>
+            render: (img: string) => (
+                <img
+                    src={`${import.meta.env.VITE_SPACE_HOST}/sections/${img}`}
+                    alt={txt.image[currentLang]}
+                    style={{width: "100px", height: "50px"}}
+                />
+            )
         },
         {
             key: "id",

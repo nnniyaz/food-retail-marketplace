@@ -16,6 +16,7 @@ import classes from "./Slides.module.scss";
 
 export const Slides: FC = () => {
     const navigate = useNavigate();
+    const {} = useTypedSelector(state => state.system);
     const {currentLang} = useTypedSelector(state => state.lang);
     const {slides, slidesCount, isLoadingGetSlides} = useTypedSelector(state => state.slides);
     const {fetchSlides} = useActions();
@@ -41,7 +42,13 @@ export const Slides: FC = () => {
             key: "img",
             title: txt.image[currentLang],
             dataIndex: "img",
-            render: (img: string) => <img src={img} alt={txt.image[currentLang]} style={{width: "50px"}}/>
+            render: (img: string) => (
+                <img
+                    src={`${import.meta.env.VITE_SPACE_HOST}/slides/${img}`}
+                    alt={txt.image[currentLang]}
+                    style={{width: "100px", height: "50px"}}
+                />
+            )
         },
         {
             key: "id",
