@@ -126,7 +126,7 @@ export const ProductsAdd: FC = () => {
                             <Form.Item
                                 name={"desc"}
                                 label={txt.desc[currentLang]}
-                                rules={[rules.requiredI18n(txt.please_enter_desc[currentLang])]}
+                                // rules={[rules.requiredI18n(txt.please_enter_desc[currentLang])]}
                                 required={false}
                             >
                                 <I18NTextarea

@@ -30,8 +30,7 @@ export function App() {
 
     return (
         <React.Fragment>
-            {/*<ReactNotifications className={"notifications"}/>*/}
-
+            <ReactNotifications className={"notifications"}/>
             <AppRouter/>
         </React.Fragment>
     );
