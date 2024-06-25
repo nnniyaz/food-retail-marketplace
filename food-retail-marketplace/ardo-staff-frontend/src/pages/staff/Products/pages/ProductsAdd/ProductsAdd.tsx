@@ -3,22 +3,21 @@ import {useNavigate} from "react-router-dom";
 import {Button, Card, Form, Select} from "antd";
 import {useForm, useWatch} from "antd/es/form/Form";
 import {RouteNames} from "@pages/index";
+import {SpaceFolders} from "@entities/base/spaceFolders";
 import {Langs, MlString} from "@entities/base/MlString";
 import {ProductStatus, ProductUnit} from "@entities/product/product";
 import {txt} from "@shared/core/i18ngen";
 import {rules} from "@shared/lib/form-rules/rules";
+import {Upload} from "@shared/ui/Upload/Upload";
 import {I18NInput} from "@shared/ui/Input/I18NInput";
 import {useActions} from "@shared/lib/hooks/useActions";
 import {NumberInput} from "@shared/ui/Input/NumberInput";
 import {I18NTextarea} from "@shared/ui/Textarea";
 import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
-import {productStatusOptions} from "@shared/lib/options/productStatusOptions";
-import classes from "./ProductsAdd.module.scss";
-import {productCutOffTimeOptions} from "@shared/lib/options/productCutOffTimeOptions";
 import {productUnitOptions} from "@shared/lib/options/productUnitOptions";
-import {PlusOutlined} from "@ant-design/icons";
-import {Upload} from "@shared/ui/Upload/Upload";
-import {SpaceFolders} from "@entities/base/spaceFolders";
+import {productStatusOptions} from "@shared/lib/options/productStatusOptions";
+import {productCutOffTimeOptions} from "@shared/lib/options/productCutOffTimeOptions";
+import classes from "./ProductsAdd.module.scss";
 
 const initialFormValues = {
     name: {
