@@ -111,8 +111,7 @@ export const SignUp = () => {
 
     const handleRegister = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        await register({...userCredentials});
-        navigate(RouteNames.PROFILE);
+        await register({...userCredentials}, {navigate: navigate, path: RouteNames.PROFILE});
     }
 
     return (

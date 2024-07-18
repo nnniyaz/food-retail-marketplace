@@ -78,7 +78,6 @@ const NotificationComponentStyles: { [key: string]: CSSProperties } = {
         lineHeight: "normal",
         color: "#000",
         backgroundColor: "transparent",
-        textTransform: "capitalize"
     }
 }
 

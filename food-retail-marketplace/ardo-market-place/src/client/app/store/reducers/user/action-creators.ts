@@ -17,6 +17,7 @@ import AuthService, {RegisterRequest} from "@services/authService.ts";
 import {Notify} from "@pkg/notification/notification.tsx";
 import {CountryCode} from "@pkg/formats/phone/countryCodes.ts";
 import {txts} from "../../../../../server/pkg/core/txts.ts";
+import {NavigateCallback} from "@domain/base/navigateCallback/navigateCallback.ts";
 
 export const UserActionCreator = {
     setIsAuth: (payload: boolean): SetIsAuthAction => ({
@@ -147,7 +148,7 @@ export const UserActionCreator = {
         }
     },
 
-    register: (request: RegisterRequest) => async (dispatch: AppDispatch, getState: () => RootState) => {
+    register: (request: RegisterRequest, navigation: NavigateCallback) => async (dispatch: AppDispatch, getState: () => RootState) => {
         const {currentLang, cfg} = getState().systemState;
         const apiCfg = {baseURL: cfg.apiUri, lang: currentLang};
         try {
@@ -155,6 +156,9 @@ export const UserActionCreator = {
             const res = await AuthService.register(apiCfg, request);
             if (res.data.success) {
                 Notify.Success({message: txts["confirmation_mail_was_sent_to_your_email"][currentLang]});
+                if (navigation.path) {
+                    navigation.navigate(navigation.path);
+                }
             } else {
                 res.data.messages.forEach((message: string) => {
                     Notify.Error({message: message});

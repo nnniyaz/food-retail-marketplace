@@ -1,4 +1,5 @@
 import {NavLink, useLocation} from "react-router-dom";
+import * as AntdIcons from "@ant-design/icons";
 import {RouteNames} from "@pages/index.tsx";
 import HomeSVG from "@assets/icons/home.svg?react";
 import SearchSVG from "@assets/icons/search.svg?react";
@@ -8,6 +9,8 @@ import UserSVG from "@assets/icons/user.svg?react";
 import classes from "./Footer.module.scss";
 import {translate} from "@pkg/translate/translate.ts";
 import {useTypedSelector} from "@pkg/hooks/useTypedSelector.ts";
+
+const {WhatsAppOutlined} = AntdIcons;
 
 export const Footer = () => {
     const location = useLocation();
@@ -22,7 +25,8 @@ export const Footer = () => {
                             target={"_blank"}
                             className={classes.credentials__text} style={{marginBottom: "5px", color: "#4096ff"}}
                         >
-                            {translate("continue_with_whatsapp", currentLang, langs)}
+                            <WhatsAppOutlined />
+                            {translate("customer_service", currentLang, langs)}
                         </a>
                         <p className={classes.credentials__text}>
                             <a

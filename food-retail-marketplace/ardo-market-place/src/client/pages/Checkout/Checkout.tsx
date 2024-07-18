@@ -259,7 +259,7 @@ export const Checkout = () => {
                         disabled={isLoadingMakeOrder}
                         style={{opacity: isLoadingMakeOrder ? 0.5 : 1}}
                     >
-                        {translate("buy", currentLang, langs)}
+                        {translate("place_order", currentLang, langs)}
                         {isLoadingMakeOrder && <LoadingOutlined className={classes.btn__loading}/>}
                     </button>
                     <Alert

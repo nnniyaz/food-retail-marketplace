@@ -31,7 +31,7 @@ const initialState: CatalogState = {
 export default function catalogReducer(state = initialState, action: CatalogAction): CatalogState {
     switch (action.type) {
         case CatalogActionEnum.INIT_CATALOG_STATE:
-            if (!state.catalog) {
+            if (!action.payload) {
                 return {...state};
             }
             return {...state, catalog: action.payload};
