@@ -1,0 +1,6 @@
+.idea
+.DS_Store
+
+.env
+
+/pkg/core/i18ngen.go

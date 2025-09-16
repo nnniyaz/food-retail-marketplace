@@ -1,0 +1,49 @@
+package deliveryInfo
+
+import "github/nnniyaz/ardo/pkg/core"
+
+var ErrEmptyDeliveryAddress = core.NewI18NError(core.EINVALID, core.TXT_EMPTY_DELIVERY_ADDRESS)
+
+type DeliveryInfo struct {
+	address         string
+	floor           string
+	apartment       string
+	deliveryComment string
+}
+
+func NewDeliveryInfo(address, floor, apartment, deliveryComment string) (DeliveryInfo, error) {
+	if address == "" {
+		return DeliveryInfo{}, ErrEmptyDeliveryAddress
+	}
+	return DeliveryInfo{
+		address:         address,
+		floor:           floor,
+		apartment:       apartment,
+		deliveryComment: deliveryComment,
+	}, nil
+}
+
+func (d *DeliveryInfo) GetAddress() string {
+	return d.address
+}
+
+func (d *DeliveryInfo) GetFloor() string {
+	return d.floor
+}
+
+func (d *DeliveryInfo) GetApartment() string {
+	return d.apartment
+}
+
+func (d *DeliveryInfo) GetDeliveryComment() string {
+	return d.deliveryComment
+}
+
+func UnmarshalDeliveryInfoFromDatabase(address, floor, apartment, deliveryComment string) DeliveryInfo {
+	return DeliveryInfo{
+		address:         address,
+		floor:           floor,
+		apartment:       apartment,
+		deliveryComment: deliveryComment,
+	}
+}

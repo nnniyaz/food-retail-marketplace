@@ -1,0 +1,144 @@
+package repo
+
+import (
+	"context"
+	"github/nnniyaz/ardo/domain/activationLink"
+	"github/nnniyaz/ardo/domain/base/uuid"
+	"github/nnniyaz/ardo/domain/catalog"
+	"github/nnniyaz/ardo/domain/category"
+	"github/nnniyaz/ardo/domain/order"
+	"github/nnniyaz/ardo/domain/orderSettings"
+	"github/nnniyaz/ardo/domain/product"
+	"github/nnniyaz/ardo/domain/section"
+	"github/nnniyaz/ardo/domain/session"
+	"github/nnniyaz/ardo/domain/slide"
+	"github/nnniyaz/ardo/domain/user"
+	activationLinkMongo "github/nnniyaz/ardo/repo/mongo/activationLink"
+	catalogMongo "github/nnniyaz/ardo/repo/mongo/catalog"
+	categoryMongo "github/nnniyaz/ardo/repo/mongo/category"
+	orderMongo "github/nnniyaz/ardo/repo/mongo/order"
+	orderSettingsMongo "github/nnniyaz/ardo/repo/mongo/orderSettings"
+	productMongo "github/nnniyaz/ardo/repo/mongo/product"
+	sectionMongo "github/nnniyaz/ardo/repo/mongo/section"
+	sessionMongo "github/nnniyaz/ardo/repo/mongo/session"
+	slideMongo "github/nnniyaz/ardo/repo/mongo/slide"
+	userMongo "github/nnniyaz/ardo/repo/mongo/user"
+	"go.mongodb.org/mongo-driver/mongo"
+	"time"
+)
+
+type User interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*user.User, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*user.User, error)
+	FindOneByEmail(ctx context.Context, email string, isDeleted bool) (*user.User, error)
+	Create(ctx context.Context, user *user.User) error
+	Update(ctx context.Context, user *user.User) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
+type Session interface {
+	Create(ctx context.Context, session *session.Session) error
+	FindManyByUserId(ctx context.Context, userId uuid.UUID) ([]*session.Session, error)
+	FindOneBySession(ctx context.Context, session uuid.UUID) (*session.Session, error)
+	DeleteAllByUserId(ctx context.Context, userId uuid.UUID) error
+	DeleteById(ctx context.Context, id uuid.UUID) error
+	DeleteByToken(ctx context.Context, token uuid.UUID) error
+	UpdateLastActionAt(ctx context.Context, sessionId uuid.UUID) error
+}
+
+type ActivationLink interface {
+	FindOneByUserId(ctx context.Context, userId uuid.UUID) (activationLink *activationLink.ActivationLink, err error)
+	FindOneByLinkId(ctx context.Context, linkId uuid.UUID) (activationLink *activationLink.ActivationLink, err error)
+	Create(ctx context.Context, activationLink *activationLink.ActivationLink) error
+	Update(ctx context.Context, activationLink *activationLink.ActivationLink) error
+}
+
+type Product interface {
+	FindByFilters(ctx context.Context, limit, offset int64, isDeleted bool, search string) ([]*product.Product, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*product.Product, error)
+	Create(ctx context.Context, product *product.Product) error
+	CreateMany(ctx context.Context, products []*product.Product) error
+	Update(ctx context.Context, product *product.Product) error
+	Delete(ctx context.Context, id uuid.UUID) error
+	Recover(ctx context.Context, id uuid.UUID) error
+}
+
+type Order interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*order.Order, int64, error)
+	FindUserOrdersByFilters(ctx context.Context, offset, limit int64, isDeleted bool, userId uuid.UUID) ([]*order.Order, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*order.Order, error)
+	Create(ctx context.Context, order *order.Order) error
+	Update(ctx context.Context, order *order.Order) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
+type Catalog interface {
+	FindAll(ctx context.Context) ([]*catalog.Catalog, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*catalog.Catalog, error)
+	CreateCatalog(ctx context.Context, catalog *catalog.Catalog) error
+	UpdateCatalog(ctx context.Context, catalog *catalog.Catalog) error
+	PublishCatalog(ctx context.Context, catalog *catalog.Catalog, selectedSections map[string]*section.Section, selectedCategories map[string]*category.Category, selectedProducts map[string]*product.Product, slides []*slide.Slide, settings *orderSettings.OrderSettings) error
+	GetTimeOfPublish(ctx context.Context, catalogId uuid.UUID) (time.Time, error)
+}
+
+type Section interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*section.Section, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*section.Section, error)
+	Create(ctx context.Context, section *section.Section) error
+	Update(ctx context.Context, section *section.Section) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
+type Category interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool, search string) ([]*category.Category, int64, error)
+	FindOneById(ctx context.Context, id uuid.UUID) (*category.Category, error)
+	Create(ctx context.Context, category *category.Category) error
+	Update(ctx context.Context, category *category.Category) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
+type Slide interface {
+	FindByFilters(ctx context.Context, offset, limit int64, isDeleted bool) ([]*slide.Slide, int64, error)
+	FindById(ctx context.Context, id uuid.UUID) (*slide.Slide, error)
+	Create(ctx context.Context, slide *slide.Slide) error
+	Update(ctx context.Context, slide *slide.Slide) error
+	Recover(ctx context.Context, id uuid.UUID) error
+	Delete(ctx context.Context, id uuid.UUID) error
+}
+
+type OrderSettings interface {
+	GetOrderSettings(ctx context.Context) (*orderSettings.OrderSettings, error)
+	UpdateMoqFee(ctx context.Context, orderSettings *orderSettings.OrderSettings) error
+}
+
+type Repository struct {
+	RepoUser           User
+	RepoSession        Session
+	RepoActivationLink ActivationLink
+	RepoProduct        Product
+	RepoOrder          Order
+	RepoCatalog        Catalog
+	RepoSection        Section
+	RepoCategory       Category
+	RepoSlide          Slide
+	RepoOrderSettings  OrderSettings
+}
+
+func NewRepository(client *mongo.Client) *Repository {
+	return &Repository{
+		RepoUser:           userMongo.NewRepoUser(client),
+		RepoSession:        sessionMongo.NewRepoSession(client),
+		RepoActivationLink: activationLinkMongo.NewRepoActivationLink(client),
+		RepoProduct:        productMongo.NewRepoProduct(client),
+		RepoOrder:          orderMongo.NewRepoOrder(client),
+		RepoCatalog:        catalogMongo.NewRepoCatalog(client),
+		RepoSection:        sectionMongo.NewRepoSection(client),
+		RepoCategory:       categoryMongo.NewRepoCategory(client),
+		RepoSlide:          slideMongo.NewRepoSlide(client),
+		RepoOrderSettings:  orderSettingsMongo.NewRepoOrderSettings(client),
+	}
+}
