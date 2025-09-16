@@ -1,0 +1,86 @@
+import React, {FC} from "react";
+import {Form, Modal, Select} from "antd";
+import {useForm} from "antd/es/form/Form";
+import {txt} from "@shared/core/i18ngen";
+import {rules} from "@shared/lib/form-rules/rules";
+import {useActions} from "@shared/lib/hooks/useActions";
+import {useTypedSelector} from "@shared/lib/hooks/useTypedSelector";
+
+interface ModalAddSectionProps {
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<boolean>;
+    isPromo?: boolean;
+}
+
+export const ModalAddSection: FC<ModalAddSectionProps> = ({isOpen, setIsOpen, isPromo}) => {
+    const {currentLang} = useTypedSelector(state => state.lang);
+    const {catalog} = useTypedSelector(state => state.catalog);
+    const {sections} = useTypedSelector(state => state.sections);
+    const {setCatalog} = useActions();
+    const [form] = useForm<{ sectionIds: string[] }>();
+
+    const handleSubmit = async () => {
+        if (!catalog) return;
+        if (isPromo) {
+            setCatalog({
+                ...catalog,
+                promo: [
+                    ...(catalog?.promo || []),
+                    ...form.getFieldValue("sectionIds").map((sectionId: string) => ({
+                        sectionId: sectionId,
+                        categories: []
+                    }))
+                ],
+            });
+        } else {
+            setCatalog({
+                ...catalog,
+                structure: [
+                    ...(catalog?.structure || []),
+                    ...form.getFieldValue("sectionIds").map((sectionId: string) => ({
+                        sectionId: sectionId,
+                        categories: []
+                    }))
+                ],
+            });
+        }
+        setIsOpen(false);
+    }
+
+    return (
+        <Modal
+            title={txt.add_section_to_catalog[currentLang]}
+            open={isOpen}
+            onOk={form.submit}
+            onCancel={() => setIsOpen(false)}
+            okText={txt.ok[currentLang]}
+            cancelText={txt.cancel[currentLang]}
+        >
+            <Form form={form} onFinish={handleSubmit} layout={"vertical"}>
+                <Form.Item
+                    name={"sectionIds"}
+                    label={txt.select_section[currentLang]}
+                    rules={[rules.required(txt.please_select_section[currentLang])]}
+                >
+                    <Select
+                        placeholder={txt.select_section[currentLang]}
+                        showSearch={true}
+                        filterOption={(input, option) => option?.label?.toLowerCase()?.includes(input.toLowerCase()) || false}
+                        filterSort={(optionA, optionB) => optionA.label.localeCompare(optionB.label)}
+                        mode={"multiple"}
+                        options={
+                            sections?.filter(section => {
+                                const structureSectionIds = catalog?.structure?.map(section => section.sectionId);
+                                const promoSectionIds = catalog?.promo?.map(section => section.sectionId);
+                                return !structureSectionIds?.includes(section.id) && !promoSectionIds?.includes(section.id);
+                            })?.map(section => ({
+                                label: section.name[currentLang] || `${txt.not_translated[currentLang]} - ID: ${section.id}`,
+                                value: section.id
+                            }))
+                        }
+                    />
+                </Form.Item>
+            </Form>
+        </Modal>
+    )
+}

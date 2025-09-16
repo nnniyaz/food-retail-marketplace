@@ -1,0 +1,33 @@
+@import "src/app/styles/vars.scss";
+
+.label__medium {
+  font-size: $global-font-size-regular-medium;
+  line-height: $global-line-height-regular-medium;
+  font-weight: $global-font-weight-semi-bold;
+  color: $global-font-color-light-black;
+  background-color: inherit;
+}
+
+.label__large {
+  font-size: $global-font-size-regular-large;
+  line-height: $global-line-height-regular-large;
+  font-weight: $global-font-weight-bold;
+  color: $global-font-color-light-black;
+  background-color: inherit;
+}
+
+.text__small {
+  font-size: $global-font-size-regular-small;
+  line-height: $global-line-height-regular-small;
+  font-weight: $global-font-weight-regular;
+  color: $global-font-color-light-black;
+  background-color: inherit;
+}
+
+.text__medium {
+  font-size: $global-font-size-regular-medium;
+  line-height: $global-line-height-regular-medium;
+  font-weight: $global-font-weight-regular;
+  color: $global-font-color-light-black;
+  background-color: inherit;
+}

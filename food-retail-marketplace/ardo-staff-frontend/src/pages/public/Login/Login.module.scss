@@ -1,0 +1,40 @@
+@import "@app/styles/vars";
+
+.main {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  .container {
+    width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    row-gap: 20px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: $global-color-light-bg-white;
+    box-shadow: 0 4px 16px 0 rgba(36,36,36,.051);
+
+    .container__header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: inherit;
+    }
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding: 15px;
+
+    .container {
+      width: 100%;
+      padding: 10px;
+    }
+  }
+}

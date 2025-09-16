@@ -1,0 +1,22 @@
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package.json .
+
+RUN npm install
+
+COPY . .
+
+ARG VITE_API_URL
+ENV VITE_API_URL=$VITE_API_URL
+ARG VITE_MAIN_CLIENT_URI
+ENV VITE_MAIN_CLIENT_URI=$VITE_MAIN_CLIENT_URI
+ARG VITE_SPACE_HOST
+ENV VITE_SPACE_HOST=$VITE_SPACE_HOST
+
+RUN npm run build:dev
+
+EXPOSE 8080
+
+CMD [ "npm", "run", "preview" ]

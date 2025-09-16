@@ -1,0 +1,112 @@
+@import "src/app/styles";
+
+.main {
+  width: 100%;
+
+  .title__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .title__row__group {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .catalog__preview {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    .catalog__preview__content {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      h3 {
+        font-size: 16px;
+        font-weight: 500;
+      }
+
+      ol {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+
+        li {
+          margin-bottom: 10px;
+
+          &:last-child {
+            margin-bottom: 0;
+          }
+        }
+
+        .list__item__title {
+          width: 100%;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          user-select: none;
+
+          .list__item__title__group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            user-select: text;
+          }
+
+          .list__item__title__holder {
+            font-size: 18px;
+            cursor: grab;
+
+            &:active {
+              cursor: grabbing;
+            }
+          }
+        }
+
+        .error__notification {
+          width: 13px;
+          height: 13px;
+          border-radius: 50%;
+          background-color: #ff9494;
+        }
+
+        .catalog__item {
+          width: 100%;
+          display: flex;
+          padding: 10px;
+          border-radius: 10px;
+          background-color: $global-color-light-bg-secondary-white;
+        }
+
+        .delete__icon {
+          color: #1677ff;
+          transition: .1s linear;
+
+          &:hover {
+            color: #69b1ff;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 700px) {
+  .main {
+    .title__row {
+      padding: 20px 0;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+
+      .title__row__group {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 10px;
+      }
+    }
+  }
+}

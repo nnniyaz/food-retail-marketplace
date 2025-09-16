@@ -1,0 +1,9 @@
+@import "@app/styles/vars.scss";
+
+.logo {
+  font-family: "SF Pro Display", sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: $global-font-color-light-blue;
+  background-color: inherit;
+}

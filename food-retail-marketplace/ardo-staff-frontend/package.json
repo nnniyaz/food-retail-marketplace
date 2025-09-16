@@ -1,0 +1,73 @@
+{
+  "name": "ardo-staff-frontend",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^5.1.4",
+    "animate.css": "^4.1.1",
+    "antd": "^5.6.1",
+    "axios": "1.6.0",
+    "concurrently": "^7.4.0",
+    "csv-parse": "^5.3.5",
+    "dotenv-cli": "^6.0.0",
+    "framer-motion": "^11.0.14",
+    "fs": "^0.0.1-security",
+    "moment": "^2.30.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-notifications-component": "^4.0.1",
+    "react-router-dom": "^6.11.2",
+    "react-scripts": "5.0.1",
+    "react-transition-group": "^4.4.5",
+    "react-redux": "^8.0.5",
+    "redux": "^4.2.1",
+    "redux-thunk": "^2.4.2",
+    "web-vitals": "^2.1.4"
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@redux-devtools/extension": "^3.2.5",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^16.18.34",
+    "@types/react": "^18.2.7",
+    "@types/react-dom": "^18.2.4",
+    "@types/react-transition-group": "^4.4.6",
+    "@vitejs/plugin-react-refresh": "^1.3.6",
+    "json-server": "^0.17.3",
+    "sass": "^1.62.1",
+    "typescript": "^4.9.5",
+    "vite": "^4.5.0"
+  },
+  "scripts": {
+    "i18n": "node src/shared/core/i18n.js",
+    "start": "npm run i18n && vite --port 3001",
+    "build": "echo \"Please use build:dev or build:prod \" && exit 1",
+    "build:dev": "dotenv -e .env.development concurrently \"npm run i18n\" \"tsc && vite build\"",
+    "build:prod": "dotenv -e .env.production concurrently \"npm run i18n\" \"tsc && vite build\"",
+    "preview": "vite preview",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}

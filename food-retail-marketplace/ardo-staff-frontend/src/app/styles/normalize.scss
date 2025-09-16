@@ -1,0 +1,27 @@
+@import "vars";
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+}
+
+div, svg, span {
+  background-color: transparent;
+}
+
+#root {
+  background-color: $global-color-light-bg-secondary-white;
+}
+
+/* Light mode */
+@media (prefers-color-scheme: light) {
+
+}
+
+@media (max-width: 1340px) {
+  body {
+    -webkit-tap-highlight-color: transparent;
+  }
+}

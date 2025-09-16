@@ -1,0 +1,121 @@
+@import "@app/styles/vars.scss";
+
+.sidebar {
+  position: relative;
+  width: 280px;
+  padding: 15px 10px 160px 10px;
+  border-radius: 20px;
+  background-color: $global-color-light-bg-white;
+  box-shadow: 0 6px 18px 0 rgba(36, 36, 36, .051);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+
+  .sidebar__header {
+    display: none;
+  }
+
+  .sidebar__item {
+    width: 100%;
+    height: 39px;
+    padding: 10px 15px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    gap: 10px;
+    background-color: inherit;
+    cursor: pointer;
+    transition: .1s linear;
+
+    &:hover {
+      background-color: $global-color-light-bg-secondary-white;
+    }
+
+    .sidebar__item__icon {
+      transition: .1s linear;
+
+      path {
+        fill: $global-font-color-light-black;
+        transition: .1s linear;
+      }
+    }
+  }
+
+  .sidebar__item__active {
+    @extend .sidebar__item;
+    background-color: $global-color-light-bg-blue;
+
+    &:hover {
+        background-color: $global-color-light-bg-blue;
+    }
+
+    .sidebar__item__icon {
+      transition: .1s linear;
+
+      path {
+        fill: $global-font-color-light-white;
+        transition: .1s linear;
+      }
+    }
+  }
+}
+
+@media (max-width: 1340px) {
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 60%;
+    height: 100vh;
+    padding: 10px;
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+    z-index: 3;
+    opacity: 0;
+
+    .sidebar__header {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+
+      .burger {
+        font-size: 30px;
+        opacity: .5;
+      }
+    }
+  }
+
+  .sidebar__enter__active {
+    animation: SlideIn .3s forwards;
+  }
+
+  .sidebar__enter__done {
+    opacity: 1;
+  }
+
+  .sidebar__exit__active {
+    animation: SlideIn .3s reverse;
+  }
+
+  .sidebar__exit__done {
+    opacity: 0;
+  }
+}
+
+@keyframes SlideIn {
+  0% {
+    opacity: 1;
+    transform: translateX(-100%);
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
