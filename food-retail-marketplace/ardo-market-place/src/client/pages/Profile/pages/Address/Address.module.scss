@@ -1,0 +1,126 @@
+.user_delivery_points_list {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  .delivery_point {
+    position: relative;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 15px;
+    border-radius: 10px;
+    background-color: var(--secondary-bg-color);
+
+    .delivery_point__row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid var(--primary-bg-color);
+      padding: 10px 0;
+
+      &:first-child {
+        padding-top: 0;
+      }
+
+      &:last-child {
+        border-bottom: none;
+        padding-bottom: 0;
+      }
+
+      .delivery_point__row__label__active {
+        color: var(--link-color);
+        font-size: 18px;
+        line-height: 21px;
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      .delivery_point__row__label {
+        width: 200px;
+        color: var(--secondary-font-color);
+        font-size: 18px;
+        line-height: 21px;
+      }
+
+      .delivery_point__row__value {
+        color: var(--primary-font-color);
+        font-size: 18px;
+        line-height: 21px;
+      }
+
+      input {
+        width: calc(100% - 200px);
+        border: none;
+        background-color: transparent;
+        outline: none;
+
+        color: var(--primary-font-color);
+        font-size: 18px;
+        line-height: 21px;
+        transition: .1s linear;
+
+        &::placeholder {
+          color: var(--secondary-font-color);
+        }
+      }
+    }
+
+    .delivery_point__row__buttons {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 10px;
+    }
+  }
+
+  .delivery_point__active {
+    @extend .delivery_point;
+    border: 3px solid var(--link-color);
+  }
+}
+
+.circled_dots {
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  background-color: var(--link-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 3px;
+  cursor: pointer;
+
+  .circled_dot {
+    width: 3px;
+    height: 3px;
+    border-radius: 50%;
+    background-color: var(--accent-font-color);
+  }
+}
+
+@media only screen and (max-width: 1200px) {
+  .user_delivery_points_list {
+
+    .delivery_point {
+
+      .delivery_point__row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+
+        .delivery_point__row__label {
+          font-size: 14px;
+          line-height: 17px;
+        }
+
+        .delivery_point__row__value {
+
+        }
+      }
+    }
+  }
+}

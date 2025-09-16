@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["src/client/app/*"],
+      "@assets/*": ["src/client/assets/*"],
+      "@domain/*": ["src/client/domain/*"],
+      "@pages/*": ["src/client/pages/*"],
+      "@pkg/*": ["src/client/pkg/*"],
+      "@widgets/*": ["src/client/widgets/*"],
+      "@services/*": ["src/client/services/*"]
+    }
+  }
+}

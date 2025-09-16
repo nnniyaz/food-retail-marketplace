@@ -1,0 +1,22 @@
+@font-face {
+  font-family: 'SF Pro Display', sans-serif;
+  src: url("../../assets/font/sf-pro-display/SF-Pro-Display-Semibold.otf");
+  src: url("../../assets/font/sf-pro-display/SF-Pro-Display-SemiboldItalic.otf");
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'SF Pro Display', sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--primary-bg-color);
+}
+
+div, span, p, h1, h2, h3, h4, h5, h6 {
+  color: var(--primary-font-color);
+}

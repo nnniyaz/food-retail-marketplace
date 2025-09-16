@@ -1,0 +1,32 @@
+@import "./styles/index";
+
+.swiper-pagination-bullet {
+  background-color: white;
+}
+
+.ant-select-dropdown {
+  background-color: var(--secondary-bg-color) !important;
+}
+
+.ant-select-item-option-selected {
+  background-color: var(--primary-bg-color) !important;
+}
+
+.ant-select-selector {
+  width: 30px;
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+.ant-select-item-option-content {
+  font-style: normal !important;
+  font-weight: 400 !important;
+  font-size: 16px !important;
+  line-height: 19px !important;
+  color: var(--primary-font-color) !important;
+}
+
+.rnc__notification-item {
+  box-shadow: none;
+}

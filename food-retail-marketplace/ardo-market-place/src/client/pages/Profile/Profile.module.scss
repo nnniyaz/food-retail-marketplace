@@ -1,0 +1,137 @@
+.login {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+
+  form {
+    width: 300px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+
+    h1 {
+      color: var(--primary-font-color);
+      font-size: 24px;
+      line-height: 29px;
+      text-align: center;
+      text-transform: capitalize;
+    }
+
+    label {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+
+      color: var(--secondary-font-color);
+      padding: 5px 15px;
+      border: 2px solid var(--secondary-bg-color);
+      background-color: var(--secondary-bg-color);
+      border-radius: 20px;
+      transition: .1s linear;
+
+      input {
+        width: 100%;
+        border: none;
+        background-color: transparent;
+        color: var(--primary-font-color);
+
+        &:focus {
+          outline: none;
+        }
+
+        &::placeholder {
+          text-transform: capitalize;
+        }
+      }
+
+      &:focus-within {
+        border: 2px solid var(--link-color);
+      }
+    }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+
+      hr {
+        width: 45%;
+        height: 1px;
+        background-color: var(--secondary-bg-color);
+        border-radius: 20px;
+        opacity: .5;
+      }
+
+      span {
+        color: var(--secondary-font-color);
+        font-size: 14px;
+        line-height: 17px;
+        text-transform: uppercase;
+        padding: 0 15px;
+      }
+    }
+
+    button {
+      width: 100%;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+
+      padding: 6px 10px;
+      border: 1px solid var(--link-color);
+      border-radius: 20px;
+      background-color: var(--link-color);
+      cursor: pointer;
+      transition: .1s linear;
+
+      &:last-child {
+        background-color: #ff6e30;
+        border: 1px solid #ff6e30;
+      }
+
+      span {
+        color: var(--accent-font-color);
+        text-transform: capitalize;
+      }
+
+      @media (hover: hover) {
+        &:hover {
+          opacity: .7;
+        }
+      }
+
+      &:active {
+        outline: none;
+        opacity: .7;
+      }
+
+      .btn__loading {
+        color: var(--primary-bg-color);
+      }
+    }
+
+    .error__message {
+      color: #ee1616;
+      font-size: 14px;
+      margin-top: 5px;
+      padding: 0 15px;
+      animation: appear .3s linear;
+      transition: .1s linear;
+
+      @keyframes appear {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
+    }
+  }
+}

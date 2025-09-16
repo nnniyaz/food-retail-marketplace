@@ -1,0 +1,145 @@
+.cheque {
+  width: 100%;
+  background-color: var(--secondary-bg-color);
+  border-radius: 12px;
+  padding: 10px 20px;
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+
+    thead {
+      tr {
+        th {
+          padding: 15px 0;
+          border-bottom: 1px solid var(--primary-font-color);
+          text-align: left;
+
+          &:nth-child(2) {
+            text-align: right;
+          }
+
+          &:nth-child(3) {
+            text-align: right;
+          }
+
+          &:last-child {
+            text-align: right;
+          }
+        }
+      }
+    }
+
+    tbody {
+
+      tr {
+
+        td {
+          padding: 15px 0;
+          border-bottom: 1px solid var(--primary-font-color);
+          text-align: left;
+
+          &:nth-child(2) {
+            text-align: right;
+            white-space: nowrap;
+          }
+
+          &:nth-child(3) {
+            text-align: right;
+            white-space: nowrap;
+          }
+
+          &:last-child {
+            text-align: right;
+          }
+        }
+      }
+    }
+
+    tfoot {
+      tr {
+        td {
+          padding: 15px 0;
+          border-top: 1px solid var(--primary-font-color);
+          text-align: left;
+
+          color: (--primary-font-color);
+          text-transform: uppercase;
+          white-space: nowrap;
+
+          &:last-child {
+            width: fit-content;
+            text-align: right;
+          }
+        }
+      }
+
+      tr:last-child {
+        td {
+          padding: 15px 0;
+          border-top: 1px solid var(--primary-font-color);
+          text-align: left;
+
+          color: (--primary-font-color);
+          font-weight: 700;
+          font-size: 20px;
+          line-height: 23px;
+          text-transform: uppercase;
+
+          &:nth-child(2) {
+            text-align: right;
+          }
+
+          &:last-child {
+            width: fit-content;
+            text-align: right;
+          }
+        }
+      }
+    }
+  }
+}
+
+@media only screen and (max-width: 800px) {
+  .cheque {
+    table {
+      thead {
+        tr {
+          th {
+            padding: 10px 0;
+            font-size: 14px;
+            line-height: 17px;
+          }
+        }
+      }
+
+      tbody {
+        tr {
+          td {
+            padding: 10px 0;
+            font-size: 14px;
+            line-height: 17px;
+          }
+        }
+      }
+
+      tfoot {
+        tr {
+          td {
+            padding: 10px 0;
+            font-size: 16px;
+            line-height: 19px;
+
+            &:nth-child(2) {
+            }
+
+            &:last-child {
+              width: fit-content;
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+  }
+}
