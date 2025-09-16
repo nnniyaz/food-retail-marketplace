@@ -1,0 +1,134 @@
+.main_block {
+  width: 100%;
+  padding: 50px 0 26px 0;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+
+  .main_block__group {
+    width: 50%;
+    min-height: 551px;
+    display: flex;
+    flex-direction: column;
+
+    &:first-child {
+      justify-content: space-between;
+      gap: 20px;
+
+      h1 {
+        max-width: 560px;
+        font-style: normal;
+        font-weight: 600;
+        font-size: 46px;
+        line-height: 59px;
+        color: var(--primary-font-color);
+        text-transform: uppercase;
+      }
+
+      .main_block__group__products {
+        align-self: flex-end;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px;
+        border-radius: 25px;
+        background-color: var(--primary-bg-color);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+
+        .main_block__group__products__item {
+          width: 160px;
+          height: 160px;
+          border-radius: 25px;
+          object-fit: contain;
+          background-color: var(--secondary-bg-color);
+        }
+      }
+
+      p {
+        font-style: normal;
+        font-weight: 600;
+        font-size: 35px;
+        line-height: 41px;
+        color: var(--primary-font-color);
+        opacity: .8;
+      }
+    }
+
+    &:last-child {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      .main_block__group__banner {
+        width: 100%;
+        height: 100%;
+        border-radius: 25px;
+        background-color: var(--primary-bg-color);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+        object-fit: contain;
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .main_block {
+    flex-direction: column;
+    gap: 20px;
+    padding: 0;
+
+    .main_block__group {
+      width: 100%;
+      height: auto;
+      min-height: auto;
+      gap: 20px;
+
+      &:first-child {
+
+        h1 {
+          max-width: 100%;
+          width: calc(100% - 20px);
+          font-size: 25px;
+          line-height: 29px;
+          margin: 0 10px;
+        }
+
+        .main_block__group__products {
+          width: 100%;
+
+          .main_block__group__products__item {
+            width: calc((100% - 20px) / 3);
+            height: auto;
+            aspect-ratio: 1/1;
+          }
+        }
+
+        p {
+          width: calc(100% - 20px);
+          font-size: 18px;
+          line-height: 21px;
+          margin: 0 10px;
+        }
+      }
+
+      &:last-child {
+        .main_block__group__banner {
+          width: 100%;
+          height: 100%;
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 500px) {
+  .main_block {
+
+    .main_block__group {
+
+      &:last-child {
+        height: 403px;
+      }
+    }
+  }
+}

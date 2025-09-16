@@ -1,0 +1,39 @@
+{
+  "name": "ardo-landing",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "i18n": "node src/pkg/core/txtGen.js",
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@redux-devtools/extension": "^3.3.0",
+    "@svgr/webpack": "^8.1.0",
+    "antd": "^5.16.1",
+    "csv-parse": "^5.5.5",
+    "mongodb": "^6.5.0",
+    "next": "14.1.0",
+    "nextjs-toploader": "^1.6.11",
+    "react": "^18",
+    "react-dom": "^18",
+    "react-redux": "^9.1.0",
+    "react-transition-group": "^4.4.5",
+    "redux": "^5.0.1",
+    "redux-thunk": "^3.1.0",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/react-transition-group": "^4.4.10",
+    "@types/uuid": "^9.0.8",
+    "eslint": "^8",
+    "eslint-config-next": "14.1.0",
+    "sass": "^1.71.0",
+    "typescript": "^5"
+  }
+}

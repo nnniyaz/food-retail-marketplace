@@ -1,0 +1,124 @@
+.advantages {
+  width: 100%;
+  border-collapse: collapse;
+
+  tbody {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    tr {
+      display: flex;
+      gap: 20px;
+
+      td {
+        width: calc((100% - 20px) / 2);
+        flex: 1;
+
+        .advantage_card {
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          padding: 20px;
+          border-radius: 25px;
+          background-color: var(--secondary-bg-color);
+
+          .advantage_card__preview {
+            width: 100%;
+            height: 300px;
+            border-radius: 25px;
+            background-color: var(--primary-bg-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            object-fit: contain;
+
+            .advantage_card__preview_img {
+              width: 100%;
+              height: 100%;
+              border-radius: 25px;
+              object-fit: contain;
+            }
+          }
+
+          h3 {
+            font-weight: 600;
+            font-size: 29px;
+            line-height: 35px;
+            color: var(--link-color);
+            text-transform: uppercase;
+          }
+
+          p {
+            font-weight: 500;
+            font-size: 20px;
+            line-height: 35px;
+            color: var(--primary-font-color);
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 1200px) {
+  .advantages {
+    tbody {
+      tr {
+        flex-direction: column;
+
+        td {
+          width: 100%;
+
+          .advantage_card {
+            border-radius: 16px;
+            padding: 10px;
+
+            .advantage_card__preview {
+              height: auto;
+              border-radius: 16px;
+
+              .advantage_card__preview_img {
+                width: 100%;
+                height: 100%;
+                object-fit: cover;
+                border-radius: 16px;
+              }
+            }
+
+            h3 {
+              font-size: 16px;
+              line-height: 19px;
+            }
+
+            p {
+              font-size: 14px;
+              line-height: 20px;
+            }
+          }
+        }
+      }
+    }
+  }
+}
+
+@media (max-width: 500px) {
+  .advantages {
+    tbody {
+      tr {
+
+        td {
+
+          .advantage_card {
+
+            .advantage_card__preview {
+              height: 212px;
+            }
+          }
+        }
+      }
+    }
+  }
+}

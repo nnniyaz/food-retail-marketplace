@@ -1,0 +1,40 @@
+.button {
+  width: 400px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 16px;
+  border: none;
+  background-color: var(--link-color);
+  cursor: pointer;
+  transition: .1s linear;
+
+  font-style: normal;
+  font-weight: 500;
+  font-size: 20px;
+  line-height: 23px;
+  color: var(--accent-font-color);
+  text-transform: uppercase;
+  text-decoration: none;
+
+  @media (hover: hover) {
+    &:hover {
+      opacity: .7;
+    }
+  }
+
+  &:active {
+    opacity: .5;
+  }
+}
+
+@media (max-width: 1200px) {
+  .button {
+    width: calc(100% - 20px);
+    height: 60px;
+    font-size: 18px;
+    line-height: 21px;
+    margin: 0 10px;
+  }
+}

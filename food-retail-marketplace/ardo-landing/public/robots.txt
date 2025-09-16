@@ -1,0 +1,6 @@
+User-agent: *
+Disallow: /not-found/
+Disallow: /api/
+
+Sitemap: https://ardogroup.org/sitemap.xml
+Host: https://ardogroup.org
